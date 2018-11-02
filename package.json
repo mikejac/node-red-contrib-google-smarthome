@@ -1,0 +1,41 @@
+{
+  "name": "node-red-contrib-google-smarthome",
+  "version": "0.0.1",
+  "description": "Google SmartHome",
+  "main": "google-smarthome.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikejac/node-red-contrib-google-smarthome.git"
+  },
+  "keywords": [
+    "google",
+    "smarthome",
+    "assistant",
+    "iot"
+  ],
+  "node-red": {
+    "nodes": {
+      "google-smarthome": "google-smarthome.js"
+    }
+  },
+  "author": {
+    "name": "Michael Jacobsen"
+  },
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/mikejac/node-red-contrib-google-smarthome/issues"
+  },
+  "homepage": "https://github.com/mikejac/node-red-contrib-google-smarthome#readme",
+  "dependencies": {
+    "actions-on-google": "^2.4.1",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  },
+  "maintainers": [
+    {
+      "name": "mikejac",
+      "email": "michael@visbyjacobsen.dk"
+    }
+  ]
+}
