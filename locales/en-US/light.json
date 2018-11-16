@@ -1,0 +1,22 @@
+{
+    "light": {
+        "label": {
+            "name": "Name",
+            "topic": "Out topic"
+        },
+        "placeholder": {
+            "name": "Name",
+            "topic": "Outgoing topic"
+        },
+        "state": {
+            "connected": "Connected to broker: __broker__",
+            "disconnected": "Disconnected from broker: __broker__",
+            "connect-failed": "Connection failed to broker: __broker__"
+        },
+        "errors": {
+            "missing-config": "Missing bridge configuration",
+            "missing-bridge": "Missing bridge",
+            "light-create": "Unable to create light"
+        }
+    }
+}

@@ -1,0 +1,32 @@
+{
+    "googlesmarthome": {
+        "label": {
+            "name": "Name",
+            "username": "Username",
+            "password": "Password",
+            "port": "Port",
+            "clientid": "Client ID",
+            "clientsecret": "Client Secret",
+            "publickey": "Public Key",
+            "privatekey": "Private Key",
+            "jwtkey": "Jwt Key"
+        },
+        "placeholder": {
+            "name": "Name",
+            "clientid": "OAuth Client ID",
+            "clientsecret": "OAuth Client secret",
+            "publickey": "Filename",
+            "privatekey": "Filename",
+            "jwtkey": "Filename"
+        },
+        "state": {
+            "connected": "Connected to broker: __broker__",
+            "disconnected": "Disconnected from broker: __broker__",
+            "connect-failed": "Connection failed to broker: __broker__"
+        },
+        "errors": {
+            "missing-config": "missing bridge configuration",
+            "missing-bridge": "missing bridge"
+        }
+    }
+}
