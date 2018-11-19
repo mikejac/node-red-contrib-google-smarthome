@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-google-smarthome",
-  "version": "0.0.3",
+  "version": "0.0.8",
   "description": "Google SmartHome",
   "main": "google-smarthome.js",
   "scripts": {},
@@ -16,7 +16,10 @@
   ],
   "node-red": {
     "nodes": {
-      "google-smarthome": "google-smarthome.js"
+      "google-smarthome": "google-smarthome.js",
+      "light": "light.js",
+      "outlet": "outlet.js",
+      "scene": "scene.js"
     }
   },
   "author": {
@@ -38,7 +41,6 @@
     "googleapis": "^35.0.x",
     "uuid-token-generator": "^1.0.x",
     "util": "^0.11.x",
-    "fs": "^0.0.1",
     "path": "^0.12.x",
     "node-persist": "^2.1.x"
   },

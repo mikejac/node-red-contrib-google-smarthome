@@ -18,6 +18,11 @@
 
 <script type="text/x-red" data-template-name="googlesmarthome-client">
     <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="googlesmarthome.label.name"></span></label>
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]googlesmarthome.placeholder.name">
+    </div>
+
+    <div class="form-row">
         <b>Local Authentication</b>
     </div>
 
@@ -55,6 +60,11 @@
     </div>
 
     <div class="form-row">
+        <label for="node-config-input-reportinterval"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.reportinterval"></span></label>
+        <input type="text" id="node-config-input-reportinterval" data-i18n="[placeholder]googlesmarthome.placeholder.reportinterval">
+    </div>
+
+    <div class="form-row">
         <b>Built-in Web Server Settings</b>
     </div>
 
@@ -71,11 +81,6 @@
     <div class="form-row">
         <label for="node-config-input-privatekey"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.privatekey"></span></label>
         <input type="text" id="node-config-input-privatekey">
-    </div>
-
-    <div class="form-row">
-        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="googlesmarthome.label.name"></span></label>
-        <input type="text" id="node-config-input-name" data-i18n="[placeholder]googlesmarthome.placeholder.name">
     </div>
 </script>
 
@@ -107,6 +112,9 @@
             },
             jwtkey: {
                 value:"", required:true
+            },
+            reportinterval: {
+                value:60, required:true, validate:RED.validators.number(true)
             },
             clientid: {
                 value:"", required:true

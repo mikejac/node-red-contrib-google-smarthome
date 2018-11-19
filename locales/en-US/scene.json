@@ -1,8 +1,9 @@
 {
-    "light": {
+    "scene": {
         "label": {
             "name": "Name",
-            "topic": "Out topic"
+            "topic": "Out topic",
+            "reversible": "Reversible"
         },
         "placeholder": {
             "name": "Name",

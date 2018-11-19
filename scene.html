@@ -1,0 +1,94 @@
+<!--
+ NodeRED Google SmartHome
+ Copyright (C) 2018 Michael Jacobsen.
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+    Scene
+-->
+<script type="text/x-red" data-template-name="google-scene">
+    <div class="form-row">
+        <b>Google SmartHome Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-client"><i class="fa fa-globe"></i> SmartHome</span></label>
+        <input type="text" id="node-input-client">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="scene.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]scene.placeholder.name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-reversible"><i class="fa fa-tag"></i> <span data-i18n="scene.label.reversible"></span></label>
+        <input type="checkbox" checked id="node-input-reversible" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+
+    <div class="form-row">
+        <b>Node-RED Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="scene.label.topic"></span></label>
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]scene.placeholder.topic">
+    </div>
+
+    <div class="form-tips">
+        <b>Input</b><br/>
+        <code>[...]/on</code><br>
+        <br/>
+        <b>Outputs</b><br/>
+        <code>updated</code><br>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="google-scene">
+    Nothing here yet.
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google-scene', {
+        category: 'Google_SmartHome-function',
+        paletteLabel: 'Scene',
+        defaults: {
+            client: {
+                type: "googlesmarthome-client", 
+                required: true
+            },
+            name: {
+                value: "", required:true
+            },
+            reversible: {
+                value: false
+            },
+            topic: {
+                value: "", required:true
+            }
+        },
+        inputs: 1,
+        outputs: 1,
+        color:"#C0DEED",
+        icon: "bridge.png",
+        label: function() {
+            return this.name || "Scene";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : ""
+        }
+    })
+</script>

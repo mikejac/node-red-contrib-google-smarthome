@@ -9,7 +9,8 @@
             "clientsecret": "Client Secret",
             "publickey": "Public Key",
             "privatekey": "Private Key",
-            "jwtkey": "Jwt Key"
+            "jwtkey": "Jwt Key",
+            "reportinterval": "Report Interval (m)"
         },
         "placeholder": {
             "name": "Name",
@@ -17,7 +18,8 @@
             "clientsecret": "OAuth Client secret",
             "publickey": "Filename",
             "privatekey": "Filename",
-            "jwtkey": "Filename"
+            "jwtkey": "Filename",
+            "reportinterval": "Interval in minutes. -1 to disable"
         },
         "state": {
             "connected": "Connected to broker: __broker__",
