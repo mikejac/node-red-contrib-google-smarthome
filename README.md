@@ -11,7 +11,14 @@ To install - change to your Node-RED user directory.
         cd ~/.node-red
         npm install node-red-contrib-google-smarthome
 
+*Note:* This version outputs a lot of debug messages on the console. These messages will be removed or made optional in a later version.
+
 ## Nodes in this package
+### General information
+1. If `online` is set to `false` for a node, Google SmartHome is not going to be able to control the node. It will also show as `offline` in the Google Home app.
+2. The nodes will do their best to convert incoming payload data to the required type. You can send a string of e.g. `ON` and it will be converted to `true`.
+3. Topics must be either as stated below or prepended with one or more `/`. E.g. `my/topic/on`. The nodes only looks for the part after the last `/`, if any.
+
 #### - Light On/Off (a light that can be swithed on and off only)
 `topic` can be `on`, `online` or `set`.
 
@@ -71,7 +78,7 @@ Messages sent to this node is simply passed through. One cannot tell Google Smar
 
 **Google HomeGraph Settings**
 
-  `Jwt Key`: Full path to JWT key file.
+  `Jwt Key`: Full path to JWT key file (the one downloaded in the *Add Report State* section).
 
   `Report Interval (m)`: Time, in minutes, between report updates are sent to Google.
 
@@ -79,9 +86,9 @@ Messages sent to this node is simply passed through. One cannot tell Google Smar
 
   `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the *Google on Actions* project.
 
-  `Public Key`: Full path to public key file.
+  `Public Key`: Full path to public key file, e.g. `fullchain.pem` from Let's Encrypt.
 
-  `Private Key`: Full path to private key file.
+  `Private Key`: Full path to private key file, e.g. `privkey.pem` from Let's Encrypt.
 
 ---
 ## Google SmartHome Setup Instructions
