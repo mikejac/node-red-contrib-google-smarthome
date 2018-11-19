@@ -12,7 +12,7 @@ To install - change to your Node-RED user directory.
         npm install node-red-contrib-google-smarthome
 
 ## Nodes in this package
-### - Light On/Off (a light that can be swithed on and off only)
+#### - Light On/Off (a light that can be swithed on and off only)
 `topic` can be `on`, `online` or `set`.
 
 If `topic` is `on` then `payload` must be boolean and tells the state of the light.
@@ -33,7 +33,7 @@ If `topic` is `set` then `payload` must be an object and tells both the on state
           online: true
         }
 
-### - Outlet
+#### - Outlet
 `topic` can be `on`, `online` or `set`.
 
 If `topic` is `on` then `payload` must be boolean and tells the state of the outlet.
@@ -54,8 +54,8 @@ If `topic` is `set` then `payload` must be an object and tells both the on state
           online: true
         }
 
-### - Scene
-Messages sent to this node is simply passed through. One cannot tell Google SmartHome to activate a scene.
+#### - Scene
+Messages sent to this node is simply passed through. One cannot tell Google SmartHome to activate a scene, they tell us.
 
 ## The config node
 
@@ -101,7 +101,7 @@ See the developer guide and release notes at [https://developers.google.com/acti
 #### Add Request Sync
 *Note: I'm almost certain this part is not needed.*
 
-The Request Sync feature allows a cloud integration to send a request to the Home Graph to send a new SYNC request.
+The Request Sync feature allows the nodes in this package to send a request to the Home Graph to send a new SYNC request.
 
 1. Navigate to the [Google Cloud Console API Manager](https://console.developers.google.com/apis) for your project id.
 2. Enable the [HomeGraph API](https://console.cloud.google.com/apis/api/homegraph.googleapis.com/overview). This will be used to request a new sync and to report the state back to the HomeGraph.
@@ -112,7 +112,7 @@ The Request Sync feature allows a cloud integration to send a request to the Hom
 7. Enable Request-Sync API using [these instructions](https://developers.google.com/actions/smarthome/create-app#request-sync).
 
 #### Add Report State
-The Report State feature allows a cloud integration to proactively provide the current state of devices to the Home Graph without a `QUERY` request. This is done securely through [JWT (JSON web tokens)](https://jwt.io/).
+The Report State feature allows the nodes in this package to proactively provide the current state of devices to the Home Graph without a `QUERY` request. This is done securely through [JWT (JSON web tokens)](https://jwt.io/).
 
 1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
 2. Select **Create Credentials** and create a **Service account key**
@@ -134,6 +134,8 @@ The Report State feature allows a cloud integration to proactively provide the c
 11. Enter any remaining necessary information you might need for authentication your app. Click *Save*.
 12. On the left navigation menu under *Test*, click on *Simulator*, to begin using this app.
 
+*Note:* The `example.com` name in the above text must be your actual domain name (and the same name as used in your SSL certficate).
+
 #### Setup Account linking
 
 1. On a device with the Google Assistant logged into the same account used to create the project in the Actions Console, enter your Assistant settings.
@@ -144,4 +146,7 @@ The Report State feature allows a cloud integration to proactively provide the c
 6. Start using the Google Assistant.
 ---
 ## Credits
-This README and large parts of the code comes from Google. [Actions on Google: Smart Home sample using Node.js](https://github.com/actions-on-google/smart-home-nodejs) in particular has been of great value.
+Parts of this README and large parts of the code comes from Google. [Actions on Google: Smart Home sample using Node.js](https://github.com/actions-on-google/smart-home-nodejs) in particular has been of great value.
+
+## Copyright and license
+Copyright 2018 Michael Jacobsen under [the GNU General Public License version 3](LICENSE).
