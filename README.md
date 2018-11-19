@@ -1,16 +1,61 @@
 # WARNING: Beta code!
 
-## Nodes
-
-This version has three nodes:
-1. Light On/Off (a light that can be swithed on and off only).
-2. Outlet.
-3. Scene.
-
 ## Prerequisites
 
 1. You are going to need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/). The public key and the private key must copied to your Node-RED server, in a location where the Node-RED service can read them.
 2. You also need to be able to forward TCP traffic coming in from the Internet to your Node-RED server on a port you specify.
+
+## Installation
+To install - change to your Node-RED user directory.
+
+        cd ~/.node-red
+        npm install node-red-contrib-google-smarthome
+
+## Nodes in this package
+### - Light On/Off (a light that can be swithed on and off only)
+`topic` can be `on`, `online` or `set`.
+
+If `topic` is `on` then `payload` must be boolean and tells the state of the light.
+
+        msg.topic = 'on'
+        msg.payload = true
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the light.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is `set` then `payload` must be an object and tells both the on state as well as the online state of the light.
+
+        msg.topic = 'set'
+        msg.payload = {
+          on: false,
+          online: true
+        }
+
+### - Outlet
+`topic` can be `on`, `online` or `set`.
+
+If `topic` is `on` then `payload` must be boolean and tells the state of the outlet.
+
+        msg.topic = 'on'
+        msg.payload = true
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the outlet.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is `set` then `payload` must be an object and tells both the on state as well as the online state of the outlet.
+
+        msg.topic = 'set'
+        msg.payload = {
+          on: false,
+          online: true
+        }
+
+### - Scene
+Messages sent to this node is simply passed through. One cannot tell Google SmartHome to activate a scene.
 
 ## The config node
 

@@ -73,12 +73,6 @@ module.exports = function(RED) {
 
         this.status({fill:"yellow", shape:"dot", text:"Ready"});
 
-        /*setTimeout(function(node) {
-            RED.log.debug("LightOnOffNode(): initial write");
-
-            outputState(node, node.light.state, node.light.state);
-        }, 100, node);*/
-
         /******************************************************************************************************************
          * respond to inputs from NodeRED
          *
