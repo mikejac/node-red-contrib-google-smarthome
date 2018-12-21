@@ -48,11 +48,20 @@ module.exports.FormatValue = function(format, key, value) {
             case Formats.STRING:
                 return value;
 
+            case Formats.FLOAT:
+                let fval = parseFloat(value);
+
+                if (isNaN(fval)) {
+                    throw new Error('Type of ' + key + ' is string but it cannot be converted to a float');
+                }
+
+                return fval;
+
             default:
                 let val = parseInt(value)
 
                 if (isNaN(val)) {
-                    throw new Error('Type of ' + key + ' is string but it cannot be converted to a number');
+                    throw new Error('Type of ' + key + ' is string but it cannot be converted to a integer');
                 }
 
                 return val;
@@ -95,6 +104,50 @@ module.exports.FormatValue = function(format, key, value) {
             throw new Error('Type of ' + key + ' is object but it does not have matching property');
         }
     } else {
-        throw new Error('Type of ' + key + ' is not compatible');
+        throw new Error('Type of ' + key + ' is not compatible; typeof = ' + typeof value);
     }
+}
+
+/******************************************************************************************************************
+ *
+ *
+ */
+module.exports.FormatBrightness = function(value) {
+    if (value < 0) {
+        return 0;
+    } else if (value > 100) {
+        return 100;
+    }
+
+    return value;
+}
+
+module.exports.FormatHue = function(value) {
+    if (value < 0) {
+        return 0.0;
+    } else if (value > 360) {
+        return 360.0;
+    }
+
+    return value;
+}
+
+module.exports.FormatSaturation = function(value) {
+    if (value < 0) {
+        return 0.0;
+    } else if (value > 100) {
+        return 100.0;
+    }
+
+    return value;
+}
+
+module.exports.FormatRGB = function(value) {
+    if (value < 0) {
+        return 0;
+    } else if (value > 16777215) {
+        return 16777215;
+    }
+
+    return value;
 }

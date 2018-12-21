@@ -23,6 +23,11 @@
     </div>
 
     <div class="form-row">
+        <label style="width:auto" for="node-config-input-enabledebug"><i class="fa fa-arrow-right"></i> <span data-i18n="googlesmarthome.label.enabledebug"></span></label>
+        <input type="checkbox" checked id="node-config-input-enabledebug" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+
+    <div class="form-row">
         <b>Local Authentication</b>
     </div>
 
@@ -85,7 +90,21 @@
 </script>
 
 <script type="text/x-red" data-help-name="googlesmarthome-client">
-    text text text.
+    <b>Local Authentication</b><br>
+    <code>Username</code> and <code>Password</code>: A username and password used when you link Google SmartHome to this node.<br>
+    <br>
+    <b>Actions on Google Project Settings</b><br>
+    <code>Client ID</code>: The client id you entered in the <b>Google on Actions</b> project.<br>
+    <code>Client Secret</code>: The client secret you entered in the <b>Google on Actions</b> project.<br>
+    <br>
+    <b>Google HomeGraph Settings</b><br>
+    <code>Jwt Key</code>: Full path to JWT key file.<br>
+    <code>Report Interval (m)</code>: Time, in minutes, between report updates are sent to Google.<br>
+    <br>
+    <b>Built-in Web Server Settings</b><br>
+    <code>Port</code>: TCP port of your choosing for incoming connections from Google. Must match what you entered in the <b>Google on Actions</b> project.<br>
+    <code>Public Key</code>: Full path to public key file, e.g. `fullchain.pem` from Let's Encrypt.<br>
+    <code>Private Key</code>: Full path to private key file, e.g. `privkey.pem` from Let's Encrypt.<br>
 </script>
 
 <script type="text/javascript">
@@ -94,6 +113,9 @@
         defaults: {
             name: {
                 value: ""
+            },
+            enabledebug: {
+                value: false
             },
             username: {
                 value:"", required:true
@@ -124,7 +146,7 @@
             }
         },
         color:"#3FADB5",
-        icon: "bridge.png",
+        icon: "google-smarthome.png",
         label: function() {
             return this.name || "googlesmarthome-client";
         },
@@ -132,4 +154,65 @@
             return this.name ? "node_label_italic" : "";
         }
     });
+</script>
+
+<!--
+    Management Interface
+-->
+<script type="text/x-red" data-template-name="google-mgmt">
+    <div class="form-row">
+        <b>Google SmartHome Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-client"><i class="fa fa-globe"></i> SmartHome</span></label>
+        <input type="text" id="node-input-client">
+    </div>
+
+    <div class="form-row">
+        <b>Node-RED Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="googlesmarthome.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]lgooglesmarthome.placeholder.name">
+    </div>
+
+    <div class="form-tips">
+        <b>Input</b><br/>
+        <code>[...]/restart_server</code><br>
+        <br/>
+        <b>Outputs</b><br/>
+        <code>TBD</code><br>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="google-mgmt">
+    Nothing here yet.
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google-mgmt', {
+        category: 'Google_SmartHome-function',
+        paletteLabel: 'Management',
+        defaults: {
+            client: {
+                type: "googlesmarthome-client", 
+                required: true
+            },
+            name: {
+                value: ""
+            }
+        },
+        inputs: 1,
+        outputs: 1,
+        color:"#C0DEED",
+        icon: "google-smarthome.png",
+        label: function() {
+            return this.name || "Management";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : ""
+        }
+    })
 </script>

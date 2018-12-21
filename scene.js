@@ -61,7 +61,7 @@ module.exports = function(RED) {
             setTimeout(function () { node.status({}) }, 10000);
 
             let msg = {
-                topic: node.topicOut + "/updated",
+                topic: node.topicOut,
                 payload: !states.deactivate
             };
 

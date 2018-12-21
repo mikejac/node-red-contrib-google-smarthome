@@ -62,14 +62,14 @@ module.exports = function(RED) {
             }
 
             let msg = {
-                topic: node.topicOut + "/updated",
+                topic: node.topicOut,
                 payload: states
             };
 
             node.send(msg);
         };
 
-        this.clientConn.register(this, 'outlet', config.name);
+        this.states = this.clientConn.register(this, 'outlet', config.name);
 
         this.status({fill:"yellow", shape:"dot", text:"Ready"});
 
@@ -87,7 +87,7 @@ module.exports = function(RED) {
 
             try {
                 if (topic.toUpperCase() === 'SET') {
-                    RED.log.debug("OutletNode(input): SET");
+                    /*RED.log.debug("OutletNode(input): SET");
                     let object = {};
 
                     if (typeof msg.payload === 'object') {
@@ -97,48 +97,94 @@ module.exports = function(RED) {
                         return;
                     }
 
-                    let state = {};
+                    let on     = node.states.on;
+                    let online = node.states.online;
 
                     // on
                     if (object.hasOwnProperty('on')) {
-                        state.on = formats.FormatValue(formats.Formats.BOOL, 'on', object.on);
+                        on = formats.FormatValue(formats.Formats.BOOL, 'on', object.on);
                     }
 
                     // online
                     if (object.hasOwnProperty('online')) {
-                        state.online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
+                        online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
                     }
 
-                    node.clientConn.setState(node, state);  // tell Google ...
+                    if (node.states.on !== on || node.states.online !== online){
+                        node.states.on     = on;
+                        node.states.online = online;
 
-                    if (node.passthru) {
-                        node.send(msg);
-                    }
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states;
+                            node.send(msg);
+                        }
+                    }*/
                 } else if (topic.toUpperCase() === 'ON') {
                     RED.log.debug("OutletNode(input): ON");
-                    let state = {
-                        on: formats.FormatValue(formats.Formats.BOOL, 'on', msg.payload)
-                    };
-                    
-                    node.clientConn.setState(node, state);  // tell Google ...
+                    let on = formats.FormatValue(formats.Formats.BOOL, 'on', msg.payload);
 
-                    if (node.passthru) {
-                        msg.payload = state.on;
-                        node.send(msg);
+                    if (node.states.on !== on) {
+                        node.states.on = on;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.on;
+                            node.send(msg);
+                        }
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("OutletNode(input): ONLINE");
-                    let state = {
-                        online: formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload)
-                    };
+                    let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload);
 
-                    node.clientConn.setState(node, state);  // tell Google ...
+                    if (node.states.online !== online) {
+                        node.states.online = online;
 
-                    if (node.passthru) {
-                        msg.payload = state.online;
-                        node.send(msg);
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.online;
+                            node.send(msg);
+                        }
                     }
-                }    
+                } else {
+                    RED.log.debug("OutletNode(input): some other topic");
+                    let object = {};
+
+                    if (typeof msg.payload === 'object') {
+                        object = msg.payload;
+                    } else {
+                        RED.log.debug("OutletNode(input): typeof payload = " + typeof msg.payload);
+                        return;
+                    }
+
+                    let on     = node.states.on;
+                    let online = node.states.online;
+
+                    // on
+                    if (object.hasOwnProperty('on')) {
+                        on = formats.FormatValue(formats.Formats.BOOL, 'on', object.on);
+                    }
+
+                    // online
+                    if (object.hasOwnProperty('online')) {
+                        online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
+                    }
+
+                    if (node.states.on !== on || node.states.online !== online){
+                        node.states.on     = on;
+                        node.states.online = online;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states;
+                            node.send(msg);
+                        }
+                    }
+                }
             } catch (err) {
                 RED.log.error(err);
             }

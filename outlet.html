@@ -47,20 +47,31 @@
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
-
-    <div class="form-tips">
-        <b>Input</b><br/>
-        <code>[...]/on</code><br>
-        <code>[...]/online</code><br>
-        <code>[...]/set</code><br>
-        <br/>
-        <b>Outputs</b><br/>
-        <code>updated</code><br>
-    </div>
 </script>
 
 <script type="text/x-red" data-help-name="google-outlet">
-    Nothing here yet.
+    <code>topic</code> can be <code>on</code>, <code>online</code> or something else.<br>
+    <br>
+    If <code>topic</code> is <code>on</code> then <code>payload</code> must be boolean and tells the state of the outlet.<br>
+    <code>
+    msg.topic = 'on'<br>
+    msg.payload = true<br>
+    </code>
+    <br>
+    If <code>topic</code> is <code>online</code> then <code>payload</code> must be boolean and tells the online state of the outlet.<br>
+    <code>
+    msg.topic = 'online'<br>
+    msg.payload = true<br>
+    </code>
+    <br>
+    If <code>topic</code> is something else then <code>payload</code> must be an object and tells both the on state as well as the online state of the outlet.<br>
+    <code>
+    msg.topic = 'set'<br>
+    msg.payload = {<br>
+      on: false,<br>
+      online: true<br>
+    }<br>
+    </code>
 </script>
 
 <script type="text/javascript">
@@ -85,7 +96,7 @@
         inputs: 1,
         outputs: 1,
         color:"#C0DEED",
-        icon: "bridge.png",
+        icon: "google-smarthome.png",
         label: function() {
             return this.name || "Outlet";
         },

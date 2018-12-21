@@ -1,4 +1,4 @@
-# WARNING: Beta code!
+# WARNING: Beta code! (But we're getting there :-)
 
 ## Prerequisites
 
@@ -11,7 +11,7 @@ To install - change to your Node-RED user directory.
         cd ~/.node-red
         npm install node-red-contrib-google-smarthome
 
-*Note:* This version outputs a lot of debug messages on the console. These messages will be removed or made optional in a later version.
+*Note:* This version can output a lot of debug messages on the console. These messages are optional.
 
 ## Nodes in this package
 ### General information
@@ -20,7 +20,7 @@ To install - change to your Node-RED user directory.
 3. Topics must be either as stated below or prepended with one or more `/`. E.g. `my/topic/on`. The nodes only looks for the part after the last `/`, if any.
 
 #### - Light On/Off (a light that can be swithed on and off only)
-`topic` can be `on`, `online` or `set`.
+`topic` can be `on`, `online` or something else.
 
 If `topic` is `on` then `payload` must be boolean and tells the state of the light.
 
@@ -32,7 +32,7 @@ If `topic` is `online` then `payload` must be boolean and tells the online state
         msg.topic = 'online'
         msg.payload = true
 
-If `topic` is `set` then `payload` must be an object and tells both the on state as well as the online state of the light.
+If `topic` is something else then `payload` must be an object and tells all the states of the light.
 
         msg.topic = 'set'
         msg.payload = {
@@ -40,8 +40,109 @@ If `topic` is `set` then `payload` must be an object and tells both the on state
           online: true
         }
 
+#### - Dimmable Light
+`topic` can be `on`, `online`, `brightness` or something else.
+
+If `topic` is `on` then `payload` must be boolean and tells the state of the light.
+
+        msg.topic = 'on'
+        msg.payload = true
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the light.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is `brightness` then `payload` must be a number and tells the brightness of the light. Range is 0 through 100.
+
+        msg.topic = 'brightness'
+        msg.payload = 75
+
+If `topic` is something else then `payload` must be an object and tells all the states of the light.
+
+        msg.topic = 'set'
+        msg.payload = {
+          on: false,
+          online: true,
+          brightness: 100
+        }
+
+#### - Color (HSV) Light
+`topic` can be `on`, `online`, `brightness`, `hue`, `saturation`, `value` or something else.
+
+If `topic` is `on` then `payload` must be boolean and tells the state of the light.
+
+        msg.topic = 'on'
+        msg.payload = true
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the light.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is `brightness` then `payload` must be a number and tells the brightness of the light. Range is 0 through 100.
+
+        msg.topic = 'brightness'
+        msg.payload = 75
+
+If `topic` is `hue` then `payload` must be a number and tells the hue of the light. Range is 0.0 through 360.0.
+
+        msg.topic = 'hue'
+        msg.payload = 120.0
+
+If `topic` is `saturation` then `payload` must be a number and tells the saturation of the light. Range is 0.0 through 100.0.
+
+        msg.topic = 'saturation'
+        msg.payload = 100.0
+
+If `topic` is something else then `payload` must be an object and tells all the states of the light.
+
+        msg.topic = 'set'
+        msg.payload = {
+          on: false,
+          online: true,
+          brightness: 100,
+          hue: 120.0,
+          saturation: 100.0
+        }
+
+#### - Color (RGB) Light
+`topic` can be `on`, `online`, `brightness`, `rgb` or something else.
+
+If `topic` is `on` then `payload` must be boolean and tells the state of the light.
+
+        msg.topic = 'on'
+        msg.payload = true
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the light.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is `brightness` then `payload` must be a number and tells the brightness of the light. Range is 0 through 100.
+
+        msg.topic = 'brightness'
+        msg.payload = 75
+
+If `topic` is `rgb` then `payload` must be a number and tells the RGB values of the light. Range is 0 through 16777215.
+
+        msg.topic = 'rgb'
+        msg.payload = 255
+
+*Hint:* red = 16711680, green = 65280, blue = 255.
+
+If `topic` is something else then `payload` must be an object and tells all the states of the light.
+
+        msg.topic = 'set'
+        msg.payload = {
+          on: false,
+          online: true,
+          brightness: 100,
+          rgb: 255,
+        }
+
 #### - Outlet
-`topic` can be `on`, `online` or `set`.
+`topic` can be `on`, `online` or something else.
 
 If `topic` is `on` then `payload` must be boolean and tells the state of the outlet.
 
@@ -53,7 +154,7 @@ If `topic` is `online` then `payload` must be boolean and tells the online state
         msg.topic = 'online'
         msg.payload = true
 
-If `topic` is `set` then `payload` must be an object and tells both the on state as well as the online state of the outlet.
+If `topic` is something else then `payload` must be an object and tells both the on state as well as the online state of the outlet.
 
         msg.topic = 'set'
         msg.payload = {
@@ -63,6 +164,15 @@ If `topic` is `set` then `payload` must be an object and tells both the on state
 
 #### - Scene
 Messages sent to this node is simply passed through. One cannot tell Google SmartHome to activate a scene, they tell us.
+
+#### - Management
+`topic` can be `restart_server` or `report_state`.
+
+`payload` is not used for anything.
+
+`restart_server` is used to stop then start the built-in webserver. Can be used when your SSL certificate has been renewed and needs to be re-read by the webserver.
+
+`report_state` will force an update of all states to Google. Mostly usefull for debugging.
 
 ## The config node
 

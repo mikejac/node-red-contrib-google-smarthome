@@ -47,20 +47,31 @@
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
-
-    <div class="form-tips">
-        <b>Input</b><br/>
-        <code>[...]/on</code><br>
-        <code>[...]/online</code><br>
-        <code>[...]/set</code><br>
-        <br/>
-        <b>Outputs</b><br/>
-        <code>updated</code><br>
-    </div>
 </script>
 
 <script type="text/x-red" data-help-name="google-light-onoff">
-    Nothing here yet.
+    <code>topic</code> can be <code>on</code>, <code>online</code> or something else.<br>
+    <br>
+    If <code>topic</code> is <code>on</code> then <code>payload</code> must be boolean and tells the state of the light.<br>
+    <code>
+    msg.topic = 'on'<br>
+    msg.payload = true<br>
+    </code>
+    <br>
+    If <code>topic</code> is <code>online</code> then <code>payload</code> must be boolean and tells the online state of the light.<br>
+    <code>
+    msg.topic = 'online'<br>
+    msg.payload = true<br>
+    </code>
+    <br>
+    If <code>topic</code> is something else then <code>payload</code> must be an object and tells both the on state as well as the online state of the light.<br>
+    <code>
+    msg.topic = 'set'<br>
+    msg.payload = {<br>
+      on: false,<br>
+      online: true<br>
+    }<br>
+    </code>
 </script>
 
 <script type="text/javascript">
@@ -85,9 +96,251 @@
         inputs: 1,
         outputs: 1,
         color:"#C0DEED",
-        icon: "bridge.png",
+        icon: "google-smarthome.png",
         label: function() {
             return this.name || "On/Off Light";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : ""
+        }
+    })
+</script>
+
+<!--
+    Dimmable light
+-->
+<script type="text/x-red" data-template-name="google-light-dimmable">
+    <div class="form-row">
+        <b>Google SmartHome Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-client"><i class="fa fa-globe"></i> SmartHome</span></label>
+        <input type="text" id="node-input-client">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="light.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]light.placeholder.name">
+    </div>
+
+    <div class="form-row">
+        <b>Node-RED Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="light.label.topic"></span></label>
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]light.placeholder.topic">
+    </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+
+    <div class="form-tips">
+        <b>Input</b><br/>
+        <code>[...]/on</code><br>
+        <code>[...]/online</code><br>
+        <code>[...]/brightness</code> Integer, 0 - 100<br>
+        <code>[...]/set</code><br>
+        <br/>
+        <b>Outputs</b><br/>
+        <code>updated</code><br>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="google-light-dimmable">
+    Nothing here yet.
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google-light-dimmable', {
+        category: 'Google_SmartHome-function',
+        paletteLabel: 'Dimmable Light',
+        defaults: {
+            client: {
+                type: "googlesmarthome-client", 
+                required: true
+            },
+            name: {
+                value: "", required:true
+            },
+            topic: {
+                value: "", required:true
+            },
+            passthru: {
+                value: false
+            },
+        },
+        inputs: 1,
+        outputs: 1,
+        color:"#C0DEED",
+        icon: "google-smarthome.png",
+        label: function() {
+            return this.name || "Dimmable Light";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : ""
+        }
+    })
+</script>
+
+<!--
+    HSV light
+-->
+<script type="text/x-red" data-template-name="google-light-hsv">
+    <div class="form-row">
+        <b>Google SmartHome Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-client"><i class="fa fa-globe"></i> SmartHome</span></label>
+        <input type="text" id="node-input-client">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="light.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]light.placeholder.name">
+    </div>
+
+    <div class="form-row">
+        <b>Node-RED Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="light.label.topic"></span></label>
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]light.placeholder.topic">
+    </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+
+    <div class="form-tips">
+        <b>Input</b><br/>
+        <code>[...]/on</code><br>
+        <code>[...]/online</code><br>
+        <code>[...]/brightness</code> Integer, 0 - 100<br>
+        <code>[...]/hue</code> Float, 0.0 - 360.0<br>
+        <code>[...]/saturation</code> Float, 0.0 - 100.0<br>
+        <br/>
+        <b>Outputs</b><br/>
+        <code>updated</code><br>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="google-light-hsv">
+    Nothing here yet.
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google-light-hsv', {
+        category: 'Google_SmartHome-function',
+        paletteLabel: 'Color (HSV) Light',
+        defaults: {
+            client: {
+                type: "googlesmarthome-client", 
+                required: true
+            },
+            name: {
+                value: "", required:true
+            },
+            topic: {
+                value: "", required:true
+            },
+            passthru: {
+                value: false
+            },
+        },
+        inputs: 1,
+        outputs: 1,
+        color:"#C0DEED",
+        icon: "google-smarthome.png",
+        label: function() {
+            return this.name || "Color (HSV) Light";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : ""
+        }
+    })
+</script>
+
+<!--
+    RGB light
+-->
+<script type="text/x-red" data-template-name="google-light-rgb">
+    <div class="form-row">
+        <b>Google SmartHome Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-client"><i class="fa fa-globe"></i> SmartHome</span></label>
+        <input type="text" id="node-input-client">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="light.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]light.placeholder.name">
+    </div>
+
+    <div class="form-row">
+        <b>Node-RED Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="light.label.topic"></span></label>
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]light.placeholder.topic">
+    </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+
+    <div class="form-tips">
+        <b>Input</b><br/>
+        <code>[...]/on</code><br>
+        <code>[...]/online</code><br>
+        <code>[...]/brightness</code> Integer, 0 - 100<br>
+        <code>[...]/hue</code> Float, 0.0 - 360.0<br>
+        <code>[...]/saturation</code> Float, 0.0 - 100.0<br>
+        <br/>
+        <b>Outputs</b><br/>
+        <code>updated</code><br>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="google-light-rgb">
+    Nothing here yet.
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google-light-rgb', {
+        category: 'Google_SmartHome-function',
+        paletteLabel: 'Color (RGB) Light',
+        defaults: {
+            client: {
+                type: "googlesmarthome-client", 
+                required: true
+            },
+            name: {
+                value: "", required:true
+            },
+            topic: {
+                value: "", required:true
+            },
+            passthru: {
+                value: false
+            },
+        },
+        inputs: 1,
+        outputs: 1,
+        color:"#C0DEED",
+        icon: "google-smarthome.png",
+        label: function() {
+            return this.name || "Color (RGB) Light";
         },
         labelStyle: function() {
             return this.name ? "node_label_italic" : ""
