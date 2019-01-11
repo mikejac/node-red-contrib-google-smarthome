@@ -4,6 +4,8 @@
 
 1. You are going to need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/). The public key and the private key must copied to your Node-RED server, in a location where the Node-RED service can read them.
 2. You also need to be able to forward TCP traffic coming in from the Internet to your Node-RED server on a port you specify.
+3. This package requires NodeJS version 7.6.0 at a minimum. If, during start of Node-RED, you get this warning, your version on NodeJS is too old:
+`[warn] [node-red-contrib-google-smarthome/google-smarthome] SyntaxError: Unexpected token ( (line:30)`
 
 ## Installation
 To install - change to your Node-RED user directory.
@@ -258,12 +260,12 @@ The Report State feature allows the nodes in this package to proactively provide
 1. On a device with the Google Assistant logged into the same account used to create the project in the Actions Console, enter your Assistant settings.
 2. Click Home Control.
 3. Click the '+' sign to add a device.
-4. Find your app in the list of providers.
-5. Log in to your service.
+4. Find your app in the list of providers. It will be `[test]` and then your app name.
+5. Log in to your service. Username and password is the ones you specified in the configuration node.
 6. Start using the Google Assistant.
 ---
 ## Credits
 Parts of this README and large parts of the code comes from Google. [Actions on Google: Smart Home sample using Node.js](https://github.com/actions-on-google/smart-home-nodejs) in particular has been of great value.
 
 ## Copyright and license
-Copyright 2018 Michael Jacobsen under [the GNU General Public License version 3](LICENSE).
+Copyright 2018 - 2019 Michael Jacobsen under [the GNU General Public License version 3](LICENSE).
