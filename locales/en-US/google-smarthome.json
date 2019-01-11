@@ -10,7 +10,8 @@
             "publickey": "Public Key",
             "privatekey": "Private Key",
             "jwtkey": "Jwt Key",
-            "reportinterval": "Report Interval (m)"
+            "reportinterval": "Report Interval (m)",
+            "enabledebug": "Enable Node Debug"
         },
         "placeholder": {
             "name": "Name",
