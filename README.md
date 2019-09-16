@@ -198,6 +198,8 @@ Messages sent to this node is simply passed through. One cannot tell Google Smar
 
   `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the *Google on Actions* project.
 
+  `Use external SSL offload`: If enabled, SSL encryption is not used by the node and must be done elsewhere.
+
   `Public Key`: Full path to public key file, e.g. `fullchain.pem` from Let's Encrypt.
 
   `Private Key`: Full path to private key file, e.g. `privkey.pem` from Let's Encrypt.
@@ -218,17 +220,17 @@ See the developer guide and release notes at [https://developers.google.com/acti
 7. Click *Save*.
 
 #### Add Request Sync
-*Note: I'm almost certain this part is not needed.*
+~~*Note: I'm almost certain this part is not needed.*~~
 
 The Request Sync feature allows the nodes in this package to send a request to the Home Graph to send a new SYNC request.
 
 1. Navigate to the [Google Cloud Console API Manager](https://console.developers.google.com/apis) for your project id.
 2. Enable the [HomeGraph API](https://console.cloud.google.com/apis/api/homegraph.googleapis.com/overview). This will be used to request a new sync and to report the state back to the HomeGraph.
-3. Click Credentials
-4. Click 'Create credentials'
-5. Click 'API key'
-6. Copy the API key shown and insert it in `smart-home-provider/cloud/config-provider.js`
-7. Enable Request-Sync API using [these instructions](https://developers.google.com/actions/smarthome/create-app#request-sync).
+3. ~~Click Credentials~~
+4. ~~Click 'Create credentials'~~
+5. ~~Click 'API key'~~
+6. ~~Copy the API key shown and insert it in `smart-home-provider/cloud/config-provider.js`~~
+7. ~~Enable Request-Sync API using [these instructions](https://developers.google.com/actions/smarthome/create-app#request-sync).~~
 
 #### Add Report State
 The Report State feature allows the nodes in this package to proactively provide the current state of devices to the Home Graph without a `QUERY` request. This is done securely through [JWT (JSON web tokens)](https://jwt.io/).

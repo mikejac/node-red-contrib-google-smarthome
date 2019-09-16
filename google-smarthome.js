@@ -41,7 +41,8 @@ module.exports = function(RED) {
         var node = this;
 
         this.app = new GoogleSmartHome(config.username, config.password, 
-            parseInt(config.port), 
+            parseInt(config.port),
+            config.ssloffload,
             config.publickey, 
             config.privatekey,
             config.jwtkey,
@@ -252,6 +253,10 @@ module.exports = function(RED) {
                     RED.log.debug("MgmtNode(input): REPORT_STATE");
 
                     this.clientConn.app.ReportAllStates();
+                } else if (topic.toUpperCase() === 'REQUEST_SYNC') {
+                    RED.log.debug("MgmtNode(input): REQUEST_SYNC");
+
+                    this.clientConn.app.RequestSync();
                 }
             } catch (err) {
                 RED.log.error(err);

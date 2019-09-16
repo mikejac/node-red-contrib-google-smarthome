@@ -79,6 +79,11 @@
     </div>
 
     <div class="form-row">
+        <label style="width:auto" for="node-config-input-ssloffload"><i class="fa fa-arrow-right"></i> <span data-i18n="googlesmarthome.label.ssloffload"></span></label>
+        <input type="checkbox" checked id="node-config-input-ssloffload" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+
+    <div class="form-row">
         <label for="node-config-input-publickey"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.publickey"></span></label>
         <input type="text" id="node-config-input-publickey">
     </div>
@@ -103,6 +108,7 @@
     <br>
     <b>Built-in Web Server Settings</b><br>
     <code>Port</code>: TCP port of your choosing for incoming connections from Google. Must match what you entered in the <b>Google on Actions</b> project.<br>
+    <code>External SSL offload</code>: If enabled, SSL encryption is not used by the node and must be done elsewhere.
     <code>Public Key</code>: Full path to public key file, e.g. `fullchain.pem` from Let's Encrypt.<br>
     <code>Private Key</code>: Full path to private key file, e.g. `privkey.pem` from Let's Encrypt.<br>
 </script>
@@ -126,11 +132,14 @@
             port: {
                 value:3001, required:true, validate:RED.validators.number(true)
             },
+            ssloffload: {
+                value: false
+            },
             publickey: {
-                value:"", required:true
+                value:"", required:false
             },
             privatekey: {
-                value:"", required:true
+                value:"", required:false
             },
             jwtkey: {
                 value:"", required:true
