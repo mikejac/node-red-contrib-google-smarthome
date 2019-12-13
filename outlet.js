@@ -134,6 +134,12 @@ module.exports = function(RED) {
                             msg.payload = node.states.on;
                             node.send(msg);
                         }
+                        
+                        if (node.states.on) {
+                            node.status({fill:"green", shape:"dot", text:"ON"});
+                        } else {
+                            node.status({fill:"red", shape:"dot", text:"OFF"});
+                        }
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("OutletNode(input): ONLINE");
