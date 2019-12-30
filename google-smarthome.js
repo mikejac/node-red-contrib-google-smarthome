@@ -91,6 +91,10 @@ module.exports = function(RED) {
                     states = node.app.NewScene(client, name, param1);
                     break;
 
+                case 'window':
+                    states = node.app.NewWindow(client, name);
+                    break;
+
                 case 'mgmt':
                     node.mgmtNodes[client.id] = client;
                     break;

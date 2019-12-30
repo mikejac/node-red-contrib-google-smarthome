@@ -1,0 +1,16 @@
+{
+    "window": {
+        "label": {
+            "name": "Name",
+            "topic": "Out topic"
+        },
+        "placeholder": {
+            "name": "Name",
+            "topic": "Outgoing topic"
+        },
+        "errors": {
+            "missing-config": "Missing SmartHome configuration",
+            "missing-bridge": "Missing SmartHome"
+        }
+    }
+}

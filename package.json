@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-google-smarthome",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Google SmartHome",
   "main": "google-smarthome.js",
   "scripts": {},
@@ -19,7 +19,8 @@
       "google-smarthome": "google-smarthome.js",
       "light": "light.js",
       "outlet": "outlet.js",
-      "scene": "scene.js"
+      "scene": "scene.js",
+      "window": "window.js"
     }
   },
   "author": {

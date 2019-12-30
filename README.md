@@ -164,6 +164,28 @@ If `topic` is something else then `payload` must be an object and tells both the
           online: true
         }
 
+#### - Window
+`topic` can be `openPercent`, `online` or something else.
+
+If `topic` is `openPercent` then `payload` must be integer and indicates the percentage that the window is opened where 0 is closed and 100 is fully open.
+
+        msg.topic = 'openPercent'
+        msg.payload = 50
+
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the window.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is something else then `payload` must be an object and tells both the open state as well as the online state of the window.
+
+        msg.topic = 'set'
+        msg.payload = {
+          openPercent: false,
+          online: true
+        }
+
 #### - Scene
 Messages sent to this node is simply passed through. One cannot tell Google SmartHome to activate a scene, they tell us.
 
