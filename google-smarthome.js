@@ -74,6 +74,10 @@ module.exports = function(RED) {
                 case 'light-dimmable':
                     states = node.app.NewLightDimmable(client, name);
                     break;
+    
+		case 'light-temperature':
+                    states = node.app.NewLightColorTemp(client, name);
+                    break;
 
                 case 'light-hsv':
                     states = node.app.NewLightHSV(client, name);
