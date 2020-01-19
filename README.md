@@ -164,6 +164,33 @@ If `topic` is something else then `payload` must be an object and tells both the
           online: true
         }
 
+#### - Thermostat
+`topic` can be `thermostatTemperatureAmbient`, `thermostatTemperatureSetpoint` or something else.
+
+If `topic` is `thermostatTemperatureAmbient` then `payload` must be a float and indicates the current ambient (room) temperature.
+
+        msg.topic = 'thermostatTemperatureAmbient'
+        msg.payload = 21.5
+
+If `topic` is `thermostatTemperatureSetpoint` then `payload` must be a float and indicates the target temperature of the thermostat.
+
+        msg.topic = 'thermostatTemperatureSetpoint'
+        msg.payload = 20.0
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the thermostat.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is something else then `payload` must be an object and tells the online state, ambient and target temperature of the thermostate.
+
+        msg.topic = 'set'
+        msg.payload = {
+          thermostatTemperatureAmbient: 21.5,
+          thermostatTemperatureSetpoint: 20.0,
+          online: true
+        }
+
 #### - Window
 `topic` can be `openPercent`, `online` or something else.
 

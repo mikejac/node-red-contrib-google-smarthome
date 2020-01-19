@@ -91,6 +91,10 @@ module.exports = function(RED) {
                     states = node.app.NewScene(client, name, param1);
                     break;
 
+                case 'thermostat':
+                    states = node.app.NewThermostat(client, name);
+                    break;
+
                 case 'window':
                     states = node.app.NewWindow(client, name);
                     break;
