@@ -380,6 +380,218 @@ module.exports = function(RED) {
 	 * 
 	 *
 	 */
+    function LightColorTempNode(config) {
+        RED.nodes.createNode(this, config);
+
+        this.client = config.client;
+        this.clientConn = RED.nodes.getNode(this.client);
+        this.topicOut = config.topic;
+        this.passthru = config.passthru;
+        this.topicDelim = '/';
+
+        if (!this.clientConn) {
+            this.error(RED._("light.errors.missing-config"));
+            this.status({ fill: "red", shape: "dot", text: "Missing config" });
+            return;
+        } else if (typeof this.clientConn.register !== 'function') {
+            this.error(RED._("light.errors.missing-bridge"));
+            this.status({ fill: "red", shape: "dot", text: "Missing SmartHome" });
+            return;
+        }
+
+        let node = this;
+
+        RED.log.debug("LightColorTempNode(): node.topicOut = " + node.topicOut);
+
+        /******************************************************************************************************************
+         * called when state is updated from Google Assistant
+         *
+         */
+        this.updated = function (states) {   // this must be defined before the call to clientConn.register()
+            RED.log.debug("LightColorTempNode(updated): states = " + JSON.stringify(states));
+
+            if (states.on) {
+                node.status({ fill: "green", shape: "dot", text: "ON" });
+            } else {
+                node.status({ fill: "red", shape: "dot", text: "OFF" });
+            }
+
+            let msg = {
+                topic: node.topicOut,
+                payload: {
+                    online: states.online,
+                    on: states.on,
+                    brightness: states.brightness,
+                    temperature: states.color.temperature
+                }
+            };
+
+            node.send(msg);
+        };
+
+        this.states = this.clientConn.register(this, 'light-temperature', config.name);
+
+        this.status({ fill: "yellow", shape: "dot", text: "Ready" });
+
+        /******************************************************************************************************************
+         * respond to inputs from NodeRED
+         *
+         */
+        this.on('input', function (msg) {
+            RED.log.debug("LightColorTempNode(input)");
+
+            let topicArr = msg.topic.split(node.topicDelim);
+            let topic = topicArr[topicArr.length - 1];   // get last part of topic
+
+            RED.log.debug("LightColorTempNode(input): topic = " + topic);
+
+            try {
+                if (topic.toUpperCase() === 'ON') {
+                    RED.log.debug("LightColorTempNode(input): ON");
+                    let on = formats.FormatValue(formats.Formats.BOOL, 'on', msg.payload);
+
+                    if (node.states.on !== on) {
+                        node.states.on = on;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.on;
+                            node.send(msg);
+                        }
+
+                        if (node.states.on) {
+                            node.status({ fill: "green", shape: "dot", text: "ON" });
+                        } else {
+                            node.status({ fill: "red", shape: "dot", text: "OFF" });
+                        }
+                    }
+                } else if (topic.toUpperCase() === 'ONLINE') {
+                    RED.log.debug("LightColorTempNode(input): ONLINE");
+                    let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload);
+
+                    if (node.states.online !== online) {
+                        node.states.online = online;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.online;
+                            node.send(msg);
+                        }
+                    }
+                } else if (topic.toUpperCase() === 'BRIGHTNESS') {
+                    RED.log.debug("LightColorTempNode(input): BRIGHTNESS");
+                    let brightness = formats.FormatBrightness(formats.FormatValue(formats.Formats.INT, 'brightness', msg.payload));
+
+                    if (node.states.brightness !== brightness) {
+                        node.states.brightness = brightness;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.brightness;
+                            node.send(msg);
+                        }
+                    }
+                } else if (topic.toUpperCase() === 'TEMPERATURE') {
+                    RED.log.debug("LightColorTempNode(input): TEMPERATURE");
+                    let temperature = formats.FormatBrightness(formats.FormatValue(formats.Formats.INT, 'temperature', msg.payload));
+
+                    if (node.states.temperature !== temperature) {
+                        node.states.temperature = temperature;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.temperature;
+                            node.send(msg);
+                        }
+                    }
+                } else {
+                    RED.log.debug("LightColorTempNode(input): some other topic");
+                    let object = {};
+
+                    if (typeof msg.payload === 'object') {
+                        object = msg.payload;
+                    } else {
+                        RED.log.debug("LightColorTempNode(input): typeof payload = " + typeof msg.payload);
+                        return;
+                    }
+
+                    let on = node.states.on;
+                    let online = node.states.online;
+                    let brightness = node.states.brightness;
+                    let temperature = node.states.temperature;
+
+                    // on
+                    if (object.hasOwnProperty('on')) {
+                        on = formats.FormatValue(formats.Formats.BOOL, 'on', object.on);
+                    }
+
+                    // online
+                    if (object.hasOwnProperty('online')) {
+                        online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
+                    }
+
+                    // brightness
+                    if (object.hasOwnProperty('brightness')) {
+                        brightness = formats.FormatBrightness(formats.FormatValue(formats.Formats.INT, 'brightness', object.brightness));
+                    }
+
+                    // color
+                    if (object.hasOwnProperty('temperature')) {
+                        temperature = formats.FormatBrightness(formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature));
+                    }
+
+                    if (node.states.on !== on || node.states.online !== online || node.states.brightness !== brightness || node.states.temperature !== temperature) {
+                        node.states.on = on;
+                        node.states.online = online;
+                        node.states.brightness = brightness;
+                        node.states.temperature = temperature;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = {};
+                            msg.payload.online = node.states.online;
+                            msg.payload.on = node.states.on;
+                            msg.payload.brightness = node.states.brightness;
+                            msg.payload.temperature = node.states.temperature;
+                            node.send(msg);
+                        }
+
+                        if (node.states.on) {
+                            node.status({ fill: "green", shape: "dot", text: "ON" });
+                        } else {
+                            node.status({ fill: "red", shape: "dot", text: "OFF" });
+                        }
+                    }
+                }
+            } catch (err) {
+                RED.log.error(err);
+            }
+        });
+
+        this.on('close', function (removed, done) {
+            if (removed) {
+                // this node has been deleted
+                node.clientConn.remove(node, 'light-temperature');
+            } else {
+                // this node is being restarted
+                node.clientConn.deregister(node, 'light-temperature');
+            }
+
+            done();
+        });
+    }
+
+    RED.nodes.registerType("google-light-temperature", LightColorTempNode);
+
+    /******************************************************************************************************************
+	 * 
+	 *
+	 */
     function LightHsvNode(config) {
         RED.nodes.createNode(this, config);
 
