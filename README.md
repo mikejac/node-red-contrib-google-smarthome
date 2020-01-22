@@ -315,6 +315,20 @@ The Report State feature allows the nodes in this package to proactively provide
 5. Log in to your service. Username and password is the ones you specified in the configuration node.
 6. Start using the Google Assistant.
 ---
+It seems that the Google Smart Home app is taken partially out of test after some time (months?). Existing devices works fine but new devices cannot be added and existing devices cannot be deleted. The Management node will output messages like this:
+
+        "_type": "actions-requestsync",
+        "msg": {
+                "error": {
+                        "code": 400,
+                        "message": "Request contains an invalid argument.",
+                        "status": "INVALID_ARGUMENT"
+                }
+        }
+
+Go to [Actions on Google Console](https://console.actions.google.com), select the *Simulator* and start the test again.
+
+---
 ## Credits
 Parts of this README and large parts of the code comes from Google. [Actions on Google: Smart Home sample using Node.js](https://github.com/actions-on-google/smart-home-nodejs) in particular has been of great value.
 
