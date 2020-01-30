@@ -56,6 +56,21 @@
             color: #333;
         }
 
+        #error_invalid_user {
+            display: none;
+            margin: 2em 0 1em;
+            color: red;
+            font-weight: bold;
+            animation: bounceIn 1s;
+        }
+
+        @keyframes bounceIn {
+            0%, 33%, 66%, 100% { transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000); }
+            0% { transform: scale3d(.5, .5, .5); }
+            33% { transform: scale3d(1.1, 1.1, 1.1); }
+            66% { transform: scale3d(.95, .95, .95); }
+            100% { transform: scale3d(1, 1, 1); }
+        }
 
         #login-button {
             border-radius: 3px;
@@ -156,6 +171,10 @@
 
     <form action='/login' method='post' id='loginform'>
 
+        <div id="error_invalid_user">
+            Invalid username or password. Please try again!
+        </div>
+
         <div class="field">
             <input type="text" name="username" id="username" autocomplete="off" autocapitalize="none" placeholder=" ">
             <label for="username">Username</label>
@@ -200,6 +219,9 @@
         document.querySelector('[name="client_id"]').value = params.get('client_id');
         document.querySelector('[name="redirect_uri"]').value = decodeURIComponent(params.get('redirect_uri'));
         document.querySelector('[name="state"]').value = params.get('state');
+
+        if(params.get('error') == 'invalid_user')
+            document.getElementById('error_invalid_user').style.display = 'block';
     });
 </script>
 </body>
