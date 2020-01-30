@@ -1,17 +1,3 @@
-<!--
-@license
-Copyright 2017, Google, Inc.
-Licensed under the Apache License, Version 2.0 (the 'License');
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-    http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an 'AS IS' BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -20,109 +6,6 @@ limitations under the License.
           content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
     <title>Node-RED SmartHome</title>
-    <meta name="description" content="Smart Home virtual devices">
-
-    <link rel="icon" href="images/favicon.ico">
-
-    <!-- See https://goo.gl/OOhYW5 for web app manifests -->
-    <link rel="manifest" href="manifest.json">
-
-    <!-- See https://goo.gl/qRE0vM for Chrome on Android theme-color attribute -->
-    <meta name="theme-color" content="#3f51b5">
-
-    <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Smart Home Gizmos">
-
-    <!-- Add to homescreen for Safari on iOS -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Smart Home Gizmos">
-
-    <!-- Homescreen icons -->
-    <link rel="apple-touch-icon" href="images/manifest/icon-48x48.png">
-    <link rel="apple-touch-icon" sizes="72x72"
-          href="images/manifest/icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="96x96"
-          href="images/manifest/icon-96x96.png">
-    <link rel="apple-touch-icon" sizes="144x144"
-          href="images/manifest/icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="192x192"
-          href="images/manifest/icon-192x192.png">
-
-    <!-- Tile icon for Windows 8 (144x144 + tile color) -->
-    <meta name="msapplication-TileImage"
-          content="images/manifest/icon-144x144.png">
-    <meta name="msapplication-TileColor" content="#3f51b5">
-    <meta name="msapplication-tap-highlight" content="no">
-
-    <!-- login -->
-    <meta name="google-signin-scope" content="profile email">
-
-    <script>
-        const SMART_HOME_PROVIDER_CLOUD_ENDPOINT = '/smart-home-api';
-
-        // Setup Polymer options
-        window.Polymer = {
-            dom: 'shadow',
-            lazyRegister: true
-        };
-
-        // Load webcomponentsjs polyfill if browser does not support native Web Components
-        (function () {
-            'use strict';
-
-            var onload = function () {
-                // For native Imports, manually fire WebComponentsReady so user code
-                // can use the same code path for native and polyfill'd imports.
-                if (!window.HTMLImports) {
-                    document.dispatchEvent(
-                            new CustomEvent('WebComponentsReady', {bubbles: true})
-                    );
-                }
-            };
-
-            var webComponentsSupported = (
-                    'registerElement' in document
-                    && 'import' in document.createElement('link')
-                    && 'content' in document.createElement('template')
-            );
-
-            if (!webComponentsSupported) {
-                var script = document.createElement('script');
-                script.async = true;
-                script.src = 'bower_components/webcomponentsjs/webcomponents-lite.js';
-                script.onload = onload;
-                document.head.appendChild(script);
-            } else {
-                onload();
-            }
-        })();
-
-        // Load pre-caching Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function () {
-                navigator.serviceWorker.register('service-worker.js');
-            });
-        }
-    </script>
-
-    <link rel="import" href="bower_components/polymer/polymer.html">
-    <link rel="import" href="bower_components/app-layout/app-header/app-header.html">
-    <link rel="import" href="bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
-    <link rel="import" href="bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
-    <link rel="import" href="bower_components/app-layout/app-toolbar/app-toolbar.html">
-    <link rel="import" href="bower_components/iron-icon/iron-icon.html">
-    <link rel="import" href="bower_components/iron-icons/iron-icons.html">
-    <link rel="import" href="bower_components/iron-icons/communication-icons.html">
-    <link rel="import" href="bower_components/iron-icons/social-icons.html">
-    <link rel="import" href="bower_components/iron-list/iron-list.html">
-    <link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
-    <link rel="import" href="bower_components/paper-input/paper-input.html">
-    <link rel="import" href="bower_components/paper-button/paper-button.html">
-    <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
-    <link rel="import" href="bower_components/paper-toast/paper-toast.html">
 
     <style>
         body {
@@ -132,17 +15,34 @@ limitations under the License.
             min-height: 100vh;
             background-color: #eeeeee;
         }
-    </style>
-</head>
-<body>
-    <style>
-        app-header {
+
+        #app-header {
             color: #fff;
             background-color: #4285f4;
+            position: relative;
         }
 
-        app-header paper-icon-button {
-            --paper-icon-button-ink-color: white;
+        #app-toolbar {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            position: relative;
+            height: 64px;
+            padding: 0 16px;
+            pointer-events: none;
+            font-size: 20px;
+        }
+
+        #main-title {
+            pointer-events: none;
+            flex-basis: 100%;
+        }
+
+        #home-icon {
+            width: 24px;
+            height: 24px;
+            padding: 8px;
+            font-size: 0;
         }
 
         div.main {
@@ -152,102 +52,155 @@ limitations under the License.
             width: 100%;
         }
 
-        div.main > h1 {
+        h1 {
             color: #333;
         }
 
-        paper-input {
-            width: calc(100% - 40px);
-            margin-left: 20px;
-            text-align: left;
-        }
 
-        paper-input iron-icon {
-            margin-right: 16px;
-            color: #555;
-        }
-
-        paper-button {
+        #login-button {
+            border-radius: 3px;
+            padding: 1em;
             color: white;
             background-color: #4285f4;
+            border: none;
+            font-size: 16px;
         }
 
-        @media (max-width:800px) {
-            div.main > h1 {
+        @media (max-width: 800px) {
+            h1 {
                 font-size: 16pt;
+            }
+            .field {
+                margin-left: 10px;
+                margin-right: 10px;
             }
         }
 
-        @media (min-width:800px) {
+        @media (min-width: 801px) {
             div.main {
                 width: 600px;
             }
-            paper-input {
-                margin-left: 80px;
-            }
+        }
+
+        .field {
+            display: flex;
+            flex-flow: column-reverse;
+            margin-bottom: 1em;
+            text-align: left;
+        }
+
+        label, input {
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+
+        input {
+            background-color: transparent;
+            font-size: 1.5em;
+            border: 0;
+            box-shadow: 0 1px 0 0 #212121;
+        }
+
+        input:focus {
+            outline: 0;
+            box-shadow: 0 2px 0 0 #3f51b5;
+            transition: box-shadow 0.5s;
+        }
+
+        input:placeholder-shown + label {
+            cursor: text;
+            max-width: 66.66%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transform-origin: left bottom;
+            transform: translate(0, 2.125rem) scale(1.5);
+        }
+
+        ::-webkit-input-placeholder {
+            opacity: 0;
+            transition: inherit;
+        }
+
+        input:focus::-webkit-input-placeholder {
+            opacity: 1;
+        }
+
+        input:not(:placeholder-shown) + label,
+        input:focus + label {
+            transform: translate(0, 0) scale(1);
+            cursor: pointer;
         }
     </style>
+</head>
+<body>
 
-    <app-header condenses reveals effects="waterfall">
-        <app-toolbar>
-            <paper-icon-button icon="home"></paper-icon-button>
-            <div main-title>Node-RED SmartHome</div>
-            <div>Welcome</div>
-        </app-toolbar>
-    </app-header>
 
-    <div class='main'>
-        <h1>Link your devices to Google</h1>
-        <img src='images/assistant-small.png' />
-
-        <form action='/login' method='post' id='loginform'>
-            <paper-input label="Username" name="paper_username">
-                <iron-icon icon="social:person" prefix></iron-icon>
-            </paper-input>
-            <paper-input label="Password" type="password" name="paper_password">
-                <iron-icon icon="communication:vpn-key" prefix></iron-icon>
-            </paper-input>
-
-            <input type="hidden" name="redirect">
-            <input type="hidden" name="client_id">
-            <input type="hidden" name="redirect_uri">
-            <input type="hidden" name="state" />
-            <input type="hidden" name="username">
-            <input type="hidden" name="password" />
-
-            <paper-button raised onclick="formSubmit()">Login</paper-button>
-        </form>
+<div id="app-header">
+    <div id="app-toolbar">
+        <div id="home-icon">
+            <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false"
+                 style="pointer-events: none; display: block; fill: white; stroke: white;">
+                <g>
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+                </g>
+            </svg>
+        </div>
+        <div id="main-title">Node-RED SmartHome</div>
     </div>
+</div>
 
-    <script>
-        function getUrlParameters () {
-            // Get each parameter
-            let query = window.location.search.substr(1);
-            // Split each parameter into a key-value pair
-            let keyValues = query.split('&');
-            let parameterMap = new Map();
-            for (let i in keyValues) {
-                // Split into <key>=<value>
-                let param = keyValues[i];
-                let splitParam = param.split('=');
-                parameterMap.set(splitParam[0], splitParam[1]);
-            }
-            return parameterMap;
-        }
+<div class='main'>
+    <h1>Link your devices to Google</h1>
+    <img src='images/assistant-small.png' alt=""/>
 
-        function formSubmit () {
-            console.log(1);
-            // Get URL parameters
-            let params = getUrlParameters();
-            // Set each hidden input from a value obtained from the URL
-            document.querySelector('[name="redirect_uri"]').value = params.get('redirect_uri');
-            document.querySelector('[name="client_id"]').value = params.get('client_id');
-            document.querySelector('[name="redirect_uri"]').value = params.get('redirect_uri');
-            document.querySelector('[name="state"]').value = params.get('state');
-            document.querySelector('[name="username"]').value = document.querySelector('paper-input[name="paper_username"]').value;
-            document.querySelector('[name="password"]').value = document.querySelector('paper-input[name="paper_password"]').value;
-            document.querySelector('#loginform').submit();
+    <form action='/login' method='post' id='loginform'>
+
+        <div class="field">
+            <input type="text" name="username" id="username" autocomplete="off" autocapitalize="none" placeholder=" ">
+            <label for="username">Username</label>
+        </div>
+
+        <div class="field">
+            <input type="password" name="password" id="password" placeholder=" ">
+            <label for="password">Password</label>
+        </div>
+
+        <input type="hidden" name="redirect">
+        <input type="hidden" name="client_id">
+        <input type="hidden" name="redirect_uri">
+        <input type="hidden" name="state"/>
+
+        <button id="login-button">LOGIN</button>
+    </form>
+</div>
+
+<script>
+    function getUrlParameters() {
+        // Get each parameter
+        let query = window.location.search.substr(1);
+        // Split each parameter into a key-value pair
+        let keyValues = query.split('&');
+        let parameterMap = new Map();
+        for (let i in keyValues) {
+            // Split into <key>=<value>
+            let param = keyValues[i];
+            let splitParam = param.split('=');
+            parameterMap.set(splitParam[0], splitParam[1]);
         }
-    </script>
+        return parameterMap;
+    }
+
+    document.addEventListener("DOMContentLoaded", function(event) {
+        // Get URL parameters
+        let params = getUrlParameters();
+
+        // Set each hidden input from a value obtained from the URL
+        document.querySelector('[name="redirect_uri"]').value = params.get('redirect_uri');
+        document.querySelector('[name="client_id"]').value = params.get('client_id');
+        document.querySelector('[name="redirect_uri"]').value = decodeURIComponent(params.get('redirect_uri'));
+        document.querySelector('[name="state"]').value = params.get('state');
+    });
+</script>
 </body>
 </html>
