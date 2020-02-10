@@ -1,5 +1,26 @@
 # WARNING: Beta code! (But we're getting there :-)
 
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Nodes in this package](#nodes-in-this-package)
+  - [General Information](#general-information)
+  - [Light On/Off](#--light-onoff-a-light-that-can-be-swithed-on-and-off-only)
+  - [Dimmable Light](#--dimmable-light)
+  - [Color (HSV) Light](#--color-hsv-light)
+  - [Color (RGB) Light](#--color-rgb-light)
+  - [Outlet](#--outlet)
+  - [Thermostat](#--thermostat)
+  - [Window](#--window)
+  - [Scene](#--scene)
+  - [Management](#--management)
+- [The config node](#the-config-node)
+- [Google SmartHome Setup Instructions](#google-smarthome-setup-instructions)
+- [Troubleshooting](#troubleshooting)
+- [Credits](#credits)
+- [Copyright and license](#copyright-and-license)
+
+---
 ## Prerequisites
 
 1. You are going to need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/). The public key and the private key must copied to your Node-RED server, in a location where the Node-RED service can read them.
@@ -7,6 +28,7 @@
 3. This package requires NodeJS version 7.6.0 at a minimum. If, during start of Node-RED, you get this warning, your version on NodeJS is too old:
 `[warn] [node-red-contrib-google-smarthome/google-smarthome] SyntaxError: Unexpected token ( (line:30)`
 
+---
 ## Installation
 To install - change to your Node-RED user directory.
 
@@ -15,6 +37,7 @@ To install - change to your Node-RED user directory.
 
 *Note:* This version can output a lot of debug messages on the console. These messages are optional.
 
+---
 ## Nodes in this package
 ### General information
 1. If `online` is set to `false` for a node, Google SmartHome is not going to be able to control the node. It will also show as `offline` in the Google Home app.
@@ -227,6 +250,7 @@ Messages sent to this node is simply passed through. One cannot tell Google Smar
 
 `request_sync` will request Google to sync to learn about new or changed devices. This usually happens automatically.
 
+---
 ## The config node
 
 **Local Authentication**
@@ -316,8 +340,11 @@ The Report State feature allows the nodes in this package to proactively provide
 4. Find your app in the list of providers. It will be `[test]` and then your app name.
 5. Log in to your service. Username and password is the ones you specified in the configuration node.
 6. Start using the Google Assistant.
+
 ---
-It seems that the Google Smart Home app is taken partially out of test after some time (months?). Existing devices works fine but new devices cannot be added and existing devices cannot be deleted. The Management node will output messages like this:
+## Troubleshooting
+
+- It seems that the Google Smart Home app is taken partially out of test after some time (months?). Existing devices works fine but new devices cannot be added and existing devices cannot be deleted. The Management node will output messages like this:
 
         "_type": "actions-requestsync",
         "msg": {
@@ -328,7 +355,7 @@ It seems that the Google Smart Home app is taken partially out of test after som
                 }
         }
 
-Go to [Actions on Google Console](https://console.actions.google.com), select the *Simulator* and start the test again.
+  Go to [Actions on Google Console](https://console.actions.google.com), select the *Simulator* and start the test again.
 
 ---
 ## Credits
