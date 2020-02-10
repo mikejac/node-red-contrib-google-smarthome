@@ -362,4 +362,4 @@ The Report State feature allows the nodes in this package to proactively provide
 Parts of this README and large parts of the code comes from Google. [Actions on Google: Smart Home sample using Node.js](https://github.com/actions-on-google/smart-home-nodejs) in particular has been of great value.
 
 ## Copyright and license
-Copyright 2018 - 2019 Michael Jacobsen under [the GNU General Public License version 3](LICENSE).
+Copyright 2018 - 2020 Michael Jacobsen under [the GNU General Public License version 3](LICENSE).
