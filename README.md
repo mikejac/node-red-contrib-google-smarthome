@@ -187,6 +187,10 @@ If `topic` is something else then `payload` must be an object and tells both the
           online: true
         }
 
+Example flow:
+
+        [{"id":"4e9d5fe5.93114","type":"mqtt in","z":"33e99952.700716","name":"","topic":"home/outlet/power","qos":"2","datatype":"auto","broker":"9e796fe5.2afd1","x":190,"y":440,"wires":[["ef7309b7.696158"]]},{"id":"237087e5.8af608","type":"mqtt out","z":"33e99952.700716","name":"","topic":"home/outlet/set-power","qos":"","retain":"","broker":"9e796fe5.2afd1","x":1000,"y":440,"wires":[]},{"id":"acbea582.f9d848","type":"google-outlet","z":"33e99952.700716","client":"9046c434.79ce38","name":"Example Outlet","topic":"example","passthru":false,"x":600,"y":440,"wires":[["8ae8e10.ab2b12"]]},{"id":"ef7309b7.696158","type":"change","z":"33e99952.700716","name":"topic = on","rules":[{"t":"set","p":"topic","pt":"msg","to":"on","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":400,"y":440,"wires":[["acbea582.f9d848"]]},{"id":"8ae8e10.ab2b12","type":"function","z":"33e99952.700716","name":"Split","func":"return [\n    { payload: msg.payload.on },\n];","outputs":1,"noerr":0,"x":790,"y":440,"wires":[["237087e5.8af608"]],"outputLabels":["on"]},{"id":"9e796fe5.2afd1","type":"mqtt-broker","z":"","name":"Example","broker":"example","port":"1883","clientid":"","usetls":false,"compatmode":false,"keepalive":"60","cleansession":true,"birthTopic":"","birthQos":"0","birthPayload":"","closeTopic":"","closeQos":"0","closePayload":"","willTopic":"","willQos":"0","willPayload":""},{"id":"9046c434.79ce38","type":"googlesmarthome-client","z":"","name":"Example","enabledebug":true,"username":"example","password":"example","port":"3001","ssloffload":false,"publickey":"","privatekey":"","jwtkey":"example","reportinterval":"60","clientid":"example","clientsecret":"example"}]
+
 #### - Thermostat
 `topic` can be `thermostatTemperatureAmbient`, `thermostatTemperatureSetpoint` or something else.
 
@@ -214,6 +218,10 @@ If `topic` is something else then `payload` must be an object and tells the onli
           online: true
         }
 
+Example flow:
+
+        [{"id":"1c91a7a5.8976d8","type":"google-thermostat","z":"33e99952.700716","client":"9046c434.79ce38","name":"Example Thermostat","topic":"example","passthru":false,"x":820,"y":260,"wires":[["cf803ec6.8dcf4"]]},{"id":"77463fb2.d6709","type":"change","z":"33e99952.700716","name":"topic = thermostatTemperatureAmbient","rules":[{"t":"set","p":"topic","pt":"msg","to":"thermostatTemperatureAmbient","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":530,"y":240,"wires":[["1c91a7a5.8976d8"]]},{"id":"519811a8.ad4e1","type":"change","z":"33e99952.700716","name":"topic = thermostatTemperatureSetpoint","rules":[{"t":"set","p":"topic","pt":"msg","to":"thermostatTemperatureSetpoint","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":530,"y":280,"wires":[["1c91a7a5.8976d8"]]},{"id":"cf803ec6.8dcf4","type":"function","z":"33e99952.700716","name":"Split","func":"return [\n    { payload: msg.payload.thermostatTemperatureSetpoint },\n];\n\n// Google returns thermostat mode too, but we currently don't handle different thermostat modes","outputs":1,"noerr":0,"x":1010,"y":260,"wires":[["b9f2d121.b12e6"]],"outputLabels":["thermostatTemperatureSetpoint"]},{"id":"86cd6365.f3f3c","type":"mqtt in","z":"33e99952.700716","name":"","topic":"home/kitchen/current-temp","qos":"2","datatype":"auto","broker":"9e796fe5.2afd1","x":230,"y":240,"wires":[["77463fb2.d6709"]]},{"id":"fdae90e8.744cf","type":"mqtt in","z":"33e99952.700716","name":"","topic":"home/kitchen/target-temp","qos":"2","datatype":"auto","broker":"9e796fe5.2afd1","x":230,"y":280,"wires":[["519811a8.ad4e1"]]},{"id":"b9f2d121.b12e6","type":"mqtt out","z":"33e99952.700716","name":"","topic":"home/kitchen/set-target-temp","qos":"","retain":"","broker":"9e796fe5.2afd1","x":1220,"y":260,"wires":[]},{"id":"9046c434.79ce38","type":"googlesmarthome-client","z":"","name":"Example","enabledebug":true,"username":"example","password":"example","port":"3001","ssloffload":false,"publickey":"","privatekey":"","jwtkey":"example","reportinterval":"60","clientid":"example","clientsecret":"example"},{"id":"9e796fe5.2afd1","type":"mqtt-broker","z":"","name":"Example","broker":"example","port":"1883","clientid":"","usetls":false,"compatmode":false,"keepalive":"60","cleansession":true,"birthTopic":"","birthQos":"0","birthPayload":"","closeTopic":"","closeQos":"0","closePayload":"","willTopic":"","willQos":"0","willPayload":""}]
+
 #### - Window
 `topic` can be `openPercent`, `online` or something else.
 
@@ -235,6 +243,11 @@ If `topic` is something else then `payload` must be an object and tells both the
           openPercent: false,
           online: true
         }
+
+Example flow:
+
+        [{"id":"bc061a10.51d288","type":"google-window","z":"33e99952.700716","client":"9046c434.79ce38","name":"Example Window","topic":"example","passthru":false,"x":690,"y":140,"wires":[["f7498f9b.ac039"]]},{"id":"8402d206.bcf17","type":"change","z":"33e99952.700716","name":"topic = openPercent","rules":[{"t":"set","p":"topic","pt":"msg","to":"openPercent","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":460,"y":140,"wires":[["bc061a10.51d288"]]},{"id":"f7498f9b.ac039","type":"function","z":"33e99952.700716","name":"Split","func":"return [\n    { payload: msg.payload.openPercent },\n];","outputs":1,"noerr":0,"x":870,"y":140,"wires":[["c310701b.494b1"]],"outputLabels":["openPercent"]},{"id":"a6869d62.39a14","type":"mqtt in","z":"33e99952.700716","name":"","topic":"home/window/state","qos":"2","datatype":"auto","broker":"9e796fe5.2afd1","x":230,"y":140,"wires":[["8402d206.bcf17"]]},{"id":"c310701b.494b1","type":"mqtt out","z":"33e99952.700716","name":"","topic":"home/window/set-state","qos":"","retain":"","broker":"9e796fe5.2afd1","x":1060,"y":140,"wires":[]},{"id":"9046c434.79ce38","type":"googlesmarthome-client","z":"","name":"Example","enabledebug":true,"username":"example","password":"example","port":"3001","ssloffload":false,"publickey":"","privatekey":"","jwtkey":"example","reportinterval":"60","clientid":"example","clientsecret":"example"},{"id":"9e796fe5.2afd1","type":"mqtt-broker","z":"","name":"Example","broker":"example","port":"1883","clientid":"","usetls":false,"compatmode":false,"keepalive":"60","cleansession":true,"birthTopic":"","birthQos":"0","birthPayload":"","closeTopic":"","closeQos":"0","closePayload":"","willTopic":"","willQos":"0","willPayload":""}]
+
 
 #### - Scene
 Messages sent to this node is simply passed through. One cannot tell Google SmartHome to activate a scene, they tell us.
