@@ -217,13 +217,15 @@ If `topic` is something else then `payload` must be an object and tells both the
 Messages sent to this node is simply passed through. One cannot tell Google SmartHome to activate a scene, they tell us.
 
 #### - Management
-`topic` can be `restart_server` or `report_state`.
+`topic` can be `restart_server`, `report_state` or `request_sync`.
 
 `payload` is not used for anything.
 
 `restart_server` is used to stop then start the built-in webserver. Can be used when your SSL certificate has been renewed and needs to be re-read by the webserver.
 
 `report_state` will force an update of all states to Google. Mostly usefull for debugging.
+
+`request_sync` will request Google to sync to learn about new or changed devices. This usually happens automatically.
 
 ## The config node
 
