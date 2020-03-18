@@ -1,6 +1,7 @@
 # WARNING: Beta code! (But we're getting there :-)
 
 ## Table of Contents
+- [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Nodes in this package](#nodes-in-this-package)
@@ -19,6 +20,11 @@
 - [Troubleshooting](#troubleshooting)
 - [Credits](#credits)
 - [Copyright and license](#copyright-and-license)
+
+---
+## Introduction
+
+A collection of Node-RED nodes to control your smart home devices via Google Assistant.
 
 ---
 ## Prerequisites
