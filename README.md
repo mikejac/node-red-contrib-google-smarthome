@@ -30,7 +30,9 @@ A collection of Node-RED nodes to control your smart home devices via Google Ass
 ## Prerequisites
 
 1. You are going to need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/). The public key and the private key must copied to your Node-RED server, in a location where the Node-RED service can read them.
-2. You also need to be able to forward TCP traffic coming in from the Internet to your Node-RED server on a port you specify.
+2. You also need to be able to forward TCP traffic coming in from the Internet to your Node-RED server on a port you
+specify. This is not your full Node-RED server but a service started by `node-red-contrib-google-smarhome`, providing
+only the functions needed by Google.
 3. This package requires NodeJS version 7.6.0 at a minimum. If, during start of Node-RED, you get this warning, your version on NodeJS is too old:
 `[warn] [node-red-contrib-google-smarthome/google-smarthome] SyntaxError: Unexpected token ( (line:30)`
 
