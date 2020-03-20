@@ -1,12 +1,42 @@
 # WARNING: Beta code! (But we're getting there :-)
 
+## Table of Contents
+- [Introduction](#introduction)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Nodes in this package](#nodes-in-this-package)
+  - [General Information](#general-information)
+  - [Light On/Off](#--light-onoff-a-light-that-can-be-swithed-on-and-off-only)
+  - [Dimmable Light](#--dimmable-light)
+  - [Color (HSV) Light](#--color-hsv-light)
+  - [Color (RGB) Light](#--color-rgb-light)
+  - [Outlet](#--outlet)
+  - [Thermostat](#--thermostat)
+  - [Window](#--window)
+  - [Scene](#--scene)
+  - [Management](#--management)
+- [The config node](#the-config-node)
+- [Google SmartHome Setup Instructions](#google-smarthome-setup-instructions)
+- [Troubleshooting](#troubleshooting)
+- [Credits](#credits)
+- [Copyright and license](#copyright-and-license)
+
+---
+## Introduction
+
+A collection of Node-RED nodes to control your smart home devices via Google Assistant.
+
+---
 ## Prerequisites
 
 1. You are going to need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/). The public key and the private key must copied to your Node-RED server, in a location where the Node-RED service can read them.
-2. You also need to be able to forward TCP traffic coming in from the Internet to your Node-RED server on a port you specify.
+2. You also need to be able to forward TCP traffic coming in from the Internet to your Node-RED server on a port you
+specify. This is not your full Node-RED server but a service started by `node-red-contrib-google-smarhome`, providing
+only the functions needed by Google.
 3. This package requires NodeJS version 7.6.0 at a minimum. If, during start of Node-RED, you get this warning, your version on NodeJS is too old:
 `[warn] [node-red-contrib-google-smarthome/google-smarthome] SyntaxError: Unexpected token ( (line:30)`
 
+---
 ## Installation
 To install - change to your Node-RED user directory.
 
@@ -15,6 +45,7 @@ To install - change to your Node-RED user directory.
 
 *Note:* This version can output a lot of debug messages on the console. These messages are optional.
 
+---
 ## Nodes in this package
 ### General information
 1. If `online` is set to `false` for a node, Google SmartHome is not going to be able to control the node. It will also show as `offline` in the Google Home app.
@@ -164,6 +195,10 @@ If `topic` is something else then `payload` must be an object and tells both the
           online: true
         }
 
+Example flow:
+
+        [{"id":"4e9d5fe5.93114","type":"mqtt in","z":"33e99952.700716","name":"","topic":"home/outlet/power","qos":"2","datatype":"auto","broker":"9e796fe5.2afd1","x":190,"y":440,"wires":[["ef7309b7.696158"]]},{"id":"237087e5.8af608","type":"mqtt out","z":"33e99952.700716","name":"","topic":"home/outlet/set-power","qos":"","retain":"","broker":"9e796fe5.2afd1","x":1000,"y":440,"wires":[]},{"id":"acbea582.f9d848","type":"google-outlet","z":"33e99952.700716","client":"9046c434.79ce38","name":"Example Outlet","topic":"example","passthru":false,"x":600,"y":440,"wires":[["8ae8e10.ab2b12"]]},{"id":"ef7309b7.696158","type":"change","z":"33e99952.700716","name":"topic = on","rules":[{"t":"set","p":"topic","pt":"msg","to":"on","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":400,"y":440,"wires":[["acbea582.f9d848"]]},{"id":"8ae8e10.ab2b12","type":"function","z":"33e99952.700716","name":"Split","func":"return [\n    { payload: msg.payload.on },\n];","outputs":1,"noerr":0,"x":790,"y":440,"wires":[["237087e5.8af608"]],"outputLabels":["on"]},{"id":"9e796fe5.2afd1","type":"mqtt-broker","z":"","name":"Example","broker":"example","port":"1883","clientid":"","usetls":false,"compatmode":false,"keepalive":"60","cleansession":true,"birthTopic":"","birthQos":"0","birthPayload":"","closeTopic":"","closeQos":"0","closePayload":"","willTopic":"","willQos":"0","willPayload":""},{"id":"9046c434.79ce38","type":"googlesmarthome-client","z":"","name":"Example","enabledebug":true,"username":"example","password":"example","port":"3001","ssloffload":false,"publickey":"","privatekey":"","jwtkey":"example","reportinterval":"60","clientid":"example","clientsecret":"example"}]
+
 #### - Thermostat
 `topic` can be `thermostatTemperatureAmbient`, `thermostatTemperatureSetpoint` or something else.
 
@@ -191,6 +226,10 @@ If `topic` is something else then `payload` must be an object and tells the onli
           online: true
         }
 
+Example flow:
+
+        [{"id":"1c91a7a5.8976d8","type":"google-thermostat","z":"33e99952.700716","client":"9046c434.79ce38","name":"Example Thermostat","topic":"example","passthru":false,"x":820,"y":260,"wires":[["cf803ec6.8dcf4"]]},{"id":"77463fb2.d6709","type":"change","z":"33e99952.700716","name":"topic = thermostatTemperatureAmbient","rules":[{"t":"set","p":"topic","pt":"msg","to":"thermostatTemperatureAmbient","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":530,"y":240,"wires":[["1c91a7a5.8976d8"]]},{"id":"519811a8.ad4e1","type":"change","z":"33e99952.700716","name":"topic = thermostatTemperatureSetpoint","rules":[{"t":"set","p":"topic","pt":"msg","to":"thermostatTemperatureSetpoint","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":530,"y":280,"wires":[["1c91a7a5.8976d8"]]},{"id":"cf803ec6.8dcf4","type":"function","z":"33e99952.700716","name":"Split","func":"return [\n    { payload: msg.payload.thermostatTemperatureSetpoint },\n];\n\n// Google returns thermostat mode too, but we currently don't handle different thermostat modes","outputs":1,"noerr":0,"x":1010,"y":260,"wires":[["b9f2d121.b12e6"]],"outputLabels":["thermostatTemperatureSetpoint"]},{"id":"86cd6365.f3f3c","type":"mqtt in","z":"33e99952.700716","name":"","topic":"home/kitchen/current-temp","qos":"2","datatype":"auto","broker":"9e796fe5.2afd1","x":230,"y":240,"wires":[["77463fb2.d6709"]]},{"id":"fdae90e8.744cf","type":"mqtt in","z":"33e99952.700716","name":"","topic":"home/kitchen/target-temp","qos":"2","datatype":"auto","broker":"9e796fe5.2afd1","x":230,"y":280,"wires":[["519811a8.ad4e1"]]},{"id":"b9f2d121.b12e6","type":"mqtt out","z":"33e99952.700716","name":"","topic":"home/kitchen/set-target-temp","qos":"","retain":"","broker":"9e796fe5.2afd1","x":1220,"y":260,"wires":[]},{"id":"9046c434.79ce38","type":"googlesmarthome-client","z":"","name":"Example","enabledebug":true,"username":"example","password":"example","port":"3001","ssloffload":false,"publickey":"","privatekey":"","jwtkey":"example","reportinterval":"60","clientid":"example","clientsecret":"example"},{"id":"9e796fe5.2afd1","type":"mqtt-broker","z":"","name":"Example","broker":"example","port":"1883","clientid":"","usetls":false,"compatmode":false,"keepalive":"60","cleansession":true,"birthTopic":"","birthQos":"0","birthPayload":"","closeTopic":"","closeQos":"0","closePayload":"","willTopic":"","willQos":"0","willPayload":""}]
+
 #### - Window
 `topic` can be `openPercent`, `online` or something else.
 
@@ -213,11 +252,16 @@ If `topic` is something else then `payload` must be an object and tells both the
           online: true
         }
 
+Example flow:
+
+        [{"id":"bc061a10.51d288","type":"google-window","z":"33e99952.700716","client":"9046c434.79ce38","name":"Example Window","topic":"example","passthru":false,"x":690,"y":140,"wires":[["f7498f9b.ac039"]]},{"id":"8402d206.bcf17","type":"change","z":"33e99952.700716","name":"topic = openPercent","rules":[{"t":"set","p":"topic","pt":"msg","to":"openPercent","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":460,"y":140,"wires":[["bc061a10.51d288"]]},{"id":"f7498f9b.ac039","type":"function","z":"33e99952.700716","name":"Split","func":"return [\n    { payload: msg.payload.openPercent },\n];","outputs":1,"noerr":0,"x":870,"y":140,"wires":[["c310701b.494b1"]],"outputLabels":["openPercent"]},{"id":"a6869d62.39a14","type":"mqtt in","z":"33e99952.700716","name":"","topic":"home/window/state","qos":"2","datatype":"auto","broker":"9e796fe5.2afd1","x":230,"y":140,"wires":[["8402d206.bcf17"]]},{"id":"c310701b.494b1","type":"mqtt out","z":"33e99952.700716","name":"","topic":"home/window/set-state","qos":"","retain":"","broker":"9e796fe5.2afd1","x":1060,"y":140,"wires":[]},{"id":"9046c434.79ce38","type":"googlesmarthome-client","z":"","name":"Example","enabledebug":true,"username":"example","password":"example","port":"3001","ssloffload":false,"publickey":"","privatekey":"","jwtkey":"example","reportinterval":"60","clientid":"example","clientsecret":"example"},{"id":"9e796fe5.2afd1","type":"mqtt-broker","z":"","name":"Example","broker":"example","port":"1883","clientid":"","usetls":false,"compatmode":false,"keepalive":"60","cleansession":true,"birthTopic":"","birthQos":"0","birthPayload":"","closeTopic":"","closeQos":"0","closePayload":"","willTopic":"","willQos":"0","willPayload":""}]
+
+
 #### - Scene
 Messages sent to this node is simply passed through. One cannot tell Google SmartHome to activate a scene, they tell us.
 
 #### - Management
-`topic` can be `restart_server` or `report_state`.
+`topic` can be `restart_server`, `report_state` or `request_sync`.
 
 `payload` is not used for anything.
 
@@ -225,6 +269,9 @@ Messages sent to this node is simply passed through. One cannot tell Google Smar
 
 `report_state` will force an update of all states to Google. Mostly usefull for debugging.
 
+`request_sync` will request Google to sync to learn about new or changed devices. This usually happens automatically.
+
+---
 ## The config node
 
 **Local Authentication**
@@ -314,8 +361,11 @@ The Report State feature allows the nodes in this package to proactively provide
 4. Find your app in the list of providers. It will be `[test]` and then your app name.
 5. Log in to your service. Username and password is the ones you specified in the configuration node.
 6. Start using the Google Assistant.
+
 ---
-It seems that the Google Smart Home app is taken partially out of test after some time (months?). Existing devices works fine but new devices cannot be added and existing devices cannot be deleted. The Management node will output messages like this:
+## Troubleshooting
+
+- It seems that the Google Smart Home app is taken partially out of test after some time (months?). Existing devices works fine but new devices cannot be added and existing devices cannot be deleted. The Management node will output messages like this:
 
         "_type": "actions-requestsync",
         "msg": {
@@ -325,12 +375,19 @@ It seems that the Google Smart Home app is taken partially out of test after som
                         "status": "INVALID_ARGUMENT"
                 }
         }
-
-Go to [Actions on Google Console](https://console.actions.google.com), select the *Simulator* and start the test again.
+  Go to [Actions on Google Console](https://console.actions.google.com), select the *Simulator* and start the test again.
+- Google might say that it cannot reach your device if that device did not update its state at least once after creation.
+- Check if your service is reachable from the outside. Use [reqbin.com](https://reqbin.com/) or a similar tool to
+  send a GET request to https://example.com:3001/login (with your hostname and port). It must answer with status
+  200 (OK) and some HTML code in the body. Use https://www.ssllabs.com/ssltest/ to check your SSL certificate.
+- Unlink and relink your account in the Google Home app.
+- Check Node-RED's logfiles.
+- Toggle "Enable Node debug" in the configuration node, connect a debug node to the output of the management node and
+  look for debug messages.
 
 ---
 ## Credits
 Parts of this README and large parts of the code comes from Google. [Actions on Google: Smart Home sample using Node.js](https://github.com/actions-on-google/smart-home-nodejs) in particular has been of great value.
 
 ## Copyright and license
-Copyright 2018 - 2019 Michael Jacobsen under [the GNU General Public License version 3](LICENSE).
+Copyright 2018 - 2020 Michael Jacobsen under [the GNU General Public License version 3](LICENSE).

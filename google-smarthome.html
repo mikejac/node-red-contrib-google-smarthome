@@ -186,18 +186,66 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="googlesmarthome.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]lgooglesmarthome.placeholder.name">
     </div>
-
-    <div class="form-tips">
-        <b>Input</b><br/>
-        <code>[...]/restart_server</code><br>
-        <br/>
-        <b>Outputs</b><br/>
-        <code>TBD</code><br>
-    </div>
 </script>
 
 <script type="text/x-red" data-help-name="google-mgmt">
-    Nothing here yet.
+    <p>Allows to manage the Google Smart Home service.</p>
+
+    <h3>Inputs</h3>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">string</span>
+            </dt>
+            <dd>Command to run. Can be restart_server, report_state or request_sync.</dd>
+        </dl>
+
+     <h3>Output</h3>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">object</span>
+            </dt>
+            <dd>Debug messages from Google Smart Home service.</dd>
+        </dl>
+
+    <h3>Details</h3>
+        <h4>Node Properties - Google SmartHome Settings</h4>
+        <p><code>SmartHome</code> Configuration node.</p>
+        <h4>Node Properties - Node-RED Settings</h4>
+        <p><code>Name</code> Name used by Google Smart Home.</p>
+
+        <h4>Input Messages</h4>
+        <p>If <code>msg.topic</code> is <code>restart_server</code> the built-in webserver will be restarted. Can be used when your SSL certificate has been renewed and needs to be re-read by the webserver.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">string</span>
+            </dt>
+            <dd>A topic of <code>restart_server</code> restarts the built-in webserver. <code>msg.payload</code> is not used for anything.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>report_state</code> an update of all device states will be sent to Google. Mostly useful for debugging.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">string</span>
+            </dt>
+            <dd>A topic of <code>report_state</code> will send an update of all states to Google. <code>msg.payload</code> is not used for anything.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>request_sync</code> Google is requested to sync to learn about new or changed devices. This usually happens automatically.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">string</span>
+            </dt>
+            <dd>A topic of <code>request_sync</code> requests Google to sync to learn about new or changed devices. <code>msg.payload</code> is not used for anything.</dd>
+        </dl>
+
+        <h4>Output Messages</h4>
+        <p>This node will output debug messages if something goes wrong.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string|object</span>
+            </dt>
+            <dd>This node will output debug messages if something goes wrong.</dd>
+        </dl>
 </script>
 
 <script type="text/javascript">
