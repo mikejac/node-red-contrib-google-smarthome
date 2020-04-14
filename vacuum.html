@@ -1,0 +1,163 @@
+<!--
+ NodeRED Google SmartHome
+ Copyright (C) 2018 Michael Jacobsen.
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+    Vacuum
+-->
+<script type="text/x-red" data-template-name="google-vacuum">
+    <div class="form-row">
+        <b>Google SmartHome Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-client"><i class="fa fa-globe"></i> SmartHome</span></label>
+        <input type="text" id="node-input-client">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="vacuum.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]vacuum.placeholder.name">
+    </div>
+    
+    <div class="form-row">
+        <b>Node-RED Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="vacuum.label.topic"></span></label>
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]vacuum.placeholder.topic">
+    </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="google-vacuum">
+    <p>A Google Smart Home Vacuum. Outputs a message when Google Smart Home changes the state of the vacuum.</p>
+
+    <h3>Inputs</h3>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">boolean | object</span>
+            </dt>
+            <dd>state to send to Google Smart Home.</dd>
+        </dl>
+    
+     <h3>Output</h3>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">object</span>
+            </dt>
+            <dd>state received from Google Smart Home.</dd>
+        </dl>
+    
+    <h3>Details</h3>
+        <h4>Node Properties - Google SmartHome Settings</h4>
+        <p><code>SmartHome</code> Configuration node.</p>
+        <p><code>Name</code> Name used by Google Smart Home.</p>
+        <h4>Node Properties - Node-RED Settings</h4>
+        <p><code>Out topic</code> Topic used by this node when sending updates from Google Smart Home.</p>
+        <p><code>Pass Through</code> If enabled, incoming messages will be passed onto the output. Be carefull with this setting.</p>
+
+        <h4>Input Messages</h4>
+        <p>If <code>msg.topic</code> is <code>on</code> then <code>msg.payload</code> must be boolean and tells the state of the vacuum.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> sets vacuum to on, <code>false</code> sets vacuum to off.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>online</code> then <code>msg.payload</code> must be boolean and tells the online state of the vacuum.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> sets online state to on, <code>false</code> sets online state to off.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is something other than the above topics then <code>msg.payload</code> must be an object and tells both the on state as well as the online state of the vacuum.</p>
+        <dl class="message-properties">
+            <dt>payload.on
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> sets vacuum to on, <code>false</code> sets vacuum to off.</dd>
+            <dt>payload.online
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> sets online state to on, <code>false</code> sets online state to off.</dd>
+        </dl>
+
+        <p><b>Note 1:</b> <code>msg.topic</code> does not have to be exactly as shown above. You can use <code>/</code> as
+        a delimiter and as long as the last part of the topic matches one of the described topics all is good. 
+        For example, <code>a/msg/topic/on</code> will be broken down into multiple parts and only the last part, 
+        <code>on</code>, will be tested for a match.</p>
+        <p><b>Note 2:</b> If you set the online state to <code>false</code> then Google Smart Home is not going to be 
+        able to control the vacuum.</p>
+
+        <h4>Output Messages</h4>
+        <p>Unless <code>Pass Through</code> is enabled, these messages are emitted when Google Smart Home wants to control the vacuum.</p>
+        <dl class="message-properties">
+            <dt>payload.on
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> vacuum on, <code>false</code> vacuum off.</dd>
+            <dt>payload.online
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> online state on, <code>false</code> online state off.</dd>
+        </dl>
+    
+    <h3>References</h3>
+        <p><a href="https://developers.google.com/actions/smarthome/guides/vacuum" target="_new">Smart Home Vacuum Guide</a>.</p>
+        <p><a href="https://www.npmjs.com/package/node-red-contrib-google-smarthome" target="_new">Node Information</a>.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google-vacuum', {
+        category: 'Google_SmartHome-function',
+        paletteLabel: 'Vacuum',
+        defaults: {
+            client: {
+                type: "googlesmarthome-client", 
+                required: true
+            },
+            name: {
+                value: "", required:true
+            },
+            topic: {
+                value: "", required:true
+            },
+            passthru: {
+                value: false
+            },
+        },
+        inputs: 1,
+        outputs: 1,
+        color:"#C0DEED",
+        icon: "google-smarthome.png",
+        label: function() {
+            return this.name || "Vacuum";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : ""
+        }
+    })
+</script>
