@@ -21,7 +21,8 @@
       "outlet": "outlet.js",
       "scene": "scene.js",
       "thermostat": "thermostat.js",
-      "window": "window.js"
+      "window": "window.js",
+      "vaccum": "vacuum.js"
     }
   },
   "author": {
