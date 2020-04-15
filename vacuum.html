@@ -136,10 +136,15 @@
                 <span class="property-type">boolean</span>
             </dt>
             <dd>Value is <code>true</code> when the device is charging, <code>false</code> when it's not.</dd>
+            <dt>payload.command
+                <span class="property-type">string</span>
+            </dt>
+            <dd>Value is the command issued by Google, this is necessary since some commands won't deliver any parameters. For this vacuum the commands <code>Dock</code> and <code>Locator<code> are possible.</dd>
             <dt>payload.online
                 <span class="property-type">boolean</span>
             </dt>
             <dd><code>true</code> online state on, <code>false</code> online state off.</dd>
+
         </dl>
 
     <h3>References</h3>
