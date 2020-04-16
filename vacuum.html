@@ -77,12 +77,13 @@
         <p><code>Pass Through</code> If enabled, incoming messages will be passed onto the output. Be carefull with this setting.</p>
 
         <h4>Input Messages</h4>
+
         <p>If <code>msg.topic</code> is <code>on</code> then <code>msg.payload</code> must be boolean and tells the state of the vacuum.</p>
         <dl class="message-properties">
             <dt>payload
                 <span class="property-type">boolean</span>
             </dt>
-            <dd><code>true</code> sets vacuum to on, <code>false</code> sets vacuum to off.</dd>
+            <dd><code>true</code> sets outlet to on, <code>false</code> sets outlet to off.</dd>
         </dl>
 
         <p>If <code>msg.topic</code> is <code>online</code> then <code>msg.payload</code> must be boolean and tells the online state of the vacuum.</p>
@@ -93,12 +94,20 @@
             <dd><code>true</code> sets online state to on, <code>false</code> sets online state to off.</dd>
         </dl>
 
-        <p>If <code>msg.topic</code> is something other than the above topics then <code>msg.payload</code> must be an object and tells both the on state as well as the online state of the vacuum.</p>
+        <p>If <code>msg.topic</code> is something other than the above topics then <code>msg.payload</code> must be an object and tells both the open state as well as the online state of the vacuum.</p>
         <dl class="message-properties">
-            <dt>payload.on
+            <dt>payload.currentModeSettings.power
+                <span class="property-type">string</span>
+            </dt>
+            <dd>Value is either <code>quiet</code>, <code>standard</code>, <code>medium</code> or <code>turbo</code>.</dd>
+            <dt>payload.capacityRemaining.rawValue
+                <span class="property-type">integer</span>
+            </dt>
+            <dd>Value is the current battery power of the vacuum in percent.</dd>
+            <dt>payload.isCharging
                 <span class="property-type">boolean</span>
             </dt>
-            <dd><code>true</code> sets vacuum to on, <code>false</code> sets vacuum to off.</dd>
+            <dd><code>true</code> indicates the vacuum is charging, <code>false</code> indicates it's not.</dd>
             <dt>payload.online
                 <span class="property-type">boolean</span>
             </dt>
@@ -113,18 +122,31 @@
         able to control the vacuum.</p>
 
         <h4>Output Messages</h4>
-        <p>Unless <code>Pass Through</code> is enabled, these messages are emitted when Google Smart Home wants to control the vacuum.</p>
+        <p>Unless <code>Pass Through</code> is enabled, these messages are emitted when Google Smart Home wants to control the thermostat.</p>
         <dl class="message-properties">
-            <dt>payload.on
+            <dt>payload.currentModeSettings.power
+                <span class="property-type">string</span>
+            </dt>
+            <dd>Value is the mode the vacuum should be set to. It can be one of <code>quiet</code>, <code>standard</code>, <code>medium</code> or <code>turbo</code></dd>
+            <dt>payload.capacityRemaining.rawValue
+                <span class="property-type">integer</span>
+            </dt>
+            <dd>Value is the current charge level of the device on percent.</dd>
+            <dt>payload.isCharging
                 <span class="property-type">boolean</span>
             </dt>
-            <dd><code>true</code> vacuum on, <code>false</code> vacuum off.</dd>
+            <dd>Value is <code>true</code> when the device is charging, <code>false</code> when it's not.</dd>
+            <dt>payload.command
+                <span class="property-type">string</span>
+            </dt>
+            <dd>Value is the command issued by Google, this is necessary since some commands won't deliver any parameters. For this vacuum the commands <code>Dock</code> and <code>Locator<code> are possible.</dd>
             <dt>payload.online
                 <span class="property-type">boolean</span>
             </dt>
             <dd><code>true</code> online state on, <code>false</code> online state off.</dd>
+
         </dl>
-    
+
     <h3>References</h3>
         <p><a href="https://developers.google.com/actions/smarthome/guides/vacuum" target="_new">Smart Home Vacuum Guide</a>.</p>
         <p><a href="https://www.npmjs.com/package/node-red-contrib-google-smarthome" target="_new">Node Information</a>.</p>
@@ -136,14 +158,16 @@
         paletteLabel: 'Vacuum',
         defaults: {
             client: {
-                type: "googlesmarthome-client", 
+                type: "googlesmarthome-client",
                 required: true
             },
             name: {
-                value: "", required:true
+                value: "",
+                required: true
             },
             topic: {
-                value: "", required:true
+                value: "",
+                required: true
             },
             passthru: {
                 value: false
@@ -151,12 +175,12 @@
         },
         inputs: 1,
         outputs: 1,
-        color:"#C0DEED",
+        color: "#C0DEED",
         icon: "google-smarthome.png",
-        label: function() {
+        label: function () {
             return this.name || "Vacuum";
         },
-        labelStyle: function() {
+        labelStyle: function () {
             return this.name ? "node_label_italic" : ""
         }
     })
