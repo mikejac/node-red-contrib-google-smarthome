@@ -75,7 +75,7 @@ module.exports = function(RED) {
                     states = node.app.NewLightDimmable(client, name);
                     break;
     
-		case 'light-temperature':
+		        case 'light-temperature':
                     states = node.app.NewLightColorTemp(client, name);
                     break;
 
@@ -103,7 +103,7 @@ module.exports = function(RED) {
                     states = node.app.NewWindow(client, name);
                     break;
 
-   		case 'vacuum':
+   		        case 'vacuum':
                     states = node.app.NewVacuum(client, name, param1);
                     break;
 
