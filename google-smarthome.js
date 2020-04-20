@@ -75,7 +75,7 @@ module.exports = function(RED) {
                     states = node.app.NewLightDimmable(client, name);
                     break;
     
-		case 'light-temperature':
+		        case 'light-temperature':
                     states = node.app.NewLightColorTemp(client, name);
                     break;
 
@@ -103,7 +103,7 @@ module.exports = function(RED) {
                     states = node.app.NewWindow(client, name);
                     break;
 
-   		case 'vacuum':
+   		        case 'vacuum':
                     states = node.app.NewVacuum(client, name, param1);
                     break;
 
@@ -153,7 +153,7 @@ module.exports = function(RED) {
          * notifications coming from the application server
          *
          */
-        this.app.on('server', function(state, param1) {
+        this.app.emitter.on('server', function(state, param1) {
             RED.log.debug("GoogleSmartHomeNode(on-server): state  = " + state);
             RED.log.debug("GoogleSmartHomeNode(on-server): param1 = " + param1);
 
@@ -164,7 +164,7 @@ module.exports = function(RED) {
             });
         });
 
-        this.app.on('actions-reportstate', function(msg) {
+        this.app.emitter.on('actions-reportstate', function(msg) {
             RED.log.debug("GoogleSmartHomeNode(on-actions-reportstate): msg = " + JSON.stringify(msg));
 
             node.callMgmtFuncs({
@@ -173,7 +173,7 @@ module.exports = function(RED) {
             });
         });
 
-        this.app.on('actions-requestsync', function(msg) {
+        this.app.emitter.on('actions-requestsync', function(msg) {
             RED.log.debug("GoogleSmartHomeNode(on-actions-requestsync): msg = " + JSON.stringify(msg));
 
             node.callMgmtFuncs({
@@ -182,7 +182,7 @@ module.exports = function(RED) {
             });
         });
 
-        this.app.on('/login', function(msg, username, password) {
+        this.app.emitter.on('/login', function(msg, username, password) {
             RED.log.debug("GoogleSmartHomeNode(on-login): msg      = " + msg);
             RED.log.debug("GoogleSmartHomeNode(on-login): username = " + username);
             RED.log.debug("GoogleSmartHomeNode(on-login): password = " + password);
