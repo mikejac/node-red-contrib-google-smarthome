@@ -14,6 +14,8 @@
   - [Thermostat](#--thermostat)
   - [Window](#--window)
   - [Scene](#--scene)
+  - [Vacuum](#--vacuum)
+  - [Fan](#--fan)
   - [Management](#--management)
 - [The config node](#the-config-node)
 - [Google SmartHome Setup Instructions](#google-smarthome-setup-instructions)
@@ -259,6 +261,50 @@ Example flow:
 
 #### - Scene
 Messages sent to this node is simply passed through. One cannot tell Google SmartHome to activate a scene, they tell us.
+
+
+#### - Vacuum
+`topic` can be `on`, `online` or something else.
+
+If `topic` is `on` then `payload` must be boolean and and tells the state of the vacuum.
+
+        msg.topic = 'on'
+        msg.payload = true
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the vacuum.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is something else then `payload` must be an object and tells both the on state as well as the online state of the vacuum.
+
+        msg.topic = 'set'
+        msg.payload = {
+          on: true,
+          online: true
+        }
+
+
+#### - Fan
+`topic` can be `on`, `online` or something else.
+
+If `topic` is `on` then `payload` must be boolean and and tells the state of the fan.
+
+        msg.topic = 'on'
+        msg.payload = true
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the fan.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is something else then `payload` must be an object and tells both the on state as well as the online state of the fan.
+
+        msg.topic = 'set'
+        msg.payload = {
+          on: true,
+          online: true
+        }
 
 #### - Management
 `topic` can be `restart_server`, `report_state` or `request_sync`.
