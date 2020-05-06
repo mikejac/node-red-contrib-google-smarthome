@@ -22,7 +22,8 @@
       "scene": "scene.js",
       "thermostat": "thermostat.js",
       "window": "window.js",
-      "vaccum": "vacuum.js"
+      "vaccum": "vacuum.js",
+      "fan": "fan.js"
     }
   },
   "author": {
