@@ -106,6 +106,10 @@ module.exports = function(RED) {
    		        case 'vacuum':
                     states = node.app.NewVacuum(client, name, param1);
                     break;
+					
+                case 'fan-onoff':
+                    states = node.app.NewFanOnOff(client, name);
+                    break;
 
                 case 'mgmt':
                     node.mgmtNodes[client.id] = client;
