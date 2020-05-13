@@ -47,6 +47,9 @@ To install - change to your Node-RED user directory.
 
 *Note:* This version can output a lot of debug messages on the console. These messages are optional.
 
+*Note:* If you run Node-RED in Docker, set the folders `/data` and `/usr/src/node-red/.node-persist` as volumes.
+Both folders contain data that needs to be persisted.
+
 ---
 ## Nodes in this package
 ### General information
