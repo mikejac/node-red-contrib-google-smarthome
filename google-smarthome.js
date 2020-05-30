@@ -30,14 +30,14 @@ module.exports = function(RED) {
     const GoogleSmartHome = require('./lib/SmartHome.js');
 
     /******************************************************************************************************************
-	 * 
-	 *
-	 */
+     *
+     *
+     */
     function GoogleSmartHomeNode(config) {
         RED.nodes.createNode(this, config);
 
         this.mgmtNodes = {};
-    
+
         var node = this;
 
         this.app = new GoogleSmartHome(config.username, config.password, 
@@ -74,8 +74,8 @@ module.exports = function(RED) {
                 case 'light-dimmable':
                     states = node.app.NewLightDimmable(client, name);
                     break;
-    
-		        case 'light-temperature':
+
+                case 'light-temperature':
                     states = node.app.NewLightColorTemp(client, name);
                     break;
 
@@ -103,10 +103,10 @@ module.exports = function(RED) {
                     states = node.app.NewWindow(client, name);
                     break;
 
-   		        case 'vacuum':
+                case 'vacuum':
                     states = node.app.NewVacuum(client, name, param1);
                     break;
-					
+
                 case 'fan-onoff':
                     states = node.app.NewFanOnOff(client, name);
                     break;
@@ -212,9 +212,9 @@ module.exports = function(RED) {
     RED.nodes.registerType("googlesmarthome-client", GoogleSmartHomeNode);
 
     /******************************************************************************************************************
-	 * 
-	 *
-	 */
+     *
+     *
+     */
     function MgmtNode(config) {
         RED.nodes.createNode(this, config);
 

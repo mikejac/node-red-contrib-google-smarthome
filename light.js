@@ -22,9 +22,9 @@ module.exports = function(RED) {
     const formats = require('./formatvalues.js');
 
     /******************************************************************************************************************
-	 * 
-	 *
-	 */
+     *
+     *
+     */
     function LightOnOffNode(config) {
         RED.nodes.createNode(this, config);
 
@@ -188,9 +188,9 @@ module.exports = function(RED) {
     RED.nodes.registerType("google-light-onoff", LightOnOffNode);
 
     /******************************************************************************************************************
-	 * 
-	 *
-	 */
+     *
+     *
+     */
     function LightDimmableNode(config) {
         RED.nodes.createNode(this, config);
 
@@ -377,9 +377,9 @@ module.exports = function(RED) {
     RED.nodes.registerType("google-light-dimmable", LightDimmableNode);
 
     /******************************************************************************************************************
-	 * 
-	 *
-	 */
+     *
+     *
+     */
     function LightColorTempNode(config) {
         RED.nodes.createNode(this, config);
 
@@ -589,9 +589,9 @@ module.exports = function(RED) {
     RED.nodes.registerType("google-light-temperature", LightColorTempNode);
 
     /******************************************************************************************************************
-	 * 
-	 *
-	 */
+     *
+     *
+     */
     function LightHsvNode(config) {
         RED.nodes.createNode(this, config);
 
@@ -830,9 +830,9 @@ module.exports = function(RED) {
     RED.nodes.registerType("google-light-hsv", LightHsvNode);
 
     /******************************************************************************************************************
-	 * 
-	 *
-	 */
+     *
+     *
+     */
     function LightRgbNode(config) {
         RED.nodes.createNode(this, config);
 
