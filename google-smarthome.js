@@ -40,7 +40,11 @@ module.exports = function(RED) {
 
         var node = this;
 
-        this.app = new GoogleSmartHome(config.username, config.password, 
+        this.app = new GoogleSmartHome(
+            config.id,
+            RED.settings.userDir,
+            config.username,
+            config.password,
             parseInt(config.port),
             config.ssloffload,
             config.publickey, 
