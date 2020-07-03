@@ -6,7 +6,7 @@
 - [Installation](#installation)
 - [Nodes in this package](#nodes-in-this-package)
   - [General Information](#general-information)
-  - [Light On/Off](#--light-onoff-a-light-that-can-be-swithed-on-and-off-only)
+  - [Light On/Off](#--light-onoff-a-light-that-can-be-switched-on-and-off-only)
   - [Dimmable Light](#--dimmable-light)
   - [Color (HSV) Light](#--color-hsv-light)
   - [Color (RGB) Light](#--color-rgb-light)
@@ -54,7 +54,7 @@ To install - change to your Node-RED user directory.
 2. The nodes will do their best to convert incoming payload data to the required type. You can send a string of e.g. `ON` and it will be converted to `true`.
 3. Topics must be either as stated below or prepended with one or more `/`. E.g. `my/topic/on`. The nodes only looks for the part after the last `/`, if any.
 
-#### - Light On/Off (a light that can be swithed on and off only)
+#### - Light On/Off (a light that can be switched on and off only)
 `topic` can be `on`, `online` or something else.
 
 If `topic` is `on` then `payload` must be boolean and tells the state of the light.
