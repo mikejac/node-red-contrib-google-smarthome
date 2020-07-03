@@ -20,9 +20,9 @@ module.exports = function(RED) {
     "use strict";
 
     /******************************************************************************************************************
-	 * 
-	 *
-	 */
+     *
+     *
+     */
     function SceneNode(config) {
         RED.nodes.createNode(this, config);
 
@@ -92,7 +92,7 @@ module.exports = function(RED) {
                 } else {
                     node.status({fill:"red", shape:"dot", text:"Deactivate"});
                 }
-    
+
                 setTimeout(function () { node.status({}) }, 10000);
 
                 node.send(msg);

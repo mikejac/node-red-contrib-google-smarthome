@@ -47,9 +47,6 @@ To install - change to your Node-RED user directory.
 
 *Note:* This version can output a lot of debug messages on the console. These messages are optional.
 
-*Note:* If you run Node-RED in Docker, set the folders `/data` and `/usr/src/node-red/.node-persist` as volumes.
-Both folders contain data that needs to be persisted.
-
 ---
 ## Nodes in this package
 ### General information
@@ -390,7 +387,7 @@ The Report State feature allows the nodes in this package to proactively provide
 1. Navigate back to the [Actions on Google Console](https://console.actions.google.com).
 2. On the left navigation menu under *BUILD*, click on *Actions*. Click on *Add Your First Action* and choose your app's language(s).
 3. Enter the URL for fulfillment, e.g. https://example.com:3001/smarthome, click *Done*.
-4. On the left navigation menu under *ADVANCED OPTIONS*, click on *Account Linking*. 
+4. On the left navigation menu under *ADVANCED OPTIONS*, click on *Account Linking*.
 5. Select *No, I only want to allow account creation on my website*. Click *Next*.
 6. For Linking Type, select *OAuth*.
 7. For Grant Type, select 'Authorization Code' for Grant Type.

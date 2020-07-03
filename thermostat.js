@@ -22,9 +22,9 @@ module.exports = function(RED) {
     const formats = require('./formatvalues.js');
 
     /******************************************************************************************************************
-	 *
-	 *
-	 */
+     *
+     *
+     */
     function ThermostatNode(config) {
         RED.nodes.createNode(this, config);
 
