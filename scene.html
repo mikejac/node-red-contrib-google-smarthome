@@ -58,7 +58,68 @@
 </script>
 
 <script type="text/x-red" data-help-name="google-scene">
-    Nothing here yet.
+    <p>A Google Smart Home Scene. Outputs a message when Google Smart Home activates the scene.</p>
+
+    <h3>Inputs</h3>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">boolean | object</span>
+            </dt>
+            <dd>state to send to Google Smart Home.</dd>
+        </dl>
+
+     <h3>Output</h3>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">object</span>
+            </dt>
+            <dd>state received from Google Smart Home.</dd>
+        </dl>
+
+    <h3>Details</h3>
+        <h4>Node Properties - Google SmartHome Settings</h4>
+        <p><code>SmartHome</code> Configuration node.</p>
+        <p><code>Name</code> Name used by Google Smart Home.</p>
+        <h4>Node Properties - Node-RED Settings</h4>
+        <p><code>Out topic</code> Topic used by this node when sending updates from Google Smart Home.</p>
+        <p><code>Pass Through</code> If enabled, incoming messages will be passed onto the output. Be carefull with this setting.</p>
+
+        <h4>Input Messages</h4>
+        <p>If <code>msg.topic</code> is <code>on</code> then <code>msg.payload</code> must be boolean and tells the state of the scene.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> activates the scene, <code>false</code> deactivates the scene.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is something other than the above topics then <code>msg.payload</code> must be an object and tells both the on state as well as the online state of the outlet.</p>
+        <dl class="message-properties">
+            <dt>payload.on
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> activates the scene, <code>false</code> deactivates the scene.</dd>
+        </dl>
+
+        <p><b>Note 1:</b> <code>msg.topic</code> does not have to be exactly as shown above. You can use <code>/</code> as
+        a delimiter and as long as the last part of the topic matches one of the described topics all is good.
+        For example, <code>a/msg/topic/on</code> will be broken down into multiple parts and only the last part,
+        <code>on</code>, will be tested for a match.</p>
+        <p><b>Note 2:</b> If you set the online state to <code>false</code> then Google Smart Home is not going to be
+        able to control the outlet.</p>
+
+        <h4>Output Messages</h4>
+        <p>Unless <code>Pass Through</code> is enabled, these messages are emitted when Google Smart Home wants to control the outlet.</p>
+        <dl class="message-properties">
+            <dt>payload.on
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> outlet on, <code>false</code> outlet off.</dd>
+        </dl>
+
+    <h3>References</h3>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/scene" target="_new">Smart Home Scene Guide</a>.</p>
+        <p><a href="https://www.npmjs.com/package/node-red-contrib-google-smarthome" target="_new">Node Information</a>.</p>
 </script>
 
 <script type="text/javascript">
