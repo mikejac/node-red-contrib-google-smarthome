@@ -83,7 +83,7 @@ module.exports = function(RED) {
         this.on('input', function (msg) {
             RED.log.debug("FanOnOffNode(input)");
 
-            let topicArr = msg.topic.split(node.topicDelim);
+            let topicArr = String(msg.topic).split(node.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("FanOnOffNode(input): topic = " + topic);

@@ -83,7 +83,7 @@ module.exports = function(RED) {
         this.on('input', function (msg) {
             RED.log.debug("LightOnOffNode(input)");
 
-            let topicArr = msg.topic.split(node.topicDelim);
+            let topicArr = String(msg.topic).split(node.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("LightOnOffNode(input): topic = " + topic);
@@ -250,7 +250,7 @@ module.exports = function(RED) {
         this.on('input', function (msg) {
             RED.log.debug("LightDimmableNode(input)");
 
-            let topicArr = msg.topic.split(node.topicDelim);
+            let topicArr = String(msg.topic).split(node.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("LightDimmableNode(input): topic = " + topic);
@@ -440,7 +440,7 @@ module.exports = function(RED) {
         this.on('input', function (msg) {
             RED.log.debug("LightColorTempNode(input)");
 
-            let topicArr = msg.topic.split(node.topicDelim);
+            let topicArr = String(msg.topic).split(node.topicDelim);
             let topic = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("LightColorTempNode(input): topic = " + topic);
@@ -655,7 +655,7 @@ module.exports = function(RED) {
         this.on('input', function (msg) {
             RED.log.debug("LightHsvNode(input)");
 
-            let topicArr = msg.topic.split(node.topicDelim);
+            let topicArr = String(msg.topic).split(node.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("LightHsvNode(input): topic = " + topic);
@@ -894,7 +894,7 @@ module.exports = function(RED) {
         this.on('input', function (msg) {
             RED.log.debug("LightRgbNode(input)");
 
-            let topicArr = msg.topic.split(node.topicDelim);
+            let topicArr = String(msg.topic).split(node.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("LightRgbNode(input): topic = " + topic);
