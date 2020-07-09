@@ -83,7 +83,7 @@ module.exports = function(RED) {
         this.on('input', function (msg) {
             RED.log.debug("LightOnOffNode(input)");
 
-            let topicArr = msg.topic.split(node.topicDelim);
+            let topicArr = String(msg.topic).split(node.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("LightOnOffNode(input): topic = " + topic);
@@ -250,7 +250,7 @@ module.exports = function(RED) {
         this.on('input', function (msg) {
             RED.log.debug("LightDimmableNode(input)");
 
-            let topicArr = msg.topic.split(node.topicDelim);
+            let topicArr = String(msg.topic).split(node.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("LightDimmableNode(input): topic = " + topic);
@@ -440,7 +440,7 @@ module.exports = function(RED) {
         this.on('input', function (msg) {
             RED.log.debug("LightColorTempNode(input)");
 
-            let topicArr = msg.topic.split(node.topicDelim);
+            let topicArr = String(msg.topic).split(node.topicDelim);
             let topic = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("LightColorTempNode(input): topic = " + topic);
@@ -655,7 +655,7 @@ module.exports = function(RED) {
         this.on('input', function (msg) {
             RED.log.debug("LightHsvNode(input)");
 
-            let topicArr = msg.topic.split(node.topicDelim);
+            let topicArr = String(msg.topic).split(node.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("LightHsvNode(input): topic = " + topic);
@@ -713,8 +713,8 @@ module.exports = function(RED) {
                     RED.log.debug("LightHsvNode(input): HUE");
                     let hue = formats.FormatHue(formats.FormatValue(formats.Formats.FLOAT, 'hue', msg.payload));
 
-                    if (node.states.color.spectrumHsv !== hue) {
-                        node.states.color.spectrumHsv = hue;
+                    if (node.states.color.spectrumHsv.hue !== hue) {
+                        node.states.color.spectrumHsv.hue = hue;
 
                         node.clientConn.setState(node, node.states);  // tell Google ...
 
@@ -727,13 +727,27 @@ module.exports = function(RED) {
                     RED.log.debug("LightHsvNode(input): SATURATION");
                     let saturation = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'saturation', msg.payload)) / 100;
 
-                    if (node.states.color.spectrumHsv !== saturation) {
-                        node.states.color.spectrumHsv = saturation / 100;
+                    if (node.states.color.spectrumHsv.saturation !== saturation) {
+                        node.states.color.spectrumHsv.saturation = saturation / 100;
 
                         node.clientConn.setState(node, node.states);  // tell Google ...
 
                         if (node.passthru) {
                             msg.payload = saturation;
+                            node.send(msg);
+                        }
+                    }
+                } else if (topic.toUpperCase() === 'VALUE') {  // Float, 0.0 - 100.0
+                    RED.log.debug("LightHsvNode(input): VALUE");
+                    let value = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'value', msg.payload)) / 100;
+
+                    if (node.states.color.spectrumHsv.value !== value) {
+                        node.states.color.spectrumHsv.value = value / 100;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = value;
                             node.send(msg);
                         }
                     }
@@ -751,9 +765,9 @@ module.exports = function(RED) {
                     let on         = node.states.on;
                     let online     = node.states.online;
                     let brightness = node.states.brightness;
-                    //let brightness = node.states.color.spectrumHsv.value;
                     let hue        = node.states.color.spectrumHsv.hue;
                     let saturation = node.states.color.spectrumHsv.saturation;
+                    let value      = node.states.color.spectrumHsv.value;
 
                     // on
                     if (object.hasOwnProperty('on')) {
@@ -780,13 +794,18 @@ module.exports = function(RED) {
                         saturation = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'saturation', object.saturation)) / 100;
                     }
 
-                    if (node.states.on !== on || node.states.online !== online || node.states.color.brightness !== brightness || node.states.color.spectrumHsv.hue !== hue || node.states.color.spectrumHsv.saturation !== saturation) {
+                    // value
+                    if (object.hasOwnProperty('value')) {
+                        saturation = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'value', object.value)) / 100;
+                    }
+
+                    if (node.states.on !== on || node.states.online !== online || node.states.color.brightness !== brightness || node.states.color.spectrumHsv.hue !== hue || node.states.color.spectrumHsv.saturation !== saturation || node.states.color.spectrumHsv.value !== value) {
                         node.states.on                              = on;
                         node.states.online                          = online;
                         node.states.brightness                      = brightness;
-                        //node.states.color.spectrumHsv.value         = brightness;
                         node.states.color.spectrumHsv.hue           = hue;
                         node.states.color.spectrumHsv.saturation    = saturation;
+                        node.states.color.spectrumHsv.value         = value;
 
                         node.clientConn.setState(node, node.states);  // tell Google ...
 
@@ -894,7 +913,7 @@ module.exports = function(RED) {
         this.on('input', function (msg) {
             RED.log.debug("LightRgbNode(input)");
 
-            let topicArr = msg.topic.split(node.topicDelim);
+            let topicArr = String(msg.topic).split(node.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("LightRgbNode(input): topic = " + topic);
