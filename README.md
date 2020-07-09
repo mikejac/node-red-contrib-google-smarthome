@@ -8,6 +8,7 @@
   - [General Information](#general-information)
   - [Light On/Off](#--light-onoff-a-light-that-can-be-switched-on-and-off-only)
   - [Dimmable Light](#--dimmable-light)
+  - [Color Temperature Light](#--color-temperature-light)
   - [Color (HSV) Light](#--color-hsv-light)
   - [Color (RGB) Light](#--color-rgb-light)
   - [Outlet](#--outlet)
@@ -101,6 +102,44 @@ If `topic` is something else then `payload` must be an object and tells all the 
           online: true,
           brightness: 100
         }
+
+#### - Color Temperature Light
+`topic` can be `on`, `online`, `brightness`, `temperature` or something else.
+
+If `topic` is `on` then `payload` must be boolean and tells the state of the light.
+
+        msg.topic = 'on'
+        msg.payload = true
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the light.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is `brightness` then `payload` must be a number and tells the brightness of the light. Range is 0 through 100.
+
+        msg.topic = 'brightness'
+        msg.payload = 75
+
+If `topic` is `temperature` then `payload` must be a number and tells the color temperature of the light. Range is 2000 through 6000.
+
+        msg.topic = 'temperature'
+        msg.payload = 3000
+
+
+If `topic` is something else then `payload` must be an object and tells all the states of the light.
+
+        msg.topic = 'set'
+        msg.payload = {
+          on: false,
+          online: true,
+          brightness: 100,
+          temperature: 100
+        }
+
+Example flow:
+
+        [{"id":"43870b89.3a30f4","type":"mqtt in","z":"1fdba310.d04cad","name":"","topic":"home/lamp/power","qos":"2","datatype":"auto","broker":"","x":310,"y":1640,"wires":[["45ed43ce.a1c31c"]]},{"id":"e099c1c7.36ea5","type":"mqtt out","z":"1fdba310.d04cad","name":"","topic":"home/lamp/set-power","qos":"","retain":"","broker":"","x":1260,"y":1640,"wires":[]},{"id":"45ed43ce.a1c31c","type":"change","z":"1fdba310.d04cad","name":"topic = on","rules":[{"t":"set","p":"topic","pt":"msg","to":"on","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":540,"y":1640,"wires":[["d068a2c2.0e73a"]]},{"id":"295718c8.bc2448","type":"mqtt in","z":"1fdba310.d04cad","name":"","topic":"home/lamp/brightness","qos":"2","datatype":"auto","broker":"","x":320,"y":1680,"wires":[["a82a5960.98e028"]]},{"id":"a82a5960.98e028","type":"change","z":"1fdba310.d04cad","name":"topic = brightness","rules":[{"t":"set","p":"topic","pt":"msg","to":"brightness","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":570,"y":1680,"wires":[["d068a2c2.0e73a"]]},{"id":"90c6be23.e6b76","type":"function","z":"1fdba310.d04cad","name":"Split","func":"return [\n    { payload: msg.payload.on },\n    { payload: msg.payload.brightness },\n    { payload: msg.payload.temperature },\n];","outputs":3,"noerr":0,"initialize":"","finalize":"","x":1050,"y":1680,"wires":[["e099c1c7.36ea5"],["57b812df.521b7c"],["d5b88148.ecde9"]],"outputLabels":["on","brightness","temperature"]},{"id":"57b812df.521b7c","type":"mqtt out","z":"1fdba310.d04cad","name":"","topic":"home/lamp/set-brightness","qos":"","retain":"","broker":"","x":1270,"y":1680,"wires":[]},{"id":"d068a2c2.0e73a","type":"google-light-temperature","z":"1fdba310.d04cad","client":"","name":"Example Colortemp Light","topic":"example-colortemp-light","passthru":false,"x":830,"y":1680,"wires":[["90c6be23.e6b76"]]},{"id":"e99a1c80.cbf9b","type":"mqtt in","z":"1fdba310.d04cad","name":"","topic":"home/lamp/colortemp","qos":"2","datatype":"auto","broker":"","x":320,"y":1720,"wires":[["e2b08d53.e775"]]},{"id":"e2b08d53.e775","type":"change","z":"1fdba310.d04cad","name":"topic = temperature","rules":[{"t":"set","p":"topic","pt":"msg","to":"temperature","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":570,"y":1720,"wires":[["d068a2c2.0e73a"]]},{"id":"d5b88148.ecde9","type":"mqtt out","z":"1fdba310.d04cad","name":"","topic":"home/lamp/set-brightness","qos":"","retain":"","broker":"","x":1270,"y":1720,"wires":[]}]
 
 #### - Color (HSV) Light
 `topic` can be `on`, `online`, `brightness`, `hue`, `saturation`, `value` or something else.
