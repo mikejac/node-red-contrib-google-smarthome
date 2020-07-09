@@ -130,6 +130,11 @@ If `topic` is `saturation` then `payload` must be a number and tells the saturat
         msg.topic = 'saturation'
         msg.payload = 100.0
 
+If `topic` is `value` then `payload` must be a number and tells the value of the light. Range is 0.0 through 100.0.
+
+        msg.topic = 'value'
+        msg.payload = 100.0
+
 If `topic` is something else then `payload` must be an object and tells all the states of the light.
 
         msg.topic = 'set'
@@ -138,7 +143,8 @@ If `topic` is something else then `payload` must be an object and tells all the 
           online: true,
           brightness: 100,
           hue: 120.0,
-          saturation: 100.0
+          saturation: 100.0,
+          value: 100.0
         }
 
 #### - Color (RGB) Light

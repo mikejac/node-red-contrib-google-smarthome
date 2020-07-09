@@ -552,6 +552,7 @@
         <code>[...]/brightness</code> Integer, 0 - 100<br>
         <code>[...]/hue</code> Float, 0.0 - 360.0<br>
         <code>[...]/saturation</code> Float, 0.0 - 100.0<br>
+        <code>[...]/value</code> Float, 0.0 - 100.0<br>
         <br/>
         <b>Outputs</b><br/>
         <code>updated</code><br>
@@ -610,6 +611,14 @@
             <dd>Hue for the light. Range is 0.0 - 100.0.</dd>
         </dl>
 
+        <p>If <code>msg.topic</code> is <code>value</code> then <code>msg.payload</code> must be a float and tells the value of the light.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">float</span>
+            </dt>
+            <dd>Value for the light. Range is 0.0 - 100.0.</dd>
+        </dl>
+
         <p>If <code>msg.topic</code> is <code>on</code> then <code>msg.payload</code> must be boolean and tells the state of the light.</p>
         <dl class="message-properties">
             <dt>payload
@@ -640,6 +649,10 @@
                 <span class="property-type">float</span>
             </dt>
             <dd>Saturation for the light. Range is 0.0 - 100.0.</dd>
+            <dt>payload.value
+                <span class="property-type">float</span>
+            </dt>
+            <dd>Value for the light. Range is 0.0 - 100.0.</dd>
             <dt>payload.on
                 <span class="property-type">boolean</span>
             </dt>
