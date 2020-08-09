@@ -45,6 +45,7 @@ module.exports = function(RED) {
             RED.settings.userDir,
             config.username,
             config.password,
+            parseInt(config.accesstokenduration), // seconds
             parseInt(config.port),
             config.ssloffload,
             config.publickey, 

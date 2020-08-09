@@ -42,6 +42,11 @@
     </div>
 
     <div class="form-row">
+        <label for="node-config-input-accesstokenduration"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.accesstokenduration"></span></label>
+        <input type="text" id="node-config-input-accesstokenduration" data-i18n="[placeholder]googlesmarthome.placeholder.accesstokenduration">
+    </div>
+
+    <div class="form-row">
         <b>Actions on Google Project Settings</b>
     </div>
 
@@ -143,6 +148,9 @@
             },
             jwtkey: {
                 value:"", required:true
+            },
+            accesstokenduration: {
+                value:3600, required:true, validate:RED.validators.number(true)
             },
             reportinterval: {
                 value:60, required:true, validate:RED.validators.number(true)
