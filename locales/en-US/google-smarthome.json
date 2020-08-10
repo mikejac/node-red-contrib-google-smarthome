@@ -4,7 +4,7 @@
             "name": "Name",
             "username": "Username",
             "password": "Password",
-            "accesstokenduration": "Access Token Duration (s)",
+            "accesstokenduration": "Access Token Duration (m)",
             "port": "Port",
             "clientid": "Client ID",
             "clientsecret": "Client Secret",
@@ -22,7 +22,7 @@
             "publickey": "Filename",
             "privatekey": "Filename",
             "jwtkey": "Filename",
-            "accesstokenduration": "Interval in seconds",
+            "accesstokenduration": "Interval in minutes",
             "reportinterval": "Interval in minutes. -1 to disable"
         },
         "state": {

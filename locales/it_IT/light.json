@@ -1,0 +1,16 @@
+{
+    "light": {
+        "label": {
+            "name": "Nome",
+            "topic": "Oggetto in uscita"
+        },
+        "placeholder": {
+            "name": "Nome",
+            "topic": "Oggetto corrente"
+        },
+        "errors": {
+            "missing-config": "La configurazione di SmartHome non è disponibile",
+            "missing-bridge": "SmartHome non disponibile"
+        }
+    }
+}

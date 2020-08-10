@@ -188,6 +188,7 @@
         <input type="hidden" name="client_id">
         <input type="hidden" name="redirect_uri">
         <input type="hidden" name="state"/>
+        <input type="hidden" name="response_type"/>
 
         <button id="login-button">LOGIN</button>
     </form>
@@ -217,6 +218,7 @@
         document.querySelector('[name="client_id"]').value = params.get('client_id');
         document.querySelector('[name="redirect_uri"]').value = decodeURIComponent(params.get('redirect_uri'));
         document.querySelector('[name="state"]').value = params.get('state');
+        document.querySelector('[name="response_type"]').value = params.get('response_type');
 
         if(params.get('error') === 'invalid_user')
             document.getElementById('error_invalid_user').style.display = 'block';

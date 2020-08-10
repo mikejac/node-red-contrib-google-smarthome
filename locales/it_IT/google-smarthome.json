@@ -1,0 +1,38 @@
+{
+    "googlesmarthome": {
+        "label": {
+            "name": "Nome",
+            "username": "Nome Utente",
+            "password": "Password",
+            "accesstokenduration": "Durata del token di accesso (m)",
+            "port": "Porta",
+            "clientid": "ID del client",
+            "clientsecret": "Segreto del client",
+            "ssloffload": "Use un server SSL esterno",
+            "publickey": "Chiave pubblica",
+            "privatekey": "Chiave privata",
+            "jwtkey": "Chiave JWT",
+            "reportinterval": "Intervallo tra i report (m)",
+            "enabledebug": "Abilita debug dei nodi"
+        },
+        "placeholder": {
+            "name": "Nome",
+            "clientid": "ID del client OAuth",
+            "clientsecret": "Segreto del client OAuth",
+            "publickey": "Nome file",
+            "privatekey": "Nome file",
+            "jwtkey": "Nome file",
+            "accesstokenduration": "Intervallo in minuti",
+            "reportinterval": "Intervallo in minuti. -1 per disabilitare"
+        },
+        "state": {
+            "connected": "Connesso al broker: __broker__",
+            "disconnected": "Disconnesso dal broker: __broker__",
+            "connect-failed": "Connessione al broker fallita: __broker__"
+        },
+        "errors": {
+            "missing-config": "La configurazione di SmartHome non è disponibile",
+            "missing-bridge": "SmartHome non disponibile"
+        }
+    }
+}
