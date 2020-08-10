@@ -12,7 +12,8 @@
     "google",
     "smarthome",
     "assistant",
-    "iot"
+    "iot",
+    "node-red"
   ],
   "node-red": {
     "nodes": {
