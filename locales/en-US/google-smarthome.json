@@ -5,6 +5,7 @@
             "username": "Username",
             "password": "Password",
             "accesstokenduration": "Access Token Duration (m)",
+            "usehttpnoderoot": "Use http Node-RED root path",
             "port": "Port",
             "clientid": "Client ID",
             "clientsecret": "Client Secret",

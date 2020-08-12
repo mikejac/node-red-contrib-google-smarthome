@@ -385,6 +385,8 @@ If `topic` is something else then `payload` must be an object and tells both the
 
 **Built-in Web Server Settings**
 
+  `Use http Node-RED root path`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the *Google on Actions* project.
+
   `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the *Google on Actions* project.
 
   `Use external SSL offload`: If enabled, SSL encryption is not used by the node and must be done elsewhere.
