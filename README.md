@@ -379,7 +379,7 @@ If `topic` is something else then `payload` must be an object and tells both the
 
 **Google HomeGraph Settings**
 
-  `Jwt Key`: Full path to JWT key file (the one downloaded in the *Add Report State* section).
+  `Jwt Key`: Full or relative to the Node-RED config folder path to JWT key file (the one downloaded in the *Add Report State* section).
 
   `Report Interval (m)`: Time, in minutes, between report updates are sent to Google.
 
