@@ -481,6 +481,92 @@ The Report State feature allows the nodes in this package to proactively provide
   look for debug messages.
 
 ---
+## Test script
+
+**login_get**
+```
+#!/usr/bin/env bash
+. ./data
+curl "$BASE_URL/oauth?client_id=$GOOGLE_CLIENT_ID&response_type=code&state=$STATE_STRING&scope=$REQUESTED_SCOPES&user_locale=$LOCALE&redirect_uri=$REDIRECT_URI"
+echo
+```
+
+**login_post**
+```
+#!/usr/bin/env bash
+. ./data
+
+EPWD=$(printf "%q" $PWD)
+echo LOGIN POST
+AUTH=$(curl -s --data "response_type=code" --data "state=$STATE_STRING" --data "client_id=$GOOGLE_CLIENT_ID" --data "username=$USERNAME" --data-urlencode "password=$PWD" --data-urlencode "redirect_uri=$REDIRECT_URI" $BASE_URL/oauth)
+echo "AUTH RESPONSE: $AUTH"
+CODE=${AUTH##*code=}
+echo "CODE $CODE"
+CODE=${CODE%%&*}
+echo "CODE $CODE"
+echo "CODE=\"$CODE\"" > code
+```
+**authorization_code**
+```
+#!/usr/bin/env bash
+. ./data
+. ./code
+
+AUTH=$(curl -s --data "client_id=$GOOGLE_CLIENT_ID" \
+--data "client_secret=$CLIENT_SECRET" \
+--data "grant_type=authorization_code" \
+--data "code=$CODE" \
+--data-urlencode "redirect_uri=$REDIRECT_URI" \
+$BASE_URL/token)
+echo "AUTH $AUTH"
+# echo "$AUTH" > auth.json
+ACCESS_TOKEN=$(echo "$AUTH" | jq ".access_token")
+REFRESH_TOKEN=$(echo "$AUTH" | jq ".refresh_token")
+echo "ACCESS_TOKEN=$ACCESS_TOKEN" > code
+echo "REFRESH_TOKEN=$REFRESH_TOKEN" >>code
+echo
+```
+
+**refresh_token**
+```
+#!/usr/bin/env bash
+. ./data
+. ./code
+
+AUTH=$(curl -s --data "client_id=$GOOGLE_CLIENT_ID" \
+--data "client_secret=$CLIENT_SECRET" \
+--data "grant_type=refresh_token" \
+--data "refresh_token=$REFRESH_TOKEN" \
+$BASE_URL/token)
+echo "AUTH $AUTH"
+if [[ $AUTH == *access_token* ]] ; then
+  ACCESS_TOKEN=$(echo "$AUTH" | jq ".access_token")
+  if [ -n "$ACCESS_TOKEN" ] ; then
+    echo "ACCESS_TOKEN=$ACCESS_TOKEN" > code
+    echo "REFRESH_TOKEN=$REFRESH_TOKEN" >>code
+  fi
+fi
+echo
+```
+
+**data**
+```
+#!/usr/bin/env bash
+PROJECT_ID=PROJECT_ID_FILL_IT
+GOOGLE_CLIENT_ID=123456789012345678901
+STATE_STRING=STATE_STRING_FILL_IT
+REQUESTED_SCOPES=REQUESTED_SCOPES_FILL_IT
+LOCALE=LOCALE_FILL_IT
+REDIRECT_URI=https://oauth-redirect.googleusercontent.com/r/$PROJECT_ID
+REDIRECT_URI=$(printf "%q" "$REDIRECT_URI")
+REDIREDT_URI=TEST
+BASE_URL=http://localhost:3001
+USERNAME=my_user
+PWD=my_password
+CLIENT_SECRET="some-secret-shared-with-google"
+```
+
+---
 ## Credits
 Parts of this README and large parts of the code comes from Google. [Actions on Google: Smart Home sample using Node.js](https://github.com/actions-on-google/smart-home-nodejs) in particular has been of great value.
 
