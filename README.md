@@ -404,7 +404,7 @@ See the developer guide and release notes at [https://developers.google.com/acti
 
 #### Create and setup project in Actions Console
 
-1. Use the [Actions on Google Console](https://console.actions.google.com) to add a new project with a name of your choosing and click *Create Project*.
+1. Use the [Actions on Google Console](https://console.actions.google.com) to add a new project with a name of your choosing and click *Create Project*.  See [https://developers.google.com/assistant/smarthome/develop/create](Create a smart home Action) for more datails.
 2. Click *Home Control*, then click *Smart Home*.
 3. On the left navigation menu under *SETUP*, click on *Invocation*.
 4. Add your App's name. Click *Save*.
@@ -415,7 +415,7 @@ See the developer guide and release notes at [https://developers.google.com/acti
 #### Add Request Sync
 ~~*Note: I'm almost certain this part is not needed.*~~
 
-The Request Sync feature allows the nodes in this package to send a request to the Home Graph to send a new SYNC request.
+The Request Sync feature allows the nodes in this package to send a request to the Home Graph to send a new SYNC request. See [https://developers.google.com/assistant/smarthome/develop/request-sync](Request Sync) for more datails.
 
 1. Navigate to the [Google Cloud Console API Manager](https://console.developers.google.com/apis) for your project id.
 2. Enable the [HomeGraph API](https://console.cloud.google.com/apis/api/homegraph.googleapis.com/overview). This will be used to request a new sync and to report the state back to the HomeGraph.
@@ -426,7 +426,7 @@ The Request Sync feature allows the nodes in this package to send a request to t
 7. ~~Enable Request-Sync API using [these instructions](https://developers.google.com/actions/smarthome/create-app#request-sync).~~
 
 #### Add Report State
-The Report State feature allows the nodes in this package to proactively provide the current state of devices to the Home Graph without a `QUERY` request. This is done securely through [JWT (JSON web tokens)](https://jwt.io/).
+The Report State feature allows the nodes in this package to proactively provide the current state of devices to the Home Graph without a `QUERY` request. This is done securely through [JWT (JSON web tokens)](https://jwt.io/). See [https://developers.google.com/assistant/smarthome/develop/report-state](Report State) for more datails.
 
 1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
 2. Select **Create Credentials** and create a **Service account key**
