@@ -84,8 +84,13 @@
     </div>
 
     <div class="form-row">
+        <label for="node-config-input-httppath"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.httppath"></span></label>
+        <input type="text" id="node-config-input-httppath">
+    </div>
+
+    <div class="form-row">
         <label for="node-config-input-port"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.port"></span></label>
-        <input type="text" id="node-config-input-port" 3001>
+        <input type="text" id="node-config-input-port" data-i18n="[placeholder]googlesmarthome.placeholder.port">
     </div>
 
     <div class="form-row">
@@ -143,7 +148,10 @@
                 value: true
             },
             port: {
-                value:3001, required:true, validate:RED.validators.number(true)
+                value:0, required:false, validate:RED.validators.number(true)
+            },
+            httppath: {
+                value:"smarthome", required: false
             },
             ssloffload: {
                 value: false

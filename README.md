@@ -387,6 +387,8 @@ If `topic` is something else then `payload` must be an object and tells both the
 
   `Use http Node-RED root path`: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.
 
+  `Path`: The path prefix to use for the requests. Default is /smarthome
+
   `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the *Google on Actions* project.
 
   `Use external SSL offload`: If enabled, SSL encryption is not used by the node and must be done elsewhere.
@@ -549,21 +551,37 @@ fi
 echo
 ```
 
+**command_on**
+```
+#!/usr/bin/env bash
+. ./data
+. ./code
+
+SH_REQUEST="{\"inputs\":[{\"context\":{\"locale_country\":\"US\",\"locale_language\":\"en\"},\"intent\":\"action.devices.EXECUTE\",\"payload\":{\"commands\":[{\"devices\":[{\"customData\":{\"nodeid\":\"$NODE_ID\",\"type\":\"light-dimmable\"},\"id\":\"$NODE_ID\"}],\"execution\":[{\"command\":\"action.devices.commands.OnOff\",\"params\":{\"on\":true}}]}]}}],\"requestId\":\"123456789\"}"
+
+curl -s \
+        -H "authorization: Bearer $ACCESS_TOKEN" \
+        -H "Content-Type: application/json;charset=UTF-8" \
+        --data "$SH_REQUEST" \
+        $BASE_URL/smarthome
+echo ""
+```
+
 **data**
 ```
 #!/usr/bin/env bash
-PROJECT_ID=PROJECT_ID_FILL_IT
+PROJECT_ID="PROJECT_ID_FILL_IT"
 GOOGLE_CLIENT_ID=123456789012345678901
-STATE_STRING=STATE_STRING_FILL_IT
-REQUESTED_SCOPES=REQUESTED_SCOPES_FILL_IT
-LOCALE=LOCALE_FILL_IT
-REDIRECT_URI=https://oauth-redirect.googleusercontent.com/r/$PROJECT_ID
+STATE_STRING="STATE_STRING_FILL_IT"
+REQUESTED_SCOPES="REQUESTED_SCOPES_FILL_IT"
+LOCALE="LOCALE_FILL_IT"
+REDIRECT_URI="https://oauth-redirect.googleusercontent.com/r/$PROJECT_ID"
 REDIRECT_URI=$(printf "%q" "$REDIRECT_URI")
-REDIREDT_URI=TEST
-BASE_URL=http://localhost:3001
-USERNAME=my_user
-PWD=my_password
+BASE_URL="http://localhost:1880/smart-home"
+USERNAME="my_user"
+PWD="my_password"
 CLIENT_SECRET="some-secret-shared-with-google"
+NODE_ID="1c188980.6d0c87"
 ```
 
 ---

@@ -48,7 +48,8 @@ module.exports = function(RED) {
             config.password,
             parseInt(config.accesstokenduration), // minutes
             config.usehttpnoderoot,
-            parseInt(config.port),
+            config.httppath,
+            parseInt(config.port || '0'),
             config.ssloffload,
             config.publickey, 
             config.privatekey,
@@ -58,7 +59,7 @@ module.exports = function(RED) {
             config.reportinterval,     // minutes
             config.enabledebug);
 
-        let err = this.app.Start();
+        let err = this.app.Start(RED.httpNode || RED.httpAdmin);
         if (err !== true) {
             RED.log.error(err);
             return;
