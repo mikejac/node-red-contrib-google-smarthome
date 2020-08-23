@@ -79,6 +79,11 @@
     </div>
 
     <div class="form-row">
+        <label style="width:auto" for="node-config-input-usehttpnoderoot"><i class="fa fa-arrow-right"></i> <span data-i18n="googlesmarthome.label.usehttpnoderoot"></span></label>
+        <input type="checkbox" id="node-config-input-usehttpnoderoot" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+
+    <div class="form-row">
         <label for="node-config-input-port"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.port"></span></label>
         <input type="text" id="node-config-input-port" 3001>
     </div>
@@ -134,6 +139,9 @@
             },
             password: {
                 value:"", required:true
+            },
+            usehttpnoderoot : {
+                value: true
             },
             port: {
                 value:3001, required:true, validate:RED.validators.number(true)

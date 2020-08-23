@@ -43,9 +43,11 @@ module.exports = function(RED) {
         this.app = new GoogleSmartHome(
             config.id,
             RED.settings.userDir,
+            RED.settings.httpNodeRoot,
             config.username,
             config.password,
             parseInt(config.accesstokenduration), // minutes
+            config.usehttpnoderoot,
             parseInt(config.port),
             config.ssloffload,
             config.publickey, 
