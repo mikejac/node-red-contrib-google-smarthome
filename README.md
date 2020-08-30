@@ -369,7 +369,7 @@ If `topic` is something else then `payload` must be an object and tells both the
 
   `Username` and `Password`: A username and password used when you link Google SmartHome to this node.
   
-  `Token Duration`: The authorization token duration used by Google SmartHome to identify itself to node-red SmartHome plugin.
+  `Token Duration`: The authorization token duration used by Google SmartHome to identify itself to node-red SmartHome plugin. Default is 60 minutes.
 
 **Actions on Google Project Settings**
 
