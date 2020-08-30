@@ -387,7 +387,7 @@ If `topic` is something else then `payload` must be an object and tells both the
 
   `Use http Node-RED root path`: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.
 
-  `Path`: The path prefix to use for the requests. Default is /smarthome
+  `Path`: The path prefix to use for the requests. Default is /smarthome.
 
   `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the *Google on Actions* project.
 
