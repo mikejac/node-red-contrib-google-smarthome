@@ -400,7 +400,7 @@ If `topic` is something else then `payload` must be an object and tells both the
 ---
 ## Google SmartHome Setup Instructions
 
-See the developer guide and release notes at [https://developers.google.com/actions/](https://developers.google.com/actions/) for more details.
+See the developer guide and release notes at [https://developers.google.com/assistant](https://developers.google.com/assistant) for more details.
 
 #### Create and setup project in Actions Console
 
@@ -423,7 +423,7 @@ The Request Sync feature allows the nodes in this package to send a request to t
 4. ~~Click 'Create credentials'~~
 5. ~~Click 'API key'~~
 6. ~~Copy the API key shown and insert it in `smart-home-provider/cloud/config-provider.js`~~
-7. ~~Enable Request-Sync API using [these instructions](https://developers.google.com/actions/smarthome/create-app#request-sync).~~
+7. ~~Enable Request-Sync API using [these instructions](https://developers.google.com/assistant/smarthome/create#request-sync).~~
 
 #### Add Report State
 The Report State feature allows the nodes in this package to proactively provide the current state of devices to the Home Graph without a `QUERY` request. This is done securely through [JWT (JSON web tokens)](https://jwt.io/). See [Report State](https://developers.google.com/assistant/smarthome/develop/report-state) for more datails.
