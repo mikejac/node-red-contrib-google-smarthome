@@ -387,6 +387,8 @@ If `topic` is something else then `payload` must be an object and tells both the
 
   `Use http Node-RED root path`: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.
 
+  `Path`: The path prefix to use for the requests. Default is /smarthome.
+
   `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the *Google on Actions* project.
 
   `Use external SSL offload`: If enabled, SSL encryption is not used by the node and must be done elsewhere.
@@ -402,7 +404,7 @@ See the developer guide and release notes at [https://developers.google.com/acti
 
 #### Create and setup project in Actions Console
 
-1. Use the [Actions on Google Console](https://console.actions.google.com) to add a new project with a name of your choosing and click *Create Project*.
+1. Use the [Actions on Google Console](https://console.actions.google.com) to add a new project with a name of your choosing and click *Create Project*.  See [Create a smart home Action](https://developers.google.com/assistant/smarthome/develop/create) for more datails.
 2. Click *Home Control*, then click *Smart Home*.
 3. On the left navigation menu under *SETUP*, click on *Invocation*.
 4. Add your App's name. Click *Save*.
@@ -413,7 +415,7 @@ See the developer guide and release notes at [https://developers.google.com/acti
 #### Add Request Sync
 ~~*Note: I'm almost certain this part is not needed.*~~
 
-The Request Sync feature allows the nodes in this package to send a request to the Home Graph to send a new SYNC request.
+The Request Sync feature allows the nodes in this package to send a request to the Home Graph to send a new SYNC request. See [Request Sync](https://developers.google.com/assistant/smarthome/develop/request-sync) for more datails.
 
 1. Navigate to the [Google Cloud Console API Manager](https://console.developers.google.com/apis) for your project id.
 2. Enable the [HomeGraph API](https://console.cloud.google.com/apis/api/homegraph.googleapis.com/overview). This will be used to request a new sync and to report the state back to the HomeGraph.
@@ -424,7 +426,7 @@ The Request Sync feature allows the nodes in this package to send a request to t
 7. ~~Enable Request-Sync API using [these instructions](https://developers.google.com/actions/smarthome/create-app#request-sync).~~
 
 #### Add Report State
-The Report State feature allows the nodes in this package to proactively provide the current state of devices to the Home Graph without a `QUERY` request. This is done securely through [JWT (JSON web tokens)](https://jwt.io/).
+The Report State feature allows the nodes in this package to proactively provide the current state of devices to the Home Graph without a `QUERY` request. This is done securely through [JWT (JSON web tokens)](https://jwt.io/). See [Report State](https://developers.google.com/assistant/smarthome/develop/report-state) for more datails.
 
 1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
 2. Select **Create Credentials** and create a **Service account key**
@@ -479,6 +481,108 @@ The Report State feature allows the nodes in this package to proactively provide
 - Check Node-RED's logfiles.
 - Toggle "Enable Node debug" in the configuration node, connect a debug node to the output of the management node and
   look for debug messages.
+
+---
+## Test script
+
+**login_get**
+```
+#!/usr/bin/env bash
+. ./data
+curl "$BASE_URL/oauth?client_id=$GOOGLE_CLIENT_ID&response_type=code&state=$STATE_STRING&scope=$REQUESTED_SCOPES&user_locale=$LOCALE&redirect_uri=$REDIRECT_URI"
+echo
+```
+
+**login_post**
+```
+#!/usr/bin/env bash
+. ./data
+
+EPWD=$(printf "%q" $PWD)
+echo LOGIN POST
+AUTH=$(curl -s --data "response_type=code" --data "state=$STATE_STRING" --data "client_id=$GOOGLE_CLIENT_ID" --data "username=$USERNAME" --data-urlencode "password=$PWD" --data-urlencode "redirect_uri=$REDIRECT_URI" $BASE_URL/oauth)
+echo "AUTH RESPONSE: $AUTH"
+CODE=${AUTH##*code=}
+echo "CODE $CODE"
+CODE=${CODE%%&*}
+echo "CODE $CODE"
+echo "CODE=\"$CODE\"" > code
+```
+**authorization_code**
+```
+#!/usr/bin/env bash
+. ./data
+. ./code
+
+AUTH=$(curl -s --data "client_id=$GOOGLE_CLIENT_ID" \
+--data "client_secret=$CLIENT_SECRET" \
+--data "grant_type=authorization_code" \
+--data "code=$CODE" \
+--data-urlencode "redirect_uri=$REDIRECT_URI" \
+$BASE_URL/token)
+echo "AUTH $AUTH"
+# echo "$AUTH" > auth.json
+ACCESS_TOKEN=$(echo "$AUTH" | jq ".access_token")
+REFRESH_TOKEN=$(echo "$AUTH" | jq ".refresh_token")
+echo "ACCESS_TOKEN=$ACCESS_TOKEN" > code
+echo "REFRESH_TOKEN=$REFRESH_TOKEN" >>code
+echo
+```
+
+**refresh_token**
+```
+#!/usr/bin/env bash
+. ./data
+. ./code
+
+AUTH=$(curl -s --data "client_id=$GOOGLE_CLIENT_ID" \
+--data "client_secret=$CLIENT_SECRET" \
+--data "grant_type=refresh_token" \
+--data "refresh_token=$REFRESH_TOKEN" \
+$BASE_URL/token)
+echo "AUTH $AUTH"
+if [[ $AUTH == *access_token* ]] ; then
+  ACCESS_TOKEN=$(echo "$AUTH" | jq ".access_token")
+  if [ -n "$ACCESS_TOKEN" ] ; then
+    echo "ACCESS_TOKEN=$ACCESS_TOKEN" > code
+    echo "REFRESH_TOKEN=$REFRESH_TOKEN" >>code
+  fi
+fi
+echo
+```
+
+**command_on**
+```
+#!/usr/bin/env bash
+. ./data
+. ./code
+
+SH_REQUEST="{\"inputs\":[{\"context\":{\"locale_country\":\"US\",\"locale_language\":\"en\"},\"intent\":\"action.devices.EXECUTE\",\"payload\":{\"commands\":[{\"devices\":[{\"customData\":{\"nodeid\":\"$NODE_ID\",\"type\":\"light-dimmable\"},\"id\":\"$NODE_ID\"}],\"execution\":[{\"command\":\"action.devices.commands.OnOff\",\"params\":{\"on\":true}}]}]}}],\"requestId\":\"123456789\"}"
+
+curl -s \
+        -H "authorization: Bearer $ACCESS_TOKEN" \
+        -H "Content-Type: application/json;charset=UTF-8" \
+        --data "$SH_REQUEST" \
+        $BASE_URL/smarthome
+echo ""
+```
+
+**data**
+```
+#!/usr/bin/env bash
+PROJECT_ID="PROJECT_ID_FILL_IT"
+GOOGLE_CLIENT_ID=123456789012345678901
+STATE_STRING="STATE_STRING_FILL_IT"
+REQUESTED_SCOPES="REQUESTED_SCOPES_FILL_IT"
+LOCALE="LOCALE_FILL_IT"
+REDIRECT_URI="https://oauth-redirect.googleusercontent.com/r/$PROJECT_ID"
+REDIRECT_URI=$(printf "%q" "$REDIRECT_URI")
+BASE_URL="http://localhost:1880/smart-home"
+USERNAME="my_user"
+PWD="my_password"
+CLIENT_SECRET="some-secret-shared-with-google"
+NODE_ID="1c188980.6d0c87"
+```
 
 ---
 ## Credits

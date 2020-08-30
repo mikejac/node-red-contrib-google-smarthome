@@ -6,6 +6,7 @@
             "password": "Password",
             "accesstokenduration": "Durata del token di accesso (m)",
             "usehttpnoderoot": "Usa il percorso radice http di Node-RED",
+            "httppath": "Percorso",
             "port": "Porta",
             "clientid": "ID del client",
             "clientsecret": "Segreto del client",
@@ -24,6 +25,7 @@
             "privatekey": "Nome file",
             "jwtkey": "Nome file",
             "accesstokenduration": "Intervallo in minuti",
+            "port": "Porta del server. -1 o vuoto per quella di Node-RED",
             "reportinterval": "Intervallo in minuti. -1 per disabilitare"
         },
         "state": {

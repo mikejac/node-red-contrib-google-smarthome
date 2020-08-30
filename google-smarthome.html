@@ -84,8 +84,13 @@
     </div>
 
     <div class="form-row">
+        <label for="node-config-input-httppath"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.httppath"></span></label>
+        <input type="text" id="node-config-input-httppath">
+    </div>
+
+    <div class="form-row">
         <label for="node-config-input-port"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.port"></span></label>
-        <input type="text" id="node-config-input-port" 3001>
+        <input type="text" id="node-config-input-port" data-i18n="[placeholder]googlesmarthome.placeholder.port">
     </div>
 
     <div class="form-row">
@@ -118,6 +123,8 @@
     <code>Report Interval (m)</code>: Time, in minutes, between report updates are sent to Google.<br>
     <br>
     <b>Built-in Web Server Settings</b><br>
+    <code>Use http Node-RED root path</code>: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.<br>
+    <code>Path</code>: The path prefix to use for the requests. Default is /smarthome.<br>
     <code>Port</code>: TCP port of your choosing for incoming connections from Google. Must match what you entered in the <b>Google on Actions</b> project.<br>
     <code>External SSL offload</code>: If enabled, SSL encryption is not used by the node and must be done elsewhere.
     <code>Public Key</code>: Full path to public key file, e.g. `fullchain.pem` from Let's Encrypt.<br>
@@ -144,7 +151,10 @@
                 value: true
             },
             port: {
-                value:3001, required:true, validate:RED.validators.number(true)
+                value:0, required:false, validate:RED.validators.number(true)
+            },
+            httppath: {
+                value:"smarthome", required: false
             },
             ssloffload: {
                 value: false
