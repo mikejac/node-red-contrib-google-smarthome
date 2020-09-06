@@ -475,8 +475,8 @@ The Report State feature allows the nodes in this package to proactively provide
   Go to [Actions on Google Console](https://console.actions.google.com), select the *Simulator* and start the test again.
 - Google might say that it cannot reach your device if that device did not update its state at least once after creation.
 - Check if your service is reachable from the outside. Use [reqbin.com](https://reqbin.com/) or a similar tool to
-  send a GET request to https://example.com:3001/login (with your hostname and port). It must answer with status
-  200 (OK) and some HTML code in the body. Use https://www.ssllabs.com/ssltest/ to check your SSL certificate.
+  send a GET request to https://example.com:3001/check (with your hostname and port). It must answer with status
+  200 (OK) and the message "SUCCESS". Use https://www.ssllabs.com/ssltest/ to check your SSL certificate.
 - Unlink and relink your account in the Google Home app.
 - Check Node-RED's logfiles.
 - Toggle "Enable Node debug" in the configuration node, connect a debug node to the output of the management node and
