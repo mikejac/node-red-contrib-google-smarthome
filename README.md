@@ -383,7 +383,7 @@ If `topic` is something else then `payload` must be an object and tells both the
 
   `Report Interval (m)`: Time, in minutes, between report updates are sent to Google.
 
-**Built-in Web Server Settings**
+**Web Server Settings**
 
   `Use http Node-RED root path`: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.
 
