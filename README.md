@@ -3,8 +3,7 @@
 ## Table of Contents
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Google SmartHome Setup Instructions](#google-smarthome-setup-instructions)
+- [Setup Instructions](#setup-instructions)
 - [Nodes in this package](#nodes-in-this-package)
   - [General Information](#general-information)
   - [Light On/Off](#--light-onoff-a-light-that-can-be-switched-on-and-off-only)
@@ -32,7 +31,7 @@ A collection of Node-RED nodes to control your smart home devices via Google Ass
 ---
 ## Prerequisites
 
-1. You are going to need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/). The public key and the private key must copied to your Node-RED server, in a location where the Node-RED service can read them.
+1. You are going to need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/).
 2. You also need to be able to forward TCP traffic coming in from the Internet to your Node-RED server on a port you
 specify. This is not your full Node-RED server but a service started by `node-red-contrib-google-smarhome`, providing
 only the functions needed by Google.
@@ -40,75 +39,72 @@ only the functions needed by Google.
 `[warn] [node-red-contrib-google-smarthome/google-smarthome] SyntaxError: Unexpected token ( (line:30)`
 
 ---
-## Installation
-To install - change to your Node-RED user directory.
+## Setup Instructions
 
-        cd ~/.node-red
-        npm install node-red-contrib-google-smarthome
+#### Create and set up project in Actions Console
 
-*Note:* This version can output a lot of debug messages on the console. These messages are optional.
+See the developer guide and release notes at https://developers.google.com/assistant/smarthome/overview for more details.
 
----
-## Google SmartHome Setup Instructions
+1. Go to [Actions on Google Console](https://console.actions.google.com).
+1. Click on *New project* to add a new project with a name and language of your choice and click *Create Project*. 
+1. Choose type *Smart Home*, then click *Start Building*.
+1. From the top menu under *Develop*, click on *Invocation*.
+1. Enter your App's name. Click *Save*.
+1. On the *Develop* tab, choose *Actions* on the left menu. Enter the URL for fulfillment, e.g. https://example.com:3001/smarthome. Leave all other fields empty. Click *Save*.
+1. Still on the *Develop* tab, choose *Account linking* on the left menu. Fill out the fields as following:
+    * Client ID and secret: Credentials, with wich Google will authenticate against your app. Use a password generator tool
+      to generate two strings of reasonable length and complexity. Copy both strings, you'll need them later.
+    * Authorization URL: is the hosted URL of your app with '/oauth' as the path, e.g. https://example.com:3001/oauth.
+    * Token URL: is the hosted URL of your app with '/token' as the path, e.g. https://example.com:3001/token.
+    * Leave all other fields empty.
+1. Click *Save*.
+1. You don't need to fill in anything on the *Deploy* tab.
+1. On tab *Test*, click *Reset Test*.
 
-See the developer guide and release notes at [https://developers.google.com/assistant](https://developers.google.com/assistant) for more details.
+*Note:* Adjust the URLs like https://example.com:3001/smarthome to your own hostname, port and settings.
 
-#### Create and setup project in Actions Console
+#### Enable HomeGraph API
 
-1. Use the [Actions on Google Console](https://console.actions.google.com) to add a new project with a name of your choosing and click *Create Project*.  See [Create a smart home Action](https://developers.google.com/assistant/smarthome/develop/create) for more datails.
-2. Click *Home Control*, then click *Smart Home*.
-3. On the left navigation menu under *SETUP*, click on *Invocation*.
-4. Add your App's name. Click *Save*.
-5. On the left navigation menu under *DEPLOY*, click on *Directory Information*.
-6. Add your App info, including images, a contact email and privacy policy. This information can all be edited before submitting for review.
-7. Click *Save*.
+The HomeGraph API is used to report the state of your devices to Google and to request a SYNC to inform Google about new or updated devices.
 
-#### Add Request Sync
-~~*Note: I'm almost certain this part is not needed.*~~
+1. Go to the [Home Graph API on Google Cloud Console API Manager](https://console.cloud.google.com/apis/api/homegraph.googleapis.com/overview).
+1. In the header bar select your project from the project chooser.
+1. Enable the [HomeGraph API].
+1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials).
+1. Again, select your project in the header bar.
+1. Select *Create Credentials* and create a *Service account key*.
+1. Enter a name for your service account and click *Create*.
+1. You don't need to add roles or user in the next steps.
+1. Your new service account is listed on the Credentials page. Click on it.
+1. Click on *Add Key* to create a new key of type JSON.
+1. Download the JSON file and copy it to your Node-RED server, in a location where the Node-RED service can read it.
 
-The Request Sync feature allows the nodes in this package to send a request to the Home Graph to send a new SYNC request. See [Request Sync](https://developers.google.com/assistant/smarthome/develop/request-sync) for more datails.
+#### Install and configure Node-RED module
 
-1. Navigate to the [Google Cloud Console API Manager](https://console.developers.google.com/apis) for your project id.
-2. Enable the [HomeGraph API](https://console.cloud.google.com/apis/api/homegraph.googleapis.com/overview). This will be used to request a new sync and to report the state back to the HomeGraph.
-3. ~~Click Credentials~~
-4. ~~Click 'Create credentials'~~
-5. ~~Click 'API key'~~
-6. ~~Copy the API key shown and insert it in `smart-home-provider/cloud/config-provider.js`~~
-7. ~~Enable Request-Sync API using [these instructions](https://developers.google.com/assistant/smarthome/create#request-sync).~~
-
-#### Add Report State
-The Report State feature allows the nodes in this package to proactively provide the current state of devices to the Home Graph without a `QUERY` request. This is done securely through [JWT (JSON web tokens)](https://jwt.io/). See [Report State](https://developers.google.com/assistant/smarthome/develop/report-state) for more datails.
-
-1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
-2. Select **Create Credentials** and create a **Service account key**
-3. Create the account and download a JSON file.
-   Save this as `jwt-key.json`. You must copy this file to your Node-RED server, in a location where the Node-RED service can read it.
-
-#### Final touches
-
-1. Navigate back to the [Actions on Google Console](https://console.actions.google.com).
-2. On the left navigation menu under *BUILD*, click on *Actions*. Click on *Add Your First Action* and choose your app's language(s).
-3. Enter the URL for fulfillment, e.g. https://example.com:3001/smarthome, click *Done*.
-4. On the left navigation menu under *ADVANCED OPTIONS*, click on *Account Linking*.
-5. Select *No, I only want to allow account creation on my website*. Click *Next*.
-6. For Linking Type, select *OAuth*.
-7. For Grant Type, select 'Authorization Code' for Grant Type.
-8. Under Client Information, enter the client ID and secret from earlier.
-9. The Authorization URL is the hosted URL of your app with '/oauth' as the path, e.g. https://example.com:3001/oauth
-10. The Token URL is the hosted URL of your app with '/token' as the path, e.g. https://example.com:3001/token
-11. Enter any remaining necessary information you might need for authentication your app. Click *Save*.
-12. On the left navigation menu under *Test*, click on *Simulator*, to begin using this app.
-
-*Note:* The `example.com` name in the above text must be your actual domain name (and the same name as used in your SSL certficate).
+1. Install `node-red-contrib-google-smarthome` from Node-RED's palette and restart Node-RED.
+1. Place the Management node from the section "Google Smart Home" on a flow.
+1. Edit the management node and open its config. Fill in the fields as following:
+    * Name: A name for your config node.
+    * Username/Password: The credentials you want to use when linking your account in the Google Home App later. These are not the credentials to your Google account!
+    * Client ID and Secret: The same strings you generated and entered on Google Search Console earlier.
+    * Jwt Key: The JSON file you downloaded earlier. Can be an absolute path or a path relative to Node-REDs user dir.
+    * Port: The port on which the service should run. If left empty, it will run on the same port as Node-RED.
+    * Path: URL path on which the service will run. If left empty, https://example.com:3001/smarthome will be used. If set, it will be https://example.com:3001/<yourpath>/smarthome.
+    * Use external SSL offload: Check, if you want do SSL decryption on an external load balancer.
+    * Public and Private Key: Path to public and private key of your SSL certificate (if you do not use external SSL decryption).
+1. Deploy the flow.
+1. Check if your service is reachable from the internet. Use a tool like https://reqbin.com to send a GET request to https://example.com:3001/check (using your domain name and port). It must answer with status 200 and the message "SUCCESS".
 
 #### Setup Account linking
 
-1. On a device with the Google Assistant logged into the same account used to create the project in the Actions Console, enter your Assistant settings.
-2. Click Home Control.
-3. Click the '+' sign to add a device.
-4. Find your app in the list of providers. It will be `[test]` and then your app name.
-5. Log in to your service. Username and password is the ones you specified in the configuration node.
-6. Start using the Google Assistant.
+1. Open the Google Home App on a device logged into the same account used to create the project in the Actions Console.
+1. Click the '+' sign to add a device.
+1. Click *Set up device*.
+1, Click *Have something already set up*.
+1. Find your app in the list of providers. It will be `[test]` and then your app name.
+1. Log in to your service. Username and password are the ones you specified in the configuration node.
+1. Start using the Google Assistant.
+
 
 ---
 ## Nodes in this package
@@ -462,17 +458,7 @@ If `topic` is something else then `payload` must be an object and tells both the
 ---
 ## Troubleshooting
 
-- It seems that the Google Smart Home app is taken partially out of test after some time (months?). Existing devices works fine but new devices cannot be added and existing devices cannot be deleted. The Management node will output messages like this:
-
-        "_type": "actions-requestsync",
-        "msg": {
-                "error": {
-                        "code": 400,
-                        "message": "Request contains an invalid argument.",
-                        "status": "INVALID_ARGUMENT"
-                }
-        }
-  Go to [Actions on Google Console](https://console.actions.google.com), select the *Simulator* and start the test again.
+- Go to [Actions on Google Console](https://console.actions.google.com), in tab *Test* choose *View logs in Google Cloud Platform*.
 - Google might say that it cannot reach your device if that device did not update its state at least once after creation.
 - Check if your service is reachable from the outside. Use [reqbin.com](https://reqbin.com/) or a similar tool to
   send a GET request to https://example.com:3001/check (with your hostname and port). It must answer with status
