@@ -15,7 +15,10 @@
             "privatekey": "Private Key",
             "jwtkey": "Jwt Key",
             "reportinterval": "Report Interval (m)",
-            "enabledebug": "Enable Node Debug"
+            "enabledebug": "Enable Node Debug",
+            "emails": "Authorized emails",
+            "usegooglelogin": "Use Google login",
+            "loginclientid": "Login Client ID"
         },
         "placeholder": {
             "name": "Name",
@@ -26,7 +29,8 @@
             "jwtkey": "Filename",
             "accesstokenduration": "Interval in minutes",
             "port": "Server port. -1 or empty for the Node-RED port",
-            "reportinterval": "Interval in minutes. -1 to disable"
+            "reportinterval": "Interval in minutes. -1 to disable",
+            "emails": "Coma separated authorized emails"
         },
         "state": {
             "connected": "Connected to broker: __broker__",

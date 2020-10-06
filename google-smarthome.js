@@ -44,6 +44,9 @@ module.exports = function(RED) {
             config.id,
             RED.settings.userDir,
             RED.settings.httpNodeRoot,
+            config.usegooglelogin,
+            config.loginclientid,
+            config.emails,
             config.username,
             config.password,
             parseInt(config.accesstokenduration), // minutes
