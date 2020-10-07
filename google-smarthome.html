@@ -171,16 +171,32 @@
                 value: false
             },
             loginclientid: {
-                value:"", required:false
+                value:"", required:false,
+                validate: function(v) {
+                    var usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
+                    return usegooglelogin ? v.trim().length > 0 : true;
+                }
             },
             emails: {
-                value:"", required:false
+                value:"", required:false, 
+                validate: function(v) {
+                    var usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
+                    return usegooglelogin ? v.trim().length > 0 : true;
+                }
             },
             username: {
-                value:"", required:false
+                value:"", required:false,
+                validate: function(v) {
+                    var usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
+                    return usegooglelogin ? true : v.trim().length > 0;
+                }
             },
             password: {
-                value:"", required:false
+                value:"", required:false,
+                validate: function(v) {
+                    var usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
+                    return usegooglelogin ? true : v.trim().length > 0;
+                }
             },
             usehttpnoderoot : {
                 value: false
@@ -195,10 +211,22 @@
                 value: false
             },
             publickey: {
-                value:"", required:false
+                value:"", required:false,
+                validate: function(v) {
+                    var ssloffload = $("#node-config-input-ssloffload").prop('checked');
+                    var input_port = $('#node-config-input-port').val();
+                    var input_port = isNaN(input_port) ? 0 : +input_port;
+                    return ssloffload || input_port <= 0 ? true : v.trim().length > 0;
+                }
             },
             privatekey: {
-                value:"", required:false
+                value:"", required:false,
+                validate: function(v) {
+                    var ssloffload = $("#node-config-input-ssloffload").prop('checked');
+                    var input_port = $('#node-config-input-port').val();
+                    var input_port = isNaN(input_port) ? 0 : +input_port;
+                    return ssloffload || input_port <= 0 ? true : v.trim().length > 0;
+                }
             },
             jwtkey: {
                 value:"", required:true
@@ -228,8 +256,8 @@
 
             // Use Google login on / off
             var useGoogleLogin = function() {
-                var mode = $("#node-config-input-usegooglelogin").prop('checked');
-                if (mode == false) {
+                var usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
+                if (usegooglelogin == false) {
                     $("#usegooglelogin").hide();
                     $("#useloginpwd").show();
                 } else {
@@ -242,8 +270,8 @@
 
             // Use external SSL offload on / off
             var sslOffLoadKeys = function() {
-                var mode = $("#node-config-input-ssloffload").prop('checked');
-                if (mode == false) {
+                var ssloffload = $("#node-config-input-ssloffload").prop('checked');
+                if (ssloffload == false) {
                     $("#ssloffloadkeys").show();
                 } else {
                     $("#ssloffloadkeys").hide();
@@ -254,9 +282,9 @@
 
             // Use same NODE-Red port
             var useNODERedPort = function() {
-                var mode = $('#node-config-input-port').val();
-                var mode = isNaN(mode) ? 0 : +mode;
-                if ((mode <= 0)) { //  || (RED.settings.uiPort === node)) {
+                var input_port = $('#node-config-input-port').val();
+                var input_port = isNaN(input_port) ? 0 : +input_port;
+                if ((input_port <= 0)) { //  || (RED.settings.uiPort === node)) {
                     $('#connectioninfo').hide();
                 } else {
                     $('#connectioninfo').show();
