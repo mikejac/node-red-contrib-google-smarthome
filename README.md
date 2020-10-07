@@ -367,7 +367,13 @@ If `topic` is something else then `payload` must be an object and tells both the
 
 **Local Authentication**
 
-  `Username` and `Password`: A username and password used when you link Google SmartHome to this node.
+  `Use Google Login`: If enabled, use the Google login authentication.
+
+  `Login Client ID`: If Google Login is enabled, The client id you gained from the *Google Sign-In* integration..
+
+  `Authorized emails`: If Google Login is enabled, The email, comma-separated, authorized to log in.
+
+  `Username` and `Password`: If Google Login is disabled, a username and password used when you link Google SmartHome to this node.
   
   `Token Duration`: The authorization token duration used by Google SmartHome to identify itself to node-red SmartHome plugin. Default is 60 minutes.
 
@@ -458,6 +464,18 @@ The Report State feature allows the nodes in this package to proactively provide
 4. Find your app in the list of providers. It will be `[test]` and then your app name.
 5. Log in to your service. Username and password is the ones you specified in the configuration node.
 6. Start using the Google Assistant.
+
+#### Integrating Google Sign-In
+
+The Google Sign-In feature allows to login using the Google credential. See [Integrating Google Sign-In into your web app](https://developers.google.com/identity/sign-in/web/sign-in) for more datails.
+
+
+1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
+2. Click Create credentials > OAuth client ID.
+3. Select the Web application application type.
+4. Name your OAuth 2.0 client and click Create
+
+After configuration is complete, take note of the client ID that was created. You will need the client ID to complete the configuration.
 
 ---
 ## Troubleshooting
