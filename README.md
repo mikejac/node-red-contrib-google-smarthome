@@ -441,7 +441,7 @@ If `topic` is something else then `payload` must be an object and tells both the
 
   `Login Client ID`: If Google Login is enabled, The client id you gained from the *Google Sign-In* integration..
 
-  `Authorized emails`: If Google Login is enabled, The email, comma-separated, authorized to log in.
+  `Authorized emails`: If Google Login is enabled, The email, semicolon-separated, authorized to log in.
 
   `Username` and `Password`: If Google Login is disabled, a username and password used when you link Google SmartHome to this node.
   
