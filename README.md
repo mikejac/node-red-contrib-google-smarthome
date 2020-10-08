@@ -571,6 +571,22 @@ curl -s \
 echo ""
 ```
 
+**disconnect**
+```
+#!/usr/bin/env bash
+. ./data
+. ./code
+
+SH_REQUEST="{\"inputs\":[{\"context\":{\"locale_country\":\"US\",\"locale_language\":\"en\"},\"intent\":\"action.devices.DISCONNECT\"}],\"requestId\":\"123456789\"}"
+
+curl -s \
+        -H "authorization: Bearer $ACCESS_TOKEN" \
+        -H "Content-Type: application/json;charset=UTF-8" \
+        --data "$SH_REQUEST" \
+        $BASE_URL/smarthome
+echo ""
+```
+
 **data**
 ```
 #!/usr/bin/env bash
