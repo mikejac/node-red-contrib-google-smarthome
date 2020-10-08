@@ -30,7 +30,7 @@
             "accesstokenduration": "Interval in minutes",
             "port": "Server port. -1 or empty for the Node-RED port",
             "reportinterval": "Interval in minutes. -1 to disable",
-            "emails": "Coma separated authorized emails"
+            "emails": "Semicolon separated authorized emails"
         },
         "state": {
             "connected": "Connected to broker: __broker__",
