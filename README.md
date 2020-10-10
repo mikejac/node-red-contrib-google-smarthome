@@ -114,7 +114,7 @@ The Google Sign-In feature allows to login using the Google credential. See [Int
 1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
 2. Click Create credentials > OAuth client ID.
 3. Select the Web application application type.
-4. Name your OAuth 2.0 client and click Create
+4. Name your OAuth 2.0 client, add your hostname (https://example.com:3001) as authorized JavaScript origin and click Create.
 
 After configuration is complete, take note of the client ID that was created. You will need the client ID to complete the configuration.
 
