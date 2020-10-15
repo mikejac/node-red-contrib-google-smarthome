@@ -43,6 +43,7 @@
     "body-parser": "^1.19.x",
     "morgan": "^1.10.x",
     "cors": "^2.8.x",
+    "google-auth-library": "^6.1.1",
     "googleapis": "^52.0.x",
     "uuid-token-generator": "^1.0.x",
     "util": "^0.12.x",

@@ -32,13 +32,32 @@
     </div>
 
     <div class="form-row">
-        <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="googlesmarthome.label.username"></span></label>
-        <input type="text" id="node-config-input-username">
+        <label style="width:auto" for="node-config-input-usegooglelogin"><i class="fa fa-arrow-right"></i> <span data-i18n="googlesmarthome.label.usegooglelogin"></span></label>
+        <input type="checkbox" id="node-config-input-usegooglelogin" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
 
-    <div class="form-row">
-        <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="googlesmarthome.label.password"></span></label>
-        <input type="text" id="node-config-input-password">
+    <div class="form-row hidden" id="usegooglelogin" style="background: #fbfbfb">
+        <div class="form-row">
+            <label for="node-config-input-loginclientid"><i class="fa fa-user"></i> <span data-i18n="googlesmarthome.label.loginclientid"></span></label>
+            <input type="text" id="node-config-input-loginclientid">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-emails"><i class="fa fa-user"></i> <span data-i18n="googlesmarthome.label.emails"></span></label>
+            <input type="text" id="node-config-input-emails" data-i18n="[placeholder]googlesmarthome.placeholder.emails">
+        </div>
+    </div>
+
+    <div class="form-row" id="useloginpwd" style="background: #fbfbfb">
+        <div class="form-row">
+            <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="googlesmarthome.label.username"></span></label>
+            <input type="text" id="node-config-input-username">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="googlesmarthome.label.password"></span></label>
+            <input type="text" id="node-config-input-password">
+        </div>
     </div>
 
     <div class="form-row">
@@ -148,11 +167,36 @@
             enabledebug: {
                 value: false
             },
+            usegooglelogin : {
+                value: false
+            },
+            loginclientid: {
+                value:"", required:false,
+                validate: function(v) {
+                    var usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
+                    return usegooglelogin ? v.trim().length > 0 : true;
+                }
+            },
+            emails: {
+                value:"", required:false, 
+                validate: function(v) {
+                    var usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
+                    return usegooglelogin ? v.trim().length > 0 : true;
+                }
+            },
             username: {
-                value:"", required:true
+                value:"", required:false,
+                validate: function(v) {
+                    var usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
+                    return usegooglelogin ? true : v.trim().length > 0;
+                }
             },
             password: {
-                value:"", required:true
+                value:"", required:false,
+                validate: function(v) {
+                    var usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
+                    return usegooglelogin ? true : v.trim().length > 0;
+                }
             },
             usehttpnoderoot : {
                 value: false
@@ -167,10 +211,22 @@
                 value: false
             },
             publickey: {
-                value:"", required:false
+                value:"", required:false,
+                validate: function(v) {
+                    var ssloffload = $("#node-config-input-ssloffload").prop('checked');
+                    var input_port = $('#node-config-input-port').val();
+                    var input_port = isNaN(input_port) ? 0 : +input_port;
+                    return ssloffload || input_port <= 0 ? true : v.trim().length > 0;
+                }
             },
             privatekey: {
-                value:"", required:false
+                value:"", required:false,
+                validate: function(v) {
+                    var ssloffload = $("#node-config-input-ssloffload").prop('checked');
+                    var input_port = $('#node-config-input-port').val();
+                    var input_port = isNaN(input_port) ? 0 : +input_port;
+                    return ssloffload || input_port <= 0 ? true : v.trim().length > 0;
+                }
             },
             jwtkey: {
                 value:"", required:true
@@ -198,10 +254,24 @@
         },
         oneditprepare: function() {
 
+            // Use Google login on / off
+            var useGoogleLogin = function() {
+                var usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
+                if (usegooglelogin == false) {
+                    $("#usegooglelogin").hide();
+                    $("#useloginpwd").show();
+                } else {
+                    $("#usegooglelogin").show();
+                    $("#useloginpwd").hide();
+                }
+            }
+            useGoogleLogin();
+            $("#node-config-input-usegooglelogin").change(useGoogleLogin);
+
             // Use external SSL offload on / off
             var sslOffLoadKeys = function() {
-                var mode = $("#node-config-input-ssloffload").prop('checked');
-                if (mode == false) {
+                var ssloffload = $("#node-config-input-ssloffload").prop('checked');
+                if (ssloffload == false) {
                     $("#ssloffloadkeys").show();
                 } else {
                     $("#ssloffloadkeys").hide();
@@ -212,9 +282,9 @@
 
             // Use same NODE-Red port
             var useNODERedPort = function() {
-                var mode = $('#node-config-input-port').val();
-                var mode = isNaN(mode) ? 0 : +mode;
-                if ((mode <= 0)) { //  || (RED.settings.uiPort === node)) {
+                var input_port = $('#node-config-input-port').val();
+                var input_port = isNaN(input_port) ? 0 : +input_port;
+                if ((input_port <= 0)) { //  || (RED.settings.uiPort === node)) {
                     $('#connectioninfo').hide();
                 } else {
                     $('#connectioninfo').show();

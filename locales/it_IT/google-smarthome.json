@@ -15,7 +15,10 @@
             "privatekey": "Chiave privata",
             "jwtkey": "Chiave JWT",
             "reportinterval": "Intervallo tra i report (m)",
-            "enabledebug": "Abilita debug dei nodi"
+            "enabledebug": "Abilita debug dei nodi",
+            "emails": "Email autorizzate",
+            "usegooglelogin": "Usa Google login",
+            "loginclientid": "ID del client per la login"
         },
         "placeholder": {
             "name": "Nome",
@@ -26,7 +29,8 @@
             "jwtkey": "Nome file",
             "accesstokenduration": "Intervallo in minuti",
             "port": "Porta del server. -1 o vuoto per quella di Node-RED",
-            "reportinterval": "Intervallo in minuti. -1 per disabilitare"
+            "reportinterval": "Intervallo in minuti. -1 per disabilitare",
+            "emails": "Email autorizzate, separate da punto e virgola"
         },
         "state": {
             "connected": "Connesso al broker: __broker__",
