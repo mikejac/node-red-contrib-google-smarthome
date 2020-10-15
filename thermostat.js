@@ -52,13 +52,15 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function(states) {   // this must be defined before the call to clientConn.register()
+        this.updated = function(device) {   // this must be defined before the call to clientConn.register()
+            let states = device.states;
             RED.log.debug("ThermostatNode(updated): states = " + JSON.stringify(states));
 
             node.status({fill:"green", shape:"dot", text:states.thermostatTemperatureSetpoint + " °C"});
 
             let msg = {
                 topic: node.topicOut,
+                device_name: device.properties.name.name,
                 payload: states
             };
 

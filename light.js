@@ -52,7 +52,8 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function(states) {   // this must be defined before the call to clientConn.register()
+        this.updated = function(device) {   // this must be defined before the call to clientConn.register()
+            let states = device.states;
             RED.log.debug("LightOnOffNode(updated): states = " + JSON.stringify(states));
 
             if (states.on) {
@@ -63,6 +64,7 @@ module.exports = function(RED) {
 
             let msg = {
                 topic: node.topicOut,
+                device_name: device.properties.name.name,
                 payload: {
                     online: states.online,
                     on: states.on
@@ -218,7 +220,8 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function(states) {   // this must be defined before the call to clientConn.register()
+        this.updated = function(device) {   // this must be defined before the call to clientConn.register()
+            let states = device.states;
             RED.log.debug("LightDimmableNode(updated): states = " + JSON.stringify(states));
 
             if (states.on) {
@@ -229,6 +232,7 @@ module.exports = function(RED) {
 
             let msg = {
                 topic: node.topicOut,
+                device_name: device.properties.name.name,
                 payload: {
                     online: states.online,
                     on: states.on,
@@ -407,7 +411,8 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function (states) {   // this must be defined before the call to clientConn.register()
+        this.updated = function (device) {   // this must be defined before the call to clientConn.register()
+            let states = device.states;
             RED.log.debug("LightColorTempNode(updated): states = " + JSON.stringify(states));
 
             if (states.on) {
@@ -418,6 +423,7 @@ module.exports = function(RED) {
 
             let msg = {
                 topic: node.topicOut,
+                device_name: device.properties.name.name,
                 payload: {
                     online: states.online,
                     on: states.on,
@@ -619,7 +625,8 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function(states) {   // this must be defined before the call to clientConn.register()
+        this.updated = function(device) {   // this must be defined before the call to clientConn.register()
+            let states = device.states;
             RED.log.debug("LightHsvNode(updated): states = " + JSON.stringify(states));
 
             if (states.on) {
@@ -630,6 +637,7 @@ module.exports = function(RED) {
             
             let msg = {
                 topic: node.topicOut,
+                device_name: device.properties.name.name,
                 payload: {
                     online: states.online,
                     on: states.on,
@@ -879,7 +887,8 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function(states) {   // this must be defined before the call to clientConn.register()
+        this.updated = function(device) {   // this must be defined before the call to clientConn.register()
+            let states = device.states;
             RED.log.debug("LightRgbNode(updated): states = " + JSON.stringify(states));
 
             if (states.on) {
@@ -890,6 +899,7 @@ module.exports = function(RED) {
             
             let msg = {
                 topic: node.topicOut,
+                device_name: device.properties.name.name,
                 payload: {
                     online: states.online,
                     on: states.on,
