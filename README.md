@@ -85,7 +85,10 @@ The HomeGraph API is used to report the state of your devices to Google and to r
 1. Place the Management node from the section "Google Smart Home" on a flow.
 1. Edit the management node and open its config. Fill in the fields as following:
     * Name: A name for your config node.
-    * Username/Password: The credentials you want to use when linking your account in the Google Home App later. These are not the credentials to your Google account!
+    * Use Google Login: Check, if you want to use authentication via Google Sign-In.
+    * Login Client ID: If Google Login is enabled, the client id you gained from the *Google Sign-In* integration.
+    * Authorized emails: If Google Login is enabled, the email adresses, semicolon-separated, authorized to log in.  
+    * Username/Password: If using Google is disabled, the credentials you want to use when linking your account in the Google Home App later. These are not the credentials to your Google account!
     * Client ID and Secret: The same strings you generated and entered on Google Search Console earlier.
     * Jwt Key: The JSON file you downloaded earlier. Can be an absolute path or a path relative to Node-REDs user dir.
     * Port: The port on which the service should run. If left empty, it will run on the same port as Node-RED.
@@ -439,9 +442,9 @@ If `topic` is something else then `payload` must be an object and tells both the
 
   `Use Google Login`: If enabled, use the Google login authentication.
 
-  `Login Client ID`: If Google Login is enabled, The client id you gained from the *Google Sign-In* integration..
+  `Login Client ID`: If Google Login is enabled, The client id you gained from the *Google Sign-In* integration.
 
-  `Authorized emails`: If Google Login is enabled, The email, semicolon-separated, authorized to log in.
+  `Authorized emails`: If Google Login is enabled, The email adresses, semicolon-separated, authorized to log in.
 
   `Username` and `Password`: If Google Login is disabled, a username and password used when you link Google SmartHome to this node.
   
