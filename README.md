@@ -79,6 +79,17 @@ The HomeGraph API is used to report the state of your devices to Google and to r
 1. Click on *Add Key* to create a new key of type JSON.
 1. Download the JSON file and copy it to your Node-RED server, in a location where the Node-RED service can read it.
 
+#### Integrating Google Sign-In
+
+The Google Sign-In feature allows to login using your Google credentials. See [Integrating Google Sign-In into your web app](https://developers.google.com/identity/sign-in/web/sign-in) for more datails.
+If you want to use login with username/password instead, skip this section.
+
+1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
+1. Click Create credentials > OAuth client ID.
+1. Select the Web application application type.
+1. Name your OAuth 2.0 client and click Create.
+1. Copy the client ID that was created. You will need it later.
+
 #### Install and configure Node-RED module
 
 1. Install `node-red-contrib-google-smarthome` from Node-RED's palette and restart Node-RED.
@@ -88,7 +99,7 @@ The HomeGraph API is used to report the state of your devices to Google and to r
     * Use Google Login: Check, if you want to use authentication via Google Sign-In.
     * Login Client ID: If Google Login is enabled, the client id you gained from the *Google Sign-In* integration.
     * Authorized emails: If Google Login is enabled, the email adresses, semicolon-separated, authorized to log in.  
-    * Username/Password: If using Google is disabled, the credentials you want to use when linking your account in the Google Home App later. These are not the credentials to your Google account!
+    * Username/Password: If Google Login is disabled, the credentials you want to use when linking your account in the Google Home App later. These are not the credentials to your Google account!
     * Client ID and Secret: The same strings you generated and entered on Google Search Console earlier.
     * Jwt Key: The JSON file you downloaded earlier. Can be an absolute path or a path relative to Node-REDs user dir.
     * Port: The port on which the service should run. If left empty, it will run on the same port as Node-RED.
@@ -103,23 +114,10 @@ The HomeGraph API is used to report the state of your devices to Google and to r
 1. Open the Google Home App on a device logged into the same account used to create the project in the Actions Console.
 1. Click the '+' sign to add a device.
 1. Click *Set up device*.
-1, Click *Have something already set up*.
+1. Click *Have something already set up*.
 1. Find your app in the list of providers. It will be `[test]` and then your app name.
 1. Log in to your service. Username and password are the ones you specified in the configuration node.
 1. Start using the Google Assistant.
-
-
-#### Integrating Google Sign-In
-
-The Google Sign-In feature allows to login using the Google credential. See [Integrating Google Sign-In into your web app](https://developers.google.com/identity/sign-in/web/sign-in) for more datails.
-
-
-1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
-2. Click Create credentials > OAuth client ID.
-3. Select the Web application application type.
-4. Name your OAuth 2.0 client, add your hostname (https://example.com:3001) as authorized JavaScript origin and click Create.
-
-After configuration is complete, take note of the client ID that was created. You will need the client ID to complete the configuration.
 
 ---
 ## Nodes in this package
