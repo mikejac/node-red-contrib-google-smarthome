@@ -52,7 +52,8 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function(states) {   // this must be defined before the call to clientConn.register()
+        this.updated = function(device) {   // this must be defined before the call to clientConn.register()
+            let states = device.states;
             RED.log.debug("OutletNode(updated): states = " + JSON.stringify(states));
 
             if (states.on) {
@@ -63,6 +64,7 @@ module.exports = function(RED) {
 
             let msg = {
                 topic: node.topicOut,
+                device_name: device.properties.name.name,
                 payload: states
             };
 
