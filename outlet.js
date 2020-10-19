@@ -41,12 +41,48 @@ module.exports = function(RED) {
         } else if (typeof this.clientConn.register !== 'function') {
             this.error(RED._("outlet.errors.missing-bridge"));
             this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;            
+            return;
         }
 
         let node = this;
 
         RED.log.debug("OutletNode(): node.topicOut = " + node.topicOut);
+
+        this.registerDevice = function (client, name) {
+            let states = {
+                online: true,
+                on: false
+            };
+
+            let device = {
+                id: client.id,
+                properties: {
+                    type: 'action.devices.types.OUTLET',
+                    traits: ['action.devices.traits.OnOff'],
+                    name: {
+                        defaultNames: ["Node-RED Outlet"],
+                        name: name
+                    },
+                    willReportState: true,
+                    attributes: {
+                    },
+                    deviceInfo: {
+                        manufacturer: 'Node-RED',
+                        model: 'nr-outlet-v1',
+                        swVersion: '1.0',
+                        hwVersion: '1.0'
+                    },
+                    customData: {
+                        "nodeid": client.id,
+                        "type": 'outlet'
+                    }
+                }
+            };
+
+            device.states = states;
+
+            return device;
+        }
 
         /******************************************************************************************************************
          * called when state is updated from Google Assistant

@@ -41,12 +41,48 @@ module.exports = function(RED) {
         } else if (typeof this.clientConn.register !== 'function') {
             this.error(RED._("fan.errors.missing-bridge"));
             this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;            
+            return;
         }
 
         let node = this;
 
         RED.log.debug("FanOnOffNode(): node.topicOut = " + node.topicOut);
+
+        this.registerDevice = function (client, name) {
+            let states = {
+                online: true,
+                on: false
+            };
+
+            let device = {
+                id: client.id,
+                properties: {
+                    type: 'action.devices.types.FAN',
+                    traits: ['action.devices.traits.OnOff'],
+                    name: {
+                        defaultNames: ["Node-RED On/Off Fan"],
+                        name: name
+                    },
+                    willReportState: true,
+                    attributes: {
+                    },
+                    deviceInfo: {
+                        manufacturer: 'Node-RED',
+                        model: 'nr-fan-onoff-v1',
+                        swVersion: '1.0',
+                        hwVersion: '1.0'
+                    },
+                    customData: {
+                        "nodeid": client.id,
+                        "type": 'fan-onoff'
+                    }
+                }
+            };
+
+            device.states = states;
+
+            return device;
+        }
 
         /******************************************************************************************************************
          * called when state is updated from Google Assistant

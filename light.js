@@ -41,12 +41,52 @@ module.exports = function(RED) {
         } else if (typeof this.clientConn.register !== 'function') {
             this.error(RED._("light.errors.missing-bridge"));
             this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;            
+            return;
         }
 
         let node = this;
 
         RED.log.debug("LightOnOffNode(): node.topicOut = " + node.topicOut);
+
+        /******************************************************************************************************************
+         * called to register device
+         *
+         */
+        this.registerDevice = function (client, name) {
+            let states = {
+                online: true,
+                on: false
+            };
+
+            let device = {
+                id: client.id,
+                properties: {
+                    type: 'action.devices.types.LIGHT',
+                    traits: ['action.devices.traits.OnOff'],
+                    name: {
+                        defaultNames: ["Node-RED On/Off Light"],
+                        name: name
+                    },
+                    willReportState: true,
+                    attributes: {
+                    },
+                    deviceInfo: {
+                        manufacturer: 'Node-RED',
+                        model: 'nr-light-onoff-v1',
+                        swVersion: '1.0',
+                        hwVersion: '1.0'
+                    },
+                    customData: {
+                        "nodeid": client.id,
+                        "type": 'light-onoff'
+                    }
+                }
+            };
+
+            device.states = states;
+
+            return device;
+        }
 
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
@@ -209,12 +249,52 @@ module.exports = function(RED) {
         } else if (typeof this.clientConn.register !== 'function') {
             this.error(RED._("light.errors.missing-bridge"));
             this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;            
+            return;
         }
 
         let node = this;
 
         RED.log.debug("LightDimmableNode(): node.topicOut = " + node.topicOut);
+
+        this.registerDevice = function (client, name) {
+            let states = {
+                online: true,
+                on: false,
+                brightness: 100     // integer, absolute brightness, from 0 to 100
+            };
+
+            let device = {
+                id: client.id,
+                properties: {
+                    type: 'action.devices.types.LIGHT',
+                    traits: [
+                        'action.devices.traits.OnOff',
+                        'action.devices.traits.Brightness'
+                    ],
+                    name: {
+                        defaultNames: ["Node-RED Dimmable Light"],
+                        name: name
+                    },
+                    willReportState: true,
+                    attributes: {
+                    },
+                    deviceInfo: {
+                        manufacturer: 'Node-RED',
+                        model: 'nr-light-dimmable-v1',
+                        swVersion: '1.0',
+                        hwVersion: '1.0'
+                    },
+                    customData: {
+                        "nodeid": client.id,
+                        "type": 'light-dimmable'
+                    }
+                }
+            };
+
+            device.states = states;
+
+            return device;
+        }
 
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
@@ -406,6 +486,61 @@ module.exports = function(RED) {
         let node = this;
 
         RED.log.debug("LightColorTempNode(): node.topicOut = " + node.topicOut);
+
+        /******************************************************************************************************************
+         * called to register device
+         *
+         */
+        this.registerDevice = function (client, name) {
+            let states = {
+                online: true,
+                on: false,
+                brightness: 100,     // integer, absolute brightness, from 0 to 100
+                color: {
+                    name: "",
+                    temperatureK: 4000,
+                }
+            };
+
+            let device = {
+                id: client.id,
+                properties: {
+                    type: 'action.devices.types.LIGHT',
+                    traits: [
+                        'action.devices.traits.OnOff',
+                        'action.devices.traits.Brightness',
+                        'action.devices.traits.ColorSetting'
+                    ],
+                    name: {
+                        defaultNames: ["Node-RED ColorTemp Light"],
+                        name: name
+                    },
+                    willReportState: true,
+                    attributes: {
+                        // this is the default range used by Googles color presets in the Home App
+                        colorTemperatureRange: {
+                            temperatureMinK: 2000,
+                            temperatureMaxK: 6000
+                        },
+                        commandOnlyColorSetting: false,
+                    },
+                    deviceInfo: {
+                        manufacturer: 'Node-RED',
+                        model: 'nr-light-temperature-v1',
+                        swVersion: '1.0',
+                        hwVersion: '1.0'
+                    },
+                    customData: {
+                        "nodeid": client.id,
+                        "type": 'light-temperature'
+                    }
+                }
+            };
+
+            device.states = states;
+
+            return device;
+        }
 
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
@@ -614,12 +749,67 @@ module.exports = function(RED) {
         } else if (typeof this.clientConn.register !== 'function') {
             this.error(RED._("light.errors.missing-bridge"));
             this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;            
+            return;
         }
 
         let node = this;
 
         RED.log.debug("LightHsvNode(): node.topicOut = " + node.topicOut);
+
+        /******************************************************************************************************************
+         * called to register device
+         *
+         */
+        this.registerDevice = function (client, name) {
+            let states = {
+                online: true,
+                on: false,
+                brightness: 100,            // integer, absolute brightness, from 0 to 100
+                color: {
+                    name: "",
+                    spectrumHsv: {
+                        hue: 0.0,           // float, representing hue as positive degrees in the range of [0.0, 360.0)
+                        saturation: 0.0,    // float, representing saturation as a percentage in the range [0.0, 1.0]
+                        value: 1            // float, representing value as a percentage in the range [0.0, 1.0]
+                    }
+                }
+            };
+
+            let device = {
+                id: client.id,
+                properties: {
+                    type: 'action.devices.types.LIGHT',
+                    traits: [
+                        'action.devices.traits.OnOff',
+                        'action.devices.traits.Brightness',
+                        'action.devices.traits.ColorSetting'
+                    ],
+                    name: {
+                        defaultNames: ["Node-RED HSV Light"],
+                        name: name
+                    },
+                    willReportState: true,
+                    attributes: {
+                        colorModel: "hsv",
+                        commandOnlyColorSetting: false,
+                    },
+                    deviceInfo: {
+                        manufacturer: 'Node-RED',
+                        model: 'nr-light-hsv-v1',
+                        swVersion: '1.0',
+                        hwVersion: '1.0'
+                    },
+                    customData: {
+                        "nodeid": client.id,
+                        "type": 'light-hsv'
+                    }
+                }
+            };
+
+            device.states = states;
+
+            return device;
+        }
 
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
@@ -876,12 +1066,64 @@ module.exports = function(RED) {
         } else if (typeof this.clientConn.register !== 'function') {
             this.error(RED._("light.errors.missing-bridge"));
             this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;            
+            return;
         }
 
         let node = this;
 
         RED.log.debug("LightRgbNode(): node.topicOut = " + node.topicOut);
+
+        /******************************************************************************************************************
+         * called to register device
+         *
+         */
+        this.registerDevice = function (client, name) {
+            // according to Googles own doc.'s, 'color.spectrumRGB' should actually be 'color.spectrumRgb'
+            let states = {
+                online: true,
+                on: false,
+                brightness: 100,            // integer, absolute brightness, from 0 to 100
+                color: {
+                    name: "",
+                    spectrumRGB: 16777215   // red = 16711680, green = 65280, blue = 255
+                }
+            };
+
+            let device = {
+                id: client.id,
+                properties: {
+                    type: 'action.devices.types.LIGHT',
+                    traits: [
+                        'action.devices.traits.OnOff',
+                        'action.devices.traits.Brightness',
+                        'action.devices.traits.ColorSetting'
+                    ],
+                    name: {
+                        defaultNames: ["Node-RED RGB Light"],
+                        name: name
+                    },
+                    willReportState: true,
+                    attributes: {
+                        colorModel: "rgb",
+                        commandOnlyColorSetting: false,
+                    },
+                    deviceInfo: {
+                        manufacturer: 'Node-RED',
+                        model: 'nr-light-rgb-v1',
+                        swVersion: '1.0',
+                        hwVersion: '1.0'
+                    },
+                    customData: {
+                        "nodeid": client.id,
+                        "type": 'light-rgb'
+                    }
+                }
+            };
+
+            device.states = states;
+
+            return device;
+        }
 
         /******************************************************************************************************************
          * called when state is updated from Google Assistant

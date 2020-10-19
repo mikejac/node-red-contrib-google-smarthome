@@ -48,6 +48,46 @@ module.exports = function(RED) {
 
         RED.log.debug("ThermostatNode(): node.topicOut = " + node.topicOut);
 
+        this.registerDevice = function (client, name) {
+            let states = {
+                online: true,
+                thermostatMode: "heat",
+                thermostatTemperatureSetpoint: 20,
+                thermostatTemperatureAmbient: 10,
+            };
+
+            let device = {
+                id: client.id,
+                properties: {
+                    type: 'action.devices.types.THERMOSTAT',
+                    traits: ['action.devices.traits.TemperatureSetting'],
+                    name: {
+                        defaultNames: ["Node-RED Thermostat"],
+                        name: name
+                    },
+                    willReportState: true,
+                    attributes: {
+                        availableThermostatModes: "heat",
+                        thermostatTemperatureUnit: "C",
+                    },
+                    deviceInfo: {
+                        manufacturer: 'Node-RED',
+                        model: 'nr-thermostat-v1',
+                        swVersion: '1.0',
+                        hwVersion: '1.0'
+                    },
+                    customData: {
+                        "nodeid": client.id,
+                        "type": 'thermostat'
+                    }
+                }
+            };
+
+            device.states = states;
+
+            return device;
+        }
+
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
          *

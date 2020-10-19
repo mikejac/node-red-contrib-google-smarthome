@@ -75,59 +75,21 @@ module.exports = function(RED) {
         this.register = function(client, type, name, param1) {
             RED.log.debug("GoogleSmartHomeNode(): register; type = " + type);
 
-            let states = {};
-
-            switch (type) {
-                case 'light-onoff':
-                    states = node.app.NewLightOnOff(client, name);
-                    break;
-
-                case 'light-dimmable':
-                    states = node.app.NewLightDimmable(client, name);
-                    break;
-
-                case 'light-temperature':
-                    states = node.app.NewLightColorTemp(client, name);
-                    break;
-
-                case 'light-hsv':
-                    states = node.app.NewLightHSV(client, name);
-                    break;
-
-                case 'light-rgb':
-                    states = node.app.NewLightRGB(client, name);
-                    break;
-
-                case 'outlet':
-                    states = node.app.NewOutlet(client, name);
-                    break;
-
-                case 'scene':
-                    states = node.app.NewScene(client, name, param1);
-                    break;
-
-                case 'thermostat':
-                    states = node.app.NewThermostat(client, name);
-                    break;
-
-                case 'window':
-                    states = node.app.NewWindow(client, name);
-                    break;
-
-                case 'vacuum':
-                    states = node.app.NewVacuum(client, name, param1);
-                    break;
-
-                case 'fan-onoff':
-                    states = node.app.NewFanOnOff(client, name);
-                    break;
-
-                case 'mgmt':
-                    node.mgmtNodes[client.id] = client;
-                    break;
+            if(type === 'mgmt') {
+                node.mgmtNodes[client.id] = client;
+                return {};
             }
 
-            return states;
+            let device = client.registerDevice(client, name, param1);
+            let states = device.states;
+
+            if (this.app.registerDevice(client, device)) {
+                RED.log.debug('GoogleSmartHomeNode:register(): sucessfully registered device ' + type + ' ' + client.id);
+                return JSON.parse(JSON.stringify(states));
+            } else {
+                this.debug('GoogleSmartHomeNode:register(): registering device ' + type + ' ' + client.id + ' failed');
+                return {};
+            }
         };
 
         this.deregister = function(client, type) {
@@ -239,7 +201,7 @@ module.exports = function(RED) {
         } else if (typeof this.clientConn.register !== 'function') {
             this.error(RED._("googlesmarthome.errors.missing-bridge"));
             this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;            
+            return;
         }
 
         let node = this;

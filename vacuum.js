@@ -48,6 +48,101 @@ module.exports = function (RED) {
 
         RED.log.debug("VacuumNode(): node.topicOut = " + node.topicOut);
 
+        this.registerDevice = function (client, name) {
+            let states = {
+                online: true,
+                on: false,
+                currentModeSettings: { power: "standard" },
+                capacityRemaining: { rawValue: 100, unit: "PERCENTAGE" },
+                isCharging: true,
+            };
+
+            let device = {
+                id: client.id,
+                properties: {
+                    type: 'action.devices.types.VACUUM',
+                    traits: [
+                        'action.devices.traits.OnOff',
+                        'action.devices.traits.Dock',
+                        'action.devices.traits.Modes',
+                        'action.devices.traits.EnergyStorage',
+                        'action.devices.traits.Locator',
+                    ],
+                    name: {
+                        defaultNames: ["Node-RED Vacuum"],
+                        name: name
+                    },
+                    willReportState: false,
+                    attributes: {
+                        availableModes: [{
+                            name: 'power',
+                            name_values: [{
+                                name_synonym: ['power', 'level'],
+                                lang: 'en'
+                            }, {
+                                name_synonym: ['Stufe', 'Leistung'],
+                                lang: 'de'
+                            }],
+                            settings: [{
+                                setting_name: 'quiet',
+                                setting_values: [{
+                                    setting_synonym: ['quiet', 'silent', 'low'],
+                                    lang: 'en'
+                                }, {
+                                    setting_synonym: ['Still', 'Leise'],
+                                    lang: 'de'
+                                }]
+                            }, {
+                                setting_name: 'standard',
+                                setting_values: [{
+                                    setting_synonym: ['standard', 'normal', 'default'],
+                                    lang: 'en'
+                                }, {
+                                    setting_synonym: ['Standard', 'Normal'],
+                                    lang: 'de'
+                                }]
+                            }, {
+                                setting_name: 'medium',
+                                setting_values: [{
+                                    setting_synonym: ['medium'],
+                                    lang: 'en'
+                                }, {
+                                    setting_synonym: ['Mittel'],
+                                    lang: 'de'
+                                }]
+                            }, {
+                                setting_name: 'turbo',
+                                setting_values: [{
+                                    setting_synonym: ['turbo', 'maximum', 'highest'],
+                                    lang: 'en'
+                                }, {
+                                    setting_synonym: ['Turbo', 'Maximum', 'Höchstleistung'],
+                                    lang: 'de'
+                                }]
+                            }],
+                            ordered: true
+                        }],
+                        isRechargeable: true,
+                        queryOnlyEnergyStorage: true
+                    },
+                    deviceInfo: {
+                        manufacturer: 'Node-RED',
+                        model: 'nr-vacuum-v1',
+                        swVersion: '1.0',
+                        hwVersion: '1.0'
+                    },
+                    customData: {
+                        "nodeid": client.id,
+                        "type": 'vacuum'
+                    }
+                }
+            };
+
+            device.states = states;
+
+            return device;
+        }
+
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
          *
