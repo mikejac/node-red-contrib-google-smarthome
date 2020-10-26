@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-google-smarthome",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "description": "Google SmartHome",
   "main": "google-smarthome.js",
   "scripts": {},
