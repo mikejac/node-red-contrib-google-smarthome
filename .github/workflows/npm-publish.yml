@@ -19,6 +19,7 @@ jobs:
 
   update-nodered:
     runs-on: ubuntu-latest
+    needs: [publish-npm]
     steps:
       - uses: Hacksore/node-red-flow@v1
         with:
