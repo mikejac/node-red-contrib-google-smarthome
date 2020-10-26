@@ -486,6 +486,8 @@ If `topic` is something else then `payload` must be an object and tells both the
 - Check Node-RED's logfiles.
 - Toggle "Enable Node debug" in the configuration node, connect a debug node to the output of the management node and
   look for debug messages.
+- Go to [Actions on Google Console](https://console.actions.google.com), on tab *Test* click *Reset Test*. If this
+  doesn't do anything, click the *Settings* button, disable "On device testing", then enable it again.
 
 ---
 ## Test script
