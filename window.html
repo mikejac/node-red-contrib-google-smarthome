@@ -77,7 +77,9 @@
         <p><code>Pass Through</code> If enabled, incoming messages will be passed onto the output. Be carefull with this setting.</p>
 
         <h4>Input Messages</h4>
-        <p>If <code>msg.topic</code> is <code>openPercent</code> then <code>msg.payload</code> must be integer and indicates the percentage that the window is opened where 0 is closed and 100 is fully open.</p>
+        <p>If <code>msg.topic</code> is <code>openPercent</code> then <code>msg.payload</code> must be integer and
+         indicates the percentage that the window is opened where 0 is closed and 100 is fully open. It can also be
+          boolean where false is closed and true is 100% opened.</p>
         <dl class="message-properties">
             <dt>payload
                 <span class="property-type">integer</span>

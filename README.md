@@ -351,7 +351,8 @@ Example flow:
 #### - Window
 `topic` can be `openPercent`, `online` or something else.
 
-If `topic` is `openPercent` then `payload` must be integer and indicates the percentage that the window is opened where 0 is closed and 100 is fully open.
+If `topic` is `openPercent` then `payload` must be integer and indicates the percentage that the window is opened
+where 0 is closed and 100 is fully open. It can also be boolean where false is closed and true is 100% opened.
 
         msg.topic = 'openPercent'
         msg.payload = 50
@@ -366,7 +367,7 @@ If `topic` is something else then `payload` must be an object and tells both the
 
         msg.topic = 'set'
         msg.payload = {
-          openPercent: false,
+          openPercent: 50,
           online: true
         }
 

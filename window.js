@@ -20,6 +20,7 @@ module.exports = function(RED) {
     "use strict";
 
     const formats = require('./formatvalues.js');
+    const util    = require('util');
 
     /******************************************************************************************************************
      *
@@ -95,10 +96,10 @@ module.exports = function(RED) {
             let states = device.states;
             RED.log.debug("WindowNode(updated): states = " + JSON.stringify(states));
 
-            if (states.openPercent == 0) {
+            if (states.openPercent === 0) {
                 node.status({fill:"green", shape:"dot", text:"CLOSED"});
             } else {
-                node.status({fill:"red", shape:"dot", text:"OPEN"});
+                node.status({fill:"red", shape:"dot", text: util.format("OPEN %d%%", states.openPercent)});
             }
 
             let msg = {
@@ -164,7 +165,13 @@ module.exports = function(RED) {
                     }*/
                 } else if (topic.toUpperCase() === 'OPENPERCENT') {
                     RED.log.debug("WindowNode(input): OPEN/OPENPERCENT");
-                    let openPercent = formats.FormatValue(formats.Formats.INT, 'openPercent', msg.payload);
+                    let openPercent;
+                    if(msg.payload.toString().toUpperCase() === 'TRUE')
+                        openPercent = 100;
+                    else if(msg.payload.toString().toUpperCase() === 'FALSE')
+                        openPercent = 0;
+                    else
+                        openPercent = formats.FormatValue(formats.Formats.INT, 'openPercent', msg.payload);
 
                     if (node.states.openPercent !== openPercent) {
                         node.states.openPercent = openPercent;
@@ -175,6 +182,12 @@ module.exports = function(RED) {
                             msg.payload = node.states.openPercent;
                             node.send(msg);
                         }
+                    }
+
+                    if (node.states.openPercent === 0) {
+                        node.status({fill:"green", shape:"dot", text:"CLOSED"});
+                    } else {
+                        node.status({fill:"red", shape:"dot", text: util.format("OPEN %d%%", node.states.openPercent)});
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("WindowNode(input): ONLINE");
@@ -206,7 +219,12 @@ module.exports = function(RED) {
 
                     // openPercent
                     if (object.hasOwnProperty('openPercent')) {
-                        openPercent = formats.FormatValue(formats.Formats.INT, 'openPercent', object.openPercent);
+                        if(object.openPercent.toString().toUpperCase() === 'TRUE')
+                            openPercent = 100;
+                        else if(object.openPercent.toString().toUpperCase() === 'FALSE')
+                            openPercent = 0;
+                        else
+                            openPercent = formats.FormatValue(formats.Formats.INT, 'openPercent', object.openPercent);
                     }
 
                     // online
