@@ -41,6 +41,7 @@ module.exports = function(RED) {
         var node = this;
 
         this.app = new GoogleSmartHome(
+            this,
             config.id,
             RED.settings.userDir,
             RED.settings.httpNodeRoot,

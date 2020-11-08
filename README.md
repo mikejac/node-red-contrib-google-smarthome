@@ -478,17 +478,22 @@ If `topic` is something else then `payload` must be an object and tells both the
 ---
 ## Troubleshooting
 
+- Look at Node-Red's debug panel for error messages.
+- Unlink and relink your account in the Google Home app. Meanwhile look for errors in the debug panel.
+- Restart your flows (using the `Restart Flows` option in the dropdown menu of the deploy button) while the debug panel
+  is open to see error messages during initialization.
 - Go to [Actions on Google Console](https://console.actions.google.com), in tab *Test* choose *View logs in Google Cloud Platform*.
-- Google might say that it cannot reach your device if that device did not update its state at least once after creation.
 - Check if your service is reachable from the outside. Use [reqbin.com](https://reqbin.com/) or a similar tool to
   send a GET request to https://example.com:3001/check (with your hostname and port). It must answer with status
   200 (OK) and the message "SUCCESS". Use https://www.ssllabs.com/ssltest/ to check your SSL certificate.
-- Unlink and relink your account in the Google Home app.
-- Check Node-RED's logfiles.
+- Check Node-RED's log output. Where you find this depends on how you installed Node-Red. Usually something like
+  `journalctl -u nodered`, `docker logs <container>` or a file in `/var/log`. 
 - Toggle "Enable Node debug" in the configuration node, connect a debug node to the output of the management node and
-  look for debug messages.
+  look for debug messages. In Node-Red UI choose 'Restart Flows' on the 'Deploy' button to see messages during
+  initialization.
 - Go to [Actions on Google Console](https://console.actions.google.com), on tab *Test* click *Reset Test*. If this
   doesn't do anything, click the *Settings* button, disable "On device testing", then enable it again.
+- Google might say that it cannot reach your device if that device did not update its state at least once after creation.
 
 ---
 ## Test script
