@@ -24,7 +24,8 @@
       "thermostat": "thermostat.js",
       "window": "window.js",
       "vaccum": "vacuum.js",
-      "fan": "fan.js"
+      "fan": "fan.js",
+      "sensor": "sensor.js"
     }
   },
   "author": {
