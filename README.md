@@ -17,6 +17,7 @@
   - [Scene](#--scene)
   - [Vacuum](#--vacuum)
   - [Fan](#--fan)
+  - [Sensor](#--sensor)
   - [Management](#--management)
 - [The config node](#the-config-node)
 - [Troubleshooting](#troubleshooting)
@@ -421,6 +422,27 @@ If `topic` is something else then `payload` must be an object and tells both the
         msg.payload = {
           on: true,
           online: true
+        }
+
+#### - Sensor
+`topic` can be `temperatureAmbientCelsius`, `humidityAmbientPercent` or something else.
+
+If `topic` is `temperatureAmbientCelsius` then `payload` must be a number that tells the sensor temperature (in celsius).
+
+        msg.topic = 'temperatureAmbientCelsius'
+        msg.payload = 19.5
+
+If `topic` is `humidityAmbientPercent` then `payload` must be a number that tells the sensor ambient humidity (as percentage).
+
+        msg.topic = 'humidityAmbientPercent'
+        msg.payload = 70
+
+If `topic` is something else then `payload` must be an object, that tells the states of the sensor.
+
+        msg.topic = ''
+        msg.payload = {
+          temperatureAmbientCelsius: 17.5,
+          humidityAmbientPercent: 60
         }
 
 #### - Management
