@@ -128,42 +128,7 @@ module.exports = function(RED) {
             RED.log.debug("WindowNode(input): topic = " + topic);
 
             try {
-                if (topic.toUpperCase() === 'SET') {
-                    /*RED.log.debug("WindowNode(input): SET");
-                    let object = {};
-
-                    if (typeof msg.payload === 'object') {
-                        object = msg.payload;
-                    } else {
-                        RED.log.debug("WindowNode(input): typeof payload = " + typeof msg.payload);
-                        return;
-                    }
-
-                    let on     = node.states.on;
-                    let online = node.states.online;
-
-                    // on
-                    if (object.hasOwnProperty('on')) {
-                        on = formats.FormatValue(formats.Formats.BOOL, 'on', object.on);
-                    }
-
-                    // online
-                    if (object.hasOwnProperty('online')) {
-                        online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
-                    }
-
-                    if (node.states.on !== on || node.states.online !== online){
-                        node.states.on     = on;
-                        node.states.online = online;
-
-                        node.clientConn.setState(node, node.states);  // tell Google ...
-
-                        if (node.passthru) {
-                            msg.payload = node.states;
-                            node.send(msg);
-                        }
-                    }*/
-                } else if (topic.toUpperCase() === 'OPENPERCENT') {
+                if (topic.toUpperCase() === 'OPENPERCENT') {
                     RED.log.debug("WindowNode(input): OPEN/OPENPERCENT");
                     let openPercent;
                     if(msg.payload.toString().toUpperCase() === 'TRUE')

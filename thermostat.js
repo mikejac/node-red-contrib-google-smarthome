@@ -124,42 +124,7 @@ module.exports = function(RED) {
             RED.log.debug("ThermostatNode(input): topic = " + topic);
 
             try {
-                if (topic.toUpperCase() === 'SET') {
-                    /*RED.log.debug("ThermostatNode(input): SET");
-                    let object = {};
-
-                    if (typeof msg.payload === 'object') {
-                        object = msg.payload;
-                    } else {
-                        RED.log.debug("ThermostatNode(input): typeof payload = " + typeof msg.payload);
-                        return;
-                    }
-
-                    let on     = node.states.on;
-                    let online = node.states.online;
-
-                    // on
-                    if (object.hasOwnProperty('on')) {
-                        on = formats.FormatValue(formats.Formats.BOOL, 'on', object.on);
-                    }
-
-                    // online
-                    if (object.hasOwnProperty('online')) {
-                        online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
-                    }
-
-                    if (node.states.on !== on || node.states.online !== online){
-                        node.states.on     = on;
-                        node.states.online = online;
-
-                        node.clientConn.setState(node, node.states);  // tell Google ...
-
-                        if (node.passthru) {
-                            msg.payload = node.states;
-                            node.send(msg);
-                        }
-                    }*/
-                } else if (topic.toUpperCase() === 'THERMOSTATTEMPERATUREAMBIENT') {
+                if (topic.toUpperCase() === 'THERMOSTATTEMPERATUREAMBIENT') {
                     RED.log.debug("ThermostatNode(input): thermostatTemperatureAmbient");
                     let thermostatTemperatureAmbient = formats.FormatValue(formats.Formats.FLOAT, 'thermostatTemperatureAmbient', msg.payload);
 
