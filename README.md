@@ -500,6 +500,8 @@ If `topic` is something else then `payload` must be an object, that tells the st
 ---
 ## Troubleshooting
 
+- Some errors and possible solutions are listed at
+  [Possible errors](https://github.com/mikejac/node-red-contrib-google-smarthome/wiki/Possible-errors).
 - Look at Node-Red's debug panel for error messages.
 - Unlink and relink your account in the Google Home app. Meanwhile look for errors in the debug panel.
 - Restart your flows (using the `Restart Flows` option in the dropdown menu of the deploy button) while the debug panel
