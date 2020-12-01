@@ -184,12 +184,12 @@ module.exports = function(RED) {
 
                     // thermostatTemperatureAmbient
                     if (object.hasOwnProperty('thermostatTemperatureAmbient')) {
-                        thermostatTemperatureAmbient = formats.FormatValue(formats.Formats.FLOAT, 'thermostatTemperatureAmbient', object.ambient);
+                        thermostatTemperatureAmbient = formats.FormatValue(formats.Formats.FLOAT, 'thermostatTemperatureAmbient', object.thermostatTemperatureAmbient);
                     }
 
                     // thermostatTemperatureSetpoint
                     if (object.hasOwnProperty('thermostatTemperatureSetpoint')) {
-                        thermostatTemperatureSetpoint = formats.FormatValue(formats.Formats.FLOAT, 'thermostatTemperatureSetpoint', object.setpoint);
+                        thermostatTemperatureSetpoint = formats.FormatValue(formats.Formats.FLOAT, 'thermostatTemperatureSetpoint', object.thermostatTemperatureSetpoint);
                     }
 
                     // online
