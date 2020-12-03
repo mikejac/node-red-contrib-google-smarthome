@@ -637,15 +637,15 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'TEMPERATURE') {
                     RED.log.debug("LightColorTempNode(input): TEMPERATURE");
-                    let temperature = formats.FormatBrightness(formats.FormatValue(formats.Formats.INT, 'temperature', msg.payload));
+                    let temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', msg.payload));
 
-                    if (node.states.temperature !== temperature) {
-                        node.states.temperature = temperature;
+                    if (node.states.color.temperatureK !== temperature) {
+                        node.states.color.temperatureK = temperature;
 
                         node.clientConn.setState(node, node.states);  // tell Google ...
 
                         if (node.passthru) {
-                            msg.payload = node.states.temperature;
+                            msg.payload = node.states.color.temperatureK;
                             node.send(msg);
                         }
                     }
@@ -663,7 +663,7 @@ module.exports = function(RED) {
                     let on = node.states.on;
                     let online = node.states.online;
                     let brightness = node.states.brightness;
-                    let temperature = node.states.temperature;
+                    let temperature = node.states.color.temperatureK;
 
                     // on
                     if (object.hasOwnProperty('on')) {
@@ -682,14 +682,14 @@ module.exports = function(RED) {
 
                     // color
                     if (object.hasOwnProperty('temperature')) {
-                        temperature = formats.FormatBrightness(formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature));
+                        temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature));
                     }
 
-                    if (node.states.on !== on || node.states.online !== online || node.states.brightness !== brightness || node.states.temperature !== temperature) {
+                    if (node.states.on !== on || node.states.online !== online || node.states.brightness !== brightness || node.states.color.temperatureK !== temperature) {
                         node.states.on = on;
                         node.states.online = online;
                         node.states.brightness = brightness;
-                        node.states.temperature = temperature;
+                        node.states.color.temperatureK = temperature;
 
                         node.clientConn.setState(node, node.states);  // tell Google ...
 
@@ -698,7 +698,7 @@ module.exports = function(RED) {
                             msg.payload.online = node.states.online;
                             msg.payload.on = node.states.on;
                             msg.payload.brightness = node.states.brightness;
-                            msg.payload.temperature = node.states.temperature;
+                            msg.payload.temperature = node.states.color.temperatureK;
                             node.send(msg);
                         }
 

@@ -112,6 +112,16 @@ module.exports.FormatValue = function(format, key, value) {
  *
  *
  */
+module.exports.FormatColorTemperature = function(value) {
+    if (value < 2000) {
+        return 2000;
+    } else if (value > 6000) {
+        return 6000;
+    }
+
+    return value;
+}
+
 module.exports.FormatBrightness = function(value) {
     if (value < 0) {
         return 0;
