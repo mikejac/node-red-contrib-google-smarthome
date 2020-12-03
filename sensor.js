@@ -143,7 +143,7 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'HUMIDITYAMBIENTPERCENT') {
                     RED.log.debug("SensorNode(input): humidityAmbientPercent");
-                    let humidityAmbientPercent = formats.FormatValue(formats.Formats.INT, 'humidityAmbientPercent', msg.payload);
+                    let humidityAmbientPercent = Math.round(formats.FormatValue(formats.Formats.INT, 'humidityAmbientPercent', msg.payload));
 
                     if (node.states.humidityAmbientPercent !== humidityAmbientPercent) {
                         node.states.humidityAmbientPercent = humidityAmbientPercent;
@@ -177,7 +177,7 @@ module.exports = function(RED) {
 
                     // humidityAmbientPercent
                     if (object.hasOwnProperty('humidityAmbientPercent')) {
-                        humidityAmbientPercent = formats.FormatValue(formats.Formats.INT, 'humidityAmbientPercent', object.humidityAmbientPercent);
+                        humidityAmbientPercent = Math.round(formats.FormatValue(formats.Formats.INT, 'humidityAmbientPercent', object.humidityAmbientPercent));
                     }
 
                     if (node.states.temperatureAmbientCelsius !== temperatureAmbientCelsius || node.states.humidityAmbientPercent !== humidityAmbientPercent){
