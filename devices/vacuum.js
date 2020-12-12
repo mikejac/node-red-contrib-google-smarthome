@@ -19,7 +19,7 @@
 module.exports = function (RED) {
     "use strict";
 
-    const formats = require('./formatvalues.js');
+    const formats = require('../formatvalues.js');
 
     /******************************************************************************************************************
      *

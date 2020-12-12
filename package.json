@@ -18,14 +18,14 @@
   "node-red": {
     "nodes": {
       "google-smarthome": "google-smarthome.js",
-      "light": "light.js",
-      "outlet": "outlet.js",
-      "scene": "scene.js",
-      "thermostat": "thermostat.js",
-      "window": "window.js",
-      "vaccum": "vacuum.js",
-      "fan": "fan.js",
-      "sensor": "sensor.js"
+      "light": "devices/light.js",
+      "outlet": "devices/outlet.js",
+      "scene": "devices/scene.js",
+      "thermostat": "devices/thermostat.js",
+      "window": "devices/window.js",
+      "vaccum": "devices/vacuum.js",
+      "fan": "devices/fan.js",
+      "sensor": "devices/sensor.js"
     }
   },
   "author": {

@@ -19,14 +19,13 @@
 module.exports = function(RED) {
     "use strict";
 
-    const formats = require('./formatvalues.js');
-    const util    = require('util');
+    const formats = require('../formatvalues.js');
 
     /******************************************************************************************************************
      *
      *
      */
-    function WindowNode(config) {
+    function ThermostatNode(config) {
         RED.nodes.createNode(this, config);
 
         this.client     = config.client;
@@ -36,49 +35,50 @@ module.exports = function(RED) {
         this.topicDelim = '/';
 
         if (!this.clientConn) {
-            this.error(RED._("window.errors.missing-config"));
+            this.error(RED._("thermostat.errors.missing-config"));
             this.status({fill:"red", shape:"dot", text:"Missing config"});
             return;
         } else if (typeof this.clientConn.register !== 'function') {
-            this.error(RED._("window.errors.missing-bridge"));
+            this.error(RED._("thermostat.errors.missing-bridge"));
             this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
             return;
         }
 
         let node = this;
 
-        RED.log.debug("WindowNode(): node.topicOut = " + node.topicOut);
+        RED.log.debug("ThermostatNode(): node.topicOut = " + node.topicOut);
 
-        /******************************************************************************************************************
-         * called to register device
-         *
-         */
         this.registerDevice = function (client, name) {
             let states = {
                 online: true,
-                openPercent: 0
+                thermostatMode: "heat",
+                thermostatTemperatureSetpoint: 20,
+                thermostatTemperatureAmbient: 10,
             };
 
             let device = {
                 id: client.id,
                 properties: {
-                    type: 'action.devices.types.WINDOW',
-                    traits: ['action.devices.traits.OpenClose'],
+                    type: 'action.devices.types.THERMOSTAT',
+                    traits: ['action.devices.traits.TemperatureSetting'],
                     name: {
-                        defaultNames: ["Node-RED Window"],
+                        defaultNames: ["Node-RED Thermostat"],
                         name: name
                     },
                     willReportState: true,
-                    attributes: {},
+                    attributes: {
+                        availableThermostatModes: "heat",
+                        thermostatTemperatureUnit: "C",
+                    },
                     deviceInfo: {
                         manufacturer: 'Node-RED',
-                        model: 'nr-window-v1',
+                        model: 'nr-thermostat-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
                     },
                     customData: {
                         "nodeid": client.id,
-                        "type": 'window'
+                        "type": 'thermostat'
                     }
                 }
             };
@@ -94,13 +94,9 @@ module.exports = function(RED) {
          */
         this.updated = function(device) {   // this must be defined before the call to clientConn.register()
             let states = device.states;
-            RED.log.debug("WindowNode(updated): states = " + JSON.stringify(states));
+            RED.log.debug("ThermostatNode(updated): states = " + JSON.stringify(states));
 
-            if (states.openPercent === 0) {
-                node.status({fill:"green", shape:"dot", text:"CLOSED"});
-            } else {
-                node.status({fill:"red", shape:"dot", text: util.format("OPEN %d%%", states.openPercent)});
-            }
+            node.status({fill:"green", shape:"dot", text:states.thermostatTemperatureSetpoint + " °C"});
 
             let msg = {
                 topic: node.topicOut,
@@ -111,7 +107,7 @@ module.exports = function(RED) {
             node.send(msg);
         };
 
-        this.states = this.clientConn.register(this, 'window', config.name);
+        this.states = this.clientConn.register(this, 'thermostat', config.name);
 
         this.status({fill:"yellow", shape:"dot", text:"Ready"});
 
@@ -120,42 +116,45 @@ module.exports = function(RED) {
          *
          */
         this.on('input', function (msg) {
-            RED.log.debug("WindowNode(input)");
+            RED.log.debug("ThermostatNode(input)");
 
             let topicArr = String(msg.topic).split(node.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
-            RED.log.debug("WindowNode(input): topic = " + topic);
+            RED.log.debug("ThermostatNode(input): topic = " + topic);
 
             try {
-                if (topic.toUpperCase() === 'OPENPERCENT') {
-                    RED.log.debug("WindowNode(input): OPEN/OPENPERCENT");
-                    let openPercent;
-                    if(msg.payload.toString().toUpperCase() === 'TRUE')
-                        openPercent = 100;
-                    else if(msg.payload.toString().toUpperCase() === 'FALSE')
-                        openPercent = 0;
-                    else
-                        openPercent = formats.FormatValue(formats.Formats.INT, 'openPercent', msg.payload);
+                if (topic.toUpperCase() === 'THERMOSTATTEMPERATUREAMBIENT') {
+                    RED.log.debug("ThermostatNode(input): thermostatTemperatureAmbient");
+                    let thermostatTemperatureAmbient = formats.FormatValue(formats.Formats.FLOAT, 'thermostatTemperatureAmbient', msg.payload);
 
-                    if (node.states.openPercent !== openPercent) {
-                        node.states.openPercent = openPercent;
+                    if (node.states.thermostatTemperatureAmbient !== thermostatTemperatureAmbient) {
+                        node.states.thermostatTemperatureAmbient = thermostatTemperatureAmbient;
 
                         node.clientConn.setState(node, node.states);  // tell Google ...
 
                         if (node.passthru) {
-                            msg.payload = node.states.openPercent;
+                            msg.payload = node.states.thermostatTemperatureAmbient;
+                            node.send(msg);
+                        }
+                    }
+                } else if (topic.toUpperCase() === 'THERMOSTATTEMPERATURESETPOINT') {
+                    RED.log.debug("ThermostatNode(input): thermostatTemperatureSetpoint");
+                    let thermostatTemperatureSetpoint = formats.FormatValue(formats.Formats.FLOAT, 'thermostatTemperatureSetpoint', msg.payload);
+
+                    if (node.states.thermostatTemperatureSetpoint !== thermostatTemperatureSetpoint) {
+                        node.states.thermostatTemperatureSetpoint = thermostatTemperatureSetpoint;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.thermostatTemperatureSetpoint;
                             node.send(msg);
                         }
                     }
 
-                    if (node.states.openPercent === 0) {
-                        node.status({fill:"green", shape:"dot", text:"CLOSED"});
-                    } else {
-                        node.status({fill:"red", shape:"dot", text: util.format("OPEN %d%%", node.states.openPercent)});
-                    }
                 } else if (topic.toUpperCase() === 'ONLINE') {
-                    RED.log.debug("WindowNode(input): ONLINE");
+                    RED.log.debug("ThermostatNode(input): ONLINE");
                     let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload);
 
                     if (node.states.online !== online) {
@@ -169,27 +168,28 @@ module.exports = function(RED) {
                         }
                     }
                 } else {
-                    RED.log.debug("WindowNode(input): some other topic");
+                    RED.log.debug("ThermostatNode(input): some other topic");
                     let object = {};
 
                     if (typeof msg.payload === 'object') {
                         object = msg.payload;
                     } else {
-                        RED.log.debug("WindowNode(input): typeof payload = " + typeof msg.payload);
+                        RED.log.debug("ThermostatNode(input): typeof payload = " + typeof msg.payload);
                         return;
                     }
 
-                    let openPercent     = node.states.openPercent;
-                    let online = node.states.online;
+                    let thermostatTemperatureAmbient  = node.states.thermostatTemperatureAmbient;
+                    let thermostatTemperatureSetpoint = node.states.thermostatTemperatureSetpoint;
+                    let online                        = node.states.online;
 
-                    // openPercent
-                    if (object.hasOwnProperty('openPercent')) {
-                        if(object.openPercent.toString().toUpperCase() === 'TRUE')
-                            openPercent = 100;
-                        else if(object.openPercent.toString().toUpperCase() === 'FALSE')
-                            openPercent = 0;
-                        else
-                            openPercent = formats.FormatValue(formats.Formats.INT, 'openPercent', object.openPercent);
+                    // thermostatTemperatureAmbient
+                    if (object.hasOwnProperty('thermostatTemperatureAmbient')) {
+                        thermostatTemperatureAmbient = formats.FormatValue(formats.Formats.FLOAT, 'thermostatTemperatureAmbient', object.thermostatTemperatureAmbient);
+                    }
+
+                    // thermostatTemperatureSetpoint
+                    if (object.hasOwnProperty('thermostatTemperatureSetpoint')) {
+                        thermostatTemperatureSetpoint = formats.FormatValue(formats.Formats.FLOAT, 'thermostatTemperatureSetpoint', object.thermostatTemperatureSetpoint);
                     }
 
                     // online
@@ -197,9 +197,10 @@ module.exports = function(RED) {
                         online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
                     }
 
-                    if (node.states.openPercent !== openPercent || node.states.online !== online){
-                        node.states.openPercent     = openPercent;
-                        node.states.online = online;
+                    if (node.states.thermostatTemperatureAmbient !== thermostatTemperatureAmbient || node.states.thermostatTemperatureSetpoint !== thermostatTemperatureSetpoint || node.states.online !== online){
+                        node.states.thermostatTemperatureAmbient  = thermostatTemperatureAmbient;
+                        node.states.thermostatTemperatureSetpoint = thermostatTemperatureSetpoint;
+                        node.states.online                        = online;
 
                         node.clientConn.setState(node, node.states);  // tell Google ...
 
@@ -217,15 +218,15 @@ module.exports = function(RED) {
         this.on('close', function(removed, done) {
             if (removed) {
                 // this node has been deleted
-                node.clientConn.remove(node, 'window');
+                node.clientConn.remove(node, 'thermostat');
             } else {
                 // this node is being restarted
-                node.clientConn.deregister(node, 'window');
+                node.clientConn.deregister(node, 'thermostat');
             }
-            
+
             done();
         });
     }
 
-    RED.nodes.registerType("google-window", WindowNode);
+    RED.nodes.registerType("google-thermostat", ThermostatNode);
 }
