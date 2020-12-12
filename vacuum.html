@@ -60,7 +60,7 @@
             <dd>state to send to Google Smart Home.</dd>
         </dl>
     
-     <h3>Output</h3>
+    <h3>Output</h3>
         <dl class="message-properties">
             <dt>payload
                 <span class="property-type">object</span>
@@ -78,6 +78,34 @@
 
         <h4>Input Messages</h4>
 
+        <p>If <code>msg.topic</code> is <code>currentModeSettings.power</code> then <code>msg.payload</code> must be
+            string and tells the mode of the vacuum. It can be one of <code>quiet</code>, <code>standard</code>,
+            <code>medium</code> or <code>turbo</code>.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string</span>
+            </dt>
+            <dd>Value is the mode of the vacuum (either <code>quiet</code>, <code>standard</code>, <code>medium</code>
+                or <code>turbo</code>).</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>capacityRemaining.rawValue</code> then <code>msg.payload</code> must be
+            integer and tells the current battery power of the vacuum in percent.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string</span>
+            </dt>
+            <dd>Value is the current battery power of the vacuum in percent.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>isCharging</code> then <code>msg.payload</code> must be boolean and tells if the vacuum is charging.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> indicates the vacuum is charging, <code>false</code> indicates it's not.</dd>
+        </dl>
+
         <p>If <code>msg.topic</code> is <code>on</code> then <code>msg.payload</code> must be boolean and tells the state of the vacuum.</p>
         <dl class="message-properties">
             <dt>payload
@@ -94,7 +122,7 @@
             <dd><code>true</code> sets online state to on, <code>false</code> sets online state to off.</dd>
         </dl>
 
-        <p>If <code>msg.topic</code> is something other than the above topics then <code>msg.payload</code> must be an object and tells both the open state as well as the online state of the vacuum.</p>
+        <p>If <code>msg.topic</code> is something other than the above topics then <code>msg.payload</code> must be an object and tells the state of the vacuum.</p>
         <dl class="message-properties">
             <dt>payload.currentModeSettings.power
                 <span class="property-type">string</span>

@@ -384,6 +384,23 @@ Messages sent to this node is simply passed through. One cannot tell Google Smar
 #### - Vacuum
 `topic` can be `on`, `online` or something else.
 
+If `msg.topic` is `currentModeSettings.power` then `msg.payload` must be string and tells the mode of the vacuum. It
+can be one of `quiet`, `standard`, `medium` or `turbo`.
+
+        msg.topic = 'currentModeSettings.power'
+        msg.payload = 'standard'
+
+If `msg.topic` is `capacityRemaining.rawValue` then `msg.payload` must be integer and tells the current battery power
+of the vacuum in percent.
+
+        msg.topic = 'capacityRemaining.rawValue'
+        msg.payload = 100
+
+If `msg.topic` is `isCharging` then `msg.payload` must be boolean and tells if the vacuum is charging.
+
+        msg.topic = 'isCharging'
+        msg.payload = true
+
 If `topic` is `on` then `payload` must be boolean and and tells the state of the vacuum.
 
         msg.topic = 'on'
@@ -398,6 +415,9 @@ If `topic` is something else then `payload` must be an object and tells both the
 
         msg.topic = 'set'
         msg.payload = {
+          currentModeSettings.power = 'standard'
+          capacityRemaining.rawValue' = 100
+          isCharging = true
           on: true,
           online: true
         }

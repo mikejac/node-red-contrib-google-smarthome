@@ -223,6 +223,48 @@ module.exports = function (RED) {
                             node.send(msg);
                         }
                     }
+                } else if (topic.toUpperCase() === 'CURRENTMODESETTINGS.POWER') {
+                    RED.log.debug("VacuumNode(input): CURRENTMODESETTINGS.POWER");
+                    let power = formats.FormatValue(formats.Formats.STRING, 'currentModeSettings.power', msg.payload);
+
+                    if (node.states.currentModeSettings.power !== power) {
+                        node.states.currentModeSettings.power = power;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.currentModeSettings.power;
+                            node.send(msg);
+                        }
+                    }
+                } else if (topic.toUpperCase() === 'CAPACITYREMAINING.RAWVALUE') {
+                    RED.log.debug("VacuumNode(input): CAPACITYREMAINING.RAWVALUE");
+                    let rawValue = formats.FormatValue(formats.Formats.STRING, 'capacityRemaining.rawValue', msg.payload);
+
+                    if (node.states.capacityRemaining.rawValue !== rawValue) {
+                        node.states.capacityRemaining.rawValue = rawValue;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.capacityRemaining.rawValue;
+                            node.send(msg);
+                        }
+                    }
+                } else if (topic.toUpperCase() === 'ISCHARGING') {
+                    RED.log.debug("VacuumNode(input): ISCHARGING");
+                    let isCharging = formats.FormatValue(formats.Formats.BOOL, 'isCharging', msg.payload);
+
+                    if (node.states.isCharging !== isCharging) {
+                        node.states.isCharging = isCharging;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.isCharging;
+                            node.send(msg);
+                        }
+                    }
                 } else {
                     RED.log.debug("VacuumNode(input): some other topic");
                     let object = {};
@@ -249,13 +291,13 @@ module.exports = function (RED) {
                     let isCharging = node.states.isCharging;
 
                     // power level 
-                    if (object.hasOwnProperty('currentModeSettings.power')) {
-                        power = formats.FormatValue(formats.Formats.STRING, 'power', object.currentModeSettings.power);
+                    if (object.hasOwnProperty('currentModeSettings') && object.currentModeSettings.hasOwnProperty('power')) {
+                        currentModeSettings.power = formats.FormatValue(formats.Formats.STRING, 'power', object.currentModeSettings.power);
                     }
 
                     // battery level
-                    if (object.hasOwnProperty('currentModeSettings.rawValue')) {
-                        rawValue = formats.FormatValue(formats.Formats.INT, 'battery', object.capacityRemaining.rawValue);
+                    if (object.hasOwnProperty('capacityRemaining') && object.capacityRemaining.hasOwnProperty('rawValue')) {
+                        capacityRemaining.rawValue = formats.FormatValue(formats.Formats.INT, 'battery', object.capacityRemaining.rawValue);
                     }
 
                     // charging
