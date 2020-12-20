@@ -18,6 +18,7 @@
   - [Vacuum](#--vacuum)
   - [Fan](#--fan)
   - [Sensor](#--sensor)
+  - [Shutter](#--shutter)
   - [Management](#--management)
 - [The config node](#the-config-node)
 - [Troubleshooting](#troubleshooting)
@@ -463,6 +464,29 @@ If `topic` is something else then `payload` must be an object, that tells the st
         msg.payload = {
           temperatureAmbientCelsius: 17.5,
           humidityAmbientPercent: 60
+        }
+
+#### - Shutter
+`topic` can be `openPercent`, `online` or something else.
+
+If `topic` is `openPercent` then `payload` must be integer and indicates the percentage that the shutter is opened
+where 0 is closed and 100 is fully open. It can also be boolean where false is closed and true is 100% opened.
+
+        msg.topic = 'openPercent'
+        msg.payload = 50
+
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the shutter.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is something else then `payload` must be an object and tells both the open state as well as the online state of the shutter.
+
+        msg.topic = 'set'
+        msg.payload = {
+          openPercent: 50,
+          online: true
         }
 
 #### - Management
