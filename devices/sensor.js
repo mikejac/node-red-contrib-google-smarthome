@@ -88,6 +88,17 @@ module.exports = function(RED) {
             return device;
         }
 
+        this.updateStatusIcon = function(states) {
+            let txt = "";
+            if (node.states.temperatureAmbientCelsius !== undefined)
+                txt += node.states.temperatureAmbientCelsius + "\xB0C ";
+
+            if (node.states.humidityAmbientPercent !== undefined)
+                txt += node.states.humidityAmbientPercent + "% ";
+
+            node.status({fill: "green", shape: "dot", text: txt});
+        }
+
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
          *
@@ -95,8 +106,6 @@ module.exports = function(RED) {
         this.updated = function(device) {   // this must be defined before the call to clientConn.register()
             let states = device.states;
             RED.log.debug("SensorNode(updated): states = " + JSON.stringify(states));
-
-            //node.status({fill:"green", shape:"dot", text:"Updated"});
 
             let msg = {
                 topic: node.topicOut,
@@ -120,7 +129,6 @@ module.exports = function(RED) {
 
             let topicArr = String(msg.topic).split(node.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
-            let updated  = false;
 
             RED.log.debug("SensorNode(input): topic = " + topic);
 
@@ -134,12 +142,13 @@ module.exports = function(RED) {
                         node.states.temperatureSetpointCelsius = temperatureAmbientCelsius;
 
                         node.clientConn.setState(node, node.states);  // tell Google ...
-                        updated = true;
 
                         if (node.passthru) {
                             msg.payload = node.states.temperatureAmbientCelsius;
                             node.send(msg);
                         }
+
+                        node.updateStatusIcon(node.states);
                     }
                 } else if (topic.toUpperCase() === 'HUMIDITYAMBIENTPERCENT') {
                     RED.log.debug("SensorNode(input): humidityAmbientPercent");
@@ -149,12 +158,13 @@ module.exports = function(RED) {
                         node.states.humidityAmbientPercent = humidityAmbientPercent;
 
                         node.clientConn.setState(node, node.states);  // tell Google ...
-                        updated = true;
 
                         if (node.passthru) {
                             msg.payload = node.states.humidityAmbientPercent;
                             node.send(msg);
                         }
+
+                        node.updateStatusIcon(node.states);
                     }
                 } else {
                     RED.log.debug("SensorNode(input): some other topic");
@@ -186,26 +196,15 @@ module.exports = function(RED) {
                         node.states.humidityAmbientPercent = humidityAmbientPercent;
 
                         node.clientConn.setState(node, node.states);  // tell Google ...
-                        updated = true;
 
                         if (node.passthru) {
                             msg.payload = node.states;
                             node.send(msg);
                         }
+
+                        node.updateStatusIcon(node.states);
                     }
                 }
-
-                if (updated) {
-                    let txt = "";
-                    if (node.states.temperatureAmbientCelsius !== undefined)
-                        txt += node.states.temperatureAmbientCelsius + "\xB0C ";
-
-                    if (node.states.humidityAmbientPercent !== undefined)
-                        txt += node.states.humidityAmbientPercent + "% ";
-
-                    node.status({fill:"green", shape:"dot", text:txt});
-                }
-
             } catch (err) {
                 RED.log.error(err);
             }

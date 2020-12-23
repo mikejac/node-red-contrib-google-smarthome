@@ -88,6 +88,10 @@ module.exports = function(RED) {
             return device;
         }
 
+        this.updateStatusIcon = function(states) {
+            node.status({fill: "green", shape: "dot", text: states.thermostatTemperatureSetpoint + " °C"});
+        }
+
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
          *
@@ -96,7 +100,7 @@ module.exports = function(RED) {
             let states = device.states;
             RED.log.debug("ThermostatNode(updated): states = " + JSON.stringify(states));
 
-            node.status({fill:"green", shape:"dot", text:states.thermostatTemperatureSetpoint + " °C"});
+            node.updateStatusIcon(states);
 
             let msg = {
                 topic: node.topicOut,
@@ -137,6 +141,8 @@ module.exports = function(RED) {
                             msg.payload = node.states.thermostatTemperatureAmbient;
                             node.send(msg);
                         }
+
+                        node.updateStatusIcon(node.states);
                     }
                 } else if (topic.toUpperCase() === 'THERMOSTATTEMPERATURESETPOINT') {
                     RED.log.debug("ThermostatNode(input): thermostatTemperatureSetpoint");
@@ -151,6 +157,8 @@ module.exports = function(RED) {
                             msg.payload = node.states.thermostatTemperatureSetpoint;
                             node.send(msg);
                         }
+
+                        node.updateStatusIcon(node.states);
                     }
 
                 } else if (topic.toUpperCase() === 'ONLINE') {
@@ -208,6 +216,8 @@ module.exports = function(RED) {
                             msg.payload = node.states;
                             node.send(msg);
                         }
+
+                        node.updateStatusIcon(node.states);
                     }
                 }
             } catch (err) {

@@ -81,6 +81,16 @@ module.exports = function(RED) {
             return device;
         }
 
+        this.updateStatusIcon = function(states) {
+            if (!states.deactivate) {
+                node.status({fill:"green", shape:"dot", text:"Activate"});
+            } else {
+                node.status({fill:"red", shape:"dot", text:"Deactivate"});
+            }
+
+            setTimeout(function () { node.status({}) }, 10000);
+        }
+
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
          *
@@ -89,13 +99,7 @@ module.exports = function(RED) {
             let states = device.states;
             RED.log.debug("SceneNode(updated): states = " + JSON.stringify(states));
 
-            if (!states.deactivate) {
-                node.status({fill:"green", shape:"dot", text:"Activate"});
-            } else {
-                node.status({fill:"red", shape:"dot", text:"Deactivate"});
-            }
-
-            setTimeout(function () { node.status({}) }, 10000);
+            node.updateStatusIcon(states);
 
             let msg = {
                 topic: node.topicOut,
@@ -124,14 +128,6 @@ module.exports = function(RED) {
 
             if (topic.toUpperCase() === 'ON') {
                 RED.log.debug("SceneNode(input): ON");
-                
-                if (msg.payload) {
-                    node.status({fill:"green", shape:"dot", text:"Activate"});
-                } else {
-                    node.status({fill:"red", shape:"dot", text:"Deactivate"});
-                }
-
-                setTimeout(function () { node.status({}) }, 10000);
 
                 node.send(msg);
             }

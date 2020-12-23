@@ -88,6 +88,14 @@ module.exports = function(RED) {
             return device;
         }
 
+        this.updateStatusIcon = function(states) {
+            if (states.openPercent === 0) {
+                node.status({fill:"green", shape:"dot", text:"CLOSED"});
+            } else {
+                node.status({fill:"red", shape:"dot", text: util.format("OPEN %d%%", states.openPercent)});
+            }
+        }
+
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
          *
@@ -96,11 +104,7 @@ module.exports = function(RED) {
             let states = device.states;
             RED.log.debug("ShutterNode(updated): states = " + JSON.stringify(states));
 
-            if (states.openPercent === 0) {
-                node.status({fill:"green", shape:"dot", text:"CLOSED"});
-            } else {
-                node.status({fill:"red", shape:"dot", text: util.format("OPEN %d%%", states.openPercent)});
-            }
+            node.updateStatusIcon(states);
 
             let msg = {
                 topic: node.topicOut,
@@ -149,11 +153,7 @@ module.exports = function(RED) {
                         }
                     }
 
-                    if (node.states.openPercent === 0) {
-                        node.status({fill:"green", shape:"dot", text:"CLOSED"});
-                    } else {
-                        node.status({fill:"red", shape:"dot", text: util.format("OPEN %d%%", node.states.openPercent)});
-                    }
+                    node.updateStatusIcon(node.states);
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("ShutterNode(input): ONLINE");
                     let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload);
@@ -207,6 +207,8 @@ module.exports = function(RED) {
                             msg.payload = node.states;
                             node.send(msg);
                         }
+
+                        node.updateStatusIcon(node.states);
                     }
                 }
             } catch (err) {

@@ -84,6 +84,14 @@ module.exports = function(RED) {
             return device;
         }
 
+        this.updateStatusIcon = function(states) {
+            if (states.on) {
+                node.status({fill: "green", shape: "dot", text: "ON"});
+            } else {
+                node.status({fill: "red", shape: "dot", text: "OFF"});
+            }
+        }
+
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
          *
@@ -92,11 +100,7 @@ module.exports = function(RED) {
             let states = device.states;
             RED.log.debug("FanOnOffNode(updated): states = " + JSON.stringify(states));
 
-            if (states.on) {
-                node.status({fill:"green", shape:"dot", text:"ON"});
-            } else {
-                node.status({fill:"red", shape:"dot", text:"OFF"});
-            }
+            node.updateStatusIcon(states);
 
             let msg = {
                 topic: node.topicOut,
@@ -141,11 +145,7 @@ module.exports = function(RED) {
                             node.send(msg);
                         }
 
-                        if (node.states.on) {
-                            node.status({fill:"green", shape:"dot", text:"ON"});
-                        } else {
-                            node.status({fill:"red", shape:"dot", text:"OFF"});
-                        }
+                        node.updateStatusIcon(node.states);
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("FanOnOffNode(input): ONLINE");
@@ -198,11 +198,7 @@ module.exports = function(RED) {
                             node.send(msg);
                         }
 
-                        if (node.states.on) {
-                            node.status({fill:"green", shape:"dot", text:"ON"});
-                        } else {
-                            node.status({fill:"red", shape:"dot", text:"OFF"});
-                        }
+                        node.updateStatusIcon(node.states);
                     }
                 }
             } catch (err) {
