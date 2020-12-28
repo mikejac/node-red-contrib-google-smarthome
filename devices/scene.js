@@ -97,6 +97,7 @@ module.exports = function(RED) {
          */
         this.updated = function(device) {   // this must be defined before the call to clientConn.register()
             let states = device.states;
+            let command = device.command;
             RED.log.debug("SceneNode(updated): states = " + JSON.stringify(states));
 
             node.updateStatusIcon(states);
@@ -104,7 +105,8 @@ module.exports = function(RED) {
             let msg = {
                 topic: node.topicOut,
                 device_name: device.properties.name.name,
-                payload: !states.deactivate
+                command: command,
+                payload: !states.deactivate,
             };
 
             node.send(msg);

@@ -98,6 +98,7 @@ module.exports = function(RED) {
          */
         this.updated = function(device) {   // this must be defined before the call to clientConn.register()
             let states = device.states;
+            let command = device.command;
             RED.log.debug("FanOnOffNode(updated): states = " + JSON.stringify(states));
 
             node.updateStatusIcon(states);
@@ -105,10 +106,11 @@ module.exports = function(RED) {
             let msg = {
                 topic: node.topicOut,
                 device_name: device.properties.name.name,
+                command: command,
                 payload: {
                     online: states.online,
-                    on: states.on
-                }
+                    on: states.on,
+                },
             };
 
             node.send(msg);

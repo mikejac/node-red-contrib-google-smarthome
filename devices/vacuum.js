@@ -157,6 +157,7 @@ module.exports = function (RED) {
          */
         this.updated = function (device) {   // this must be defined before the call to clientConn.register()
             let states = device.states;
+            let command = device.command;
             RED.log.debug("VacuumNode(updated): states = " + JSON.stringify(states));
 
             node.updateStatusIcon(states);
@@ -170,7 +171,19 @@ module.exports = function (RED) {
             let msg = {
                 topic: node.topicOut,
                 device_name: device.properties.name.name,
-                payload: states
+                command: command,
+                payload: {
+                    online: states.online,
+                    on: states.on,
+                    currentModeSettings:{
+                        "power": states.currentModeSettings.power,
+                    },
+                    capacityRemaining:{
+                        rawValue: states.capacityRemaining.rawValue,
+                        unit: "PERCENTAGE",
+                    },
+                    isCharging:true,
+                },
             };
 
             node.send(msg);

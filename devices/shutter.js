@@ -113,8 +113,8 @@ module.exports = function(RED) {
                 command: command,
                 payload: {
                     online: states.online,
-                    openPercent: states.openPercent
-                }
+                    openPercent: states.openPercent,
+                },
             };
 
             node.send(msg);

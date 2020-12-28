@@ -102,6 +102,7 @@ module.exports = function(RED) {
          */
         this.updated = function(device) {   // this must be defined before the call to clientConn.register()
             let states = device.states;
+            let command = device.command;
             RED.log.debug("LightOnOffNode(updated): states = " + JSON.stringify(states));
 
             node.updateStatusIcon(states);
@@ -109,10 +110,11 @@ module.exports = function(RED) {
             let msg = {
                 topic: node.topicOut,
                 device_name: device.properties.name.name,
+                command: command,
                 payload: {
                     online: states.online,
-                    on: states.on
-                }
+                    on: states.on,
+                },
             };
 
             node.send(msg);
@@ -306,6 +308,7 @@ module.exports = function(RED) {
          */
         this.updated = function(device) {   // this must be defined before the call to clientConn.register()
             let states = device.states;
+            let command = device.command;
             RED.log.debug("LightDimmableNode(updated): states = " + JSON.stringify(states));
 
             node.updateStatusIcon(states);
@@ -313,11 +316,12 @@ module.exports = function(RED) {
             let msg = {
                 topic: node.topicOut,
                 device_name: device.properties.name.name,
+                command: command,
                 payload: {
                     online: states.online,
                     on: states.on,
-                    brightness: states.brightness
-                }
+                    brightness: states.brightness,
+                },
             };
 
             node.send(msg);
@@ -548,6 +552,7 @@ module.exports = function(RED) {
          */
         this.updated = function (device) {   // this must be defined before the call to clientConn.register()
             let states = device.states;
+            let command = device.command;
             RED.log.debug("LightColorTempNode(updated): states = " + JSON.stringify(states));
 
             node.updateStatusIcon(states);
@@ -555,12 +560,13 @@ module.exports = function(RED) {
             let msg = {
                 topic: node.topicOut,
                 device_name: device.properties.name.name,
+                command: command,
                 payload: {
                     online: states.online,
                     on: states.on,
                     brightness: states.brightness,
-                    temperature: states.color.temperature
-                }
+                    temperature: states.color.temperature,
+                },
             };
 
             node.send(msg);
@@ -813,6 +819,7 @@ module.exports = function(RED) {
          */
         this.updated = function(device) {   // this must be defined before the call to clientConn.register()
             let states = device.states;
+            let command = device.command;
             RED.log.debug("LightHsvNode(updated): states = " + JSON.stringify(states));
 
             node.updateStatusIcon(states);
@@ -820,6 +827,7 @@ module.exports = function(RED) {
             let msg = {
                 topic: node.topicOut,
                 device_name: device.properties.name.name,
+                command: command,
                 payload: {
                     online: states.online,
                     on: states.on,
@@ -827,8 +835,8 @@ module.exports = function(RED) {
                     saturation: states.color.spectrumHsv.saturation * 100,  // rescale
                     value: states.color.spectrumHsv.value * 100,            // rescale
                     name: states.color.name,
-                    brightness: states.brightness
-                }
+                    brightness: states.brightness,
+                },
             };
 
             node.send(msg);
@@ -1123,6 +1131,7 @@ module.exports = function(RED) {
          */
         this.updated = function(device) {   // this must be defined before the call to clientConn.register()
             let states = device.states;
+            let command = device.command;
             RED.log.debug("LightRgbNode(updated): states = " + JSON.stringify(states));
 
             node.updateStatusIcon(states);
@@ -1130,13 +1139,14 @@ module.exports = function(RED) {
             let msg = {
                 topic: node.topicOut,
                 device_name: device.properties.name.name,
+                command: command,
                 payload: {
                     online: states.online,
                     on: states.on,
                     rgb: states.color.spectrumRGB,
                     name: states.color.name,
-                    brightness: states.brightness
-                }
+                    brightness: states.brightness,
+                },
             };
 
             node.send(msg);

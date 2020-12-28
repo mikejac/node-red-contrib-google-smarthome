@@ -105,12 +105,17 @@ module.exports = function(RED) {
          */
         this.updated = function(device) {   // this must be defined before the call to clientConn.register()
             let states = device.states;
+            let command = device.command;
             RED.log.debug("SensorNode(updated): states = " + JSON.stringify(states));
 
             let msg = {
                 topic: node.topicOut,
                 device_name: device.properties.name.name,
-                payload: states
+                command: command,
+                payload: {
+                    temperatureAmbientCelsius: states.temperatureAmbientCelsius,
+                    temperatureSetpointCelsius: states.temperatureSetpointCelsius,
+                },
             };
 
             node.send(msg);
