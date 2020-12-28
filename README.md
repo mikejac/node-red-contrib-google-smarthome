@@ -19,6 +19,7 @@
   - [Fan](#--fan)
   - [Sensor](#--sensor)
   - [Shutter](#--shutter)
+  - [Switch](#--switch)
   - [Management](#--management)
 - [The config node](#the-config-node)
 - [Troubleshooting](#troubleshooting)
@@ -486,6 +487,27 @@ If `topic` is something else then `payload` must be an object and tells both the
         msg.topic = 'set'
         msg.payload = {
           openPercent: 50,
+          online: true
+        }
+        
+#### - Switch
+`topic` can be `on`, `online` or something else.
+
+If `topic` is `on` then `payload` must be boolean and tells the state of the switch.
+
+        msg.topic = 'on'
+        msg.payload = true
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the switch.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is something else then `payload` must be an object and tells both the on state as well as the online state of the switch.
+
+        msg.topic = 'set'
+        msg.payload = {
+          on: false,
           online: true
         }
 
