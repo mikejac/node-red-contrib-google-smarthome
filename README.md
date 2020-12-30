@@ -11,6 +11,7 @@
   - [Color Temperature Light](#--color-temperature-light)
   - [Color (HSV) Light](#--color-hsv-light)
   - [Color (RGB) Light](#--color-rgb-light)
+  - [Color (RGB/Temp) Light](#--color-rgbtemp-light)
   - [Outlet](#--outlet)
   - [Thermostat](#--thermostat)
   - [Window](#--window)
@@ -292,6 +293,47 @@ If `topic` is something else then `payload` must be an object and tells all the 
           on: false,
           online: true,
           brightness: 100,
+          rgb: 255,
+        }
+
+#### - Color (RGB/Temp) Light
+`topic` can be `on`, `online`, `brightness`, `temperature`, `rgb` or something else.
+
+If `topic` is `on` then `payload` must be boolean and tells the state of the light.
+
+        msg.topic = 'on'
+        msg.payload = true
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the light.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is `brightness` then `payload` must be a number and tells the brightness of the light. Range is 0 through 100.
+
+        msg.topic = 'brightness'
+        msg.payload = 75
+
+If `topic` is `temperature` then `payload` must be a number and tells the color temperature of the light. Range is 2000 through 6000.
+
+        msg.topic = 'temperature'
+        msg.payload = 3000
+
+If `topic` is `rgb` then `payload` must be a number and tells the RGB values of the light. Range is 0 through 16777215.
+
+        msg.topic = 'rgb'
+        msg.payload = 255
+
+*Hint:* red = 16711680, green = 65280, blue = 255.
+
+If `topic` is something else then `payload` must be an object and tells all the states of the light.
+
+        msg.topic = 'set'
+        msg.payload = {
+          on: false,
+          online: true,
+          brightness: 100,
+          temperature: 100,
           rgb: 255,
         }
 

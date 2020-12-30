@@ -1302,4 +1302,297 @@ module.exports = function(RED) {
     }
 
     RED.nodes.registerType("google-light-rgb", LightRgbNode);
+
+    /******************************************************************************************************************
+     *
+     *
+     */
+    function LightRgbTempNode(config) {
+        RED.nodes.createNode(this, config);
+
+        this.client     = config.client;
+        this.clientConn = RED.nodes.getNode(this.client);
+        this.topicOut   = config.topic;
+        this.passthru   = config.passthru;
+        this.topicDelim = '/';
+
+        if (!this.clientConn) {
+            this.error(RED._("light.errors.missing-config"));
+            this.status({fill:"red", shape:"dot", text:"Missing config"});
+            return;
+        } else if (typeof this.clientConn.register !== 'function') {
+            this.error(RED._("light.errors.missing-bridge"));
+            this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
+            return;
+        }
+
+        let node = this;
+
+        RED.log.debug("LightRgbTempNode(): node.topicOut = " + node.topicOut);
+
+        /******************************************************************************************************************
+         * called to register device
+         *
+         */
+        this.registerDevice = function (client, name) {
+            // according to Googles own doc.'s, 'color.spectrumRGB' should actually be 'color.spectrumRgb'
+            let states = {
+                online: true,
+                on: false,
+                brightness: 100,            // integer, absolute brightness, from 0 to 100
+                color: {
+                    name: "",
+                    spectrumRGB: 16777215,   // red = 16711680, green = 65280, blue = 255
+                    temperatureK: 4000
+                }
+            };
+
+            let device = {
+                id: client.id,
+                properties: {
+                    type: 'action.devices.types.LIGHT',
+                    traits: [
+                        'action.devices.traits.OnOff',
+                        'action.devices.traits.Brightness',
+                        'action.devices.traits.ColorSetting'
+                    ],
+                    name: {
+                        defaultNames: ["Node-RED RGB/Temp Light"],
+                        name: name
+                    },
+                    willReportState: true,
+                    attributes: {
+                        colorModel: "rgb",
+                        colorTemperatureRange: {
+                            temperatureMinK: 2000,
+                            temperatureMaxK: 6000
+                        },
+                        commandOnlyColorSetting: false,
+                    },
+                    deviceInfo: {
+                        manufacturer: 'Node-RED',
+                        model: 'nr-light-rgb-temp-v1',
+                        swVersion: '1.0',
+                        hwVersion: '1.0'
+                    },
+                    customData: {
+                        "nodeid": client.id,
+                        "type": 'light-rgb-temp'
+                    }
+                }
+            };
+
+            device.states = states;
+
+            return device;
+        }
+
+        this.updateStatusIcon = function(states) {
+            if (states.on) {
+                node.status({fill: "green", shape: "dot", text: "ON"});
+            } else {
+                node.status({fill: "red", shape: "dot", text: "OFF"});
+            }
+        }
+
+        /******************************************************************************************************************
+         * called when state is updated from Google Assistant
+         *
+         */
+        this.updated = function(device) {   // this must be defined before the call to clientConn.register()
+            let states = device.states;
+            let command = device.command;
+            RED.log.debug("LightRgbTempNode(updated): states = " + JSON.stringify(states));
+
+            node.updateStatusIcon(states);
+            
+            let msg = {
+                topic: node.topicOut,
+                device_name: device.properties.name.name,
+                command: command,
+                payload: {
+                    online: states.online,
+                    on: states.on,
+                    rgb: states.color.spectrumRGB,
+                    temperature: states.color.temperature,
+                    name: states.color.name,
+                    brightness: states.brightness,
+                },
+            };
+
+            node.send(msg);
+        };
+
+        this.states = this.clientConn.register(this, 'light-rgb-temp', config.name);
+
+        this.status({fill:"yellow", shape:"dot", text:"Ready"});
+
+        /******************************************************************************************************************
+         * respond to inputs from NodeRED
+         *
+         */
+        this.on('input', function (msg) {
+            RED.log.debug("LightRgbTempNode(input)");
+
+            let topicArr = String(msg.topic).split(node.topicDelim);
+            let topic    = topicArr[topicArr.length - 1];   // get last part of topic
+
+            RED.log.debug("LightRgbTempNode(input): topic = " + topic);
+
+            try {
+                if (topic.toUpperCase() === 'ON') {
+                    RED.log.debug("LightRgbTempNode(input): ON");
+                    let on = formats.FormatValue(formats.Formats.BOOL, 'on', msg.payload);
+
+                    if (node.states.on !== on) {
+                        node.states.on = on;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.on;
+                            node.send(msg);
+                        }
+
+                        node.updateStatusIcon(node.states);
+                    }
+                } else if (topic.toUpperCase() === 'ONLINE') {
+                    RED.log.debug("LightRgbTempNode(input): ONLINE");
+                    let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload);
+
+                    if (node.states.online !== online) {
+                        node.states.online = online;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.online;
+                            node.send(msg);
+                        }
+                    }
+                } else if (topic.toUpperCase() === 'BRIGHTNESS') {  // Integer, 0 - 100
+                    RED.log.debug("LightRgbTempNode(input): BRIGHTNESS");
+                    let brightness = formats.FormatBrightness(formats.FormatValue(formats.Formats.INT, 'brightness', msg.payload));
+
+                    if (node.states.brightness !== brightness) {
+                        node.states.brightness = brightness;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = brightness;
+                            node.send(msg);
+                        }
+                    }
+                } else if (topic.toUpperCase() === 'RGB') {  // Integer, 0 - 16777215
+                    RED.log.debug("LightRgbTempNode(input): RGB");
+                    let rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', msg.payload));
+
+                    if (node.states.color.spectrumRGB !== rgb) {
+                        node.states.color.spectrumRGB = rgb;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = rgb;
+                            node.send(msg);
+                        }
+                    }
+                } else if (topic.toUpperCase() === 'TEMPERATURE') {
+                    RED.log.debug("LightColorRgbTempNode(input): TEMPERATURE");
+                    let temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', msg.payload));
+
+                    if (node.states.color.temperatureK !== temperature) {
+                        node.states.color.temperatureK = temperature;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload = node.states.color.temperatureK;
+                            node.send(msg);
+                        }
+                    }
+                } else {
+                    RED.log.debug("LightRgbTempNode(input): some other topic");
+                    let object = {};
+
+                    if (typeof msg.payload === 'object') {
+                        object = msg.payload;
+                    } else {
+                        RED.log.debug("LightRgbTempNode(input): typeof payload = " + typeof msg.payload);
+                        return;
+                    }
+
+                    let on         = node.states.on;
+                    let online     = node.states.online;
+                    let brightness = node.states.brightness;
+                    let rgb        = node.states.color.spectrumRGB;
+                    let temperature = node.states.color.temperatureK;
+
+                    // on
+                    if (object.hasOwnProperty('on')) {
+                        on = formats.FormatValue(formats.Formats.BOOL, 'on', object.on);
+                    }
+
+                    // online
+                    if (object.hasOwnProperty('online')) {
+                        online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
+                    }
+
+                    // brightness
+                    if (object.hasOwnProperty('brightness')) {
+                        brightness = formats.FormatBrightness(formats.FormatValue(formats.Formats.INT, 'brightness', object.brightness));
+                    }
+
+                    // rgb
+                    if (object.hasOwnProperty('rgb')) {
+                        rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', object.rgb));
+                    }
+
+                    // color
+                    if (object.hasOwnProperty('temperature')) {
+                        temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature));
+                    }
+
+                    if (node.states.on !== on || node.states.online !== online || node.states.color.brightness !== brightness || node.states.color.spectrumRGB !== rgb || node.states.color.temperatureK !== temperature) {
+                        node.states.on                  = on;
+                        node.states.online              = online;
+                        node.states.brightness          = brightness;
+                        node.states.color.spectrumRGB   = rgb;
+                        node.states.color.temperatureK  = temperature;
+
+                        node.clientConn.setState(node, node.states);  // tell Google ...
+
+                        if (node.passthru) {
+                            msg.payload             = {};
+                            msg.payload.online      = node.states.online;
+                            msg.payload.on          = node.states.on;
+                            msg.payload.rgb         = node.states.color.spectrumRGB;
+                            msg.payload.temperature = node.states.color.temperatureK;
+                            msg.payload.brightness  = node.states.brightness;        
+                            node.send(msg);
+                        }
+
+                        node.updateStatusIcon(node.states);
+                    }
+                }
+            } catch (err) {
+                RED.log.error(err);
+            }
+        });
+
+        this.on('close', function(removed, done) {
+            if (removed) {
+                // this node has been deleted
+                node.clientConn.remove(node, 'light-rgb-temp');
+            } else {
+                // this node is being restarted
+                node.clientConn.deregister(node, 'light-rgb-temp');
+            }
+            
+            done();
+        });
+    }
+
+    RED.nodes.registerType("google-light-rgb-temp", LightRgbTempNode);
 }
