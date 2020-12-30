@@ -25,30 +25,32 @@ module.exports = function(RED) {
      *
      *
      */
-    function ThermostatNode(config) {
-        RED.nodes.createNode(this, config);
+    class ThermostatNode {
+        constructor(config) {
+            RED.nodes.createNode(this, config);
 
-        this.client     = config.client;
-        this.clientConn = RED.nodes.getNode(this.client);
-        this.topicOut   = config.topic;
-        this.passthru   = config.passthru;
-        this.topicDelim = '/';
+            this.client     = config.client;
+            this.clientConn = RED.nodes.getNode(this.client);
+            this.topicOut   = config.topic;
+            this.passthru   = config.passthru;
+            this.topicDelim = '/';
 
-        if (!this.clientConn) {
-            this.error(RED._("thermostat.errors.missing-config"));
-            this.status({fill:"red", shape:"dot", text:"Missing config"});
-            return;
-        } else if (typeof this.clientConn.register !== 'function') {
-            this.error(RED._("thermostat.errors.missing-bridge"));
-            this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;
+            if (!this.clientConn) {
+                this.error(RED._("thermostat.errors.missing-config"));
+                this.status({fill: "red", shape: "dot", text: "Missing config"});
+                return;
+            } else if (typeof this.clientConn.register !== 'function') {
+                this.error(RED._("thermostat.errors.missing-bridge"));
+                this.status({fill: "red", shape: "dot", text: "Missing SmartHome"});
+                return;
+            }
+
+            this.states = this.clientConn.register(this, 'thermostat', config.name);
+
+            this.status({fill: "yellow", shape: "dot", text: "Ready"});
         }
 
-        let node = this;
-
-        RED.log.debug("ThermostatNode(): node.topicOut = " + node.topicOut);
-
-        this.registerDevice = function (client, name) {
+        registerDevice(client, name) {
             let states = {
                 online: true,
                 thermostatMode: "heat",
@@ -88,23 +90,23 @@ module.exports = function(RED) {
             return device;
         }
 
-        this.updateStatusIcon = function(states) {
-            node.status({fill: "green", shape: "dot", text: states.thermostatTemperatureSetpoint + " °C"});
+        updateStatusIcon(states) {
+            this.status({fill: "green", shape: "dot", text: states.thermostatTemperatureSetpoint + " °C"});
         }
 
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function(device) {   // this must be defined before the call to clientConn.register()
+        updated(device) {
             let states = device.states;
             let command = device.command;
             RED.log.debug("ThermostatNode(updated): states = " + JSON.stringify(states));
 
-            node.updateStatusIcon(states);
+            this.updateStatusIcon(states);
 
             let msg = {
-                topic: node.topicOut,
+                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
@@ -115,21 +117,17 @@ module.exports = function(RED) {
                 },
             };
 
-            node.send(msg);
+            this.send(msg);
         };
-
-        this.states = this.clientConn.register(this, 'thermostat', config.name);
-
-        this.status({fill:"yellow", shape:"dot", text:"Ready"});
 
         /******************************************************************************************************************
          * respond to inputs from NodeRED
          *
          */
-        this.on('input', function (msg) {
+        onInput(msg) {
             RED.log.debug("ThermostatNode(input)");
 
-            let topicArr = String(msg.topic).split(node.topicDelim);
+            let topicArr = String(msg.topic).split(this.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("ThermostatNode(input): topic = " + topic);
@@ -139,47 +137,47 @@ module.exports = function(RED) {
                     RED.log.debug("ThermostatNode(input): thermostatTemperatureAmbient");
                     let thermostatTemperatureAmbient = formats.FormatValue(formats.Formats.FLOAT, 'thermostatTemperatureAmbient', msg.payload);
 
-                    if (node.states.thermostatTemperatureAmbient !== thermostatTemperatureAmbient) {
-                        node.states.thermostatTemperatureAmbient = thermostatTemperatureAmbient;
+                    if (this.states.thermostatTemperatureAmbient !== thermostatTemperatureAmbient) {
+                        this.states.thermostatTemperatureAmbient = thermostatTemperatureAmbient;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.thermostatTemperatureAmbient;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.thermostatTemperatureAmbient;
+                            this.send(msg);
                         }
 
-                        node.updateStatusIcon(node.states);
+                        this.updateStatusIcon(this.states);
                     }
                 } else if (topic.toUpperCase() === 'THERMOSTATTEMPERATURESETPOINT') {
                     RED.log.debug("ThermostatNode(input): thermostatTemperatureSetpoint");
                     let thermostatTemperatureSetpoint = formats.FormatValue(formats.Formats.FLOAT, 'thermostatTemperatureSetpoint', msg.payload);
 
-                    if (node.states.thermostatTemperatureSetpoint !== thermostatTemperatureSetpoint) {
-                        node.states.thermostatTemperatureSetpoint = thermostatTemperatureSetpoint;
+                    if (this.states.thermostatTemperatureSetpoint !== thermostatTemperatureSetpoint) {
+                        this.states.thermostatTemperatureSetpoint = thermostatTemperatureSetpoint;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.thermostatTemperatureSetpoint;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.thermostatTemperatureSetpoint;
+                            this.send(msg);
                         }
 
-                        node.updateStatusIcon(node.states);
+                        this.updateStatusIcon(this.states);
                     }
 
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("ThermostatNode(input): ONLINE");
                     let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload);
 
-                    if (node.states.online !== online) {
-                        node.states.online = online;
+                    if (this.states.online !== online) {
+                        this.states.online = online;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.online;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.online;
+                            this.send(msg);
                         }
                     }
                 } else {
@@ -193,9 +191,9 @@ module.exports = function(RED) {
                         return;
                     }
 
-                    let thermostatTemperatureAmbient  = node.states.thermostatTemperatureAmbient;
-                    let thermostatTemperatureSetpoint = node.states.thermostatTemperatureSetpoint;
-                    let online                        = node.states.online;
+                    let thermostatTemperatureAmbient  = this.states.thermostatTemperatureAmbient;
+                    let thermostatTemperatureSetpoint = this.states.thermostatTemperatureSetpoint;
+                    let online                        = this.states.online;
 
                     // thermostatTemperatureAmbient
                     if (object.hasOwnProperty('thermostatTemperatureAmbient')) {
@@ -212,37 +210,37 @@ module.exports = function(RED) {
                         online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
                     }
 
-                    if (node.states.thermostatTemperatureAmbient !== thermostatTemperatureAmbient || node.states.thermostatTemperatureSetpoint !== thermostatTemperatureSetpoint || node.states.online !== online){
-                        node.states.thermostatTemperatureAmbient  = thermostatTemperatureAmbient;
-                        node.states.thermostatTemperatureSetpoint = thermostatTemperatureSetpoint;
-                        node.states.online                        = online;
+                    if (this.states.thermostatTemperatureAmbient !== thermostatTemperatureAmbient || this.states.thermostatTemperatureSetpoint !== thermostatTemperatureSetpoint || this.states.online !== online){
+                        this.states.thermostatTemperatureAmbient  = thermostatTemperatureAmbient;
+                        this.states.thermostatTemperatureSetpoint = thermostatTemperatureSetpoint;
+                        this.states.online                        = online;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states;
+                            this.send(msg);
                         }
 
-                        node.updateStatusIcon(node.states);
+                        this.updateStatusIcon(this.states);
                     }
                 }
             } catch (err) {
                 RED.log.error(err);
             }
-        });
+        }
 
-        this.on('close', function(removed, done) {
+        onClose(removed, done) {
             if (removed) {
                 // this node has been deleted
-                node.clientConn.remove(node, 'thermostat');
+                this.clientConn.remove(this, 'thermostat');
             } else {
                 // this node is being restarted
-                node.clientConn.deregister(node, 'thermostat');
+                this.clientConn.deregister(this, 'thermostat');
             }
 
             done();
-        });
+        }
     }
 
     RED.nodes.registerType("google-thermostat", ThermostatNode);

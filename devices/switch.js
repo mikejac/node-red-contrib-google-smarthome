@@ -25,30 +25,39 @@ module.exports = function(RED) {
      *
      *
      */
-    function SwitchNode(config) {
-        RED.nodes.createNode(this, config);
+    class SwitchNode {
+        constructor(config) {
+            RED.nodes.createNode(this, config);
 
-        this.client     = config.client;
-        this.clientConn = RED.nodes.getNode(this.client);
-        this.topicOut   = config.topic;
-        this.passthru   = config.passthru;
-        this.topicDelim = '/';
+            this.client     = config.client;
+            this.clientConn = RED.nodes.getNode(this.client);
+            this.topicOut   = config.topic;
+            this.passthru   = config.passthru;
+            this.topicDelim = '/';
 
-        if (!this.clientConn) {
-            this.error(RED._("switch.errors.missing-config"));
-            this.status({fill:"red", shape:"dot", text:"Missing config"});
-            return;
-        } else if (typeof this.clientConn.register !== 'function') {
-            this.error(RED._("switch.errors.missing-bridge"));
-            this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;
+            if (!this.clientConn) {
+                this.error(RED._("switch.errors.missing-config"));
+                this.status({fill: "red", shape: "dot", text: "Missing config"});
+                return;
+            } else if (typeof this.clientConn.register !== 'function') {
+                this.error(RED._("switch.errors.missing-bridge"));
+                this.status({fill: "red", shape: "dot", text: "Missing SmartHome"});
+                return;
+            }
+
+            this.states = this.clientConn.register(this, 'switch', config.name);
+
+            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+
+            this.on('input', this.onInput);
+            this.on('close', this.onClose);
         }
 
-        let node = this;
-
-        RED.log.debug("SwitchNode(): node.topicOut = " + node.topicOut);
-
-        this.registerDevice = function (client, name) {
+        /******************************************************************************************************************
+         * called to register device
+         *
+         */
+        registerDevice(client, name) {
             let states = {
                 online: true,
                 on: false
@@ -84,11 +93,11 @@ module.exports = function(RED) {
             return device;
         }
 
-        this.updateStatusIcon = function(states) {
+        updateStatusIcon(states) {
             if (states.on) {
-                node.status({fill: "green", shape: "dot", text: "ON"});
+                this.status({fill: "green", shape: "dot", text: "ON"});
             } else {
-                node.status({fill: "red", shape: "dot", text: "OFF"});
+                this.status({fill: "red", shape: "dot", text: "OFF"});
             }
         }
 
@@ -96,15 +105,15 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function(device) {   // this must be defined before the call to clientConn.register()
+        updated(device) {
             let states = device.states;
             let command = device.command;
             RED.log.debug("SwitchNode(updated): states = " + JSON.stringify(states));
 
-            node.updateStatusIcon(states);
+            this.updateStatusIcon(states);
 
             let msg = {
-                topic: node.topicOut,
+                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
@@ -113,21 +122,17 @@ module.exports = function(RED) {
                 },
             };
 
-            node.send(msg);
+            this.send(msg);
         };
-
-        this.states = this.clientConn.register(this, 'switch', config.name);
-
-        this.status({fill:"yellow", shape:"dot", text:"Ready"});
 
         /******************************************************************************************************************
          * respond to inputs from NodeRED
          *
          */
-        this.on('input', function (msg) {
+        onInput(msg) {
             RED.log.debug("SwitchNode(input)");
 
-            let topicArr = String(msg.topic).split(node.topicDelim);
+            let topicArr = String(msg.topic).split(this.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("SwitchNode(input): topic = " + topic);
@@ -137,30 +142,30 @@ module.exports = function(RED) {
                     RED.log.debug("SwitchNode(input): ON");
                     let on = formats.FormatValue(formats.Formats.BOOL, 'on', msg.payload);
 
-                    if (node.states.on !== on) {
-                        node.states.on = on;
+                    if (this.states.on !== on) {
+                        this.states.on = on;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.on;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.on;
+                            this.send(msg);
                         }
-                        
-                        node.updateStatusIcon(node.states);
+
+                        this.updateStatusIcon(this.states);
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("SwitchNode(input): ONLINE");
                     let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload);
 
-                    if (node.states.online !== online) {
-                        node.states.online = online;
+                    if (this.states.online !== online) {
+                        this.states.online = online;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.online;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.online;
+                            this.send(msg);
                         }
                     }
                 } else {
@@ -174,8 +179,8 @@ module.exports = function(RED) {
                         return;
                     }
 
-                    let on     = node.states.on;
-                    let online = node.states.online;
+                    let on     = this.states.on;
+                    let online = this.states.online;
 
                     // on
                     if (object.hasOwnProperty('on')) {
@@ -187,36 +192,38 @@ module.exports = function(RED) {
                         online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
                     }
 
-                    if (node.states.on !== on || node.states.online !== online){
-                        node.states.on     = on;
-                        node.states.online = online;
+                    if (this.states.on !== on || this.states.online !== online){
+                        this.states.on     = on;
+                        this.states.online = online;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload             = {};
+                            msg.payload.online      = this.states.online;
+                            msg.payload.on          = this.states.on;
+                            this.send(msg);
                         }
 
-                        node.updateStatusIcon(node.states);
+                        this.updateStatusIcon(this.states);
                     }
                 }
             } catch (err) {
                 RED.log.error(err);
             }
-        });
+        }
 
-        this.on('close', function(removed, done) {
+        onClose(removed, done) {
             if (removed) {
                 // this node has been deleted
-                node.clientConn.remove(node, 'switch');
+                this.clientConn.remove(this, 'switch');
             } else {
                 // this node is being restarted
-                node.clientConn.deregister(node, 'switch');
+                this.clientConn.deregister(this, 'switch');
             }
-            
+
             done();
-        });
+        }
     }
 
     RED.nodes.registerType("google-switch", SwitchNode);

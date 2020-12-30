@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-module.exports = function (RED) {
+module.exports = function(RED) {
     "use strict";
 
     const formats = require('../formatvalues.js');
@@ -25,30 +25,39 @@ module.exports = function (RED) {
      *
      *
      */
-    function VacuumNode(config) {
-        RED.nodes.createNode(this, config);
+    class VacuumNode {
+        constructor(config) {
+            RED.nodes.createNode(this, config);
 
-        this.client = config.client;
-        this.clientConn = RED.nodes.getNode(this.client);
-        this.topicOut = config.topic;
-        this.passthru = config.passthru;
-        this.topicDelim = '/';
+            this.client     = config.client;
+            this.clientConn = RED.nodes.getNode(this.client);
+            this.topicOut   = config.topic;
+            this.passthru   = config.passthru;
+            this.topicDelim = '/';
 
-        if (!this.clientConn) {
-            this.error(RED._("vacuum.errors.missing-config"));
-            this.status({ fill: "red", shape: "dot", text: "Missing config" });
-            return;
-        } else if (typeof this.clientConn.register !== 'function') {
-            this.error(RED._("vacuum.errors.missing-bridge"));
-            this.status({ fill: "red", shape: "dot", text: "Missing SmartHome" });
-            return;
+            if (!this.clientConn) {
+                this.error(RED._("vacuum.errors.missing-config"));
+                this.status({fill: "red", shape: "dot", text: "Missing config"});
+                return;
+            } else if (typeof this.clientConn.register !== 'function') {
+                this.error(RED._("vacuum.errors.missing-bridge"));
+                this.status({fill: "red", shape: "dot", text: "Missing SmartHome"});
+                return;
+            }
+
+            this.states = this.clientConn.register(this, 'vacuum', config.name);
+
+            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+
+            this.on('input', this.onInput);
+            this.on('close', this.onClose);
         }
 
-        let node = this;
-
-        RED.log.debug("VacuumNode(): node.topicOut = " + node.topicOut);
-
-        this.registerDevice = function (client, name) {
+        /******************************************************************************************************************
+         * called to register device
+         *
+         */
+        registerDevice(client, name) {
             let states = {
                 online: true,
                 on: false,
@@ -143,11 +152,11 @@ module.exports = function (RED) {
             return device;
         }
 
-        this.updateStatusIcon = function(states) {
+        updateStatusIcon(states) {
             if (states.on) {
-                node.status({ fill: "green", shape: "dot", text: "ON" });
+                this.status({fill: "green", shape: "dot", text: "ON"});
             } else {
-                node.status({ fill: "red", shape: "dot", text: "OFF" });
+                this.status({fill: "red", shape: "dot", text: "OFF"});
             }
         }
 
@@ -155,21 +164,15 @@ module.exports = function (RED) {
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function (device) {   // this must be defined before the call to clientConn.register()
+        updated(device) {
             let states = device.states;
             let command = device.command;
             RED.log.debug("VacuumNode(updated): states = " + JSON.stringify(states));
 
-            node.updateStatusIcon(states);
-
-            //clean up the message
-            if (states.updateModeSettings) {
-                states.currentModeSettings = states.updateModeSettings
-                delete states.updateModeSettings
-            }
+            this.updateStatusIcon(states);
 
             let msg = {
-                topic: node.topicOut,
+                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
@@ -186,22 +189,18 @@ module.exports = function (RED) {
                 },
             };
 
-            node.send(msg);
+            this.send(msg);
         };
-
-        this.states = this.clientConn.register(this, 'vacuum', config.name);
-
-        this.status({ fill: "yellow", shape: "dot", text: "Ready" });
 
         /******************************************************************************************************************
          * respond to inputs from NodeRED
          *
          */
-        this.on('input', function (msg) {
+        onInput(msg) {
             RED.log.debug("VacuumNode(input)");
 
-            let topicArr = String(msg.topic).split(node.topicDelim);
-            let topic = topicArr[topicArr.length - 1];   // get last part of topic
+            let topicArr = String(msg.topic).split(this.topicDelim);
+            let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("VacuumNode(input): topic = " + topic);
 
@@ -210,72 +209,72 @@ module.exports = function (RED) {
                     RED.log.debug("VacuumNode(input): ON");
                     let on = formats.FormatValue(formats.Formats.BOOL, 'on', msg.payload);
 
-                    if (node.states.on !== on) {
-                        node.states.on = on;
+                    if (this.states.on !== on) {
+                        this.states.on = on;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.on;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.on;
+                            this.send(msg);
                         }
 
-                        node.updateStatusIcon(node.states);
+                        this.updateStatusIcon(this.states);
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("VacuumNode(input): ONLINE");
                     let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload);
 
-                    if (node.states.online !== online) {
-                        node.states.online = online;
+                    if (this.states.online !== online) {
+                        this.states.online = online;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.online;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.online;
+                            this.send(msg);
                         }
                     }
                 } else if (topic.toUpperCase() === 'CURRENTMODESETTINGS.POWER') {
                     RED.log.debug("VacuumNode(input): CURRENTMODESETTINGS.POWER");
                     let power = formats.FormatValue(formats.Formats.STRING, 'currentModeSettings.power', msg.payload);
 
-                    if (node.states.currentModeSettings.power !== power) {
-                        node.states.currentModeSettings.power = power;
+                    if (this.states.currentModeSettings.power !== power) {
+                        this.states.currentModeSettings.power = power;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.currentModeSettings.power;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.currentModeSettings.power;
+                            this.send(msg);
                         }
                     }
                 } else if (topic.toUpperCase() === 'CAPACITYREMAINING.RAWVALUE') {
                     RED.log.debug("VacuumNode(input): CAPACITYREMAINING.RAWVALUE");
                     let rawValue = formats.FormatValue(formats.Formats.STRING, 'capacityRemaining.rawValue', msg.payload);
 
-                    if (node.states.capacityRemaining.rawValue !== rawValue) {
-                        node.states.capacityRemaining.rawValue = rawValue;
+                    if (this.states.capacityRemaining.rawValue !== rawValue) {
+                        this.states.capacityRemaining.rawValue = rawValue;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.capacityRemaining.rawValue;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.capacityRemaining.rawValue;
+                            this.send(msg);
                         }
                     }
                 } else if (topic.toUpperCase() === 'ISCHARGING') {
                     RED.log.debug("VacuumNode(input): ISCHARGING");
                     let isCharging = formats.FormatValue(formats.Formats.BOOL, 'isCharging', msg.payload);
 
-                    if (node.states.isCharging !== isCharging) {
-                        node.states.isCharging = isCharging;
+                    if (this.states.isCharging !== isCharging) {
+                        this.states.isCharging = isCharging;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.isCharging;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.isCharging;
+                            this.send(msg);
                         }
                     }
                 } else {
@@ -290,18 +289,18 @@ module.exports = function (RED) {
                     }
 
                     RED.log.debug("VacuumNode object " + JSON.stringify(object));
-                    RED.log.debug("VacuumNode node states = " + JSON.stringify(node.states));
-                    let on = node.states.on;
-                    let online = node.states.online;
+                    RED.log.debug("VacuumNode node states = " + JSON.stringify(this.states));
+                    let on = this.states.on;
+                    let online = this.states.online;
 
                     let currentModeSettings = {};
-                    currentModeSettings.power = node.states.currentModeSettings.power;
+                    currentModeSettings.power = this.states.currentModeSettings.power;
 
                     let capacityRemaining = {};
-                    capacityRemaining.rawValue = node.states.capacityRemaining.rawValue;
+                    capacityRemaining.rawValue = this.states.capacityRemaining.rawValue;
                     capacityRemaining.unit = "PERCENTAGE";
 
-                    let isCharging = node.states.isCharging;
+                    let isCharging = this.states.isCharging;
 
                     // power level 
                     if (object.hasOwnProperty('currentModeSettings') && object.currentModeSettings.hasOwnProperty('power')) {
@@ -328,40 +327,40 @@ module.exports = function (RED) {
                         online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
                     }
 
-                    if (node.states.on !== on || node.states.online !== online || node.states.currentModeSettings.power !== currentModeSettings.power || node.states.capacityRemaining.rawValue !== capacityRemaining.rawValue || node.states.isCharging !== isCharging) {
-                        node.states.on = on;
-                        node.states.online = online;
+                    if (this.states.on !== on || this.states.online !== online || this.states.currentModeSettings.power !== currentModeSettings.power || this.states.capacityRemaining.rawValue !== capacityRemaining.rawValue || this.states.isCharging !== isCharging) {
+                        this.states.on = on;
+                        this.states.online = online;
 
-                        node.states.currentModeSettings = currentModeSettings;
-                        node.states.capacityRemaining = capacityRemaining;
-                        node.states.isCharging = isCharging;
+                        this.states.currentModeSettings = currentModeSettings;
+                        this.states.capacityRemaining = capacityRemaining;
+                        this.states.isCharging = isCharging;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states;
+                            this.send(msg);
                         }
 
-                        node.updateStatusIcon(node.states);
+                        this.updateStatusIcon(this.states);
                     }
                 }
             } catch (err) {
                 RED.log.error(err);
             }
-        });
+        }
 
-        this.on('close', function (removed, done) {
+        onClose(removed, done) {
             if (removed) {
                 // this node has been deleted
-                node.clientConn.remove(node, 'vacuum');
+                this.clientConn.remove(this, 'vacuum');
             } else {
                 // this node is being restarted
-                node.clientConn.deregister(node, 'vacuum');
+                this.clientConn.deregister(this, 'vacuum');
             }
 
             done();
-        });
+        }
     }
 
     RED.nodes.registerType("google-vacuum", VacuumNode);

@@ -25,30 +25,39 @@ module.exports = function(RED) {
      *
      *
      */
-    function SensorNode(config) {
-        RED.nodes.createNode(this, config);
+    class SensorNode {
+        constructor(config) {
+            RED.nodes.createNode(this, config);
 
-        this.client     = config.client;
-        this.clientConn = RED.nodes.getNode(this.client);
-        this.topicOut   = config.topic;
-        this.passthru   = config.passthru;
-        this.topicDelim = '/';
+            this.client     = config.client;
+            this.clientConn = RED.nodes.getNode(this.client);
+            this.topicOut   = config.topic;
+            this.passthru   = config.passthru;
+            this.topicDelim = '/';
 
-        if (!this.clientConn) {
-            this.error(RED._("sensor.errors.missing-config"));
-            this.status({fill:"red", shape:"dot", text:"Missing config"});
-            return;
-        } else if (typeof this.clientConn.register !== 'function') {
-            this.error(RED._("sensor.errors.missing-bridge"));
-            this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;
+            if (!this.clientConn) {
+                this.error(RED._("sensor.errors.missing-config"));
+                this.status({fill: "red", shape: "dot", text: "Missing config"});
+                return;
+            } else if (typeof this.clientConn.register !== 'function') {
+                this.error(RED._("sensor.errors.missing-bridge"));
+                this.status({fill: "red", shape: "dot", text: "Missing SmartHome"});
+                return;
+            }
+
+            this.states = this.clientConn.register(this, 'sensor', config.name);
+
+            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+
+            this.on('input', this.onInput);
+            this.on('close', this.onClose);
         }
 
-        let node = this;
-
-        RED.log.debug("SensorNode(): node.topicOut = " + node.topicOut);
-
-        this.registerDevice = function (client, name) {
+        /******************************************************************************************************************
+         * called to register device
+         *
+         */
+        registerDevice(client, name) {
             let states = {
                 temperatureAmbientCelsius: undefined,
                 temperatureSetpointCelsius: undefined,
@@ -88,28 +97,28 @@ module.exports = function(RED) {
             return device;
         }
 
-        this.updateStatusIcon = function(states) {
+        updateStatusIcon(states) {
             let txt = "";
-            if (node.states.temperatureAmbientCelsius !== undefined)
-                txt += node.states.temperatureAmbientCelsius + "\xB0C ";
+            if (states.temperatureAmbientCelsius !== undefined)
+                txt += states.temperatureAmbientCelsius + "\xB0C ";
 
-            if (node.states.humidityAmbientPercent !== undefined)
-                txt += node.states.humidityAmbientPercent + "% ";
+            if (states.humidityAmbientPercent !== undefined)
+                txt += states.humidityAmbientPercent + "% ";
 
-            node.status({fill: "green", shape: "dot", text: txt});
+            this.status({fill: "green", shape: "dot", text: txt});
         }
 
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function(device) {   // this must be defined before the call to clientConn.register()
+        updated(device) {
             let states = device.states;
             let command = device.command;
             RED.log.debug("SensorNode(updated): states = " + JSON.stringify(states));
 
             let msg = {
-                topic: node.topicOut,
+                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
@@ -118,21 +127,17 @@ module.exports = function(RED) {
                 },
             };
 
-            node.send(msg);
+            this.send(msg);
         };
-
-        this.states = this.clientConn.register(this, 'sensor', config.name);
-
-        this.status({fill:"yellow", shape:"dot", text:"Ready"});
 
         /******************************************************************************************************************
          * respond to inputs from NodeRED
          *
          */
-        this.on('input', function (msg) {
+        onInput(msg) {
             RED.log.debug("SensorNode(input)");
 
-            let topicArr = String(msg.topic).split(node.topicDelim);
+            let topicArr = String(msg.topic).split(this.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("SensorNode(input): topic = " + topic);
@@ -142,34 +147,32 @@ module.exports = function(RED) {
                     RED.log.debug("SensorNode(input): temperatureAmbientCelsius");
                     let temperatureAmbientCelsius = formats.FormatValue(formats.Formats.FLOAT, 'temperatureAmbientCelsius', msg.payload);
 
-                    if (node.states.temperatureAmbientCelsius !== temperatureAmbientCelsius) {
-                        node.states.temperatureAmbientCelsius = temperatureAmbientCelsius;
-                        node.states.temperatureSetpointCelsius = temperatureAmbientCelsius;
+                    if (this.states.temperatureAmbientCelsius !== temperatureAmbientCelsius) {
+                        this.states.temperatureAmbientCelsius = temperatureAmbientCelsius;
+                        this.states.temperatureSetpointCelsius = temperatureAmbientCelsius;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.temperatureAmbientCelsius;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.temperatureAmbientCelsius;
+                            this.send(msg);
                         }
 
-                        node.updateStatusIcon(node.states);
+                        this.updateStatusIcon(this.states);
                     }
                 } else if (topic.toUpperCase() === 'HUMIDITYAMBIENTPERCENT') {
                     RED.log.debug("SensorNode(input): humidityAmbientPercent");
                     let humidityAmbientPercent = Math.round(formats.FormatValue(formats.Formats.INT, 'humidityAmbientPercent', msg.payload));
 
-                    if (node.states.humidityAmbientPercent !== humidityAmbientPercent) {
-                        node.states.humidityAmbientPercent = humidityAmbientPercent;
+                    if (this.states.humidityAmbientPercent !== humidityAmbientPercent) {
+                        this.states.humidityAmbientPercent = humidityAmbientPercent;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.humidityAmbientPercent;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.humidityAmbientPercent;
+                            this.send(msg);
                         }
-
-                        node.updateStatusIcon(node.states);
                     }
                 } else {
                     RED.log.debug("SensorNode(input): some other topic");
@@ -182,8 +185,8 @@ module.exports = function(RED) {
                         return;
                     }
 
-                    let temperatureAmbientCelsius  = node.states.temperatureAmbientCelsius;
-                    let humidityAmbientPercent = node.states.humidityAmbientPercent;
+                    let temperatureAmbientCelsius  = this.states.temperatureAmbientCelsius;
+                    let humidityAmbientPercent = this.states.humidityAmbientPercent;
 
                     // temperatureAmbientCelsius
                     if (object.hasOwnProperty('temperatureAmbientCelsius')) {
@@ -195,37 +198,37 @@ module.exports = function(RED) {
                         humidityAmbientPercent = Math.round(formats.FormatValue(formats.Formats.INT, 'humidityAmbientPercent', object.humidityAmbientPercent));
                     }
 
-                    if (node.states.temperatureAmbientCelsius !== temperatureAmbientCelsius || node.states.humidityAmbientPercent !== humidityAmbientPercent){
-                        node.states.temperatureAmbientCelsius  = temperatureAmbientCelsius;
-                        node.states.temperatureSetpointCelsius = temperatureAmbientCelsius;
-                        node.states.humidityAmbientPercent = humidityAmbientPercent;
+                    if (this.states.temperatureAmbientCelsius !== temperatureAmbientCelsius || this.states.humidityAmbientPercent !== humidityAmbientPercent){
+                        this.states.temperatureAmbientCelsius  = temperatureAmbientCelsius;
+                        this.states.temperatureSetpointCelsius = temperatureAmbientCelsius;
+                        this.states.humidityAmbientPercent = humidityAmbientPercent;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states;
+                            this.send(msg);
                         }
 
-                        node.updateStatusIcon(node.states);
+                        this.updateStatusIcon(this.states);
                     }
                 }
             } catch (err) {
                 RED.log.error(err);
             }
-        });
+        }
 
-        this.on('close', function(removed, done) {
+        onClose(removed, done) {
             if (removed) {
                 // this node has been deleted
-                node.clientConn.remove(node, 'sensor');
+                this.clientConn.remove(this, 'sensor');
             } else {
                 // this node is being restarted
-                node.clientConn.deregister(node, 'sensor');
+                this.clientConn.deregister(this, 'sensor');
             }
 
             done();
-        });
+        }
     }
 
     RED.nodes.registerType("google-sensor", SensorNode);

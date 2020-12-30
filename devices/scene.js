@@ -23,29 +23,38 @@ module.exports = function(RED) {
      *
      *
      */
-    function SceneNode(config) {
-        RED.nodes.createNode(this, config);
+    class SceneNode {
+        constructor(config) {
+            RED.nodes.createNode(this, config);
 
-        this.client     = config.client;
-        this.clientConn = RED.nodes.getNode(this.client);
-        this.topicOut   = config.topic;
-        this.topicDelim = '/';
+            this.client     = config.client;
+            this.clientConn = RED.nodes.getNode(this.client);
+            this.topicOut   = config.topic;
+            this.topicDelim = '/';
 
-        if (!this.clientConn) {
-            this.error(RED._("scene.errors.missing-config"));
-            this.status({fill:"red", shape:"dot", text:"Missing config"});
-            return;
-        } else if (typeof this.clientConn.register !== 'function') {
-            this.error(RED._("scene.errors.missing-bridge"));
-            this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;
+            if (!this.clientConn) {
+                this.error(RED._("scene.errors.missing-config"));
+                this.status({fill: "red", shape: "dot", text: "Missing config"});
+                return;
+            } else if (typeof this.clientConn.register !== 'function') {
+                this.error(RED._("scene.errors.missing-bridge"));
+                this.status({fill: "red", shape: "dot", text: "Missing SmartHome"});
+                return;
+            }
+
+            this.clientConn.register(this, 'scene', config.name, config.scenereversible);
+
+            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+
+            this.on('input', this.onInput);
+            this.on('close', this.onClose);
         }
 
-        let node = this;
-
-        RED.log.debug("SceneNode(): node.topicOut = " + node.topicOut);
-
-        this.registerDevice = function (client, name, sceneReversible) {
+        /******************************************************************************************************************
+         * called to register device
+         *
+         */
+        registerDevice(client, name, sceneReversible) {
             let states = {
                 online: true
             };
@@ -81,49 +90,45 @@ module.exports = function(RED) {
             return device;
         }
 
-        this.updateStatusIcon = function(states) {
+        updateStatusIcon(states) {
             if (!states.deactivate) {
-                node.status({fill:"green", shape:"dot", text:"Activate"});
+                this.status({fill: "green", shape: "dot", text: "Activate"});
             } else {
-                node.status({fill:"red", shape:"dot", text:"Deactivate"});
+                this.status({fill: "red", shape: "dot", text: "Deactivate"});
             }
 
-            setTimeout(function () { node.status({}) }, 10000);
+            setTimeout(() => { this.status({}) }, 10000);
         }
 
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function(device) {   // this must be defined before the call to clientConn.register()
+        updated(device) {
             let states = device.states;
             let command = device.command;
             RED.log.debug("SceneNode(updated): states = " + JSON.stringify(states));
 
-            node.updateStatusIcon(states);
+            this.updateStatusIcon(states);
 
             let msg = {
-                topic: node.topicOut,
+                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: !states.deactivate,
             };
 
-            node.send(msg);
+            this.send(msg);
         };
-
-        this.clientConn.register(this, 'scene', config.name, config.scenereversible);
-
-        this.status({fill:"yellow", shape:"dot", text:"Ready"});
 
         /******************************************************************************************************************
          * respond to inputs from NodeRED
          *
          */
-        this.on('input', function (msg) {
+        onInput(msg) {
             RED.log.debug("SceneNode(input)");
 
-            let topicArr = String(msg.topic).split(node.topicDelim);
+            let topicArr = String(msg.topic).split(this.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("SceneNode(input): topic = " + topic);
@@ -131,21 +136,21 @@ module.exports = function(RED) {
             if (topic.toUpperCase() === 'ON') {
                 RED.log.debug("SceneNode(input): ON");
 
-                node.send(msg);
+                this.send(msg);
             }
-        });
+        }
 
-        this.on('close', function(removed, done) {
+        onClose(removed, done) {
             if (removed) {
                 // this node has been deleted
-                node.clientConn.remove(node, 'scene');
+                this.clientConn.remove(this, 'scene');
             } else {
                 // this node is being restarted
-                node.clientConn.deregister(node, 'scene');
+                this.clientConn.deregister(this, 'scene');
             }
-            
+
             done();
-        });
+        }
     }
 
     RED.nodes.registerType("google-scene", SceneNode);

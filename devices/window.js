@@ -26,34 +26,39 @@ module.exports = function(RED) {
      *
      *
      */
-    function WindowNode(config) {
-        RED.nodes.createNode(this, config);
+    class WindowNode {
+        constructor(config) {
+            RED.nodes.createNode(this, config);
 
-        this.client     = config.client;
-        this.clientConn = RED.nodes.getNode(this.client);
-        this.topicOut   = config.topic;
-        this.passthru   = config.passthru;
-        this.topicDelim = '/';
+            this.client     = config.client;
+            this.clientConn = RED.nodes.getNode(this.client);
+            this.topicOut   = config.topic;
+            this.passthru   = config.passthru;
+            this.topicDelim = '/';
 
-        if (!this.clientConn) {
-            this.error(RED._("window.errors.missing-config"));
-            this.status({fill:"red", shape:"dot", text:"Missing config"});
-            return;
-        } else if (typeof this.clientConn.register !== 'function') {
-            this.error(RED._("window.errors.missing-bridge"));
-            this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;
+            if (!this.clientConn) {
+                this.error(RED._("window.errors.missing-config"));
+                this.status({fill: "red", shape: "dot", text: "Missing config"});
+                return;
+            } else if (typeof this.clientConn.register !== 'function') {
+                this.error(RED._("window.errors.missing-bridge"));
+                this.status({fill: "red", shape: "dot", text: "Missing SmartHome"});
+                return;
+            }
+
+            this.states = this.clientConn.register(this, 'window', config.name);
+
+            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+
+            this.on('input', this.onInput);
+            this.on('close', this.onClose);
         }
-
-        let node = this;
-
-        RED.log.debug("WindowNode(): node.topicOut = " + node.topicOut);
 
         /******************************************************************************************************************
          * called to register device
          *
          */
-        this.registerDevice = function (client, name) {
+        registerDevice(client, name) {
             let states = {
                 online: true,
                 openPercent: 0
@@ -69,7 +74,8 @@ module.exports = function(RED) {
                         name: name
                     },
                     willReportState: true,
-                    attributes: {},
+                    attributes: {
+                    },
                     deviceInfo: {
                         manufacturer: 'Node-RED',
                         model: 'nr-window-v1',
@@ -88,11 +94,11 @@ module.exports = function(RED) {
             return device;
         }
 
-        this.updateStatusIcon = function(states) {
+        updateStatusIcon(states) {
             if (states.openPercent === 0) {
-                node.status({fill:"green", shape:"dot", text:"CLOSED"});
+                this.status({fill: "green", shape: "dot", text: "CLOSED"});
             } else {
-                node.status({fill:"red", shape:"dot", text: util.format("OPEN %d%%", states.openPercent)});
+                this.status({fill: "red", shape: "dot", text: util.format("OPEN %d%%", states.openPercent)});
             }
         }
 
@@ -100,15 +106,15 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function(device) {   // this must be defined before the call to clientConn.register()
+        updated(device) {
             let states = device.states;
             let command = device.command;
             RED.log.debug("WindowNode(updated): states = " + JSON.stringify(states));
 
-            node.updateStatusIcon(states);
+            this.updateStatusIcon(states);
 
             let msg = {
-                topic: node.topicOut,
+                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
@@ -117,21 +123,17 @@ module.exports = function(RED) {
                 },
             };
 
-            node.send(msg);
+            this.send(msg);
         };
-
-        this.states = this.clientConn.register(this, 'window', config.name);
-
-        this.status({fill:"yellow", shape:"dot", text:"Ready"});
 
         /******************************************************************************************************************
          * respond to inputs from NodeRED
          *
          */
-        this.on('input', function (msg) {
+        onInput(msg) {
             RED.log.debug("WindowNode(input)");
 
-            let topicArr = String(msg.topic).split(node.topicDelim);
+            let topicArr = String(msg.topic).split(this.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             RED.log.debug("WindowNode(input): topic = " + topic);
@@ -147,30 +149,30 @@ module.exports = function(RED) {
                     else
                         openPercent = formats.FormatValue(formats.Formats.INT, 'openPercent', msg.payload);
 
-                    if (node.states.openPercent !== openPercent) {
-                        node.states.openPercent = openPercent;
+                    if (this.states.openPercent !== openPercent) {
+                        this.states.openPercent = openPercent;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.openPercent;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.openPercent;
+                            this.send(msg);
                         }
-                    }
 
-                    node.updateStatusIcon(node.states);
+                        this.updateStatusIcon(this.states);
+                    }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("WindowNode(input): ONLINE");
                     let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload);
 
-                    if (node.states.online !== online) {
-                        node.states.online = online;
+                    if (this.states.online !== online) {
+                        this.states.online = online;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states.online;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states.online;
+                            this.send(msg);
                         }
                     }
                 } else {
@@ -184,8 +186,8 @@ module.exports = function(RED) {
                         return;
                     }
 
-                    let openPercent     = node.states.openPercent;
-                    let online = node.states.online;
+                    let openPercent     = this.states.openPercent;
+                    let online = this.states.online;
 
                     // openPercent
                     if (object.hasOwnProperty('openPercent')) {
@@ -202,36 +204,36 @@ module.exports = function(RED) {
                         online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
                     }
 
-                    if (node.states.openPercent !== openPercent || node.states.online !== online){
-                        node.states.openPercent     = openPercent;
-                        node.states.online = online;
+                    if (this.states.openPercent !== openPercent || this.states.online !== online){
+                        this.states.openPercent     = openPercent;
+                        this.states.online = online;
 
-                        node.clientConn.setState(node, node.states);  // tell Google ...
+                        this.clientConn.setState(this, this.states);  // tell Google ...
 
-                        if (node.passthru) {
-                            msg.payload = node.states;
-                            node.send(msg);
+                        if (this.passthru) {
+                            msg.payload = this.states;
+                            this.send(msg);
                         }
 
-                        node.updateStatusIcon(node.states);
+                        this.updateStatusIcon(this.states);
                     }
                 }
             } catch (err) {
                 RED.log.error(err);
             }
-        });
+        }
 
-        this.on('close', function(removed, done) {
+        onClose(removed, done) {
             if (removed) {
                 // this node has been deleted
-                node.clientConn.remove(node, 'window');
+                this.clientConn.remove(this, 'window');
             } else {
                 // this node is being restarted
-                node.clientConn.deregister(node, 'window');
+                this.clientConn.deregister(this, 'window');
             }
-            
+
             done();
-        });
+        }
     }
 
     RED.nodes.registerType("google-window", WindowNode);
