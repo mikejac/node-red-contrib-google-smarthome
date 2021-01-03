@@ -1,0 +1,26 @@
+{
+    "camera": {
+        "label": {
+            "name": "Name",
+            "topic": "Out topic",
+            "hls": "Hls url",
+            "dash": "Dash url",
+            "smooth_stream": "Smooth stream url",
+            "progressive_mp4": "Progressive mp4 url",
+            "auth_token": "Authorization token"
+        },
+        "placeholder": {
+            "name": "Name",
+            "topic": "Outgoing topic",
+            "hls": "Hls url",
+            "dash": "Dash url",
+            "smooth_stream": "Smooth stream url",
+            "progressive_mp4": "Progressive mp4 url",
+            "auth_token": "Authorization token"
+        },
+        "errors": {
+            "missing-config": "Missing SmartHome configuration",
+            "missing-bridge": "Missing SmartHome"
+        }
+    }
+}
