@@ -48,7 +48,6 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.error(RED._("CCHI       camera.errors.missing-bridge"));
             let protocols = [];
             if (this.hlsUrl) {
                 protocols.push('hls');
