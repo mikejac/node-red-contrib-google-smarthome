@@ -126,7 +126,7 @@ module.exports = function(RED) {
         updated(device) {
             let states = device.states;
             let command = device.command;
-            RED.log.debug("OutletNode(updated): states = " + JSON.stringify(states));
+            RED.log.debug("CameraNode(updated): states = " + JSON.stringify(states));
 
             this.updateStatusIcon(states);
 
@@ -155,7 +155,7 @@ module.exports = function(RED) {
             RED.log.debug("CameraNode(input): topic = " + topic);
             try {
                 if (topic.toUpperCase() === 'ONLINE') {
-                    RED.log.debug("OutletNode(input): ONLINE");
+                    RED.log.debug("CameraNode(input): ONLINE");
                     let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload);
 
                     if (this.states.online !== online) {
@@ -169,13 +169,13 @@ module.exports = function(RED) {
                         }
                     }
                 } else {
-                    RED.log.debug("OutletNode(input): some other topic");
+                    RED.log.debug("CameraNode(input): some other topic");
                     let object = {};
 
                     if (typeof msg.payload === 'object') {
                         object = msg.payload;
                     } else {
-                        RED.log.debug("OutletNode(input): typeof payload = " + typeof msg.payload);
+                        RED.log.debug("CameraNode(input): typeof payload = " + typeof msg.payload);
                         return;
                     }
 
@@ -214,6 +214,59 @@ module.exports = function(RED) {
             }
 
             done();
+        }
+
+        getStreamUrl(protocol_type) {
+            switch(protocol_type) {
+                case 'hls':
+                    return this.hlsUrl;
+                case 'dash':
+                    return this.dashUrl;
+                case 'smooth_stream':
+                    return this.smoothStreamUrl;
+                case 'progressive_mp4':
+                    return this.progressiveMp4Url;
+            }
+            return '';
+        }
+
+        execCommand(device, command) {
+            let me = this;
+
+            RED.log.debug("CameraNode:execCommand(command) " +  JSON.stringify(command));
+
+            if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.GetCameraStream') {
+                const params = command.params;
+                if (params.hasOwnProperty('SupportedStreamProtocols')) {
+                    const supported_protocols = params['SupportedStreamProtocols'];
+                    let protocol = '';
+                    let stramUrl = '';
+                    supported_protocols.forEach(function (supported_protocol) {
+                        let url = me.getStreamUrl(supported_protocol);
+                        if (url) {
+                            protocol = supported_protocol;
+                            stramUrl = url;
+                        }
+                    });
+                    if (protocol.length > 0) {
+                        let executionStates = ['online', 'cameraStreamAccessUrl', 'cameraStreamReceiverAppId', 'cameraStreamProtocol'];
+                        if (me.authToken.length > 0) {
+                            executionStates.push('cameraStreamAuthToken');
+                        }
+                        return {
+                            status: 'SUCCESS',
+                            states: {
+                                online: true,
+                                cameraStreamAccessUrl: stramUrl,
+                                cameraStreamReceiverAppId: device.id, // App ID ??
+                                cameraStreamAuthToken: me.authToken,
+                                cameraStreamProtocol: protocol
+                            },
+                            executionStates: executionStates,
+                        };
+                    }
+                }
+            }
         }
     }
 
