@@ -111,6 +111,9 @@ module.exports = function(RED) {
             RED.log.debug("OutletNode(updated): states = " + JSON.stringify(states));
 
             this.updateStatusIcon(states);
+            
+            this.states.on = device.states.on;
+            this.states.online = device.states.online;
 
             let msg = {
                 topic: this.topicOut,

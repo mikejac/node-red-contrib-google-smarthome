@@ -48,6 +48,9 @@ module.exports = function(RED) {
             this.states = this.clientConn.register(this, 'thermostat', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
+            
+            this.on('input', this.onInput);
+            this.on('close', this.onClose);
         }
 
         registerDevice(client, name) {
@@ -91,7 +94,7 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon(states) {
-            this.status({fill: "green", shape: "dot", text: states.thermostatTemperatureSetpoint + " °C"});
+            this.status({fill: "green", shape: "dot", text: "T: " + states.thermostatTemperatureAmbient + " °C | S: " + states.thermostatTemperatureSetpoint + " °C"});
         }
 
         /******************************************************************************************************************
