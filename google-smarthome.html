@@ -153,7 +153,8 @@
     <br>
     <b>Web Server Settings</b><br>
     <code>Use http Node-RED root path</code>: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.<br>
-    <code>Path</code>: The path prefix to use for the requests. Default is /smarthome.<br>
+    <code>Path</code>: Prefix for URLs provided by this module. Default fulfillment URL is https://example.com:3001/smarthome. With a
+          path of "foo" this changes to https://example.com:3001/foo/smarthome. Same for URLs `/oauth` and `/token`.<br>
     <code>Port</code>: TCP port of your choosing for incoming connections from Google. Must match what you entered in the <b>Google on Actions</b> project.<br>
     <code>External SSL offload</code>: If enabled, SSL encryption is not used by the node and must be done elsewhere.
     <code>Public Key</code>: Full path to public key file, e.g. `fullchain.pem` from Let's Encrypt.<br>
