@@ -97,9 +97,9 @@ module.exports = function(RED) {
             return device;
         }
 
-        updateStatusIcon(states) {
+        updateStatusIcon() {
             let txt = "";
-            if (states.temperatureAmbientCelsius !== undefined)
+            if (this.states.temperatureAmbientCelsius !== undefined)
                 txt += states.temperatureAmbientCelsius + "\xB0C ";
 
             if (states.humidityAmbientPercent !== undefined)
@@ -116,6 +116,8 @@ module.exports = function(RED) {
             let states = device.states;
             let command = device.command;
             RED.log.debug("SensorNode(updated): states = " + JSON.stringify(states));
+
+            Object.assign(this.states, states);
 
             let msg = {
                 topic: this.topicOut,
@@ -158,7 +160,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 } else if (topic.toUpperCase() === 'HUMIDITYAMBIENTPERCENT') {
                     RED.log.debug("SensorNode(input): humidityAmbientPercent");
@@ -210,7 +212,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 }
             } catch (err) {

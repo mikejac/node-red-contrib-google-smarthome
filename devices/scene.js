@@ -90,8 +90,8 @@ module.exports = function(RED) {
             return device;
         }
 
-        updateStatusIcon(states) {
-            if (!states.deactivate) {
+        updateStatusIcon() {
+            if (!this.states.deactivate) {
                 this.status({fill: "green", shape: "dot", text: "Activate"});
             } else {
                 this.status({fill: "red", shape: "dot", text: "Deactivate"});
@@ -109,7 +109,9 @@ module.exports = function(RED) {
             let command = device.command;
             RED.log.debug("SceneNode(updated): states = " + JSON.stringify(states));
 
-            this.updateStatusIcon(states);
+            Object.assign(this.states, states);
+
+            this.updateStatusIcon();
 
             let msg = {
                 topic: this.topicOut,

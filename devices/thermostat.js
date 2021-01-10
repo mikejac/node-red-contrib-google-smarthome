@@ -48,7 +48,7 @@ module.exports = function(RED) {
             this.states = this.clientConn.register(this, 'thermostat', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
-            
+
             this.on('input', this.onInput);
             this.on('close', this.onClose);
         }
@@ -93,8 +93,8 @@ module.exports = function(RED) {
             return device;
         }
 
-        updateStatusIcon(states) {
-            this.status({fill: "green", shape: "dot", text: "T: " + states.thermostatTemperatureAmbient + " °C | S: " + states.thermostatTemperatureSetpoint + " °C"});
+        updateStatusIcon() {
+            this.status({fill: "green", shape: "dot", text: "T: " + this.states.thermostatTemperatureAmbient + " °C | S: " + this.states.thermostatTemperatureSetpoint + " °C"});
         }
 
         /******************************************************************************************************************
@@ -106,7 +106,9 @@ module.exports = function(RED) {
             let command = device.command;
             RED.log.debug("ThermostatNode(updated): states = " + JSON.stringify(states));
 
-            this.updateStatusIcon(states);
+            Object.assign(this.states, states);
+
+            this.updateStatusIcon();
 
             let msg = {
                 topic: this.topicOut,
@@ -150,7 +152,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 } else if (topic.toUpperCase() === 'THERMOSTATTEMPERATURESETPOINT') {
                     RED.log.debug("ThermostatNode(input): thermostatTemperatureSetpoint");
@@ -166,7 +168,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
 
                 } else if (topic.toUpperCase() === 'ONLINE') {
@@ -225,7 +227,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 }
             } catch (err) {

@@ -94,8 +94,8 @@ module.exports = function(RED) {
             return device;
         }
 
-        updateStatusIcon(states) {
-            if (states.openPercent === 0) {
+        updateStatusIcon() {
+            if (this.states.openPercent === 0) {
                 this.status({fill: "green", shape: "dot", text: "CLOSED"});
             } else {
                 this.status({fill: "red", shape: "dot", text: util.format("OPEN %d%%", states.openPercent)});
@@ -111,7 +111,9 @@ module.exports = function(RED) {
             let command = device.command;
             RED.log.debug("ShutterNode(updated): states = " + JSON.stringify(states));
 
-            this.updateStatusIcon(states);
+            Object.assign(this.states, states);
+
+            this.updateStatusIcon();
 
             let msg = {
                 topic: this.topicOut,
@@ -159,7 +161,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("ShutterNode(input): ONLINE");
@@ -215,7 +217,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 }
             } catch (err) {

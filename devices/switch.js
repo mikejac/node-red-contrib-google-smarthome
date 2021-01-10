@@ -93,8 +93,8 @@ module.exports = function(RED) {
             return device;
         }
 
-        updateStatusIcon(states) {
-            if (states.on) {
+        updateStatusIcon() {
+            if (this.states.on) {
                 this.status({fill: "green", shape: "dot", text: "ON"});
             } else {
                 this.status({fill: "red", shape: "dot", text: "OFF"});
@@ -110,7 +110,9 @@ module.exports = function(RED) {
             let command = device.command;
             RED.log.debug("SwitchNode(updated): states = " + JSON.stringify(states));
 
-            this.updateStatusIcon(states);
+            Object.assign(this.states, states);
+
+            this.updateStatusIcon();
 
             let msg = {
                 topic: this.topicOut,
@@ -152,7 +154,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("SwitchNode(input): ONLINE");
@@ -205,7 +207,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 }
             } catch (err) {

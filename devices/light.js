@@ -93,8 +93,8 @@ module.exports = function(RED) {
             return device;
         }
 
-        updateStatusIcon(states) {
-            if (states.on) {
+        updateStatusIcon() {
+            if (this.states.on) {
                 this.status({fill: "green", shape: "dot", text: "ON"});
             } else {
                 this.status({fill: "red", shape: "dot", text: "OFF"});
@@ -110,7 +110,9 @@ module.exports = function(RED) {
             let command = device.command;
             RED.log.debug("LightOnOffNode(updated): states = " + JSON.stringify(states));
 
-            this.updateStatusIcon(states);
+            Object.assign(this.states, states);
+
+            this.updateStatusIcon();
 
             let msg = {
                 topic: this.topicOut,
@@ -152,7 +154,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("LightOnOffNode(input): ONLINE");
@@ -205,7 +207,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 }
             } catch (err) {
@@ -304,8 +306,8 @@ module.exports = function(RED) {
             return device;
         }
 
-        updateStatusIcon(states) {
-            if (states.on) {
+        updateStatusIcon() {
+            if (this.states.on) {
                 this.status({fill: "green", shape: "dot", text: "ON"});
             } else {
                 this.status({fill: "red", shape: "dot", text: "OFF"});
@@ -321,7 +323,9 @@ module.exports = function(RED) {
             let command = device.command;
             RED.log.debug("LightDimmableNode(updated): states = " + JSON.stringify(states));
 
-            this.updateStatusIcon(states);
+            Object.assign(this.states, states);
+
+            this.updateStatusIcon();
 
             let msg = {
                 topic: this.topicOut,
@@ -364,7 +368,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("LightDimmableNode(input): ONLINE");
@@ -439,7 +443,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 }
             } catch (err) {
@@ -549,8 +553,8 @@ module.exports = function(RED) {
             return device;
         }
 
-        updateStatusIcon(states) {
-            if (states.on) {
+        updateStatusIcon() {
+            if (this.states.on) {
                 this.status({fill: "green", shape: "dot", text: "ON"});
             } else {
                 this.status({fill: "red", shape: "dot", text: "OFF"});
@@ -566,7 +570,9 @@ module.exports = function(RED) {
             let command = device.command;
             RED.log.debug("LightColorTempNode(updated): states = " + JSON.stringify(states));
 
-            this.updateStatusIcon(states);
+            Object.assign(this.states, states);
+
+            this.updateStatusIcon();
 
             let msg = {
                 topic: this.topicOut,
@@ -610,7 +616,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("LightColorTempNode(input): ONLINE");
@@ -707,7 +713,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 }
             } catch (err) {
@@ -817,8 +823,8 @@ module.exports = function(RED) {
             return device;
         }
 
-        updateStatusIcon(states) {
-            if (states.on) {
+        updateStatusIcon() {
+            if (this.states.on) {
                 this.status({fill: "green", shape: "dot", text: "ON"});
             } else {
                 this.status({fill: "red", shape: "dot", text: "OFF"});
@@ -834,7 +840,9 @@ module.exports = function(RED) {
             let command = device.command;
             RED.log.debug("LightHsvNode(updated): states = " + JSON.stringify(states));
 
-            this.updateStatusIcon(states);
+            Object.assign(this.states, states);
+
+            this.updateStatusIcon();
 
             let msg = {
                 topic: this.topicOut,
@@ -881,7 +889,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("LightHsvNode(input): ONLINE");
@@ -1023,7 +1031,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 }
             } catch (err) {
@@ -1130,8 +1138,8 @@ module.exports = function(RED) {
             return device;
         }
 
-        updateStatusIcon(states) {
-            if (states.on) {
+        updateStatusIcon() {
+            if (this.states.on) {
                 this.status({fill: "green", shape: "dot", text: "ON"});
             } else {
                 this.status({fill: "red", shape: "dot", text: "OFF"});
@@ -1147,7 +1155,9 @@ module.exports = function(RED) {
             let command = device.command;
             RED.log.debug("LightRgbNode(updated): states = " + JSON.stringify(states));
 
-            this.updateStatusIcon(states);
+            Object.assign(this.states, states);
+
+            this.updateStatusIcon();
 
             let msg = {
                 topic: this.topicOut,
@@ -1192,7 +1202,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("LightRgbNode(input): ONLINE");
@@ -1289,7 +1299,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 }
             } catch (err) {
@@ -1401,8 +1411,8 @@ module.exports = function(RED) {
             return device;
         }
 
-        updateStatusIcon(states) {
-            if (states.on) {
+        updateStatusIcon() {
+            if (this.states.on) {
                 this.status({fill: "green", shape: "dot", text: "ON"});
             } else {
                 this.status({fill: "red", shape: "dot", text: "OFF"});
@@ -1418,7 +1428,9 @@ module.exports = function(RED) {
             let command = device.command;
             RED.log.debug("LightRgbTempNode(updated): states = " + JSON.stringify(states));
 
-            this.updateStatusIcon(states);
+            Object.assign(this.states, states);
+
+            this.updateStatusIcon();
 
             let msg = {
                 topic: this.topicOut,
@@ -1464,7 +1476,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     RED.log.debug("LightRgbTempNode(input): ONLINE");
@@ -1583,7 +1595,7 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
 
-                        this.updateStatusIcon(this.states);
+                        this.updateStatusIcon();
                     }
                 }
             } catch (err) {
