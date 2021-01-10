@@ -12,6 +12,7 @@
   - [Color (HSV) Light](#--color-hsv-light)
   - [Color (RGB) Light](#--color-rgb-light)
   - [Color (RGB/Temp) Light](#--color-rgbtemp-light)
+  - [Camera](#--camera)
   - [Outlet](#--outlet)
   - [Thermostat](#--thermostat)
   - [Window](#--window)
@@ -336,6 +337,25 @@ If `topic` is something else then `payload` must be an object and tells all the 
           temperature: 100,
           rgb: 255,
         }
+
+#### - Camera
+`topic` can be `online` or something else.
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the camera.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is something else then `payload` must be an object and tells both the online state of the camera.
+
+        msg.topic = 'set'
+        msg.payload = {
+          online: true
+        }
+
+Example flow:
+
+        [{"id":"980e90e8.c7796","type":"mqtt in","z":"1fdba310.d04cad","name":"","topic":"home/camera/power","qos":"2","datatype":"auto","broker":"","x":530,"y":460,"wires":[["6637f52f.da97cc"]]},{"id":"6f5daaf0.f5dce4","type":"mqtt out","z":"1fdba310.d04cad","name":"","topic":"home/camera/set-power","qos":"","retain":"","broker":"","x":1340,"y":460,"wires":[]},{"id":"9eca40d3.9338b","type":"google-camera","z":"1fdba310.d04cad","client":"","name":"Example Camera","topic":"example","passthru":false,"x":940,"y":460,"wires":[["48723761.d78bb8"]]},{"id":"6637f52f.da97cc","type":"change","z":"1fdba310.d04cad","name":"topic = online","rules":[{"t":"set","p":"topic","pt":"msg","to":"online","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":740,"y":460,"wires":[["9eca40d3.9338b"]]},{"id":"48723761.d78bb8","type":"function","z":"1fdba310.d04cad","name":"Split","func":"return [\n    { payload: msg.payload.online },\n];","outputs":1,"noerr":0,"x":1130,"y":460,"wires":[["6f5daaf0.f5dce4"]],"outputLabels":["online"]}]
 
 #### - Outlet
 `topic` can be `on`, `online` or something else.

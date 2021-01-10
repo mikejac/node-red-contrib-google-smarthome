@@ -20,6 +20,7 @@
       "google-smarthome": "google-smarthome.js",
       "light": "devices/light.js",
       "outlet": "devices/outlet.js",
+      "camera": "devices/camera.js",
       "scene": "devices/scene.js",
       "shutter": "devices/shutter.js",
       "thermostat": "devices/thermostat.js",
