@@ -31,7 +31,7 @@ module.exports.Formats = Formats;
  *
  *
  */
-module.exports.FormatValue = function(format, key, value) {
+module.exports.FormatValue = function FormatValue(format, key, value) {
     if (typeof value === 'string') {
         switch(format) {
             case Formats.BOOL:
@@ -104,7 +104,7 @@ module.exports.FormatValue = function(format, key, value) {
             throw new Error('Type of ' + key + ' is object but it does not have matching property');
         }
     } else {
-        throw new Error('Type of ' + key + ' is not compatible; typeof = ' + typeof value);
+        throw new Error('Type of ' + key + ' is not compatible; typeof = ' + typeof value + "; value = " + JSON.stringify(value));
     }
 }
 
