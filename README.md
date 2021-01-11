@@ -210,7 +210,7 @@ If `topic` is something else then `payload` must be an object and tells all the 
           on: false,
           online: true,
           brightness: 100,
-          temperature: 100
+          temperature: 3000
         }
 
 Example flow:
@@ -334,7 +334,7 @@ If `topic` is something else then `payload` must be an object and tells all the 
           on: false,
           online: true,
           brightness: 100,
-          temperature: 100,
+          temperature: 3000,
           rgb: 255,
         }
 
