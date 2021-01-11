@@ -98,7 +98,7 @@ module.exports = function(RED) {
             if (this.states.openPercent === 0) {
                 this.status({fill: "green", shape: "dot", text: "CLOSED"});
             } else {
-                this.status({fill: "red", shape: "dot", text: util.format("OPEN %d%%", states.openPercent)});
+                this.status({fill: "red", shape: "dot", text: util.format("OPEN %d%%", this.states.openPercent)});
             }
         }
 
