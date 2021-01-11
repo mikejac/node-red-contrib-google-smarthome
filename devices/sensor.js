@@ -100,10 +100,10 @@ module.exports = function(RED) {
         updateStatusIcon() {
             let txt = "";
             if (this.states.temperatureAmbientCelsius !== undefined)
-                txt += states.temperatureAmbientCelsius + "\xB0C ";
+                txt += this.states.temperatureAmbientCelsius + "\xB0C ";
 
-            if (states.humidityAmbientPercent !== undefined)
-                txt += states.humidityAmbientPercent + "% ";
+            if (this.states.humidityAmbientPercent !== undefined)
+                txt += this.states.humidityAmbientPercent + "% ";
 
             this.status({fill: "green", shape: "dot", text: txt});
         }
