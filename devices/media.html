@@ -1,0 +1,418 @@
+<!--
+ NodeRED Google SmartHome
+ Copyright (C) 2020 Claudio Chimera.
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+    Media
+-->
+<script type="text/x-red" data-template-name="google-media">
+    <div class="form-row">
+        <b>Google SmartHome Settings</b>
+    </d iv>
+
+    <div class="form-row">
+        <label for="node-input-client"><i class="fa fa-globe"></i> SmartHome</span></label>
+        <input type="text" id="node-input-client">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="media.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]media.placeholder.name">
+    </div>
+
+    <div class="form-row">
+        <b>Node-RED Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="media.label.topic"></span></label>
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]media.placeholder.topic">
+    </div>
+
+    <div class="form-row" id="device_type" style="background: #fbfbfb">
+        <div class="form-row">
+            <b data-i18n="media.label.device_type"></b>
+        </div>
+
+        <div class="form-row">
+            <select id="node-input-device_type" >
+                <option value="AUDIO_VIDEO_RECEIVER" data-i18n="media.label.audio_video_receiver"></option>
+                <option value="REMOTECONTROL" data-i18n="media.label.remote_control"></option>
+                <option value="SETTOP" data-i18n="media.label.set_top_box"></option>
+                <option value="SOUNDBAR" data-i18n="media.label.soudbar"></option>
+                <option value="SPEAKER" data-i18n="media.label.speaker"></option>
+                <option value="STREAMING_BOX" data-i18n="media.label.streaming_box"></option>
+                <option value="STREAMING_SOUNDBAR" data-i18n="media.label.streaming_soudbar"></option>
+                <option value="STREAMING_STICK" data-i18n="media.label.streaming_stick"></option>
+                <option value="TV" data-i18n="media.label.tv"></option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row" id="apps" style="background: #fbfbfb">
+        <div class="form-row">
+            <b data-i18n="media.label.apps"></b>
+        </div>
+
+        <div class="form-row">
+            <div class="form-row">
+                <label for="node-input-available_applications_file"><i class="fa fa-tasks"></i> <span data-i18n="media.label.available_applications_file"></span></label>
+                <input type="text" id="node-input-available_applications_file" data-i18n="[placeholder]media.placeholder.available_applications_file">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row" id="channels" style="background: #fbfbfb">
+        <div class="form-row">
+            <b data-i18n="media.label.channels"></b>
+        </div>
+
+        <div class="form-row">
+            <div class="form-row">
+                <label for="node-input-available_channels_file"><i class="fa fa-tasks"></i> <span data-i18n="media.label.available_channels_file"></span></label>
+                <input type="text" id="node-input-available_channels_file" data-i18n="[placeholder]media.placeholder.available_channels_file">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row" id="inputs" style="background: #fbfbfb">
+        <div class="form-row">
+            <b data-i18n="media.label.inputs"></b>
+        </div>
+
+        <div class="form-row">
+            <div class="form-row">
+                <label for="node-input-available_inputs_file"><i class="fa fa-tasks"></i> <span data-i18n="media.label.available_inputs_file"></span></label>
+                <input type="text" id="node-input-available_inputs_file" data-i18n="[placeholder]media.placeholder.available_inputs_file">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-command_only_input_selector"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.command_only_input_selector"></label>
+                <input type="checkbox" checked id="node-input-command_only_input_selector" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-ordered_inputs"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.ordered_inputs"></label>
+                <input type="checkbox" checked id="node-input-ordered_inputs" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-row" id="media_state" style="background: #fbfbfb">
+        <div class="form-row">
+            <b data-i18n="media.label.media_state"></b>
+        </div>
+
+        <div class="form-row">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-support_activity_state"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.support_activity_state"></label>
+                <input type="checkbox" checked id="node-input-support_activity_state" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-support_playback_state"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.support_playback_state"></label>
+                <input type="checkbox" checked id="node-input-support_playback_state" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row" id="on-off" style="background: #fbfbfb">
+        <div class="form-row">
+            <b data-i18n="media.label.on_off"></b>
+        </div>
+
+        <div class="form-row">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-command_only_on_off"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.command_only_on_off"></label>
+                <input type="checkbox" checked id="node-input-command_only_on_off" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-query_only_on_off"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.query_only_on_off"></label>
+                <input type="checkbox" checked id="node-input-query_only_on_off" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row" id="transport_control" style="background: #fbfbfb">
+        <div class="form-row">
+            <b data-i18n="media.label.supported_commands"></b>
+        </div>
+
+        <div class="form-row">
+            <select multiple id="node-input-transport_control" >
+                <option value="CAPTION_CONTROL" data-i18n="media.label.caption_control"></option>
+                <option value="NEXT" data-i18n="media.label.next"></option>
+                <option value="PAUSE" data-i18n="media.label.pause"></option>
+                <option value="PREVIOUS" data-i18n="media.label.previous"></option>
+                <option value="RESUME" data-i18n="media.label.resume"></option>
+                <option value="SEEK_RELATIVE" data-i18n="media.label.seek_relative"></option>
+                <option value="SEEK_TO_POSITION" data-i18n="media.label.seek_to_position"></option>
+                <option value="SET_REPEAT" data-i18n="media.label.set_repeat"></option>
+                <option value="SHUFFLE" data-i18n="media.label.shuffle"></option>
+                <option value="STOP" data-i18n="media.label.stop"></option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row" id="volume" style="background: #fbfbfb">
+        <div class="form-row">
+            <b data-i18n="media.label.volume"></b>
+        </div>
+
+        <div class="form-row">
+            <div class="form-row">
+                <label for="node-input-volume_max_level"><i class="fa fa-tasks"></i> <span data-i18n="media.label.volume_max_level"></span></label>
+                <input type="text" id="node-input-volume_max_level" data-i18n="[placeholder]media.placeholder.volume_max_level">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-can_mute_and_unmute"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.can_mute_and_unmute"></label>
+                <input type="checkbox" checked id="node-input-can_mute_and_unmute" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-volume_default_percentage"><i class="fa fa-tasks"></i> <span data-i18n="media.label.volume_default_percentage"></span></label>
+                <input type="text" id="node-input-volume_default_percentage" data-i18n="[placeholder]media.placeholder.volume_default_percentage">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-level_step_size"><i class="fa fa-tasks"></i> <span data-i18n="media.label.level_step_size"></span></label>
+                <input type="text" id="node-input-level_step_size" data-i18n="[placeholder]media.placeholder.level_step_size">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-command_only_volume"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.command_only_volume"></label>
+                <input type="checkbox" checked id="node-input-command_only_volume" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="google-media">
+    <p>A Google Smart Home Media Devices.</p>
+    <p>Supported devices:
+        <ul>
+            <li>Audio Video Receiver</li>
+            <li>Remote Control</li>
+            <li>Set-Top Box</li>
+            <li>Sound Bar</li>
+            <li>Speaker</li>
+            <li>Streaming Box</li>
+            <li>Streaming Sound Bar</li>
+            <li>Streaming Stick</li>
+            <li>TV</li>
+        </ul>
+    <p>
+
+    <h3>Inputs</h3>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">boolean | object</span>
+            </dt>
+            <dd>state to send to Google Smart Home.</dd>
+        </dl>
+
+     <h3>Output</h3>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">object</span>
+            </dt>
+            <dd>state received from Google Smart Home.</dd>
+        </dl>
+
+    <h3>Details</h3>
+        <h4>Node Properties - Google SmartHome Settings</h4>
+        <p><code>SmartHome</code> Configuration node.</p>
+        <p><code>Name</code> Name used by Google Smart Home.</p>
+        <h4>Node Properties - Node-RED Settings</h4>
+        <p><code>Out topic</code> Topic used by this node when sending updates from Google Smart Home.</p>
+        <p><code>Media Device Type</code> The media device type.</p>
+        <p><code>Apps</code> The available channels file location.</p>
+        <p><code>Inputs</code> The available inputs file location.</p>
+        <p><code>Command only input selector</code> Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.</p>
+        <p><code>ordered Inputs</code> True if the list of output is ordered. This also indicates that the 'next' and 'previous' functionality is available.</p>
+        <p><code>Support activity state</code> Indicate if the device can report the activity state.</p>
+        <p><code>Support playback state</code> Indicate if the device can report the current playback state.</p>
+        <p><code>Command only On/Off</code> Indicates if the device can only controlled through commands, and cannot be queried for state information.</p>
+        <p><code>Query only On/Off</code> Indicates if the device can only be queried for state information, and cannot be controlled through commands.</p>
+        <p><code>Supported commands</code> Indicates the supported transport control commands on this device.</p>
+        <p><code>Volume Max level</code> The maximum volume level, assuming a baseline of 0 (mute). Assistant will adjust adverbial commands (e.g. 'make the tv a little louder') accordingly.</p>
+        <p><code>Volume Can mute and unmute</code> Indicates if the device can mute and unmute the volume. Mute is a separate option as the 'mute' behavior takes the volume to 0 while remembering the previous volume, so that unmute restores it. This is reflected in volume state—if volume is 5, and the user mutes, the volume remains 5 and isMuted is true.</p>
+        <p><code>Volume default percentage</code> The volume (in percentage) for the default volume defined by user or manufacturer. The scale must be 0-100.</p>
+        <p><code>Level step size</code> The default step size for relative volume queries like 'volume up on <device_name>.</p>
+        <p><code>command only volume</code> Indicates if the device operates using one-way (true) or two-way (false) communication. For example, if the controller can confirm the new device state after sending the request, this field would be false. If it's not possible to confirm if the request is successfully executed or to get the state of the device (for example, if the device is a traditional infrared remote), set this field to true.</p>
+        <p><code>Pass Through</code> If enabled, incoming messages will be passed onto the output. Be carefull with this setting.</p>
+
+        <p>If <code>msg.topic</code> is <code>on</code> then <code>msg.payload</code> must be boolean and tells the state of the device.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> sets device to on, <code>false</code> sets device to off.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>online</code> then <code>msg.payload</code> must be boolean and tells the online state of the device.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> sets online state to on, <code>false</code> sets online state to off.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is something other than the above topics then <code>msg.payload</code> must be an object and tells both the on state as well as the online state of the media.</p>
+        <dl class="message-properties">
+            <dt>payload.on
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> device on, <code>false</code> device off.</dd>
+            <dt>payload.online
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> sets online state to on, <code>false</code> sets online state to off.</dd>
+        </dl>
+
+        <p><b>Note 1:</b> <code>msg.topic</code> does not have to be exactly as shown above. You can use <code>/</code> as
+        a delimiter and as long as the last part of the topic matches one of the described topics all is good.
+        For example, <code>a/msg/topic/online</code> will be broken down into multiple parts and only the last part, 
+        <code>online</code>, will be tested for a match.</p>
+        <p><b>Note 2:</b> If you set the online state to <code>false</code> then Google Smart Home is not going to be 
+        able to control the media device.</p>
+
+        <h4>Output Messages</h4>
+        <p>Unless <code>Pass Through</code> is enabled, these messages are emitted when Google Smart Home wants to control the media.</p>
+        <dl class="message-properties">
+            <dt>payload.online
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> online state on, <code>false</code> online state off.</dd>
+        </dl>
+
+    <h3>References</h3>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/audiovideoreceiver" target="_new">Smart Home Audio/Video receiver Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/remotecontrol" target="_new">Smart Home remote control Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/settop" target="_new">Smart Home set-top box Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/soudbar" target="_new">Smart Home soundbar Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/speaker" target="_new">Smart Home speaker Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/streamingbox" target="_new">Smart Home streaming box Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/streamingsoundbar" target="_new">Smart Home streaming soundbar Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/streamingstick" target="_new">Smart Home streaming stick Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/tv" target="_new">Smart Home TV Guide</a>.</p>
+        <p><a href="https://www.npmjs.com/package/node-red-contrib-google-smarthome" target="_new">Node Information</a>.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google-media', {
+        category: 'Google_SmartHome-function',
+        paletteLabel: 'Media Device',
+        defaults: {
+            client: {
+                type: "googlesmarthome-client", 
+                required: true
+            },
+            name: {
+                value: "", required:true
+            },
+            topic: {
+                value: "", required:true
+            },
+            device_type: {
+                value: "AUDIO_VIDEO_RECEIVER", required: true
+            },
+            available_applications_file: {
+                value: "", required:false
+            },
+            available_channels_file: {
+                value: "", required:false
+            },
+            available_inputs_file: {
+                value: "", required:false
+            },
+            command_only_input_selector: {
+                value: "", required:false
+            },
+            ordered_inputs: {
+                value: "", required:false
+            },
+            support_activity_state: {
+                value: "", required:false
+            },
+            support_playback_state: {
+                value: "", required:false
+            },
+            command_only_on_off: {
+                value: "", required:false
+            },
+            transport_control: {
+                value: [], required:false
+            },
+            volume_max_level: {
+                value: "", required:false
+            },
+            can_mute_and_unmute: {
+                value: "", required:false
+            },
+            volume_default_percentage: {
+                value: "", required:false
+            },
+            level_step_size: {
+                value: "", required:false
+            },
+            command_only_volume: {
+                value: "", required:false
+            },
+            passthru: {
+                value: false
+            },
+        },
+        inputs: 1,
+        outputs: 1,
+        color:"#C0DEED",
+        icon: "google-smarthome.png",
+        label: function() {
+            return this.name || "Media Device";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : ""
+        },
+        oneditprepare: function() {
+            // Device Type
+            var deviceTypeChanged = function() {
+                var device_type = $("#node-input-device_type").val();
+                if (device_type === "SETTOP") {
+                    $("#inputs").hide();
+                } else {
+                    $("#inputs").show();
+                }
+                if ((device_type === "REMOTECONTROL") || 
+                    (device_type === "SETTOP") ||
+                    (device_type === "TV")) {
+                    $("#channels").show();
+                } else {
+                    $("#channels").hide();
+                }
+            }
+            deviceTypeChanged();
+            $("#node-input-device_type").change(deviceTypeChanged);
+        }
+    })
+</script>
