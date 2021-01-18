@@ -13,7 +13,7 @@
             "streaming_box": "Streaming Box",
             "streaming_soudbar": "Streaming Sound Bar",
             "streaming_stick": "Streaming Stick",
-            "tv": "TV",
+            "tv": "Television",
             "caption_control": "Caption control",
             "next": "Next",
             "pause": "Pause",
@@ -43,7 +43,15 @@
             "inputs": "Inputs",
             "available_inputs_file": "Available inputs file",
             "command_only_input_selector": "Command only input selector",
-            "ordered_inputs": "Ordered inputs"
+            "ordered_inputs": "Ordered inputs",
+            "modes": "Modes",
+            "available_modes_file": "Available modes file",
+            "command_only_modes": "Command only modes",
+            "query_only_modes": "Query only modes",
+            "toggles": "Toggles",
+            "available_toggles_file": "Available toggles file",
+            "command_only_toggles": "Command only toggles",
+            "query_only_toggles": "Query only toggles"
         },
         "placeholder": {
             "name": "Name",
@@ -57,7 +65,9 @@
             "support_playback_state": "Support playback state",
             "available_channels_file": "Available channels file",
             "available_inputs_file": "Available inputs file",
-            "available_applications_file": "Available applications file"
+            "available_applications_file": "Available applications file",
+            "available_modes_file": "Available modes file",
+            "available_toggles_file": "Available toggles file"
         },
         "errors": {
             "missing-config": "Missing SmartHome configuration",

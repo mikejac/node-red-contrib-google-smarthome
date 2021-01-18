@@ -148,13 +148,13 @@
         </div>
     </div>
 
-    <div class="form-row" id="transport_control" style="background: #fbfbfb">
+    <div class="form-row" id="supported_commands" style="background: #fbfbfb">
         <div class="form-row">
             <b data-i18n="media.label.supported_commands"></b>
         </div>
 
         <div class="form-row">
-            <select multiple id="node-input-transport_control" >
+            <select multiple id="node-input-supported_commands" >
                 <option value="CAPTION_CONTROL" data-i18n="media.label.caption_control"></option>
                 <option value="NEXT" data-i18n="media.label.next"></option>
                 <option value="PAUSE" data-i18n="media.label.pause"></option>
@@ -202,6 +202,54 @@
         </div>
     </div>
 
+    <div class="form-row" id="modes" style="background: #fbfbfb">
+        <div class="form-row">
+            <b data-i18n="media.label.modes"></b>
+        </div>
+
+        <div class="form-row">
+            <div class="form-row">
+                <label for="node-input-available_modes_file"><i class="fa fa-tasks"></i> <span data-i18n="media.label.available_modes_file"></span></label>
+                <input type="text" id="node-input-available_modes_file" data-i18n="[placeholder]media.placeholder.available_modes_file">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-command_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.command_only_modes"></label>
+                <input type="checkbox" checked id="node-input-command_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-query_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.query_only_modes"></label>
+                <input type="checkbox" checked id="node-input-query_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-row" id="toggles" style="background: #fbfbfb">
+        <div class="form-row">
+            <b data-i18n="media.label.toggles"></b>
+        </div>
+
+        <div class="form-row">
+            <div class="form-row">
+                <label for="node-input-available_toggles_file"><i class="fa fa-tasks"></i> <span data-i18n="media.label.available_toggles_file"></span></label>
+                <input type="text" id="node-input-available_toggles_file" data-i18n="[placeholder]media.placeholder.available_toggles_file">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-command_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.command_only_toggles"></label>
+                <input type="checkbox" checked id="node-input-command_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-query_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.query_only_toggles"></label>
+                <input type="checkbox" checked id="node-input-query_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+
     <div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
@@ -212,15 +260,15 @@
     <p>A Google Smart Home Media Devices.</p>
     <p>Supported devices:
         <ul>
-            <li>Audio Video Receiver</li>
-            <li>Remote Control</li>
-            <li>Set-Top Box</li>
-            <li>Sound Bar</li>
-            <li>Speaker</li>
-            <li>Streaming Box</li>
-            <li>Streaming Sound Bar</li>
-            <li>Streaming Stick</li>
-            <li>TV</li>
+            <li><b>Audio Video Receiver</b>: Device that takes audio input (for example, HDMI, optical, and RCA) and outputs sound to one or more speakers.</li>
+            <li><b>Remote Control</b>: Media remotes are used to control media devices. Examples of this device type include hubs, universal remotes, and media controllers.</li>
+            <li><b>Set-Top Box</b>: Interactions with Multichannel Video Programming Distributor (MVPD) and set-top-box devices may include controlling media playback.</li>
+            <li><b>Sound Bar</b>: An all-in-one audio device that is often used in conjunction with a TV and has a bar form factor.</li>
+            <li><b>Speaker</b>: This device is a connected speaker that does not split audio into separate channels (for example, between two left and right devices).</li>
+            <li><b>Streaming Box</b>: This device enables streaming services for media and music, often used in conjunction with a display such as a TV. This devices is powered from a constant source, separate from the display device itself.</li>
+            <li><b>Streaming Sound Bar</b>: This device is a combination of speaker and streaming stick or box. This device provides a streaming experience in addition to soundbar capabilities.</li>
+            <li><b>Streaming Stick</b>: This device has a small stick-like form factor that is usually powered by a USB or HDMI cable connected to a display such as a TV.</li>
+            <li><b>Television</b>: Television devices combine a tuner, display, and loudspeakers for the purpose of viewing and hearing media. Examples include smart TV devices.</li>
         </ul>
     <p>
 
@@ -246,21 +294,34 @@
         <p><code>Name</code> Name used by Google Smart Home.</p>
         <h4>Node Properties - Node-RED Settings</h4>
         <p><code>Out topic</code> Topic used by this node when sending updates from Google Smart Home.</p>
-        <p><code>Media Device Type</code> The media device type.</p>
-        <p><code>Apps</code> The available channels file location.</p>
+
+        <p><code>Device Type</code> The media device type.</p>
+        <p><code>Apps</code> The available Apps file location.</p>
+        <p><code>Channels</code> The available channels file location.</p>
         <p><code>Inputs</code> The available inputs file location.</p>
         <p><code>Command only input selector</code> Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.</p>
-        <p><code>ordered Inputs</code> True if the list of output is ordered. This also indicates that the 'next' and 'previous' functionality is available.</p>
+        <p><code>Ordered Inputs</code> True if the list of output is ordered. This also indicates that the 'next' and 'previous' functionality is available.</p>
         <p><code>Support activity state</code> Indicate if the device can report the activity state.</p>
         <p><code>Support playback state</code> Indicate if the device can report the current playback state.</p>
+
         <p><code>Command only On/Off</code> Indicates if the device can only controlled through commands, and cannot be queried for state information.</p>
         <p><code>Query only On/Off</code> Indicates if the device can only be queried for state information, and cannot be controlled through commands.</p>
         <p><code>Supported commands</code> Indicates the supported transport control commands on this device.</p>
+
         <p><code>Volume Max level</code> The maximum volume level, assuming a baseline of 0 (mute). Assistant will adjust adverbial commands (e.g. 'make the tv a little louder') accordingly.</p>
         <p><code>Volume Can mute and unmute</code> Indicates if the device can mute and unmute the volume. Mute is a separate option as the 'mute' behavior takes the volume to 0 while remembering the previous volume, so that unmute restores it. This is reflected in volume state—if volume is 5, and the user mutes, the volume remains 5 and isMuted is true.</p>
         <p><code>Volume default percentage</code> The volume (in percentage) for the default volume defined by user or manufacturer. The scale must be 0-100.</p>
         <p><code>Level step size</code> The default step size for relative volume queries like 'volume up on <device_name>.</p>
         <p><code>command only volume</code> Indicates if the device operates using one-way (true) or two-way (false) communication. For example, if the controller can confirm the new device state after sending the request, this field would be false. If it's not possible to confirm if the request is successfully executed or to get the state of the device (for example, if the device is a traditional infrared remote), set this field to true.</p>
+
+        <p><code>Available modes file</code> The available modes file location.</p>
+        <p><code>Command only modes</code> Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.</p>
+        <p><code>Query only modes</code> Required if the device supports query-only execution. This attribute indicates if the device can only be queried for state information, and cannot be controlled.</p>
+
+        <p><code>Available toggles file</code> The available toggles file location.</p>
+        <p><code>Command only toggles</code> Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.</p>
+        <p><code>Query only toggles</code> Required if the device supports query-only execution. This attribute indicates if the device can only be queried for state information, and cannot be controlled.</p>
+
         <p><code>Pass Through</code> If enabled, incoming messages will be passed onto the output. Be carefull with this setting.</p>
 
         <p>If <code>msg.topic</code> is <code>on</code> then <code>msg.payload</code> must be boolean and tells the state of the device.</p>
@@ -362,7 +423,10 @@
             command_only_on_off: {
                 value: "", required:false
             },
-            transport_control: {
+            query_only_on_off: {
+                value: [], required:false
+            },
+            supported_commands: {
                 value: [], required:false
             },
             volume_max_level: {
@@ -379,6 +443,18 @@
             },
             command_only_volume: {
                 value: "", required:false
+            },
+            command_only_modes: {
+                value: "", required:false
+            },
+            query_only_modes: {
+                value: [], required:false
+            },
+            command_only_toggles: {
+                value: "", required:false
+            },
+            query_only_toggles: {
+                value: [], required:false
             },
             passthru: {
                 value: false
@@ -409,6 +485,14 @@
                     $("#channels").show();
                 } else {
                     $("#channels").hide();
+                }
+                if ((device_type === "REMOTECONTROL") || 
+                    (device_type === "TV")) {
+                    $("#modes").show();
+                    $("#toggles").show();
+                } else {
+                    $("#modes").hide();
+                    $("#toggles").hide();
                 }
             }
             deviceTypeChanged();
