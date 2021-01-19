@@ -33,7 +33,7 @@ module.exports = function(RED) {
             this.clientConn                     = RED.nodes.getNode(this.client);
             this.topicOut                       = config.topic;
             this.device_type					= config.device_type;
-            this.has_applications               = config.has_applications;
+            this.has_apps               = config.has_apps;
             this.available_applications_file    = config.available_applications_file;
             this.has_channels                   = config.has_channels;
             this.available_channels_file        = config.available_channels_file;
@@ -76,7 +76,7 @@ module.exports = function(RED) {
 
             switch (this.device_type) {
                 case "AUDIO_VIDEO_RECEIVER":
-                    // this.has_applications               = true;
+                    // this.has_apps                    = true;
                     this.has_channels                   = false;
                     this.has_inputs                     = true;
                     // this.has_media_state                = true;
@@ -87,7 +87,7 @@ module.exports = function(RED) {
                     this.has_toggles                    = false;
                     break;
                 case "REMOTECONTROL":
-                    this.has_applications               = true;
+                    this.has_apps                       = true;
                     //this.has_channels                   = true;
                     this.has_inputs                     = true;
                     this.has_media_state                = true;
@@ -98,7 +98,7 @@ module.exports = function(RED) {
                     // this.has_toggles                    = true;
                     break;
                 case "SETTOP":
-                    this.has_applications               = true;
+                    this.has_apps                       = true;
                     //this.has_channels                   = true;
                     this.has_inputs                     = true;
                     this.has_media_state                = true;
@@ -109,18 +109,8 @@ module.exports = function(RED) {
                     this.has_toggles                    = false;
                     break;
                 case "SOUNDBAR":
-                    // this.has_applications               = true;
-                    this.has_channels                   = false;
-                    //this.has_inputs                     = true;
-                    this.has_media_state                = true;
-                    //this.has_on_off                     = true;
-                    this.has_transport_control          = true;
-                    this.has_volume                     = true;
-                    this.has_modes                      = false;
-                    this.has_toggles                    = false;
-                    break;
                 case "SPEAKER":
-                    // this.has_applications               = true;
+                    // this.has_apps                     = true;
                     this.has_channels                   = false;
                     //this.has_inputs                     = true;
                     this.has_media_state                = true;
@@ -131,29 +121,9 @@ module.exports = function(RED) {
                     this.has_toggles                    = false;
                     break;
                 case "STREAMING_BOX":
-                    this.has_applications               = true;
-                    this.has_channels                   = false;
-                    //this.has_inputs                     = true;
-                    this.has_media_state                = true;
-                    //this.has_on_off                     = true;
-                    this.has_transport_control          = true;
-                    this.has_volume                     = true;
-                    this.has_modes                      = false;
-                    this.has_toggles                    = false;
-                    break;
                 case "STREAMING_SOUNDBAR":
-                    this.has_applications               = true;
-                    this.has_channels                   = false;
-                    //this.has_inputs                     = true;
-                    this.has_media_state                = true;
-                    //this.has_on_off                     = true;
-                    this.has_transport_control          = true;
-                    this.has_volume                     = true;
-                    this.has_modes                      = false;
-                    this.has_toggles                    = false;
-                    break;
                 case "STREAMING_STICK":
-                    this.has_applications               = true;
+                    this.has_apps                       = true;
                     this.has_channels                   = false;
                     //this.has_inputs                     = true;
                     this.has_media_state                = true;
@@ -164,7 +134,7 @@ module.exports = function(RED) {
                     this.has_toggles                    = false;
                     break;
                 case "TV":
-                    this.has_applications               = true;
+                    this.has_apps                       = true;
                     //this.has_channels                   = true;
                     this.has_inputs                     = true;
                     this.has_media_state                = true;
@@ -229,82 +199,80 @@ module.exports = function(RED) {
         }
 
         updateAttributesForTraits(me, device) {
-            const traits = device.properties.traits;
             let attributes = device.properties.attributes;
 
-            if (traits.includes("action.devices.traits.AppSelector")) {
+            if (me.has_apps) {
                 attributes['availableApplications'] = {};  // TODO read file
             }
-            if (traits.includes("action.devices.traits.InputSelector")) {
+            if (me.has_inputs) {
                 attributes['availableInputs'] = {};  // TODO read file
                 attributes['commandOnlyInputSelector'] = me.command_only_input_selector;
                 attributes['commanorderedInputsOnlyInputSelector'] = me.ordered_inputs;
             }
-            if (traits.includes("action.devices.traits.MediaState")) {
+            if (me.has_media_state) {
                 attributes['supportActivityState'] = me.support_activity_state;
                 attributes['supportPlaybackState'] = me.support_playback_state;
             }
-            if (traits.includes("action.devices.traits.OnOff")) {
+            if (me.has_on_off) {
                 attributes['commandOnlyOnOff'] = me.command_only_on_off;
                 attributes['queryOnlyOnOff'] = me.query_only_on_off;
             }
-            if (traits.includes("action.devices.traits.TransportControl")) {
+            if (me.has_transport_control) {
                 attributes['transportControlSupportedCommands'] = me.supported_commands;
             }
-            if (traits.includes("action.devices.traits.Volume")) {
+            if (me.has_volume) {
                 attributes['volumeMaxLevel'] = me.volume_max_level;
                 attributes['volumeCanMuteAndUnmute'] = me.can_mute_and_unmute;
                 attributes['volumeDefaultPercentage'] = me.volume_default_percentage;
                 attributes['levelStepSize'] = me.level_step_size;
                 attributes['commandOnlyVolume'] = me.command_only_volume;
             }
-            if (traits.includes("action.devices.traits.Toggles")) {
+            if (me.has_toggles) {
                 attributes['availableToggles'] = {}; // TODO read file
                 attributes['commandOnlyToggles'] = me.command_only_toggles;
                 attributes['queryOnlyToggles'] = me.query_only_toggles;
             }
-            if (traits.includes("action.devices.traits.Modes")) {
+            if (me.has_modes) {
                 attributes['availableModes'] = {}; // TODO read file
                 attributes['commandOnlyModes'] = me.command_only_modes;
                 attributes['queryOnlyModes'] = me.query_only_modees;
             }
-            if (traits.includes("action.devices.traits.Channel")) {
+            if (me.has_channels) {
                 attributes['availableChannels'] = {}; // TODO read file
             }
         }
 
         updateStatesForTraits(me, device) {
-            const traits = device.properties.traits;
             let states = device.states;
 
-            if (traits.includes("action.devices.traits.AppSelector")) {
+            if (me.has_apps) {
                 states['currentApplication'] = '';
             }
-            if (traits.includes("action.devices.traits.InputSelector")) {
+            if (me.has_inputs) {
                 states['currentInput'] = '';
             }
-            if (traits.includes("action.devices.traits.MediaState")) {
+            if (me.has_media_state) {
                 // INACTIVE STANDBY ACTIVE
                 states['activityState'] = 'INACTIVE';
                 // PAUSED PLAYING FAST_FORWARDING REWINDING BUFFERING STOPPED
                 states['playbackState'] = 'STOPPED';
             }
-            if (traits.includes("action.devices.traits.OnOff")) {
+            if (me.has_on_off) {
                 states['on'] = false;
             }
-            // if (traits.includes("action.devices.traits.TransportControl")) {
+            // if (me.has_transport_control) {
             // }
-            if (traits.includes("action.devices.traits.Volume")) {
+            if (me.has_volume) {
                 states['currentVolume'] = me.volume_default_percentage;
                 states['isMuted'] = false;
             }
-            if (traits.includes("action.devices.traits.Toggles")) {
+            if (me.has_toggles) {
                 states['currentToggleSettings'] = {}; // TODO Key/value pair with the toggle name of the device as the key, and the current state as the value.
             }
-            if (traits.includes("action.devices.traits.Modes")) {
+            if (me.has_modes) {
                 states['currentModeSettings'] = {}; // TODO Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
             }
-            // if (traits.includes("action.devices.traits.Channel")) {
+            // if (me.has_channels) {
             // }
         }
 
@@ -338,6 +306,10 @@ module.exports = function(RED) {
                 },
             };
 
+            Object.keys(states).forEach(function (key) {
+                msg.payload[key] = states[key];
+             });
+
             this.send(msg);
         };
 
@@ -346,6 +318,7 @@ module.exports = function(RED) {
          *
          */
         onInput(msg) {
+            const me = this;
             RED.log.debug("MediaNode(input)");
 
             let topicArr = String(msg.topic).split(this.topicDelim);
@@ -353,41 +326,40 @@ module.exports = function(RED) {
 
             RED.log.debug("MediaNode(input): topic = " + topic);
             try {
-                if (topic.toUpperCase() === 'ONLINE') {
-                    RED.log.debug("MediaNode(input): ONLINE");
-                    let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload);
+                let state_key = '';
+                Object.keys(this.states).forEach(function (key) {
+                    if (topic.toUpperCase() == key.toUpperCase()) {
+                        state_key = key;
+                        RED.log.debug("MediaNode(input): " + key);
+                    }
+                 });
 
-                    if (this.states.online !== online) {
-                        this.states.online = online;
-
+                 if (state_key !== '') {
+                    RED.log.debug("MediaNode(input): " + state_key.toUpperCase() + ' ' + msg.payload);
+                    const differs = me.setState(state_key, msg.payload, this.states);
+                    if (differs) {
                         this.clientConn.setState(this, this.states);  // tell Google ...
-
+    
                         if (this.passthru) {
-                            msg.payload = this.states.online;
+                            msg.payload = this.states[state_key];
                             this.send(msg);
                         }
+
+                        this.updateStatusIcon();
                     }
                 } else {
                     RED.log.debug("MediaNode(input): some other topic");
-                    let object = {};
-
-                    if (typeof msg.payload === 'object') {
-                        object = msg.payload;
-                    } else {
-                        RED.log.debug("MediaNode(input): typeof payload = " + typeof msg.payload);
-                        return;
-                    }
-
-                    let online = this.states.online;
-
-                    // online
-                    if (object.hasOwnProperty('online')) {
-                        online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
-                    }
-
-                    if (this.states.online !== online){
-                        this.states.online = online;
-
+                    let differs = false;
+                    Object.keys(this.states).forEach(function (key) {
+                        if (msg.payload.hasOwnProperty(key)) {
+                            RED.log.debug("MediaNode(input): set state " + key + ' to ' + msg.payload[key]);
+                            if (me.setState(key, msg.payload[key], me.states)) {
+                                differs = true;
+                            }
+                        }
+                     });
+      
+                    if (differs) {
                         this.clientConn.setState(this, this.states);  // tell Google ...
 
                         if (this.passthru) {
@@ -460,6 +432,31 @@ module.exports = function(RED) {
                     traits.push("action.devices.traits.Toggles");
             }
             return traits;
+        }
+
+        setState(key, value, states) {
+            const old_state = states[key];
+            let val_type = typeof old_state;
+            let new_value = undefined;
+            if (val_type === 'number') {
+                if (value % 1 === 0) {
+                    new_value = formats.FormatValue(formats.Formats.INT, key, value);
+                } else {
+                    new_value = formats.FormatValue(formats.Formats.FLOAT, key, value);
+                }
+            } else if (val_type === 'string') {
+                new_value = formats.FormatValue(formats.Formats.STRING, key, value);
+            } else if (val_type === 'boolean') {
+                new_value = formats.FormatValue(formats.Formats.BOOL, key, value);
+            } else if (val_type === 'object') {
+                new_value = value;
+            }
+            let differs = false;
+            if (new_value !== undefined) {
+                differs = states['key'] === new_value;
+                states['key'] = new_value;
+            }
+            return differs;
         }
 
         execCommand(device, command) {
