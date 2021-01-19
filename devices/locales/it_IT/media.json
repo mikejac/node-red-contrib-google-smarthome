@@ -5,6 +5,7 @@
             "topic": "Oggetto in uscita",
             "device_type": "Tipo dispositivo",
             "volume": "Volume",
+            "transport_control": "Controlli",
             "supported_commands": "Comandi supportati",
             "audio_video_receiver": "Ricevitore Audio/Video",
             "remote_control": "Controllo remoto",

@@ -33,24 +33,33 @@ module.exports = function(RED) {
             this.clientConn                     = RED.nodes.getNode(this.client);
             this.topicOut                       = config.topic;
             this.device_type					= config.device_type;
+            this.has_applications               = config.has_applications;
             this.available_applications_file    = config.available_applications_file;
+            this.has_channels                   = config.has_channels;
             this.available_channels_file        = config.available_channels_file;
+            this.has_inputs                     = config.has_inputs;
             this.available_inputs_file          = config.available_inputs_file;
             this.command_only_input_selector    = config.command_only_input_selector;
             this.ordered_inputs                 = config.ordered_inputs;
+            this.has_media_state                = config.has_media_state;
             this.support_activity_state         = config.support_activity_state;
             this.support_playback_state         = config.support_playback_state;
+            this.has_on_off                     = config.has_on_off;
             this.command_only_on_off            = config.command_only_on_off;
             this.query_only_on_off              = config.query_only_on_off;
+            this.has_transport_control          = config.has_transport_control;
             this.supported_commands             = config.supported_commands;
+            this.has_volume                     = true; // config.has_volume;
             this.volume_max_level               = config.volume_max_level;
             this.can_mute_and_unmute            = config.can_mute_and_unmute;
             this.volume_default_percentage      = config.volume_default_percentage;
             this.level_step_size                = config.level_step_size;
             this.command_only_volume            = config.command_only_volume;
+            this.has_modes                      = config.has_modes;
             this.available_modes_file           = config.available_modes_file;
             this.command_only_modes             = config.command_only_modes;
             this.query_only_modes               = config.query_only_modes;
+            this.has_toggles                    = config.has_toggles;
             this.available_toggles_file         = config.available_toggles_file;
             this.command_only_toggles           = config.command_only_toggles;
             this.query_only_toggles             = config.query_only_toggles;
@@ -64,6 +73,109 @@ module.exports = function(RED) {
                 this.status({fill: "red", shape: "dot", text: "Missing SmartHome"});
                 return;
             }
+
+            switch (this.device_type) {
+                case "AUDIO_VIDEO_RECEIVER":
+                    // this.has_applications               = true;
+                    this.has_channels                   = false;
+                    this.has_inputs                     = true;
+                    // this.has_media_state                = true;
+                    this.has_on_off                     = true;
+                    // this.has_transport_control          = true;
+                    this.has_volume                     = true;
+                    this.has_modes                      = false;
+                    this.has_toggles                    = false;
+                    break;
+                case "REMOTECONTROL":
+                    this.has_applications               = true;
+                    //this.has_channels                   = true;
+                    this.has_inputs                     = true;
+                    this.has_media_state                = true;
+                    this.has_on_off                     = true;
+                    this.has_transport_control          = true;
+                    this.has_volume                     = true;
+                    // this.has_modes                      = true;
+                    // this.has_toggles                    = true;
+                    break;
+                case "SETTOP":
+                    this.has_applications               = true;
+                    //this.has_channels                   = true;
+                    this.has_inputs                     = true;
+                    this.has_media_state                = true;
+                    this.has_on_off                     = true;
+                    this.has_transport_control          = true;
+                    this.has_volume                     = true;
+                    this.has_modes                      = false;
+                    this.has_toggles                    = false;
+                    break;
+                case "SOUNDBAR":
+                    // this.has_applications               = true;
+                    this.has_channels                   = false;
+                    //this.has_inputs                     = true;
+                    this.has_media_state                = true;
+                    //this.has_on_off                     = true;
+                    this.has_transport_control          = true;
+                    this.has_volume                     = true;
+                    this.has_modes                      = false;
+                    this.has_toggles                    = false;
+                    break;
+                case "SPEAKER":
+                    // this.has_applications               = true;
+                    this.has_channels                   = false;
+                    //this.has_inputs                     = true;
+                    this.has_media_state                = true;
+                    //this.has_on_off                     = true;
+                    this.has_transport_control          = true;
+                    this.has_volume                     = true;
+                    this.has_modes                      = false;
+                    this.has_toggles                    = false;
+                    break;
+                case "STREAMING_BOX":
+                    this.has_applications               = true;
+                    this.has_channels                   = false;
+                    //this.has_inputs                     = true;
+                    this.has_media_state                = true;
+                    //this.has_on_off                     = true;
+                    this.has_transport_control          = true;
+                    this.has_volume                     = true;
+                    this.has_modes                      = false;
+                    this.has_toggles                    = false;
+                    break;
+                case "STREAMING_SOUNDBAR":
+                    this.has_applications               = true;
+                    this.has_channels                   = false;
+                    //this.has_inputs                     = true;
+                    this.has_media_state                = true;
+                    //this.has_on_off                     = true;
+                    this.has_transport_control          = true;
+                    this.has_volume                     = true;
+                    this.has_modes                      = false;
+                    this.has_toggles                    = false;
+                    break;
+                case "STREAMING_STICK":
+                    this.has_applications               = true;
+                    this.has_channels                   = false;
+                    //this.has_inputs                     = true;
+                    this.has_media_state                = true;
+                    //this.has_on_off                     = true;
+                    this.has_transport_control          = true;
+                    this.has_volume                     = true;
+                    this.has_modes                      = false;
+                    this.has_toggles                    = false;
+                    break;
+                case "TV":
+                    this.has_applications               = true;
+                    //this.has_channels                   = true;
+                    this.has_inputs                     = true;
+                    this.has_media_state                = true;
+                    this.has_on_off                     = true;
+                    this.has_transport_control          = true;
+                    this.has_volume                     = true;
+                    //this.has_modes                      = true;
+                    //this.has_toggles                    = true;
+                    break;
+            }
+
             this.states = this.clientConn.register(this, 'media', config.name, this);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});

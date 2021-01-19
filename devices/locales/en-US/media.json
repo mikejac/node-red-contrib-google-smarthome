@@ -4,6 +4,7 @@
             "name": "Name",
             "topic": "Out topic",
             "device_type": "Device Type",
+            "transport_control": "Transport control",
             "supported_commands": "Supported Commands",
             "audio_video_receiver": "Audio Video Receiver",
             "remote_control": "Remote Control",
