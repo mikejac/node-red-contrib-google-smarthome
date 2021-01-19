@@ -150,7 +150,7 @@ module.exports = function(RED) {
 
             let error_msg = '';
             if (this.has_apps) {
-                this.available_applications = this.loadJson(this.available_applications_file);
+                this.available_applications = this.loadJson(this.available_applications_file, []);
                 if (this.available_applications === undefined) {
                     error_msg += ' Applications file not found.';
                     RED.log.error("Applications " +  this.available_applications_file + "file not found.")
@@ -160,7 +160,7 @@ module.exports = function(RED) {
             }
 
             if (this.has_channels) {
-                this.available_channels = this.loadJson(this.available_channels_file);
+                this.available_channels = this.loadJson(this.available_channels_file, []);
                 if (this.available_channels === undefined) {
                     error_msg += ' Channels file not found.';
                     RED.log.error("Channels " +  this.available_channels_file + "file not found.")
@@ -170,7 +170,7 @@ module.exports = function(RED) {
             }
 
             if (this.has_inputs) {
-                this.available_inputs = this.loadJson(this.available_inputs_file);
+                this.available_inputs = this.loadJson(this.available_inputs_file, []);
                 if (this.available_inputs === undefined) {
                     error_msg += ' Inputs file not found.';
                     RED.log.error("Inputs " +  this.available_inputs_file + "file not found.")
@@ -180,7 +180,7 @@ module.exports = function(RED) {
             }
 
             if (this.has_modes) {
-                this.available_modes = this.loadJson(this.available_modes_file);
+                this.available_modes = this.loadJson(this.available_modes_file, []);
                 if (this.available_modes === undefined) {
                     error_msg += ' Modes file not found.';
                     RED.log.error("Modes " +  this.available_modes_file + "file not found.")
@@ -190,7 +190,7 @@ module.exports = function(RED) {
             }
 
             if (this.has_toggles) {
-                this.available_toggles = this.loadJson(this.available_toggles_file);
+                this.available_toggles = this.loadJson(this.available_toggles_file, []);
                 if (this.available_toggles === undefined) {
                     error_msg += ' Toggles file not found.';
                     RED.log.error("Toggles " +  this.available_toggles_file + "file not found.")
@@ -516,7 +516,7 @@ module.exports = function(RED) {
             return differs;
         }
 
-        loadJson(filename) {
+        loadJson(filename, defaultValue) {
             if (!filename.startsWith(path.sep)) {
                 const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
@@ -533,12 +533,12 @@ module.exports = function(RED) {
     
                 if (jsonFile === '') {
                     RED.log.debug('MediaNode:loadJson(): empty data');
-                    return {};
+                    return defaultValue;
                 } else {
                     RED.log.debug('MediaNode:loadJson(): data loaded');
                     const json = JSON.parse(jsonFile);
                     RED.log.debug('MediaNode:loadAuth(): json = ' + JSON.stringify(json));
-                    return jsonFile;
+                    return json;
                 }
             }
             catch (err) {
