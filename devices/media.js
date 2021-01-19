@@ -20,6 +20,8 @@ module.exports = function(RED) {
     "use strict";
 
     const formats = require('../formatvalues.js');
+    const fs      = require('fs');
+    const path    = require('path');
 
     /******************************************************************************************************************
      *
@@ -146,9 +148,64 @@ module.exports = function(RED) {
                     break;
             }
 
+            let error_msg = '';
+            if (this.has_apps) {
+                this.available_applications = this.loadJson(this.available_applications_file);
+                if (this.available_applications === undefined) {
+                    error_msg += ' Applications file not found.';
+                    RED.log.error("Applications " +  this.available_applications_file + "file not found.")
+                }
+            } else {
+                this.available_applications = undefined;
+            }
+
+            if (this.has_channels) {
+                this.available_channels = this.loadJson(this.available_channels_file);
+                if (this.available_channels === undefined) {
+                    error_msg += ' Channels file not found.';
+                    RED.log.error("Channels " +  this.available_channels_file + "file not found.")
+                }
+            } else {
+                this.available_channels = undefined;
+            }
+
+            if (this.has_inputs) {
+                this.available_inputs = this.loadJson(this.available_inputs_file);
+                if (this.available_inputs === undefined) {
+                    error_msg += ' Inputs file not found.';
+                    RED.log.error("Inputs " +  this.available_inputs_file + "file not found.")
+                }
+            } else {
+                this.available_inputs = undefined;
+            }
+
+            if (this.has_modes) {
+                this.available_modes = this.loadJson(this.available_modes_file);
+                if (this.available_modes === undefined) {
+                    error_msg += ' Modes file not found.';
+                    RED.log.error("Modes " +  this.available_modes_file + "file not found.")
+                }
+            } else {
+                this.available_modes = undefined;
+            }
+
+            if (this.has_toggles) {
+                this.available_toggles = this.loadJson(this.available_toggles_file);
+                if (this.available_toggles === undefined) {
+                    error_msg += ' Toggles file not found.';
+                    RED.log.error("Toggles " +  this.available_toggles_file + "file not found.")
+                }
+            } else {
+                this.available_toggles = undefined;
+            }
+
             this.states = this.clientConn.register(this, 'media', config.name, this);
 
-            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+            if (error_msg.length() == 0) {
+                this.status({fill: "yellow", shape: "dot", text: "Ready"});
+            } else {
+                this.status({fill: "red", shape: "dot", text: error_msg});
+            }
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
@@ -202,10 +259,10 @@ module.exports = function(RED) {
             let attributes = device.properties.attributes;
 
             if (me.has_apps) {
-                attributes['availableApplications'] = {};  // TODO read file
+                attributes['availableApplications'] = me.available_applications;
             }
             if (me.has_inputs) {
-                attributes['availableInputs'] = {};  // TODO read file
+                attributes['availableInputs'] = me.available_inputs;
                 attributes['commandOnlyInputSelector'] = me.command_only_input_selector;
                 attributes['commanorderedInputsOnlyInputSelector'] = me.ordered_inputs;
             }
@@ -228,17 +285,17 @@ module.exports = function(RED) {
                 attributes['commandOnlyVolume'] = me.command_only_volume;
             }
             if (me.has_toggles) {
-                attributes['availableToggles'] = {}; // TODO read file
+                attributes['availableToggles'] = me.available_toggles;
                 attributes['commandOnlyToggles'] = me.command_only_toggles;
                 attributes['queryOnlyToggles'] = me.query_only_toggles;
             }
             if (me.has_modes) {
-                attributes['availableModes'] = {}; // TODO read file
+                attributes['availableModes'] = me.available_modes;
                 attributes['commandOnlyModes'] = me.command_only_modes;
                 attributes['queryOnlyModes'] = me.query_only_modees;
             }
             if (me.has_channels) {
-                attributes['availableChannels'] = {}; // TODO read file
+                attributes['availableChannels'] = me.available_channels;
             }
         }
 
@@ -457,6 +514,37 @@ module.exports = function(RED) {
                 states['key'] = new_value;
             }
             return differs;
+        }
+
+        loadJson(filename) {
+            if (!filename.startsWith(path.sep)) {
+                const userDir = RED.settings.userDir;
+                filename = path.join(userDir, filename);
+            }
+            RED.log.debug('MediaNode:loadJson(): loading ' + filename);
+        
+            try {    
+                let jsonFile = fs.readFileSync(
+                    filename,
+                    {
+                        'encoding': 'utf8',
+                        'flag': fs.constants.R_OK | fs.constants.W_OK | fs.constants.O_CREAT
+                    });
+    
+                if (jsonFile === '') {
+                    RED.log.debug('MediaNode:loadJson(): empty data');
+                    return {};
+                } else {
+                    RED.log.debug('MediaNode:loadJson(): data loaded');
+                    const json = JSON.parse(jsonFile);
+                    RED.log.debug('MediaNode:loadAuth(): json = ' + JSON.stringify(json));
+                    return jsonFile;
+                }
+            }
+            catch (err) {
+                RED.log.error('Error on loading ' + filename + ': ' + err.toString());
+                return undefined;
+            }
         }
 
         execCommand(device, command) {
