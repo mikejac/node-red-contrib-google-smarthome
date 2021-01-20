@@ -552,7 +552,8 @@ module.exports = function(RED) {
         execCommand(device, command) {
             const ok_result = {
                 status: 'SUCCESS',
-                states: this.states
+                states: this.states,
+                executionStates: Object.keys(this.states)
             };
 
             RED.log.debug("MediaNode:execCommand(command) " +  JSON.stringify(command));
