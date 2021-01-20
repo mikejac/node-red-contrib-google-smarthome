@@ -221,13 +221,15 @@ module.exports = function(RED) {
                 online: true
             };
 
+            const default_name = me.getDefaultName(me.device_type);
+            const default_name_type = default_name.replace(/\s+/g, '-').toLowerCase();
             let device = {
                 id: client.id,
                 properties: {
                     type: 'action.devices.types.' + me.device_type,
                     traits: me.getTraits(me.device_type),
                     name: {
-                        defaultNames: ["Node-RED " + me.getDefaultName(me.device_type)],
+                        defaultNames: ["Node-RED " + default_name],
                         name: name
                     },
                     willReportState: true,
@@ -235,13 +237,13 @@ module.exports = function(RED) {
                     },
                     deviceInfo: {
                         manufacturer: 'Node-RED',
-                        model: 'nr-media-v1',
+                        model: 'nr-' + default_name_type + '-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
                     },
                     customData: {
                         "nodeid": client.id,
-                        "type": 'media'
+                        "type": default_name_type
                     }
                 }
             };
@@ -548,36 +550,35 @@ module.exports = function(RED) {
         }
 
         execCommand(device, command) {
-            let me = this;
+            const ok_result = {
+                status: 'SUCCESS',
+                states: this.states
+            };
 
             RED.log.debug("MediaNode:execCommand(command) " +  JSON.stringify(command));
+            RED.log.debug("MediaNode:execCommand(states) " +  JSON.stringify(this.states));
+            // RED.log.debug("MediaNode:execCommand(device) " +  JSON.stringify(device));
 
             // Applications
             if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.appInstall') {
                 const params = command.params;
                 if (params.hasOwnProperty('newApplication')) {
                     const newApplication = params['newApplication'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.appSearch') {
                 const params = command.params;
                 if (params.hasOwnProperty('newApplication')) {
                     const newApplication = params['newApplication'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.appSelect') {
                 const params = command.params;
                 if (params.hasOwnProperty('newApplication')) {
                     const newApplication = params['newApplication'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
             // Inputs
@@ -585,140 +586,100 @@ module.exports = function(RED) {
                 const params = command.params;
                 if (params.hasOwnProperty('newInput')) {
                     const newInput = params['newInput'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.NextInput') {
-                return {
-                    status: 'SUCCESS'
-                };
+                return ok_result;
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.PreviousInput') {
-                return {
-                    status: 'SUCCESS'
-                };
+                return ok_result;
             }
             // On/Off
-            else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.OnOff') {
+            /*else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.OnOff') {
                 const params = command.params;
                 if (params.hasOwnProperty('on')) {
                     const on_param = params['on'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
-            }
+            }*/
             // TransportControl
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.mediaStop') {
-                return {
-                    status: 'SUCCESS'
-                };
+                return ok_result;
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.mediaNext') {
-                return {
-                    status: 'SUCCESS'
-                };
+                return ok_result;
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.mediaPrevious') {
-                return {
-                    status: 'SUCCESS'
-                };
+                return ok_result;
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.mediaPause') {
-                return {
-                    status: 'SUCCESS'
-                };
+                return ok_result;
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.mediaResume') {
-                return {
-                    status: 'SUCCESS'
-                };
+                return ok_result;
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.mediaSeekRelative') {
                 const params = command.params;
                 if (params.hasOwnProperty('relativePositionMs')) {
                     const relative_position_ms = params['relativePositionMs'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.mediaSeekToPosition') {
                 const params = command.params;
                 if (params.hasOwnProperty('absPositionMs')) {
                     const abs_position_ms = params['absPositionMs'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.mediaRepeatMode') {
                 const params = command.params;
                 if (params.hasOwnProperty('isOn')) {
                     const is_on = params['isOn'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
                 if (params.hasOwnProperty('isSingle')) {
                     const is_single = params['isSingle'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.mediaShuffle') {
-                return {
-                    status: 'SUCCESS'
-                };
+                return ok_result;
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.mediaClosedCaptioningOn') {
                 const params = command.params;
                 if (params.hasOwnProperty('closedCaptioningLanguage')) {
                     const closedCaptioningLanguage = params['closedCaptioningLanguage'];
-                    // TODO
                 }
                 if (params.hasOwnProperty('userQueryLanguage')) {
                     const userQueryLanguage = params['userQueryLanguage'];
-                    // TODO
                 }
-                return {
-                    status: 'SUCCESS'
-                };
+                return ok_result;
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.mediaClosedCaptioningOff') {
-                return {
-                    status: 'SUCCESS'
-                };
+                return ok_result;
             }
             // Volume
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.mute') {
                 const params = command.params;
                 if (params.hasOwnProperty('mute')) {
                     const mute = params['mute'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.setVolume') {
                 const params = command.params;
                 if (params.hasOwnProperty('volumeLevel')) {
                     const volumeLevel = params['volumeLevel'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.volumeRelative') {
                 const params = command.params;
                 if (params.hasOwnProperty('relativeSteps')) {
                     const relativeSteps = params['relativeSteps'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
             // Channels
@@ -726,42 +687,31 @@ module.exports = function(RED) {
                 const params = command.params;
                 if (params.hasOwnProperty('channelCode')) {
                     const channelCode = params['channelCode'];
-                    // TODO
                 }
                 if (params.hasOwnProperty('channelName')) {
                     const channelName = params['channelName'];
-                    // TODO
                 }
                 if (params.hasOwnProperty('channelNumber')) {
                     const channelNumber = params['channelNumber'];
-                    // TODO
                 }
-                return {
-                    status: 'SUCCESS'
-                };
+                return ok_result;
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.relativeChannel') {
                 const params = command.params;
                 if (params.hasOwnProperty('relativeChannelChange')) {
                     const relativeChannelChange = params['relativeChannelChange'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.returnChannel') {
-                return {
-                    status: 'SUCCESS'
-                };
+                return ok_result;
             }
             // Modes
             else if (command.hasOwnProperty('params') && command.command == 'action.devices.commands.SetModes') {
                 const params = command.params;
                 if (params.hasOwnProperty('updateModeSettings')) {
                     const updateModeSettings = params['updateModeSettings'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
             // Traits
@@ -769,9 +719,7 @@ module.exports = function(RED) {
                 const params = command.params;
                 if (params.hasOwnProperty('updateToggleSettings')) {
                     const updateToggleSettings = params['updateToggleSettings'];
-                    return {
-                        status: 'SUCCESS'
-                    };
+                    return ok_result;
                 }
             }
         }
