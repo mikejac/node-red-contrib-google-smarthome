@@ -359,6 +359,86 @@
             <dd><code>true</code> sets online state to on, <code>false</code> sets online state to off.</dd>
         </dl>
 
+        <p>If <code>msg.topic</code> is <code>applications</code> and the <code>msg.payload</code> is a string or a json object, the applications list is saved to the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string | json</span>
+            </dt>
+            <dd>Save the applications to the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>applications</code> and the <code>msg.payload</code> is not defined, the applications list is loaded from the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">undefined</span>
+            </dt>
+            <dd>Load the applications from the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>channels</code> and the <code>msg.payload</code> is a string or a json object, the available channel are saved to the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string | json</span>
+            </dt>
+            <dd>Save the channels to the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>channels</code> and the <code>msg.payload</code> is not defined, the available channel are loaded from the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">undefined</span>
+            </dt>
+            <dd>Load the channels from the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>inputs</code> and the <code>msg.payload</code> is a string or a json object, the available inputs are saved to the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string | json</span>
+            </dt>
+            <dd>Save the inputs to the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>inputs</code> and the <code>msg.payload</code> is not defined, the available inputs are loaded from the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">undefined</span>
+            </dt>
+            <dd>Load the inputs from the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>modes</code> and the <code>msg.payload</code> is a string or a json object, the available modes are saved to the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string | json</span>
+            </dt>
+            <dd>Save the modes to the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>modes</code> and the <code>msg.payload</code> is not defined, the available modes are loaded from the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">undefined</span>
+            </dt>
+            <dd>Load the modes from the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>traits</code> and the <code>msg.payload</code> is a string or a json object, the available traits are saved to the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string | json</span>
+            </dt>
+            <dd>Save the traits to the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>traits</code> and the <code>msg.payload</code> is not defined, the available traits are loaded from the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">undefined</span>
+            </dt>
+            <dd>Load the traits from the file.</dd>
+        </dl>
+
         <p>If <code>msg.topic</code> is something other than the above topics then <code>msg.payload</code> must be an object and tells both the on state as well as the online state of the media.</p>
         <dl class="message-properties">
             <dt>payload.on

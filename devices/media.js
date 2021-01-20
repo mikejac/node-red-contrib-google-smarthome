@@ -157,6 +157,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_applications = undefined;
+                RED.log.debug("Applications disabled");
             }
 
             if (this.has_channels) {
@@ -167,6 +168,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_channels = undefined;
+                RED.log.debug("Channels disabled");
             }
 
             if (this.has_inputs) {
@@ -177,6 +179,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_inputs = undefined;
+                RED.log.debug("Inputs disabled");
             }
 
             if (this.has_modes) {
@@ -187,6 +190,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_modes = undefined;
+                RED.log.debug("Modes disabled");
             }
 
             if (this.has_toggles) {
@@ -197,6 +201,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_toggles = undefined;
+                RED.log.debug("Toggles disabled");
             }
 
             this.states = this.clientConn.register(this, 'media', config.name, this);
@@ -385,48 +390,140 @@ module.exports = function(RED) {
 
             RED.log.debug("MediaNode(input): topic = " + topic);
             try {
-                let state_key = '';
-                Object.keys(this.states).forEach(function (key) {
-                    if (topic.toUpperCase() == key.toUpperCase()) {
-                        state_key = key;
-                        RED.log.debug("MediaNode(input): " + key);
-                    }
-                 });
-
-                 if (state_key !== '') {
-                    const differs = me.setState(state_key, msg.payload, this.states);
-                    if (differs) {
-                        RED.log.debug("MediaNode(input): " + state_key + ' ' + msg.payload);
-                        this.clientConn.setState(this, this.states);  // tell Google ...
-    
-                        if (this.passthru) {
-                            msg.payload = this.states[state_key];
-                            this.send(msg);
-                        }
-
-                        this.updateStatusIcon();
-                    }
-                } else {
-                    RED.log.debug("MediaNode(input): some other topic");
-                    let differs = false;
-                    Object.keys(this.states).forEach(function (key) {
-                        if (msg.payload.hasOwnProperty(key)) {
-                            if (me.setState(key, msg.payload[key], me.states)) {
-                                RED.log.debug("MediaNode(input): set state " + key + ' to ' + msg.payload[key]);
-                                differs = true;
+                if (topic.toUpperCase() === 'APPLICATIONS') {
+                    if (this.has_apps) {
+                        if (typeof msg.payload === undefined) {
+                            this.available_applications = this.loadJson(this.available_applications_file, []);
+                            if (this.available_applications === undefined) {
+                                RED.log.error("Applications " +  this.available_applications_file + "file not found.")
+                            }
+                        } else {
+                            if (!this.writeJson(this.available_applications_file, msg.payload)) {
+                                RED.log.error("Error saving Applications to file " + this.available_applications_file);
+                            } else {
+                                this.available_applications = msg.payload;
                             }
                         }
-                     });
-      
-                    if (differs) {
-                        this.clientConn.setState(this, this.states);  // tell Google ...
-
-                        if (this.passthru) {
-                            msg.payload = this.states;
-                            this.send(msg);
+                    } else {
+                        this.available_applications = undefined;
+                        RED.log.error("Applications disabled");
+                    }
+                } else if (topic.toUpperCase() === 'CHANNELS') {
+                    if (this.has_channels) {
+                        if (typeof msg.payload === undefined) {
+                            this.available_channels = this.loadJson(this.available_channels_file, []);
+                            if (this.available_channels === undefined) {
+                                RED.log.error("Channels " +  this.available_channels_file + "file not found.")
+                            }
+                        } else {
+                            if (!this.writeJson(this.available_channels_file, msg.payload)) {
+                                RED.log.error("Error saving Channels to file " + this.available_channels_file);
+                            } else {
+                                this.available_channels = msg.payload;
+                            }
                         }
+                    } else {
+                        this.available_channels = undefined;
+                        RED.log.error("Channels disabled");
+                    }
+                } else if (topic.toUpperCase() === 'INPUTS') {
+                    if (this.has_inputs) {
+                        if (typeof msg.payload === undefined) {
+                            this.available_inputs = this.loadJson(this.available_inputs_file, []);
+                            if (this.available_inputs === undefined) {
+                                RED.log.error("Inputs " +  this.available_inputs_file + "file not found.")
+                            }
+                        } else {
+                            if (!this.writeJson(this.available_inputs_file, msg.payload)) {
+                                RED.log.error("Error saving Inputs to file " + this.available_inputs_file);
+                            } else {
+                                this.available_inputs = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.available_inputs = undefined;
+                        RED.log.error("Inputs disabled");
+                    }
+                } else if (topic.toUpperCase() === 'MODES') {
+                    if (this.has_modes) {
+                        if (typeof msg.payload === undefined) {
+                            this.available_modes = this.loadJson(this.available_modes_file, []);
+                            if (this.available_modes === undefined) {
+                                RED.log.error("Modes " +  this.available_modes_file + "file not found.")
+                            }
+                        } else {
+                            if (!this.writeJson(this.available_modes_file, msg.payload)) {
+                                RED.log.error("Error saving Modes to file " + this.available_modes_file);
+                            } else {
+                                this.available_modes = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.available_modes = undefined;
+                        RED.log.error("Modes disabled");
+                    }
+                } else if (topic.toUpperCase() === 'TRAITS') {
+                    if (this.has_traits) {
+                        if (typeof msg.payload === undefined) {
+                            this.available_traits = this.loadJson(this.available_traits_file, []);
+                            if (this.available_traits === undefined) {
+                                RED.log.error("Traits " +  this.available_traits_file + "file not found.")
+                            }
+                        } else {
+                            if (!this.writeJson(this.available_traits_file, msg.payload)) {
+                                RED.log.error("Error saving Traits to file " + this.available_traits_file);
+                            } else {
+                                this.available_traits = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.available_traits = undefined;
+                        RED.log.error("Traits disabled");
+                    }
+                } else {
+                    let state_key = '';
+                    Object.keys(this.states).forEach(function (key) {
+                        if (topic.toUpperCase() == key.toUpperCase()) {
+                            state_key = key;
+                            RED.log.debug("MediaNode(input): " + key);
+                        }
+                    });
 
-                        this.updateStatusIcon();
+                    if (state_key !== '') {
+                        const differs = me.setState(state_key, msg.payload, this.states);
+                        if (differs) {
+                            RED.log.debug("MediaNode(input): " + state_key + ' ' + msg.payload);
+                            this.clientConn.setState(this, this.states);  // tell Google ...
+        
+                            if (this.passthru) {
+                                msg.payload = this.states[state_key];
+                                this.send(msg);
+                            }
+
+                            this.updateStatusIcon();
+                        }
+                    } else {
+                        RED.log.debug("MediaNode(input): some other topic");
+                        let differs = false;
+                        Object.keys(this.states).forEach(function (key) {
+                            if (msg.payload.hasOwnProperty(key)) {
+                                if (me.setState(key, msg.payload[key], me.states)) {
+                                    RED.log.debug("MediaNode(input): set state " + key + ' to ' + msg.payload[key]);
+                                    differs = true;
+                                }
+                            }
+                        });
+        
+                        if (differs) {
+                            this.clientConn.setState(this, this.states);  // tell Google ...
+
+                            if (this.passthru) {
+                                msg.payload = this.states;
+                                this.send(msg);
+                            }
+
+                            this.updateStatusIcon();
+                        }
                     }
                 }
             } catch (err) {
@@ -546,6 +643,33 @@ module.exports = function(RED) {
             catch (err) {
                 RED.log.error('Error on loading ' + filename + ': ' + err.toString());
                 return undefined;
+            }
+        }
+
+        writeJson(filename, value) {
+            if (!filename.startsWith(path.sep)) {
+                const userDir = RED.settings.userDir;
+                filename = path.join(userDir, filename);
+            }
+            RED.log.debug('MediaNode:writeJson(): loading ' + filename);
+            if (typeof value === 'object') {
+                value = JSON.stringify(value);
+            }
+            try {    
+                fs.writeFileSync(
+                    filename,
+                    value,
+                    {
+                        'encoding': 'utf8',
+                        'flag': fs.constants.W_OK | fs.constants.O_CREAT
+                    });
+    
+                RED.log.debug('MediaNode:writeJson(): data saved');
+                return true;
+            }
+            catch (err) {
+                RED.log.error('Error on saving ' + filename + ': ' + err.toString());
+                return false;
             }
         }
 
