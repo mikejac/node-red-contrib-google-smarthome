@@ -573,6 +573,141 @@ If `topic` is something else then `payload` must be an object and tells both the
           online: true
         }
 
+#### - Audio/Video Receiver
+#### - Remote Control
+#### - Set-Top Box
+#### - Sound Bar
+#### - Speaker
+#### - Streaming Box
+#### - Streaming Sound Bar
+#### - Streaming Stick
+#### - Television
+`topic` can be `currentApplication`, `currentInput`, `activityState`, `playbackState`,
+`on`, `currentVolume`, `isMuted`, `toggles`, `modes` or something else.
+
+If `topic` is `currentApplication` then `payload` must be a string and indicates the current application running.
+
+        msg.topic = 'currentApplication'
+        msg.payload = 'yourube'
+
+If `topic` is `currentInput` then `payload` must be a string and indicates the current input selected.
+
+        msg.topic = 'currentInput'
+        msg.payload = 'hdmi_1'
+
+If `topic` is `activityState` then `payload` must be a string and indicates the active state of the media device. Supported values are `INACTIVE`, `STANDBY`, `ACTIVE`.
+
+        msg.topic = 'activityState'
+        msg.payload = 'ACTIVE'
+
+If `topic` is `playbackState` then `payload` must be a string and indicates the playback state of the media device. Supported values are `PAUSED`, `PLAYING`, `FAST_FORWARDING`, `REWINDING`, `BUFFERING`, `STOPPED`.
+
+        msg.topic = 'playbackState'
+        msg.payload = 'PAUSED'
+
+If `topic` is `on` then `payload` must be boolean and tells the state of the media devices.
+
+        msg.topic = 'on'
+        msg.payload = true
+
+If `topic` is `currentVolume` then `payload` must be an integer and indicates the current volume level.
+
+        msg.topic = 'currentVolume'
+        msg.payload = 5
+
+If `topic` is `isMuted` then `payload` must be boolean and tells the mute state of the media devices.
+
+        msg.topic = 'isMuted'
+        msg.payload = true
+
+If `topic` is `currentModeSettings` then `payload` must be an object and indicates the modes state of the media device.
+
+        msg.topic = 'currentModeSettings'
+        msg.payload = {
+                "load_mode": "small_load",
+                "temp_mode": "cold_temp"
+        }
+
+If `topic` is `currentToggleSettings` then `payload` must be an object and indicates the toggles state of the media device.
+
+        msg.topic = 'currentToggleSettings'
+        msg.payload = {
+                "sterilization_toggle": true,
+                "energysaving_toggle": false
+        }
+
+If `topic` is `applications` then `payload` must be json string, json object and tells the available applications of the media devices. The available applications will be saved on the applications file.
+
+        msg.topic = 'applications'
+        msg.payload = {....}
+
+If `topic` is `applications` then `payload` is undefined the available applications will be loaded from the applications file.
+
+        msg.topic = 'applications'
+
+If `topic` is `channels` then `payload` must be json string, json object and tells the available channels of the media devices. The available channels will be saved on the channels file.
+
+        msg.topic = 'channels'
+        msg.payload = {....}
+
+If `topic` is `channels` then `payload` is undefined the available channels will be loaded from the channels file.
+
+        msg.topic = 'channels'
+
+If `topic` is `inputs` then `payload` must be json string, json object and tells the available inputs of the media devices. The available inputs will be saved on the inputs file.
+
+        msg.topic = 'inputs'
+        msg.payload = {....}
+
+If `topic` is `inputs` then `payload` is undefined the available inputs will be loaded from the inputs file.
+
+        msg.topic = 'inputs'
+
+If `topic` is `modes` then `payload` must be json string, json object and tells the available modes of the media devices. The available modes will be saved on the modes file.
+
+        msg.topic = 'modes'
+        msg.payload = {....}
+
+If `topic` is `modes` then `payload` is undefined the available modes will be loaded from the modes file.
+
+        msg.topic = 'modes'
+
+If `topic` is `toggles` then `payload` must be json string, json object and tells the available toggles of the media devices. The available toggles will be saved on the toggles file.
+
+        msg.topic = 'toggles'
+        msg.payload = {....}
+
+If `topic` is `toggles` then `payload` is undefined the available toggles will be loaded from the toggles file.
+
+        msg.topic = 'toggles'
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the media devices.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is something else then `payload` must be an object and tells the online state, ambient and target temperature of the thermostate.
+
+        msg.topic = 'set'
+        msg.payload = {
+          currentApplication: 'youtube',
+          currentInput: 'hdmi_1',
+          activityState: 'ACTIVE',
+          playbackState: 'PAUSED',
+          on: true,
+          currentVolume: 5,
+          isMuted: false,
+          currentToggleSettings:{
+                "sterilization_toggle": true,
+                "energysaving_toggle": false
+          },
+          currentModeSettings: {
+                "load_mode": "small_load",
+                "temp_mode": "cold_temp"
+          },
+          online: true
+        }
+
 #### - Management
 `topic` can be `restart_server`, `report_state` or `request_sync`.
 

@@ -331,10 +331,12 @@ module.exports = function(RED) {
                 states['isMuted'] = false;
             }
             if (me.has_toggles) {
-                states['currentToggleSettings'] = {}; // TODO Key/value pair with the toggle name of the device as the key, and the current state as the value.
+                states['currentToggleSettings'] = {};
+                this.updateTogglesState(me, device);
             }
             if (me.has_modes) {
-                states['currentModeSettings'] = {}; // TODO Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
+                states['currentModeSettings'] = {};
+                this.updateModesState(me, device);
             }
             // if (me.has_channels) {
             // }
@@ -450,35 +452,41 @@ module.exports = function(RED) {
                             this.available_modes = this.loadJson(this.available_modes_file, []);
                             if (this.available_modes === undefined) {
                                 RED.log.error("Modes " +  this.available_modes_file + "file not found.")
+                            } else {
+                                this.updateModesState(me, me);
                             }
                         } else {
                             if (!this.writeJson(this.available_modes_file, msg.payload)) {
                                 RED.log.error("Error saving Modes to file " + this.available_modes_file);
                             } else {
                                 this.available_modes = msg.payload;
+                                this.updateModesState(me, me);
                             }
                         }
                     } else {
                         this.available_modes = undefined;
                         RED.log.error("Modes disabled");
                     }
-                } else if (topic.toUpperCase() === 'TRAITS') {
-                    if (this.has_traits) {
+                } else if (topic.toUpperCase() === 'TOGGLES') {
+                    if (this.has_toggles) {
                         if (typeof msg.payload === undefined) {
-                            this.available_traits = this.loadJson(this.available_traits_file, []);
-                            if (this.available_traits === undefined) {
-                                RED.log.error("Traits " +  this.available_traits_file + "file not found.")
+                            this.available_toggles = this.loadJson(this.available_toggles_file, []);
+                            if (this.available_toggles === undefined) {
+                                RED.log.error("Toggles " +  this.available_toggles_file + "file not found.")
+                            } else {
+                                this.updateTogglesState();
                             }
                         } else {
-                            if (!this.writeJson(this.available_traits_file, msg.payload)) {
-                                RED.log.error("Error saving Traits to file " + this.available_traits_file);
+                            if (!this.writeJson(this.available_toggles_file, msg.payload)) {
+                                RED.log.error("Error saving Toggles to file " + this.available_toggles_file);
                             } else {
-                                this.available_traits = msg.payload;
+                                this.available_toggles = msg.payload;
+                                this.updateTogglesState();
                             }
                         }
                     } else {
-                        this.available_traits = undefined;
-                        RED.log.error("Traits disabled");
+                        this.available_toggles = undefined;
+                        RED.log.error("Toggles disabled");
                     }
                 } else {
                     let state_key = '';
@@ -543,6 +551,34 @@ module.exports = function(RED) {
             done();
         }
 
+        updateTogglesState(me, device) {
+            // Key/value pair with the toggle name of the device as the key, and the current state as the value.
+            let states = device.states;
+            let new_toggles = {};
+            me.available_toggles.forEach(function (toggle) {
+                let value = false;
+                if (typeof states[toggle.name] === 'boolean') {
+                    value = states[toggle.name];
+                }
+                new_toggles[toggle.name] = value;
+            });
+            states['currentToggleSettings'] = new_toggles;
+        }
+
+        updateModesState(me, device) {
+            // Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
+            let states = device.states;
+            let new_modes = {};
+            me.available_modes.forEach(function (mode) {
+                let value = '';
+                if (typeof states[mode.name] === 'string') {
+                    value = states[mode.name];
+                }
+                new_modes[mode.name] = value;
+            });
+            states['currentModeSettings'] = new_modes;
+        }
+
         getDefaultName(device_type) {
             switch(device_type) {
                 case 'AUDIO_VIDEO_RECEIVER':
@@ -591,6 +627,8 @@ module.exports = function(RED) {
         }
 
         setState(key, value, states) {
+            const me = this;
+            let differs = false;
             const old_state = states[key];
             let val_type = typeof old_state;
             let new_value = undefined;
@@ -605,12 +643,19 @@ module.exports = function(RED) {
             } else if (val_type === 'boolean') {
                 new_value = formats.FormatValue(formats.Formats.BOOL, key, value);
             } else if (val_type === 'object') {
-                new_value = value;
+                Object.keys(old_state).forEach(function (key) {
+                    if (typeof new_value[key] !== undefined) {
+                        if (me.setState(key, new_value[key], old_State)) {
+                            differs = true;
+                        }
+                    }
+                });
             }
-            let differs = false;
-            if (new_value !== undefined) {
-                differs = states['key'] === new_value;
-                states['key'] = new_value;
+            if (val_type !== 'object') {
+                if (new_value !== undefined) {
+                    differs = states['key'] === new_value;
+                    states['key'] = new_value;
+                }
             }
             return differs;
         }
