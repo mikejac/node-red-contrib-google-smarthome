@@ -762,7 +762,9 @@ module.exports = function(RED) {
                         }
                     });
                     if (application_index < 0) {
-                        return ok_result; // TODO ERROR
+                        ok_result.status = 'ERROR';
+                        ok_result.errorCode = 'noAvailableApp';
+                        return ok_result;
                     }
                     executionStates.push('currentApplication');
                     states['currentApplication'] = newApplication;
@@ -780,7 +782,9 @@ module.exports = function(RED) {
                         });
                     });
                     if (application_key === '') {
-                        return ok_result; // TODO ERROR
+                        ok_result.status = 'ERROR';
+                        ok_result.errorCode = 'noAvailableApp';
+                        return ok_result;
                     }
                     states['currentApplication'] = application_key;
                     executionStates.push('currentApplication');
@@ -800,7 +804,9 @@ module.exports = function(RED) {
                         }
                     });
                     if (current_input_index < 0) {
-                        return ok_result; // TODO ERROR
+                        ok_result.status = 'ERROR';
+                        ok_result.errorCode = 'unsupportedInput';
+                        return ok_result;
                     }
                     states['currentInput'] = newInput;
                     executionStates.push('currentInput');
@@ -948,6 +954,15 @@ module.exports = function(RED) {
                 if (params.hasOwnProperty('relativeSteps')) {
                     const relativeSteps = params['relativeSteps'];
                     let current_volume = this.states['currentVolume'];
+                    if (current_volume >= this.volumeMaxLevel && relativeSteps > 0) {
+                        ok_result.status = 'ERROR';
+                        ok_result.errorCode = 'volumeAlreadyMax';
+                        return ok_result;
+                    } else if (current_volume <= 0 && relativeSteps < 0) {
+                        ok_result.status = 'ERROR';
+                        ok_result.errorCode = 'volumeAlreadyMin';
+                        return ok_result;
+                    }
                     current_volume += relativeSteps;
                     if (current_volume > this.volumeMaxLevel) {
                         current_volume = volumeMaxLevel;
