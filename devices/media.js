@@ -157,8 +157,8 @@ module.exports = function(RED) {
             if (this.has_apps) {
                 this.available_applications = this.loadJson(this.available_applications_file, []);
                 if (this.available_applications === undefined) {
-                    error_msg += ' Applications file not found.';
-                    RED.log.error("Applications " +  this.available_applications_file + "file not found.")
+                    error_msg += ' Applications file error.';
+                    RED.log.error("Applications " +  this.available_applications_file + "file error.")
                 }
             } else {
                 this.available_applications = undefined;
@@ -168,8 +168,8 @@ module.exports = function(RED) {
             if (this.has_channels) {
                 this.available_channels = this.loadJson(this.available_channels_file, []);
                 if (this.available_channels === undefined) {
-                    error_msg += ' Channels file not found.';
-                    RED.log.error("Channels " +  this.available_channels_file + "file not found.")
+                    error_msg += ' Channels file error.';
+                    RED.log.error("Channels " +  this.available_channels_file + "file error.")
                 }
             } else {
                 this.available_channels = undefined;
@@ -179,8 +179,8 @@ module.exports = function(RED) {
             if (this.has_inputs) {
                 this.available_inputs = this.loadJson(this.available_inputs_file, []);
                 if (this.available_inputs === undefined) {
-                    error_msg += ' Inputs file not found.';
-                    RED.log.error("Inputs " +  this.available_inputs_file + "file not found.")
+                    error_msg += ' Inputs file error.';
+                    RED.log.error("Inputs " +  this.available_inputs_file + "file error.")
                 }
             } else {
                 this.available_inputs = undefined;
@@ -190,8 +190,8 @@ module.exports = function(RED) {
             if (this.has_modes) {
                 this.available_modes = this.loadJson(this.available_modes_file, []);
                 if (this.available_modes === undefined) {
-                    error_msg += ' Modes file not found.';
-                    RED.log.error("Modes " +  this.available_modes_file + "file not found.")
+                    error_msg += ' Modes file error.';
+                    RED.log.error("Modes " +  this.available_modes_file + "file error.")
                 }
             } else {
                 this.available_modes = undefined;
@@ -201,8 +201,8 @@ module.exports = function(RED) {
             if (this.has_toggles) {
                 this.available_toggles = this.loadJson(this.available_toggles_file, []);
                 if (this.available_toggles === undefined) {
-                    error_msg += ' Toggles file not found.';
-                    RED.log.error("Toggles " +  this.available_toggles_file + "file not found.")
+                    error_msg += ' Toggles file error.';
+                    RED.log.error("Toggles " +  this.available_toggles_file + "file error.")
                 }
             } else {
                 this.available_toggles = undefined;
@@ -211,7 +211,7 @@ module.exports = function(RED) {
 
             this.states = this.clientConn.register(this, 'media', config.name, this);
 
-            if (error_msg.length() == 0) {
+            if (error_msg.length == 0) {
                 this.status({fill: "yellow", shape: "dot", text: "Ready"});
             } else {
                 this.status({fill: "red", shape: "dot", text: error_msg});
@@ -498,7 +498,7 @@ module.exports = function(RED) {
                     Object.keys(this.states).forEach(function (key) {
                         if (topic.toUpperCase() == key.toUpperCase()) {
                             state_key = key;
-                            RED.log.debug("MediaNode(input): " + key);
+                            RED.log.debug("MediaNode(input): found state " + key);
                         }
                     });
 
@@ -636,30 +636,30 @@ module.exports = function(RED) {
             let differs = false;
             const old_state = states[key];
             let val_type = typeof old_state;
-            let new_value = undefined;
+            let new_state = undefined;
             if (val_type === 'number') {
                 if (value % 1 === 0) {
-                    new_value = formats.FormatValue(formats.Formats.INT, key, value);
+                    new_state = formats.FormatValue(formats.Formats.INT, key, value);
                 } else {
-                    new_value = formats.FormatValue(formats.Formats.FLOAT, key, value);
+                    new_state = formats.FormatValue(formats.Formats.FLOAT, key, value);
                 }
             } else if (val_type === 'string') {
-                new_value = formats.FormatValue(formats.Formats.STRING, key, value);
+                new_state = formats.FormatValue(formats.Formats.STRING, key, value);
             } else if (val_type === 'boolean') {
-                new_value = formats.FormatValue(formats.Formats.BOOL, key, value);
+                new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
             } else if (val_type === 'object') {
                 Object.keys(old_state).forEach(function (key) {
-                    if (typeof new_value[key] !== undefined) {
-                        if (me.setState(key, new_value[key], old_State)) {
+                    if (typeof new_state[key] !== undefined) {
+                        if (me.setState(key, new_state[key], old_State)) {
                             differs = true;
                         }
                     }
                 });
             }
             if (val_type !== 'object') {
-                if (new_value !== undefined) {
-                    differs = states['key'] === new_value;
-                    states['key'] = new_value;
+                if (new_state !== undefined) {
+                    differs = old_state !== new_state;
+                    states['key'] = new_state;
                 }
             }
             return differs;
@@ -672,7 +672,7 @@ module.exports = function(RED) {
             }
             RED.log.debug('MediaNode:loadJson(): loading ' + filename);
         
-            try {    
+            try {
                 let jsonFile = fs.readFileSync(
                     filename,
                     {
