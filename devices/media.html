@@ -47,8 +47,8 @@
         <label for="node-input-device_type"><i class="fa fa-tasks"></i> <span data-i18n="media.label.device_type"></span></label>
         <select id="node-input-device_type" >
             <option value="AUDIO_VIDEO_RECEIVER" data-i18n="media.label.audio_video_receiver"></option>
-            <option value="REMOTECONTROL" data-i18n="media.label.remote_control"></option>
-            <option value="SETTOP" data-i18n="media.label.set_top_box"></option>
+            <option value="REMOTECONTROL" data-i18n="media.label.remotecontrol"></option>
+            <option value="SETTOP" data-i18n="media.label.settop"></option>
             <option value="SOUNDBAR" data-i18n="media.label.soundbar"></option>
             <option value="SPEAKER" data-i18n="media.label.speaker"></option>
             <option value="STREAMING_BOX" data-i18n="media.label.streaming_box"></option>
@@ -626,7 +626,7 @@
         color:"#C0DEED",
         icon: "google-smarthome.png",
         label: function() {
-            return this.name || "Media Device";
+            return this.name || this._('media.label.' + this.device_type.toLowerCase()) || "Media Device";
         },
         labelStyle: function() {
             return this.name ? "node_label_italic" : ""
