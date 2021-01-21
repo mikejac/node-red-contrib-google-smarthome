@@ -725,12 +725,14 @@ module.exports = function(RED) {
 
         execCommand(device, command) {
             let me = this;
+            let states = {
+                "online" : this.states['online'] 
+            };
+            let executionStates = ['online'];
             const ok_result = {
                 status: 'SUCCESS',
-                states: {
-                    "online" : this.states['online'] 
-                },
-                executionStates: ['online']
+                states: states,
+                executionStates: executionStates
             };
 
             RED.log.debug("MediaNode:execCommand(command) " +  JSON.stringify(command));
@@ -740,8 +742,8 @@ module.exports = function(RED) {
             if (!command.hasOwnProperty('params')) {
                 // TransportControl
                 if (command.command == 'action.devices.commands.mediaClosedCaptioningOff') {
-                    ok_result.states['playbackState'] = this.states['playbackState'];
-                    this.executionStates.push('playbackState');
+                    states['playbackState'] = this.states['playbackState'];
+                    executionStates.push('playbackState');
                     return ok_result;
                 }
                 return false;
@@ -757,14 +759,14 @@ module.exports = function(RED) {
                     this.available_applications.forEach(function(application, index) {
                         if (application.key === newApplication) {
                             application_index = index;
-                            me.states['currentApplication'] = newApplication;
                         }
                     });
                     if (application_index < 0) {
                         return ok_result; // TODO ERROR
                     }
+                    executionStates.push('currentApplication');
+                    states['currentApplication'] = newApplication;
                     this.states['currentApplication'] = newApplication;
-                    ok_result.executionStates.push('currentApplication');
                     return ok_result;
                 }
                 if (params.hasOwnProperty('newApplicationName')) {
@@ -780,8 +782,9 @@ module.exports = function(RED) {
                     if (application_key === '') {
                         return ok_result; // TODO ERROR
                     }
+                    states['currentApplication'] = application_key;
+                    executionStates.push('currentApplication');
                     this.states['currentApplication'] = application_key;
-                    ok_result.executionStates.push('currentApplication');
                     return ok_result;
                 }
             }
@@ -793,15 +796,16 @@ module.exports = function(RED) {
                     let current_input_index = -1;
                     this.available_inputs.forEach(function(input_element, index) {
                         if (input_element.key === newInput) {
-                            me.states['currentInput'] = newInput;
-                            me.current_input_index = index;
                             current_input_index = index;
                         }
                     });
                     if (current_input_index < 0) {
                         return ok_result; // TODO ERROR
                     }
-                    ok_result.executionStates.push('currentInput');
+                    states['currentInput'] = newInput;
+                    executionStates.push('currentInput');
+                    this.current_input_index = index;
+                    this.states['currentInput'] = newInput;
                     return ok_result;
                 }
             }
@@ -810,8 +814,9 @@ module.exports = function(RED) {
                 if (this.current_input_index >= this.available_inputs.length) {
                     this.current_input_index = 0;
                 }
-                this.states['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
-                ok_result.executionStates.push('currentInput');
+                executionStates.push('currentInput');
+                states['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
+                this.states['currentInput'] = states['currentInput']
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.PreviousInput') {
@@ -819,8 +824,9 @@ module.exports = function(RED) {
                     this.current_input_index = this.available_inputs.length;
                 }
                 this.current_input_index --;
-                this.states['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
-                ok_result.executionStates.push('currentInput');
+                executionStates.push('currentInput');
+                states['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
+                this.states['currentInput'] = states['currentInput'];
                 return ok_result;
             }
             // On/Off
@@ -833,45 +839,52 @@ module.exports = function(RED) {
             }*/
             // TransportControl
             else if (command.command == 'action.devices.commands.mediaStop') {
+                states['playbackState'] = 'STOPPED';
+                executionStates.push('playbackState');
                 this.states['playbackState'] = 'STOPPED';
-                this.executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaNext') {
+                states['playbackState'] = 'FAST_FORWARDING';
+                executionStates.push('playbackState');
                 this.states['playbackState'] = 'FAST_FORWARDING';
-                this.executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaPrevious') {
+                states['playbackState'] = 'REWINDING';
+                executionStates.push('playbackState');
                 this.states['playbackState'] = 'REWINDING';
-                this.executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaPause') {
+                states['playbackState'] = 'PAUSED';
+                executionStates.push('playbackState');
                 this.states['playbackState'] = 'PAUSED';
-                this.executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaResume') {
+                states['playbackState'] = 'PLAYING';
+                executionStates.push('playbackState');
                 this.states['playbackState'] = 'PLAYING';
-                this.executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaSeekRelative') {
                 const params = command.params;
                 if (params.hasOwnProperty('relativePositionMs')) {
-                    this.states['playbackState'] = 'PLAYING';
                     const relative_position_ms = params['relativePositionMs'];
-                    this.executionStates.push('playbackState');
+                    states['playbackState'] = 'PLAYING';
+                    executionStates.push('playbackState');
+                    this.states['playbackState'] = 'PLAYING';
                     return ok_result;
                 }
             }
             else if (command.command == 'action.devices.commands.mediaSeekToPosition') {
                 const params = command.params;
                 if (params.hasOwnProperty('absPositionMs')) {
-                    this.states['playbackState'] = 'PLAYING';
                     const abs_position_ms = params['absPositionMs'];
-                    this.executionStates.push('playbackState');
+                    states['playbackState'] = 'PLAYING';
+                    executionStates.push('playbackState');
+                    this.states['playbackState'] = 'PLAYING';
                     return ok_result;
                 }
             }
@@ -895,8 +908,8 @@ module.exports = function(RED) {
                 const params = command.params;
                 if (params.hasOwnProperty('closedCaptioningLanguage')) {
                     const closedCaptioningLanguage = params['closedCaptioningLanguage'];
-                    ok_result.states['playbackState'] = this.states['playbackState'];
-                    ok_result.executionStates.push('playbackState');
+                    states['playbackState'] = this.states['playbackState'];
+                    executionStates.push('playbackState');
                 }
                 if (params.hasOwnProperty('userQueryLanguage')) {
                     const userQueryLanguage = params['userQueryLanguage'];
@@ -910,9 +923,9 @@ module.exports = function(RED) {
                 if (params.hasOwnProperty('mute')) {
                     const mute = params['mute'];
                     this.states['isMuted'] = mute;
-                    ok_result['isMuted'] = mute;
-                    ok_result['currentVolume'] = this.states['currentVolume'];
-                    ok_result.executionStates.push('isMuted', 'currentVolume');
+                    states['isMuted'] = mute;
+                    states['currentVolume'] = this.states['currentVolume'];
+                    executionStates.push('isMuted', 'currentVolume');
                     return ok_result;
                 }
             }
@@ -924,9 +937,9 @@ module.exports = function(RED) {
                         volumeLevel = this.volumeMaxLevel;
                     }
                     this.states['currentVolume'] = volumeLevel;
-                    ok_result['currentVolume'] = volumeLevel;
-                    ok_result['isMuted'] = this.states['isMuted'];
-                    ok_result.executionStates.push('isMuted', 'currentVolume');
+                    states['currentVolume'] = volumeLevel;
+                    states['isMuted'] = this.states['isMuted'];
+                    executionStates.push('isMuted', 'currentVolume');
                     return ok_result;
                 }
             }
@@ -942,7 +955,8 @@ module.exports = function(RED) {
                         current_volume = 0;
                     }
                     this.states['currentVolume'] = current_volume;
-                    ok_result.executionStates.push('currentVolume');
+                    states['currentVolume'] = current_volume;
+                    executionStates.push('currentVolume');
                     return ok_result;
                 }
             }
@@ -952,17 +966,19 @@ module.exports = function(RED) {
                 if (params.hasOwnProperty('channelCode')) {
                     const channelCode = params['channelCode'];
                     let new_channel_index = -1;
+                    let new_channel_key = '';
                     this.available_channels.forEach(function(channel, index) {
                         if (channel.key === channelCode) {
                             new_channel_index = index;
-                            me.current_channel_index = index;
-                            me.states['currentChannel'] = channel.key;
+                            new_channel_key = channel.key;
                         }
                     });
                     if (new_channel_index < 0) {
                         return ok_result; // TODO ERROR
                     }
-                    // ok_result.executionStates.push('currentChannel');
+                    this.current_channel_index = index;
+                    this.states['currentChannel'] = new_channel_key;
+                    // executionStates.push('currentChannel');
                     return ok_result;
                 }
                 /*if (params.hasOwnProperty('channelName')) {
@@ -981,7 +997,7 @@ module.exports = function(RED) {
                     if (new_channel_index < 0) {
                         return ok_result; // TODO ERROR
                     }
-                    // ok_result.executionStates.push('currentChannel');
+                    // executionStates.push('currentChannel');
                     return ok_result;
                 }
             }
@@ -1005,7 +1021,7 @@ module.exports = function(RED) {
                         this.current_channel_index = current_channel_index;
                     }
                     this.states['currentChannel'] = this.available_channels[current_channel_index].key;
-                    // ok_result.executionStates.push('currentChannel');
+                    // executionStates.push('currentChannel');
                     return ok_result;
                 }
             }
@@ -1019,7 +1035,7 @@ module.exports = function(RED) {
                     this.current_channel_index = 0;
                 }
                 this.states['currentChannel'] = this.available_channels[this.current_channel_index].key;
-                // ok_result.executionStates.push('currentChannel');
+                // executionStates.push('currentChannel');
                 return ok_result;
             }
             // Modes
@@ -1033,7 +1049,8 @@ module.exports = function(RED) {
                             modes[mode] = updateModeSettings[mode];
                         }
                     });
-                    ok_result.executionStates.push('currentModeeSettings');
+                    states['currentModeeSettings'] = modes;
+                    executionStates.push('currentModeeSettings');
                     return ok_result;
                 }
             }
@@ -1048,7 +1065,8 @@ module.exports = function(RED) {
                             toggles[toggle] = updateToggleSettings[toggle];
                         }
                     });
-                    ok_result.executionStates.push('currentToggleSettings');
+                    states['currentToggleSettings'] = toggles;
+                    executionStates.push('currentToggleSettings');
                     return ok_result;
                 }
             }
