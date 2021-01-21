@@ -276,7 +276,7 @@ module.exports = function(RED) {
             if (me.has_inputs) {
                 attributes['availableInputs'] = me.available_inputs;
                 attributes['commandOnlyInputSelector'] = me.command_only_input_selector;
-                attributes['commanorderedInputsOnlyInputSelector'] = me.ordered_inputs;
+                attributes['orderedInputs'] = me.ordered_inputs;
             }
             if (me.has_media_state) {
                 attributes['supportActivityState'] = me.support_activity_state;
@@ -748,7 +748,7 @@ module.exports = function(RED) {
             }
             // Applications
             if ((command.command == 'action.devices.commands.appInstall') ||
-                (command.command == 'action.devices.commands.appSearch')
+                (command.command == 'action.devices.commands.appSearch') ||
                 (command.command == 'action.devices.commands.appSelect')) {
                 const params = command.params;
                 if (params.hasOwnProperty('newApplication')) {
@@ -912,7 +912,7 @@ module.exports = function(RED) {
                     this.states['isMuted'] = mute;
                     ok_result['isMuted'] = mute;
                     ok_result['currentVolume'] = this.states['currentVolume'];
-                    ok_result.executionStates.push(['isMuted', 'currentVolume']);
+                    ok_result.executionStates.push('isMuted', 'currentVolume');
                     return ok_result;
                 }
             }
@@ -920,13 +920,13 @@ module.exports = function(RED) {
                 const params = command.params;
                 if (params.hasOwnProperty('volumeLevel')) {
                     const volumeLevel = params['volumeLevel'];
-                    if (current_volume > this.volumeMaxLevel) {
+                    if (volumeLevel > this.volumeMaxLevel) {
                         volumeLevel = this.volumeMaxLevel;
                     }
                     this.states['currentVolume'] = volumeLevel;
                     ok_result['currentVolume'] = volumeLevel;
                     ok_result['isMuted'] = this.states['isMuted'];
-                    ok_result.executionStates.push(['isMuted', 'currentVolume']);
+                    ok_result.executionStates.push('isMuted', 'currentVolume');
                     return ok_result;
                 }
             }
