@@ -520,8 +520,8 @@ module.exports = function(RED) {
                         let differs = false;
                         Object.keys(this.states).forEach(function (key) {
                             if (msg.payload.hasOwnProperty(key)) {
+                                RED.log.debug("MediaNode(input): set state " + key + ' to ' + msg.payload[key]);
                                 if (me.setState(key, msg.payload[key], me.states)) {
-                                    RED.log.debug("MediaNode(input): set state " + key + ' to ' + msg.payload[key]);
                                     differs = true;
                                 }
                             }
