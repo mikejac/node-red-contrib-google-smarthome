@@ -725,14 +725,11 @@ module.exports = function(RED) {
 
         execCommand(device, command) {
             let me = this;
-            let states = {
-                "online" : this.states['online'] 
-            };
-            let executionStates = ['online'];
+            let params = {};
+            let executionStates = [];
             const ok_result = {
-                status: 'SUCCESS',
-                states: states,
-                executionStates: executionStates
+                'params' : params,
+                'executionStates': executionStates
             };
 
             RED.log.debug("MediaNode:execCommand(command) " +  JSON.stringify(command));
@@ -742,8 +739,7 @@ module.exports = function(RED) {
             if (!command.hasOwnProperty('params')) {
                 // TransportControl
                 if (command.command == 'action.devices.commands.mediaClosedCaptioningOff') {
-                    states['playbackState'] = this.states['playbackState'];
-                    executionStates.push('playbackState');
+                    executionStates.push('online', 'playbackState');
                     return ok_result;
                 }
                 return false;
@@ -752,9 +748,8 @@ module.exports = function(RED) {
             if ((command.command == 'action.devices.commands.appInstall') ||
                 (command.command == 'action.devices.commands.appSearch') ||
                 (command.command == 'action.devices.commands.appSelect')) {
-                const params = command.params;
-                if (params.hasOwnProperty('newApplication')) {
-                    const newApplication = params['newApplication'];
+                if (command.params.hasOwnProperty('newApplication')) {
+                    const newApplication = command.params['newApplication'];
                     let application_index = -1;
                     this.available_applications.forEach(function(application, index) {
                         if (application.key === newApplication) {
@@ -762,17 +757,17 @@ module.exports = function(RED) {
                         }
                     });
                     if (application_index < 0) {
-                        ok_result.status = 'ERROR';
-                        ok_result.errorCode = 'noAvailableApp';
-                        return ok_result;
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'noAvailableApp'
+                        };
                     }
-                    executionStates.push('currentApplication');
-                    states['currentApplication'] = newApplication;
-                    this.states['currentApplication'] = newApplication;
+                    executionStates.push('online', 'currentApplication');
+                    params['currentApplication'] = newApplication;
                     return ok_result;
                 }
-                if (params.hasOwnProperty('newApplicationName')) {
-                    const newApplicationName = params['newApplicationName'];
+                if (command.params.hasOwnProperty('newApplicationName')) {
+                    const newApplicationName = command.params['newApplicationName'];
                     let application_key = '';
                     this.available_applications.forEach(function(application, index) {
                         application.names.forEach(function(name) {
@@ -782,21 +777,20 @@ module.exports = function(RED) {
                         });
                     });
                     if (application_key === '') {
-                        ok_result.status = 'ERROR';
-                        ok_result.errorCode = 'noAvailableApp';
-                        return ok_result;
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'noAvailableApp'
+                        };
                     }
-                    states['currentApplication'] = application_key;
-                    executionStates.push('currentApplication');
-                    this.states['currentApplication'] = application_key;
+                    params['currentApplication'] = application_key;
+                    executionStates.push('online', 'currentApplication');
                     return ok_result;
                 }
             }
             // Inputs
             else if (command.command == 'action.devices.commands.SetInput') {
-                const params = command.params;
-                if (params.hasOwnProperty('newInput')) {
-                    const newInput = params['newInput'];
+                if (pcommand.arams.hasOwnProperty('newInput')) {
+                    const newInput = command.params['newInput'];
                     let current_input_index = -1;
                     this.available_inputs.forEach(function(input_element, index) {
                         if (input_element.key === newInput) {
@@ -804,14 +798,13 @@ module.exports = function(RED) {
                         }
                     });
                     if (current_input_index < 0) {
-                        ok_result.status = 'ERROR';
-                        ok_result.errorCode = 'unsupportedInput';
-                        return ok_result;
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'unsupportedInput'
+                        };
                     }
-                    states['currentInput'] = newInput;
-                    executionStates.push('currentInput');
-                    this.current_input_index = index;
-                    this.states['currentInput'] = newInput;
+                    params['currentInput'] = newInput;
+                    executionStates.push('online', 'currentInput');
                     return ok_result;
                 }
             }
@@ -820,9 +813,8 @@ module.exports = function(RED) {
                 if (this.current_input_index >= this.available_inputs.length) {
                     this.current_input_index = 0;
                 }
-                executionStates.push('currentInput');
-                states['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
-                this.states['currentInput'] = states['currentInput']
+                executionStates.push('online', 'currentInput');
+                params['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.PreviousInput') {
@@ -830,79 +822,67 @@ module.exports = function(RED) {
                     this.current_input_index = this.available_inputs.length;
                 }
                 this.current_input_index --;
-                executionStates.push('currentInput');
-                states['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
-                this.states['currentInput'] = states['currentInput'];
+                executionStates.push('online', 'currentInput');
+                params['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
                 return ok_result;
             }
             // On/Off
             /*else if (command.command == 'action.devices.commands.OnOff') {
-                const params = command.params;
-                if (params.hasOwnProperty('on')) {
-                    const on_param = params['on'];
+                if (command.params.hasOwnProperty('on')) {
+                    const on_param = command.params['on'];
                     return ok_result;
                 }
             }*/
             // TransportControl
             else if (command.command == 'action.devices.commands.mediaStop') {
-                states['playbackState'] = 'STOPPED';
-                executionStates.push('playbackState');
-                this.states['playbackState'] = 'STOPPED';
+                params['playbackState'] = 'STOPPED';
+                executionStates.push('online', 'playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaNext') {
-                states['playbackState'] = 'FAST_FORWARDING';
-                executionStates.push('playbackState');
-                this.states['playbackState'] = 'FAST_FORWARDING';
+                params['playbackState'] = 'FAST_FORWARDING';
+                executionStates.push('online', 'playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaPrevious') {
-                states['playbackState'] = 'REWINDING';
-                executionStates.push('playbackState');
-                this.states['playbackState'] = 'REWINDING';
+                params['playbackState'] = 'REWINDING';
+                executionStates.push('online', 'playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaPause') {
-                states['playbackState'] = 'PAUSED';
-                executionStates.push('playbackState');
-                this.states['playbackState'] = 'PAUSED';
+                params['playbackState'] = 'PAUSED';
+                executionStates.push('online', 'playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaResume') {
-                states['playbackState'] = 'PLAYING';
-                executionStates.push('playbackState');
-                this.states['playbackState'] = 'PLAYING';
+                params['playbackState'] = 'PLAYING';
+                executionStates.push('online', 'playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaSeekRelative') {
-                const params = command.params;
-                if (params.hasOwnProperty('relativePositionMs')) {
-                    const relative_position_ms = params['relativePositionMs'];
-                    states['playbackState'] = 'PLAYING';
-                    executionStates.push('playbackState');
-                    this.states['playbackState'] = 'PLAYING';
+                if (command.params.hasOwnProperty('relativePositionMs')) {
+                    const relative_position_ms = command.params['relativePositionMs'];
+                    params['playbackState'] = 'PLAYING';
+                    executionStates.push('online', 'playbackState');
                     return ok_result;
                 }
             }
             else if (command.command == 'action.devices.commands.mediaSeekToPosition') {
-                const params = command.params;
-                if (params.hasOwnProperty('absPositionMs')) {
-                    const abs_position_ms = params['absPositionMs'];
-                    states['playbackState'] = 'PLAYING';
-                    executionStates.push('playbackState');
-                    this.states['playbackState'] = 'PLAYING';
+                if (command.params.hasOwnProperty('absPositionMs')) {
+                    const abs_position_ms = command.params['absPositionMs'];
+                    params['playbackState'] = 'PLAYING';
+                    executionStates.push('online', 'playbackState');
                     return ok_result;
                 }
             }
             else if (command.command == 'action.devices.commands.mediaRepeatMode') {
                 // TODO
-                const params = command.params;
-                if (params.hasOwnProperty('isOn')) {
-                    const is_on = params['isOn'];
+                if (command.params.hasOwnProperty('isOn')) {
+                    const is_on = command.params['isOn'];
                     return ok_result;
                 }
-                if (params.hasOwnProperty('isSingle')) {
-                    const is_single = params['isSingle'];
+                if (command.params.hasOwnProperty('isSingle')) {
+                    const is_single = command.params['isSingle'];
                     return ok_result;
                 }
             }
@@ -911,57 +891,51 @@ module.exports = function(RED) {
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaClosedCaptioningOn') {
-                const params = command.params;
-                if (params.hasOwnProperty('closedCaptioningLanguage')) {
-                    const closedCaptioningLanguage = params['closedCaptioningLanguage'];
-                    states['playbackState'] = this.states['playbackState'];
-                    executionStates.push('playbackState');
+                if (command.params.hasOwnProperty('closedCaptioningLanguage')) {
+                    const closedCaptioningLanguage = command.params['closedCaptioningLanguage'];
+                    params['playbackState'] = this.states['playbackState'];
                 }
-                if (params.hasOwnProperty('userQueryLanguage')) {
-                    const userQueryLanguage = params['userQueryLanguage'];
-                    // TODO
+                if (command.params.hasOwnProperty('userQueryLanguage')) {
+                    const userQueryLanguage = command.params['userQueryLanguage'];
+                    params['playbackState'] = this.states['playbackState'];
                 }
+                executionStates.push('online', 'playbackState');
                 return ok_result;
             }
             // Volume
             else if (command.command == 'action.devices.commands.mute') {
-                const params = command.params;
-                if (params.hasOwnProperty('mute')) {
-                    const mute = params['mute'];
-                    this.states['isMuted'] = mute;
-                    states['isMuted'] = mute;
-                    states['currentVolume'] = this.states['currentVolume'];
-                    executionStates.push('isMuted', 'currentVolume');
+                if (command.params.hasOwnProperty('mute')) {
+                    const mute = command.params['mute'];
+                    params['isMuted'] = mute;
+                    executionStates.push('online', 'isMuted', 'currentVolume');
                     return ok_result;
                 }
             }
             else if (command.command == 'action.devices.commands.setVolume') {
-                const params = command.params;
-                if (params.hasOwnProperty('volumeLevel')) {
-                    const volumeLevel = params['volumeLevel'];
+                if (command.params.hasOwnProperty('volumeLevel')) {
+                    let volumeLevel = command.params['volumeLevel'];
                     if (volumeLevel > this.volumeMaxLevel) {
                         volumeLevel = this.volumeMaxLevel;
                     }
-                    this.states['currentVolume'] = volumeLevel;
-                    states['currentVolume'] = volumeLevel;
-                    states['isMuted'] = this.states['isMuted'];
-                    executionStates.push('isMuted', 'currentVolume');
+                    params['currentVolume'] = volumeLevel;
+                    executionStates.push('online', 'isMuted', 'currentVolume');
                     return ok_result;
                 }
             }
             else if (command.command == 'action.devices.commands.volumeRelative') {
-                const params = command.params;
-                if (params.hasOwnProperty('relativeSteps')) {
-                    const relativeSteps = params['relativeSteps'];
+                if (command.params.hasOwnProperty('relativeSteps')) {
+                    const relativeSteps = command.params['relativeSteps'];
                     let current_volume = this.states['currentVolume'];
                     if (current_volume >= this.volumeMaxLevel && relativeSteps > 0) {
-                        ok_result.status = 'ERROR';
-                        ok_result.errorCode = 'volumeAlreadyMax';
-                        return ok_result;
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'volumeAlreadyMax'
+                        };
                     } else if (current_volume <= 0 && relativeSteps < 0) {
-                        ok_result.status = 'ERROR';
-                        ok_result.errorCode = 'volumeAlreadyMin';
-                        return ok_result;
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'volumeAlreadyMin'
+                        };
                     }
                     current_volume += relativeSteps;
                     if (current_volume > this.volumeMaxLevel) {
@@ -969,17 +943,15 @@ module.exports = function(RED) {
                     } else if (current_volume < 0) {
                         current_volume = 0;
                     }
-                    this.states['currentVolume'] = current_volume;
-                    states['currentVolume'] = current_volume;
-                    executionStates.push('currentVolume');
+                    params['currentVolume'] = current_volume;
+                    executionStates.push('online', 'currentVolume');
                     return ok_result;
                 }
             }
             // Channels
             else if (command.command == 'action.devices.commands.selectChannel') {
-                const params = command.params;
-                if (params.hasOwnProperty('channelCode')) {
-                    const channelCode = params['channelCode'];
+                if (command.params.hasOwnProperty('channelCode')) {
+                    const channelCode = command.params['channelCode'];
                     let new_channel_index = -1;
                     let new_channel_key = '';
                     this.available_channels.forEach(function(channel, index) {
@@ -992,34 +964,35 @@ module.exports = function(RED) {
                         return ok_result; // TODO ERROR
                     }
                     this.current_channel_index = index;
-                    this.states['currentChannel'] = new_channel_key;
-                    // executionStates.push('currentChannel');
+                    params['currentChannel'] = new_channel_key;
+                    // executionStates.push('online', 'currentChannel');
                     return ok_result;
                 }
-                /*if (params.hasOwnProperty('channelName')) {
-                    const channelName = params['channelName'];
+                /*if (command.params.hasOwnProperty('channelName')) {
+                    const channelName = command.params['channelName'];
                 }*/
-                if (params.hasOwnProperty('channelNumber')) {
-                    const channelNumber = params['channelNumber'];
+                if (command.params.hasOwnProperty('channelNumber')) {
+                    const channelNumber = command.params['channelNumber'];
                     let new_channel_index = -1;
+                    let new_channel_key = '';
                     this.available_channels.forEach(function(channel, index) {
                         if (channel.number === channelNumber) {
                             new_channel_index = index;
-                            me.current_channel_index = index;
-                            me.states['currentChannel'] = channel.key;
+                            new_channel_key = channel.key;
                         }
                     });
                     if (new_channel_index < 0) {
                         return ok_result; // TODO ERROR
                     }
-                    // executionStates.push('currentChannel');
+                    me.current_channel_index = index;
+                    params['currentChannel'] = new_channel_key;
+                    // executionStates.push('online', 'currentChannel');
                     return ok_result;
                 }
             }
             else if (command.command == 'action.devices.commands.relativeChannel') {
-                const params = command.params;
-                if (params.hasOwnProperty('relativeChannelChange')) {
-                    const relativeChannelChange = params['relativeChannelChange'];
+                if (command.params.hasOwnProperty('relativeChannelChange')) {
+                    const relativeChannelChange = command.params['relativeChannelChange'];
                     let current_channel_index = this.current_channel_index;
                     if (current_channel_index < 0) {
                         current_channel_index = 0;
@@ -1035,8 +1008,8 @@ module.exports = function(RED) {
                         this.last_channel_index = this.current_channel_index;
                         this.current_channel_index = current_channel_index;
                     }
-                    this.states['currentChannel'] = this.available_channels[current_channel_index].key;
-                    // executionStates.push('currentChannel');
+                    params['currentChannel'] = this.available_channels[current_channel_index].key;
+                    // executionStates.push('online', 'currentChannel');
                     return ok_result;
                 }
             }
@@ -1049,42 +1022,41 @@ module.exports = function(RED) {
                 if (this.current_channel_index < 0) {
                     this.current_channel_index = 0;
                 }
-                this.states['currentChannel'] = this.available_channels[this.current_channel_index].key;
-                // executionStates.push('currentChannel');
+                params['currentChannel'] = this.available_channels[this.current_channel_index].key;
+                // executionStates.push('online', 'currentChannel');
                 return ok_result;
             }
             // Modes
             else if (command.command == 'action.devices.commands.SetModes') {
-                const params = command.params;
-                if (params.hasOwnProperty('updateModeSettings')) {
-                    const updateModeSettings = params['updateModeSettings'];
-                    let modes = this.states['currentModeeSettings'];
+                if (command.params.hasOwnProperty('updateModeSettings')) {
+                    const updateModeSettings = command.params['updateModeSettings'];
+                    let modes = this.states['currentModeSettings'];
                     this.available_modes.forEach(function (mode) {
                         if (typeof updateModeSettings[mode] === 'string') {
                             modes[mode] = updateModeSettings[mode];
                         }
                     });
-                    states['currentModeeSettings'] = modes;
-                    executionStates.push('currentModeeSettings');
+                    params['currentModeSettings'] = modes;
+                    executionStates.push('online', 'currentModeSettings');
                     return ok_result;
                 }
             }
             // Traits
             else if (command.command == 'action.devices.commands.SetToggles') {
-                const params = command.params;
-                if (params.hasOwnProperty('updateToggleSettings')) {
-                    const updateToggleSettings = params['updateToggleSettings'];
+                if (command.params.hasOwnProperty('updateToggleSettings')) {
+                    const updateToggleSettings = command.params['updateToggleSettings'];
                     let toggles = this.states['currentToggleSettings'];
                     this.available_toggles.forEach(function (toggle) {
                         if (typeof updateToggleSettings[toggle] === 'boolean') {
                             toggles[toggle] = updateToggleSettings[toggle];
                         }
                     });
-                    states['currentToggleSettings'] = toggles;
-                    executionStates.push('currentToggleSettings');
+                    params['currentToggleSettings'] = toggles;
+                    executionStates.push('online', 'currentToggleSettings');
                     return ok_result;
                 }
             }
+            return false;
         }
     }
 
