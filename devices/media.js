@@ -961,7 +961,10 @@ module.exports = function(RED) {
                         }
                     });
                     if (new_channel_index < 0) {
-                        return ok_result; // TODO ERROR
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'noAvailableChannel'
+                        };
                     }
                     this.current_channel_index = index;
                     params['currentChannel'] = new_channel_key;
@@ -982,7 +985,10 @@ module.exports = function(RED) {
                         }
                     });
                     if (new_channel_index < 0) {
-                        return ok_result; // TODO ERROR
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'noAvailableChannel'
+                        };
                     }
                     me.current_channel_index = index;
                     params['currentChannel'] = new_channel_key;
