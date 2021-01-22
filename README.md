@@ -708,6 +708,10 @@ If `topic` is something else then `payload` must be an object and tells the onli
           online: true
         }
 
+Example flow:
+
+        [{"id":"985701ca.58de9","type":"google-media","z":"dfd6855a.a9da98","client":"","name":"Example Television","topic":"tv","device_type":"TV","has_apps":false,"has_channels":false,"has_inputs":false,"has_media_state":false,"has_on_off":false,"has_transport_control":false,"has_modes":false,"has_toggles":false,"available_applications_file":"applications.json","available_channels_file":"channels.json","available_inputs_file":"inputs.json","command_only_input_selector":"","ordered_inputs":"","support_activity_state":false,"support_playback_state":false,"command_only_on_off":false,"query_only_on_off":false,"supported_commands":[],"volume_max_level":"50","can_mute_and_unmute":"","volume_default_percentage":40,"level_step_size":1,"command_only_volume":false,"available_modes_file":"modes.json","command_only_modes":false,"query_only_modes":false,"available_toggles_file":"toggles.json","command_only_toggles":false,"query_only_toggles":false,"passthru":false,"x":530,"y":40,"wires":[["48723761.d78bb8"]]},{"id":"6637f52f.da97cc","type":"change","z":"dfd6855a.a9da98","name":"topic = online","rules":[{"t":"set","p":"topic","pt":"msg","to":"online","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":320,"y":40,"wires":[["985701ca.58de9"]]},{"id":"48723761.d78bb8","type":"function","z":"dfd6855a.a9da98","name":"Split","func":"return [\n    { payload: msg.payload.online },\n];","outputs":1,"noerr":0,"x":710,"y":40,"wires":[["6f5daaf0.f5dce4"]],"outputLabels":["online"]},{"id":"980e90e8.c7796","type":"mqtt in","z":"dfd6855a.a9da98","name":"","topic":"home/tv/power","qos":"2","datatype":"auto","broker":"","x":100,"y":40,"wires":[["6637f52f.da97cc"]]},{"id":"6f5daaf0.f5dce4","type":"mqtt out","z":"dfd6855a.a9da98","name":"","topic":"home/tv/set-power","qos":"","retain":"","broker":"","x":900,"y":40,"wires":[]}]
+        
 #### - Management
 `topic` can be `restart_server`, `report_state` or `request_sync`.
 
