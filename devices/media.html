@@ -564,10 +564,10 @@
                 value: "inputs.json", required:false
             },
             command_only_input_selector: {
-                value: "", required:false
+                value: false, required:false
             },
             ordered_inputs: {
-                value: "", required:false
+                value: false, required:false
             },
             support_activity_state: {
                 value: false, required:false
@@ -582,19 +582,31 @@
                 value: false, required:false
             },
             supported_commands: {
-                value: [], required:false
+                value: ['CAPTION_CONTROL', 'NEXT', 'PAUSE', 'PREVIOUS', 'RESUME', 'SEEK_RELATIVE', 'SEEK_TO_POSITION', 'SET_REPEAT', 'SHUFFLE', 'STOP'], required:false
             },
             volume_max_level: {
-                value: "", required:true
+                value: 100, required:true, validate: function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
             },
             can_mute_and_unmute: {
-                value: "", required:false
+                value: true, required:false
             },
             volume_default_percentage: {
-                value: 40, required:false
+                value: 40, required:false, validate: function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0 && n <= 100;
+                }
             },
             level_step_size: {
-                value: 1, required:false
+                value: 1, required:false, validate: function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
             },
             command_only_volume: {
                 value: false, required:false
