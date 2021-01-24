@@ -789,7 +789,7 @@ module.exports = function(RED) {
             }
             // Inputs
             else if (command.command == 'action.devices.commands.SetInput') {
-                if (pcommand.arams.hasOwnProperty('newInput')) {
+                if (command.params.hasOwnProperty('newInput')) {
                     const newInput = command.params['newInput'];
                     let current_input_index = -1;
                     this.available_inputs.forEach(function(input_element, index) {
