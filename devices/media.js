@@ -667,7 +667,7 @@ module.exports = function(RED) {
             if (val_type !== 'object') {
                 if (new_state !== undefined) {
                     differs = old_state !== new_state;
-                    states['key'] = new_state;
+                    states[key] = new_state;
                 }
             }
             return differs;
