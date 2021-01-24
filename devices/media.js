@@ -484,14 +484,14 @@ module.exports = function(RED) {
                             if (this.available_toggles === undefined) {
                                 RED.log.error("Toggles " +  this.available_toggles_file + "file not found.")
                             } else {
-                                this.updateTogglesState();
+                                this.updateTogglesState(me, me);
                             }
                         } else {
                             if (!this.writeJson(this.available_toggles_file, msg.payload)) {
                                 RED.log.error("Error saving Toggles to file " + this.available_toggles_file);
                             } else {
                                 this.available_toggles = msg.payload;
-                                this.updateTogglesState();
+                                this.updateTogglesState(me, me);
                             }
                         }
                     } else {
@@ -563,12 +563,13 @@ module.exports = function(RED) {
 
         updateTogglesState(me, device) {
             // Key/value pair with the toggle name of the device as the key, and the current state as the value.
-            let states = device.states;
+            let states = device.states || {};
+            const currentToggleSettings = states['currentToggleSettings']
             let new_toggles = {};
             me.available_toggles.forEach(function (toggle) {
                 let value = false;
-                if (typeof states[toggle.name] === 'boolean') {
-                    value = states[toggle.name];
+                if (typeof currentToggleSettings[toggle.name] === 'boolean') {
+                    value = currentToggleSettings[toggle.name];
                 }
                 new_toggles[toggle.name] = value;
             });
@@ -577,12 +578,14 @@ module.exports = function(RED) {
 
         updateModesState(me, device) {
             // Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
-            let states = device.states;
+            RED.log.debug("Update Modes device");
+            let states = device.states || {};
+            const currentModeSettings = states['currentModeSettings']
             let new_modes = {};
             me.available_modes.forEach(function (mode) {
                 let value = '';
-                if (typeof states[mode.name] === 'string') {
-                    value = states[mode.name];
+                if (typeof currentModeSettings[mode.name] === 'string') {
+                    value = currentModeSettings[mode.name];
                 }
                 new_modes[mode.name] = value;
             });
