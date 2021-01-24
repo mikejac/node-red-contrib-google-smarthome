@@ -39,10 +39,13 @@ module.exports = function(RED) {
             this.device_type					= config.device_type;
             this.has_apps               = config.has_apps;
             this.available_applications_file    = config.available_applications_file;
+            this.available_applications         = [];
             this.has_channels                   = config.has_channels;
             this.available_channels_file        = config.available_channels_file;
+            this.available_channels             = [];
             this.has_inputs                     = config.has_inputs;
             this.available_inputs_file          = config.available_inputs_file;
+            this.available_inputs               = [];
             this.command_only_input_selector    = config.command_only_input_selector;
             this.ordered_inputs                 = config.ordered_inputs;
             this.has_media_state                = config.has_media_state;
@@ -61,10 +64,12 @@ module.exports = function(RED) {
             this.command_only_volume            = config.command_only_volume;
             this.has_modes                      = config.has_modes;
             this.available_modes_file           = config.available_modes_file;
+            this.available_modes                = [];
             this.command_only_modes             = config.command_only_modes;
             this.query_only_modes               = config.query_only_modes;
             this.has_toggles                    = config.has_toggles;
             this.available_toggles_file         = config.available_toggles_file;
+            this.available_toggles              = [];
             this.command_only_toggles           = config.command_only_toggles;
             this.query_only_toggles             = config.query_only_toggles;
             this.last_channel_index             = '';
@@ -412,7 +417,7 @@ module.exports = function(RED) {
                             }
                         }
                     } else {
-                        this.available_applications = undefined;
+                        this.available_applications = [];
                         RED.log.error("Applications disabled");
                     }
                 } else if (topic.toUpperCase() === 'CHANNELS') {
@@ -430,7 +435,7 @@ module.exports = function(RED) {
                             }
                         }
                     } else {
-                        this.available_channels = undefined;
+                        this.available_channels = [];
                         RED.log.error("Channels disabled");
                     }
                 } else if (topic.toUpperCase() === 'INPUTS') {
@@ -448,7 +453,7 @@ module.exports = function(RED) {
                             }
                         }
                     } else {
-                        this.available_inputs = undefined;
+                        this.available_inputs = [];
                         RED.log.error("Inputs disabled");
                     }
                 } else if (topic.toUpperCase() === 'MODES') {
@@ -469,7 +474,7 @@ module.exports = function(RED) {
                             }
                         }
                     } else {
-                        this.available_modes = undefined;
+                        this.available_modes = [];
                         RED.log.error("Modes disabled");
                     }
                 } else if (topic.toUpperCase() === 'TOGGLES') {
@@ -490,7 +495,7 @@ module.exports = function(RED) {
                             }
                         }
                     } else {
-                        this.available_toggles = undefined;
+                        this.available_toggles = [];
                         RED.log.error("Toggles disabled");
                     }
                 } else {
