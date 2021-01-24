@@ -1046,8 +1046,8 @@ module.exports = function(RED) {
                     const updateModeSettings = command.params['updateModeSettings'];
                     let modes = this.states['currentModeSettings'];
                     this.available_modes.forEach(function (mode) {
-                        if (typeof updateModeSettings[mode] === 'string') {
-                            modes[mode] = updateModeSettings[mode];
+                        if (typeof updateModeSettings[mode.name] === 'string') {
+                            modes[mode.name] = updateModeSettings[mode];
                         }
                     });
                     params['currentModeSettings'] = modes;
@@ -1061,8 +1061,8 @@ module.exports = function(RED) {
                     const updateToggleSettings = command.params['updateToggleSettings'];
                     let toggles = this.states['currentToggleSettings'];
                     this.available_toggles.forEach(function (toggle) {
-                        if (typeof updateToggleSettings[toggle] === 'boolean') {
-                            toggles[toggle] = updateToggleSettings[toggle];
+                        if (typeof updateToggleSettings[toggle].name === 'boolean') {
+                            toggles[toggle.name] = updateToggleSettings[toggle.name];
                         }
                     });
                     params['currentToggleSettings'] = toggles;
