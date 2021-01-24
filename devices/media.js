@@ -974,7 +974,7 @@ module.exports = function(RED) {
                             errorCode: 'noAvailableChannel'
                         };
                     }
-                    this.current_channel_index = index;
+                    this.current_channel_index = new_channel_index;
                     params['currentChannel'] = new_channel_key;
                     // executionStates.push('online', 'currentChannel');
                     return ok_result;
