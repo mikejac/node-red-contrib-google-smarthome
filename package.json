@@ -28,7 +28,7 @@
       "vaccum": "devices/vacuum.js",
       "fan": "devices/fan.js",
       "sensor": "devices/sensor.js",
-      "switch": "devices/switch.js"
+      "switch": "devices/switch.js",
       "blind": "devices/blind.js"
     }
   },
