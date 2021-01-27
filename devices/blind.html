@@ -50,7 +50,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="google-blind">
-    <p>A Google Smart Home blind. Outputs a message when Google Smart Home changes the state of the blind.</p>
+    <p>A Google Smart Home Blind. Outputs a message when Google Smart Home changes the state of the blind.</p>
 
     <h3>Inputs</h3>
         <dl class="message-properties">
@@ -95,7 +95,7 @@
             <dd><code>true</code> sets online state to on, <code>false</code> sets online state to off.</dd>
         </dl>
 
-        <p>If <code>msg.topic</code> is something other than the above topics then <code>msg.payload</code> must be an object and tells both the open state as well as the online state of the shutter.</p>
+        <p>If <code>msg.topic</code> is something other than the above topics then <code>msg.payload</code> must be an object and tells both the open state as well as the online state of the blind.</p>
         <dl class="message-properties">
             <dt>payload.openPercent
                 <span class="property-type">integer</span>
@@ -133,7 +133,7 @@
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('google-blinds', {
+    RED.nodes.registerType('google-blind', {
         category: 'Google_SmartHome-function',
         paletteLabel: 'Blind',
         defaults: {
