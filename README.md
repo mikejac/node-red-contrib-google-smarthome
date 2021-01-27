@@ -19,7 +19,7 @@
   - [Scene](#--scene)
   - [Vacuum](#--vacuum)
   - [Fan](#--fan)
-  - [Kitchen Hood](#--kitchen-hood)
+  - [Kitchen Hood](#--hood)
   - [Fireplace](#--fireplace)
   - [Sensor](#--sensor)
   - [Shutter](#--shutter)
