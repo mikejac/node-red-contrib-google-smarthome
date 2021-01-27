@@ -19,8 +19,6 @@
   - [Scene](#--scene)
   - [Vacuum](#--vacuum)
   - [Fan](#--fan)
-  - [Kitchen Hood](#--hood)
-  - [Fireplace](#--fireplace)
   - [Sensor](#--sensor)
   - [Shutter](#--shutter)
   - [Switch](#--switch)
@@ -503,48 +501,6 @@ If `topic` is `online` then `payload` must be boolean and tells the online state
         msg.payload = true
 
 If `topic` is something else then `payload` must be an object and tells both the on state as well as the online state of the fan.
-
-        msg.topic = 'set'
-        msg.payload = {
-          on: true,
-          online: true
-        }
-
-#### - Kitchen Hood
-`topic` can be `on`, `online` or something else.
-
-If `topic` is `on` then `payload` must be boolean and and tells the state of the kitchen hood.
-
-        msg.topic = 'on'
-        msg.payload = true
-
-If `topic` is `online` then `payload` must be boolean and tells the online state of the kitchen hood.
-
-        msg.topic = 'online'
-        msg.payload = true
-
-If `topic` is something else then `payload` must be an object and tells both the on state as well as the online state of the kitchen hood.
-
-        msg.topic = 'set'
-        msg.payload = {
-          on: true,
-          online: true
-        }
-
-#### - Fireplace
-`topic` can be `on`, `online` or something else.
-
-If `topic` is `on` then `payload` must be boolean and and tells the state of the fireplace.
-
-        msg.topic = 'on'
-        msg.payload = true
-
-If `topic` is `online` then `payload` must be boolean and tells the online state of the fireplace.
-
-        msg.topic = 'online'
-        msg.payload = true
-
-If `topic` is something else then `payload` must be an object and tells both the on state as well as the online state of the fireplace.
 
         msg.topic = 'set'
         msg.payload = {
