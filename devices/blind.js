@@ -109,7 +109,7 @@ module.exports = function(RED) {
         updated(device) {
             let states = device.states;
             let command = device.command;
-            RED.log.debug("ShutterNode(updated): states = " + JSON.stringify(states));
+            RED.log.debug("BlindNode(updated): states = " + JSON.stringify(states));
 
             Object.assign(this.states, states);
 
