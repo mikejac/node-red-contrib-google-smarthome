@@ -27,6 +27,8 @@
       "window": "devices/window.js",
       "vaccum": "devices/vacuum.js",
       "fan": "devices/fan.js",
+      "hood": "devices/hood.js",
+      "fireplace": "devices/fireplace.js",
       "sensor": "devices/sensor.js",
       "switch": "devices/switch.js"
     }
