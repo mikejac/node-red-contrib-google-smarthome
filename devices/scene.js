@@ -90,8 +90,8 @@ module.exports = function(RED) {
             return device;
         }
 
-        updateStatusIcon() {
-            if (!this.states.deactivate) {
+        updateStatusIcon(deactivate) {
+            if (!deactivate) {
                 this.status({fill: "green", shape: "dot", text: "Activate"});
             } else {
                 this.status({fill: "red", shape: "dot", text: "Deactivate"});
@@ -109,9 +109,9 @@ module.exports = function(RED) {
             let command = device.command;
             RED.log.debug("SceneNode(updated): states = " + JSON.stringify(states));
 
-            Object.assign(this.states, states);
+            // Don't assign states object here. Scenes don't have a persistent state.
 
-            this.updateStatusIcon();
+            this.updateStatusIcon(states.deactivate);
 
             let msg = {
                 topic: this.topicOut,
