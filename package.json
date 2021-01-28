@@ -30,7 +30,8 @@
       "hood": "devices/hood.js",
       "fireplace": "devices/fireplace.js",
       "sensor": "devices/sensor.js",
-      "switch": "devices/switch.js"
+      "switch": "devices/switch.js",
+      "blind": "devices/blind.js"
     }
   },
   "author": {

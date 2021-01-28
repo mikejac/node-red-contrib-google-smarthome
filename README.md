@@ -596,6 +596,29 @@ If `topic` is something else then `payload` must be an object and tells both the
           online: true
         }
         
+#### - Blind
+`topic` can be `openPercent`, `online` or something else.
+
+If `topic` is `openPercent` then `payload` must be integer and indicates the percentage that the blind is opened
+where 0 is closed and 100 is fully open. It can also be boolean where false is closed and true is 100% opened.
+
+        msg.topic = 'openPercent'
+        msg.payload = 50
+
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the blind.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is something else then `payload` must be an object and tells both the open state as well as the online state of the blind.
+
+        msg.topic = 'set'
+        msg.payload = {
+          openPercent: 50,
+          online: true
+        }
+        
 #### - Switch
 `topic` can be `on`, `online` or something else.
 
