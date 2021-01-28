@@ -29,14 +29,18 @@ module.exports = function(RED) {
         constructor(config) {
             RED.nodes.createNode(this, config);
 
-            this.client            = config.client;
-            this.clientConn        = RED.nodes.getNode(this.client);
-            this.topicOut          = config.topic;
-            this.hlsUrl            = config.hls.trim();
-            this.dashUrl           = config.dash.trim();
-            this.smoothStreamUrl   = config.smooth_stream.trim();
-            this.progressiveMp4Url = config.progressive_mp4.trim();
-            this.authToken         = config.auth_token.trim();
+            this.client              = config.client;
+            this.clientConn          = RED.nodes.getNode(this.client);
+            this.topicOut            = config.topic;
+            this.hlsUrl              = config.hls.trim();
+            this.hlsAppId            = config.hls_app_id.trim();
+            this.dashUrl             = config.dash.trim();
+            this.dashAppId           = config.dash_app_id.trim();
+            this.smoothStreamUrl     = config.smooth_stream.trim();
+            this.smoothStreamAppId   = config.smooth_stream_app_id.trim();
+            this.progressiveMp4Url   = config.progressive_mp4.trim();
+            this.progressiveMp4AppId = config.progressive_mp4_app_id.trim();
+            this.authToken           = config.auth_token.trim();
 
             if (!this.clientConn) {
                 this.error(RED._("camera.errors.missing-config"));
@@ -48,21 +52,21 @@ module.exports = function(RED) {
                 return;
             }
 
-            let protocols = [];
+            this.protocols = [];
             if (this.hlsUrl) {
-                protocols.push('hls');
+                this.protocols.push('hls');
             }
             if (this.dashUrl) {
-                protocols.push('dash');
+                this.protocols.push('dash');
             }
             if (this.smoothStreamUrl) {
-                protocols.push('smooth_stream');
+                this.protocols.push('smooth_stream');
             }
             if (this.progressiveMp4Url) {
-                protocols.push('progressive_mp4');
+                this.protocols.push('progressive_mp4');
             }
 
-            this.states = this.clientConn.register(this, 'camera', config.name, protocols, this.authToken.length > 0);
+            this.states = this.clientConn.register(this, 'camera', config.name, this);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -74,7 +78,8 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name, protocols, needAuthToken) {
+        registerDevice(client, name, me) {
+            const needAuthToken = me.authToken.length > 0;
             let states = {
                 online: true
             };
@@ -90,7 +95,7 @@ module.exports = function(RED) {
                     },
                     willReportState: true,
                     attributes: {
-                        cameraStreamSupportedProtocols: protocols,
+                        cameraStreamSupportedProtocols: me.protocols,
                         cameraStreamNeedAuthToken: needAuthToken
                     },
                     deviceInfo: {
@@ -232,6 +237,20 @@ module.exports = function(RED) {
             return '';
         }
 
+        getAppId(protocol_type) {
+            switch(protocol_type) {
+                case 'hls':
+                    return this.hlsAppId;
+                case 'dash':
+                    return this.dashAppId;
+                case 'smooth_stream':
+                    return this.smoothStreamAppId;
+                case 'progressive_mp4':
+                    return this.progressiveMp4AppId;
+            }
+            return '';
+        }
+
         execCommand(device, command) {
             let me = this;
 
@@ -251,16 +270,20 @@ module.exports = function(RED) {
                         }
                     });
                     if (protocol.length > 0) {
-                        let executionStates = ['online', 'cameraStreamAccessUrl', 'cameraStreamReceiverAppId', 'cameraStreamProtocol'];
+                        let executionStates = ['online', 'cameraStreamAccessUrl', 'cameraStreamProtocol'];
                         if (me.authToken.length > 0) {
                             executionStates.push('cameraStreamAuthToken');
+                        }
+                        const appId = this.getAppId(protocol);
+                        if (appId.length > 0) {
+                            executionStates.push('cameraStreamReceiverAppId');
                         }
                         return {
                             status: 'SUCCESS',
                             states: {
                                 online: true,
                                 cameraStreamAccessUrl: stramUrl,
-                                cameraStreamReceiverAppId: device.id, // App ID ??
+                                cameraStreamReceiverAppId: appId,
                                 cameraStreamAuthToken: me.authToken,
                                 cameraStreamProtocol: protocol
                             },

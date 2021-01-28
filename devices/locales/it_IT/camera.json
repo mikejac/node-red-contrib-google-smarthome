@@ -4,18 +4,26 @@
             "name": "Nome",
             "topic": "Oggetto in uscita",
             "hls": "Hls url",
+            "hls_app_id": "Hls App Id",
             "dash": "Dash url",
-            "dasmooth_streamsh": "Smooth stream url",
+            "dash_app_id": "Dash App Id",
+            "smooth_stream": "Smooth stream url",
+            "smooth_stream_app_id": "Smooth stream App Id",
             "progressive_mp4": "Progressive mp4 url",
+            "progressive_mp4_app_id": "Progressive mp4 App Id",
             "auth_token": "Token di autorizzazione"
         },
         "placeholder": {
             "name": "Nome",
             "topic": "Oggetto corrente",
             "hls": "Hls url",
+            "hls_app_id": "Hls App Id",
             "dash": "Dash url",
-            "dasmooth_streamsh": "Smooth stream url",
+            "dash_app_id": "Dash App Id",
+            "smooth_stream": "Smooth stream url",
+            "smooth_stream_app_id": "Smooth stream App Id",
             "progressive_mp4": "Progressive mp4 url",
+            "progressive_mp4_app_id": "Progressive mp4 App Id",
             "auth_token": "Token di autorizzazione"
         },
         "errors": {
