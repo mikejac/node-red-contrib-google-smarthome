@@ -1,0 +1,860 @@
+<!--
+ NodeRED Google SmartHome
+ Copyright (C) 2020 Claudio Chimera.
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+    Media
+-->
+<script type="text/x-red" data-template-name="google-media">
+    <div class="form-row">
+        <b>Google SmartHome Settings</b>
+    </d iv>
+
+    <div class="form-row">
+        <label for="node-input-client"><i class="fa fa-globe"></i> SmartHome</span></label>
+        <input type="text" id="node-input-client">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="media.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]media.placeholder.name">
+    </div>
+
+    <div class="form-row">
+        <b>Node-RED Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="media.label.topic"></span></label>
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]media.placeholder.topic">
+    </div>
+
+    <div class="form-row" id="device_type">
+        <label for="node-input-device_type"><i class="fa fa-tasks"></i> <span data-i18n="media.label.device_type"></span></label>
+        <select id="node-input-device_type" >
+            <option value="AUDIO_VIDEO_RECEIVER" data-i18n="media.label.audio_video_receiver"></option>
+            <option value="REMOTECONTROL" data-i18n="media.label.remotecontrol"></option>
+            <option value="SETTOP" data-i18n="media.label.settop"></option>
+            <option value="SOUNDBAR" data-i18n="media.label.soundbar"></option>
+            <option value="SPEAKER" data-i18n="media.label.speaker"></option>
+            <option value="STREAMING_BOX" data-i18n="media.label.streaming_box"></option>
+            <option value="STREAMING_SOUNDBAR" data-i18n="media.label.streaming_soundbar"></option>
+            <option value="STREAMING_STICK" data-i18n="media.label.streaming_stick"></option>
+            <option value="TV" data-i18n="media.label.tv"></option>
+        </select>
+    </div>
+
+    <div class="form-row red-ui-editableList-border" id="volume" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <b data-i18n="media.label.volume"></b>
+        </div>
+
+        <div class="form-row">
+            <div class="form-row">
+                <label for="node-input-volume_max_level"><i class="fa fa-tasks"></i> <span data-i18n="media.label.volume_max_level"></span></label>
+                <input type="text" id="node-input-volume_max_level" data-i18n="[placeholder]media.placeholder.volume_max_level">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-can_mute_and_unmute"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.can_mute_and_unmute"></label>
+                <input type="checkbox" checked id="node-input-can_mute_and_unmute" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-volume_default_percentage"><i class="fa fa-tasks"></i> <span data-i18n="media.label.volume_default_percentage"></span></label>
+                <input type="text" id="node-input-volume_default_percentage" data-i18n="[placeholder]media.placeholder.volume_default_percentage">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-level_step_size"><i class="fa fa-tasks"></i> <span data-i18n="media.label.level_step_size"></span></label>
+                <input type="text" id="node-input-level_step_size" data-i18n="[placeholder]media.placeholder.level_step_size">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-command_only_volume"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.command_only_volume"></label>
+                <input type="checkbox" checked id="node-input-command_only_volume" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row red-ui-editableList-border" id="apps" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_has_apps">
+            <b><label style="width:auto" for="node-input-has_apps"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.apps"></label></b>
+            <input type="checkbox" checked id="node-input-has_apps" style="display:inline-block; width:auto; vertical-align:top;">
+        </div>
+
+        <div class="form-row" id="label_has_apps">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.apps"></label></b>
+        </div>
+
+        <div id="has_apps">
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-available_applications_file"><i class="fa fa-tasks"></i> <span data-i18n="media.label.available_applications_file"></span></label>
+                    <input type="text" id="node-input-available_applications_file" data-i18n="[placeholder]media.placeholder.available_applications_file">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row red-ui-editableList-border" id="channels" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_has_channels">
+            <b><label style="width:auto" for="node-input-has_channels"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.channels"></label></b>
+            <input type="checkbox" checked id="node-input-has_channels" style="display:inline-block; width:auto; vertical-align:top;">
+        </div>
+
+        <div class="form-row" id="label_has_channels">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.channels"></label></b>
+        </div>
+
+        <div id="has_channels">
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-available_channels_file"><i class="fa fa-tasks"></i> <span data-i18n="media.label.available_channels_file"></span></label>
+                    <input type="text" id="node-input-available_channels_file" data-i18n="[placeholder]media.placeholder.available_channels_file">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row red-ui-editableList-border" id="inputs" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_has_inputs">
+            <b><label style="width:auto" for="node-input-has_inputs"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.inputs"></label></b>
+            <input type="checkbox" checked id="node-input-has_inputs" style="display:inline-block; width:auto; vertical-align:top;">
+        </div>
+
+        <div class="form-row" id="label_has_inputs">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.inputs"></label></b>
+        </div>
+
+        <div id="has_inputs">
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-available_inputs_file"><i class="fa fa-tasks"></i> <span data-i18n="media.label.available_inputs_file"></span></label>
+                    <input type="text" id="node-input-available_inputs_file" data-i18n="[placeholder]media.placeholder.available_inputs_file">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_input_selector"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.command_only_input_selector"></label>
+                    <input type="checkbox" checked id="node-input-command_only_input_selector" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-ordered_inputs"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.ordered_inputs"></label>
+                    <input type="checkbox" checked id="node-input-ordered_inputs" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border" id="media_state" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_has_media_state">
+            <b><label style="width:auto" for="node-input-has_media_state"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.media_state"></label></b>
+            <input type="checkbox" checked id="node-input-has_media_state" style="display:inline-block; width:auto; vertical-align:top;">
+        </div>
+
+        <div class="form-row" id="label_has_media_state">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.media_state"></label></b>
+        </div>
+
+        <div id="has_media_state">
+            <div class="form-row">
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-support_activity_state"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.support_activity_state"></label>
+                    <input type="checkbox" checked id="node-input-support_activity_state" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-support_playback_state"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.support_playback_state"></label>
+                    <input type="checkbox" checked id="node-input-support_playback_state" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row red-ui-editableList-border" id="on_off" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_has_on_off">
+            <b><label style="width:auto" for="node-input-has_on_off"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.on_off"></label></b>
+            <input type="checkbox" checked id="node-input-has_on_off" style="display:inline-block; width:auto; vertical-align:top;">
+        </div>
+
+        <div class="form-row" id="label_has_on_off">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.on_off"></label></b>
+        </div>
+
+        <div id="has_on_off">
+            <div class="form-row">
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_on_off"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.command_only_on_off"></label>
+                    <input type="checkbox" checked id="node-input-command_only_on_off" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-query_only_on_off"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.query_only_on_off"></label>
+                    <input type="checkbox" checked id="node-input-query_only_on_off" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row red-ui-editableList-border" id="transport_control" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_has_transport_control">
+            <b><label style="width:auto" for="node-input-has_transport_control"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.transport_control"></label></b>
+            <input type="checkbox" checked id="node-input-has_transport_control" style="display:inline-block; width:auto; vertical-align:top;">
+        </div>
+
+        <div class="form-row" id="label_has_transport_control">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.transport_control"></label></b>
+        </div>
+
+        <div id="has_transport_control">
+            <div class="form-row">
+                <label for="node-input-supported_commands"><i class="fa fa-tasks"></i> <span data-i18n="media.label.supported_commands"></span></label>
+                <select multiple id="node-input-supported_commands" >
+                    <option value="CAPTION_CONTROL" data-i18n="media.label.caption_control"></option>
+                    <option value="NEXT" data-i18n="media.label.next"></option>
+                    <option value="PAUSE" data-i18n="media.label.pause"></option>
+                    <option value="PREVIOUS" data-i18n="media.label.previous"></option>
+                    <option value="RESUME" data-i18n="media.label.resume"></option>
+                    <option value="SEEK_RELATIVE" data-i18n="media.label.seek_relative"></option>
+                    <option value="SEEK_TO_POSITION" data-i18n="media.label.seek_to_position"></option>
+                    <option value="SET_REPEAT" data-i18n="media.label.set_repeat"></option>
+                    <option value="SHUFFLE" data-i18n="media.label.shuffle"></option>
+                    <option value="STOP" data-i18n="media.label.stop"></option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row red-ui-editableList-border" id="modes" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_has_modes">
+            <b><label style="width:auto" for="node-input-has_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.modes"></label></b>
+            <input type="checkbox" checked id="node-input-has_modes" style="display:inline-block; width:auto; vertical-align:top;">
+        </div>
+
+        <div class="form-row" id="label_has_modes">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.modes"></label></b>
+        </div>
+
+        <div id="has_modes">
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-available_modes_file"><i class="fa fa-tasks"></i> <span data-i18n="media.label.available_modes_file"></span></label>
+                    <input type="text" id="node-input-available_modes_file" data-i18n="[placeholder]media.placeholder.available_modes_file">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.command_only_modes"></label>
+                    <input type="checkbox" checked id="node-input-command_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-query_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.query_only_modes"></label>
+                    <input type="checkbox" checked id="node-input-query_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-row red-ui-editableList-border" id="toggles" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_has_toggles">
+            <b><label style="width:auto" for="node-input-has_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.toggles"></label></b>
+            <input type="checkbox" checked id="node-input-has_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+        </div>
+
+        <div class="form-row" id="label_has_toggles">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.toggles"></label></b>
+        </div>
+
+        <div id="has_toggles">
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-available_toggles_file"><i class="fa fa-tasks"></i> <span data-i18n="media.label.available_toggles_file"></span></label>
+                    <input type="text" id="node-input-available_toggles_file" data-i18n="[placeholder]media.placeholder.available_toggles_file">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.command_only_toggles"></label>
+                    <input type="checkbox" checked id="node-input-command_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-query_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="media.label.query_only_toggles"></label>
+                    <input type="checkbox" checked id="node-input-query_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="google-media">
+    <p>A Google Smart Home Media Devices.</p>
+    <p>Supported devices:
+        <ul>
+            <li><b>Audio Video Receiver</b>: Device that takes audio input (for example, HDMI, optical, and RCA) and outputs sound to one or more speakers.</li>
+            <li><b>Remote Control</b>: Media remotes are used to control media devices. Examples of this device type include hubs, universal remotes, and media controllers.</li>
+            <li><b>Set-Top Box</b>: Interactions with Multichannel Video Programming Distributor (MVPD) and set-top-box devices may include controlling media playback.</li>
+            <li><b>Sound Bar</b>: An all-in-one audio device that is often used in conjunction with a TV and has a bar form factor.</li>
+            <li><b>Speaker</b>: This device is a connected speaker that does not split audio into separate channels (for example, between two left and right devices).</li>
+            <li><b>Streaming Box</b>: This device enables streaming services for media and music, often used in conjunction with a display such as a TV. This devices is powered from a constant source, separate from the display device itself.</li>
+            <li><b>Streaming Sound Bar</b>: This device is a combination of speaker and streaming stick or box. This device provides a streaming experience in addition to soundbar capabilities.</li>
+            <li><b>Streaming Stick</b>: This device has a small stick-like form factor that is usually powered by a USB or HDMI cable connected to a display such as a TV.</li>
+            <li><b>Television</b>: Television devices combine a tuner, display, and loudspeakers for the purpose of viewing and hearing media. Examples include smart TV devices.</li>
+        </ul>
+    <p>
+
+    <h3>Inputs</h3>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">boolean | object</span>
+            </dt>
+            <dd>state to send to Google Smart Home.</dd>
+        </dl>
+
+     <h3>Output</h3>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">object</span>
+            </dt>
+            <dd>state received from Google Smart Home.</dd>
+        </dl>
+
+    <h3>Details</h3>
+        <h4>Node Properties - Google SmartHome Settings</h4>
+        <p><code>SmartHome</code> Configuration node.</p>
+        <p><code>Name</code> Name used by Google Smart Home.</p>
+        <h4>Node Properties - Node-RED Settings</h4>
+        <p><code>Out topic</code> Topic used by this node when sending updates from Google Smart Home.</p>
+
+        <p><code>Device Type</code> The media device type.</p>
+        <p><code>Apps</code> The available Apps file location.</p>
+        <p><code>Channels</code> The available channels file location.</p>
+        <p><code>Inputs</code> The available inputs file location.</p>
+        <p><code>Command only input selector</code> Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.</p>
+        <p><code>Ordered Inputs</code> True if the list of output is ordered. This also indicates that the 'next' and 'previous' functionality is available.</p>
+        <p><code>Support activity state</code> Indicate if the device can report the activity state.</p>
+        <p><code>Support playback state</code> Indicate if the device can report the current playback state.</p>
+
+        <p><code>Command only On/Off</code> Indicates if the device can only controlled through commands, and cannot be queried for state information.</p>
+        <p><code>Query only On/Off</code> Indicates if the device can only be queried for state information, and cannot be controlled through commands.</p>
+        <p><code>Supported commands</code> Indicates the supported transport control commands on this device.</p>
+
+        <p><code>Volume Max level</code> The maximum volume level, assuming a baseline of 0 (mute). Assistant will adjust adverbial commands (e.g. 'make the tv a little louder') accordingly.</p>
+        <p><code>Volume Can mute and unmute</code> Indicates if the device can mute and unmute the volume. Mute is a separate option as the 'mute' behavior takes the volume to 0 while remembering the previous volume, so that unmute restores it. This is reflected in volume state—if volume is 5, and the user mutes, the volume remains 5 and isMuted is true.</p>
+        <p><code>Volume default percentage</code> The volume (in percentage) for the default volume defined by user or manufacturer. The scale must be 0-100.</p>
+        <p><code>Level step size</code> The default step size for relative volume queries like 'volume up on <device_name>.</p>
+        <p><code>command only volume</code> Indicates if the device operates using one-way (true) or two-way (false) communication. For example, if the controller can confirm the new device state after sending the request, this field would be false. If it's not possible to confirm if the request is successfully executed or to get the state of the device (for example, if the device is a traditional infrared remote), set this field to true.</p>
+
+        <p><code>Available modes file</code> The available modes file location.</p>
+        <p><code>Command only modes</code> Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.</p>
+        <p><code>Query only modes</code> Required if the device supports query-only execution. This attribute indicates if the device can only be queried for state information, and cannot be controlled.</p>
+
+        <p><code>Available toggles file</code> The available toggles file location.</p>
+        <p><code>Command only toggles</code> Indicates if the device supports using one-way (true) or two-way (false) communication. Set this attribute to true if the device cannot respond to a QUERY intent or Report State for this trait.</p>
+        <p><code>Query only toggles</code> Required if the device supports query-only execution. This attribute indicates if the device can only be queried for state information, and cannot be controlled.</p>
+
+        <p><code>Pass Through</code> If enabled, incoming messages will be passed onto the output. Be carefull with this setting.</p>
+
+        <p>If <code>msg.topic</code> is <code>on</code> then <code>msg.payload</code> must be boolean and tells the state of the device.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> sets device to on, <code>false</code> sets device to off.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>online</code> then <code>msg.payload</code> must be boolean and tells the online state of the device.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> sets online state to on, <code>false</code> sets online state to off.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>applications</code> and the <code>msg.payload</code> is a string or a json object, the applications list is saved to the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string | json</span>
+            </dt>
+            <dd>Save the applications to the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>applications</code> and the <code>msg.payload</code> is not defined, the applications list is loaded from the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">undefined</span>
+            </dt>
+            <dd>Load the applications from the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>channels</code> and the <code>msg.payload</code> is a string or a json object, the available channel are saved to the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string | json</span>
+            </dt>
+            <dd>Save the channels to the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>channels</code> and the <code>msg.payload</code> is not defined, the available channel are loaded from the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">undefined</span>
+            </dt>
+            <dd>Load the channels from the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>inputs</code> and the <code>msg.payload</code> is a string or a json object, the available inputs are saved to the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string | json</span>
+            </dt>
+            <dd>Save the inputs to the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>inputs</code> and the <code>msg.payload</code> is not defined, the available inputs are loaded from the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">undefined</span>
+            </dt>
+            <dd>Load the inputs from the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>modes</code> and the <code>msg.payload</code> is a string or a json object, the available modes are saved to the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string | json</span>
+            </dt>
+            <dd>Save the modes to the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>modes</code> and the <code>msg.payload</code> is not defined, the available modes are loaded from the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">undefined</span>
+            </dt>
+            <dd>Load the modes from the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>traits</code> and the <code>msg.payload</code> is a string or a json object, the available traits are saved to the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string | json</span>
+            </dt>
+            <dd>Save the traits to the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>traits</code> and the <code>msg.payload</code> is not defined, the available traits are loaded from the file.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">undefined</span>
+            </dt>
+            <dd>Load the traits from the file.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is something other than the above topics then <code>msg.payload</code> must be an object and tells both the on state as well as the online state of the media.</p>
+        <dl class="message-properties">
+            <dt>payload.on
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> device on, <code>false</code> device off.</dd>
+            <dt>payload.online
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> sets online state to on, <code>false</code> sets online state to off.</dd>
+        </dl>
+
+        <p><b>Note 1:</b> <code>msg.topic</code> does not have to be exactly as shown above. You can use <code>/</code> as
+        a delimiter and as long as the last part of the topic matches one of the described topics all is good.
+        For example, <code>a/msg/topic/online</code> will be broken down into multiple parts and only the last part, 
+        <code>online</code>, will be tested for a match.</p>
+        <p><b>Note 2:</b> If you set the online state to <code>false</code> then Google Smart Home is not going to be 
+        able to control the media device.</p>
+
+        <h4>Output Messages</h4>
+        <p>Unless <code>Pass Through</code> is enabled, these messages are emitted when Google Smart Home wants to control the media.</p>
+        <dl class="message-properties">
+            <dt>payload.online
+                <span class="property-type">boolean</span>
+            </dt>
+            <dd><code>true</code> online state on, <code>false</code> online state off.</dd>
+        </dl>
+
+    <h3>References</h3>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/audiovideoreceiver" target="_new">Smart Home Audio/Video receiver Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/remotecontrol" target="_new">Smart Home remote control Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/settop" target="_new">Smart Home set-top box Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/soundbar" target="_new">Smart Home soundbar Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/speaker" target="_new">Smart Home speaker Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/streamingbox" target="_new">Smart Home streaming box Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/streamingsoundbar" target="_new">Smart Home streaming soundbar Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/streamingstick" target="_new">Smart Home streaming stick Guide</a>.</p>
+        <p><a href="https://developers.google.com/assistant/smarthome/guides/tv" target="_new">Smart Home TV Guide</a>.</p>
+        <p><a href="https://www.npmjs.com/package/node-red-contrib-google-smarthome" target="_new">Node Information</a>.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google-media', {
+        category: 'Google_SmartHome-function',
+        paletteLabel: 'Media Device',
+        defaults: {
+            client: {
+                type: "googlesmarthome-client", 
+                required: true
+            },
+            name: {
+                value: "", required:true
+            },
+            topic: {
+                value: "", required:true
+            },
+            device_type: {
+                value: "AUDIO_VIDEO_RECEIVER", required: true
+            },
+            has_apps: {
+                value: false, required:false
+            },
+            has_channels: {
+                value: false, required:false
+                        },
+            has_inputs: {
+                value: false, required:false
+            },
+            has_media_state: {
+                value: false, required:false
+            },
+            has_on_off: {
+                value: false, required:false
+            },
+            has_transport_control: {
+                value: false, required:false
+            },
+            has_modes: {
+                value: false, required:false
+            },
+            has_toggles: {
+                value: false, required:false
+            },
+            available_applications_file: {
+                value: "applications.json", required:false
+            },
+            available_channels_file: {
+                value: "channels.json", required:false
+            },
+            available_inputs_file: {
+                value: "inputs.json", required:false
+            },
+            command_only_input_selector: {
+                value: false, required:false
+            },
+            ordered_inputs: {
+                value: false, required:false
+            },
+            support_activity_state: {
+                value: false, required:false
+            },
+            support_playback_state: {
+                value: false, required:false
+            },
+            command_only_on_off: {
+                value: false, required:false
+            },
+            query_only_on_off: {
+                value: false, required:false
+            },
+            supported_commands: {
+                value: ['CAPTION_CONTROL', 'NEXT', 'PAUSE', 'PREVIOUS', 'RESUME', 'SEEK_RELATIVE', 'SEEK_TO_POSITION', 'SET_REPEAT', 'SHUFFLE', 'STOP'], required:false
+            },
+            volume_max_level: {
+                value: 100, required:true, validate: function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            can_mute_and_unmute: {
+                value: true, required:false
+            },
+            volume_default_percentage: {
+                value: 40, required:false, validate: function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0 && n <= 100;
+                }
+            },
+            level_step_size: {
+                value: 1, required:false, validate: function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
+            },
+            command_only_volume: {
+                value: false, required:false
+            },
+            available_modes_file: {
+                value: "modes.json", required:false
+            },
+            command_only_modes: {
+                value: false, required:false
+            },
+            query_only_modes: {
+                value: false, required:false
+            },
+            available_toggles_file: {
+                value: "toggles.json", required:false
+            },
+            command_only_toggles: {
+                value: false, required:false
+            },
+            query_only_toggles: {
+                value: false, required:false
+            },
+            passthru: {
+                value: false
+            },
+        },
+        inputs: 1,
+        outputs: 1,
+        color:"#C0DEED",
+        icon: "google-smarthome.png",
+        label: function() {
+            return this.name || this._('media.label.' + this.device_type.toLowerCase()) || "Media Device";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : ""
+        },
+        oneditprepare: function() {
+            // Applications
+            var hasApplications = function() {
+                var has_apps = $("#node-input-has_apps").prop('checked');
+                if (has_apps == false) {
+                    $("#has_apps").hide();
+                } else {
+                    $("#has_apps").show();
+                }
+            }
+            hasApplications();
+            $("#node-input-has_apps").change(hasApplications);
+            $("#label_has_apps").click(function() {
+                $("#has_apps").toggle();
+            });
+
+            // Channels
+            var hasChannels = function() {
+                var has_channels = $("#node-input-has_channels").prop('checked');
+                if (has_channels == false) {
+                    $("#has_channels").hide();
+                } else {
+                    $("#has_channels").show();
+                }
+            }
+            hasChannels();
+            $("#node-input-has_channels").change(hasChannels);
+            $("#label_has_channels").click(function() {
+                $("#has_channels").toggle();
+            });
+
+            // Inputs
+            var hasInputs = function() {
+                var has_inputs = $("#node-input-has_inputs").prop('checked');
+                if (has_inputs == false) {
+                    $("#has_inputs").hide();
+                } else {
+                    $("#has_inputs").show();
+                }
+            }
+            hasInputs();
+            $("#node-input-has_inputs").change(hasInputs);
+            $("#label_has_inputs").click(function() {
+                $("#has_inputs").toggle();
+            });
+
+            // Media States
+            var hasMediaState = function() {
+                var has_media_state = $("#node-input-has_media_state").prop('checked');
+                if (has_media_state == false) {
+                    $("#has_media_state").hide();
+                } else {
+                    $("#has_media_state").show();
+                }
+            }
+            hasMediaState();
+            $("#node-input-has_media_state").change(hasMediaState);
+            $("#label_has_media_state").click(function() {
+                $("#has_media_state").toggle();
+            });
+
+            // Media States
+            var hasOnOff = function() {
+                var has_on_off = $("#node-input-has_on_off").prop('checked');
+                if (has_on_off == false) {
+                    $("#has_on_off").hide();
+                } else {
+                    $("#has_on_off").show();
+                }
+            }
+            hasOnOff();
+            $("#node-input-has_on_off").change(hasOnOff);
+            $("#label_has_on_off").click(function() {
+                $("#has_on_off").toggle();
+            });
+
+            // Transport Control
+            var hasTransportControl = function() {
+                var has_transport_control = $("#node-input-has_transport_control").prop('checked');
+                if (has_transport_control == false) {
+                    $("#has_transport_control").hide();
+                } else {
+                    $("#has_transport_control").show();
+                }
+            }
+            hasTransportControl();
+            $("#node-input-has_transport_control").change(hasTransportControl);
+            $("#label_has_transport_control").click(function() {
+                $("#has_transport_control").toggle();
+            });
+
+            // Modes
+            var hasModes = function() {
+                var has_modes = $("#node-input-has_modes").prop('checked');
+                if (has_modes == false) {
+                    $("#has_modes").hide();
+                } else {
+                    $("#has_modes").show();
+                }
+            }
+            hasModes();
+            $("#node-input-has_modes").change(hasModes);
+            $("#label_has_modes").click(function() {
+                $("#has_modes").toggle();
+            });
+
+            // Toggles
+            var hasToggles = function() {
+                var has_toggles = $("#node-input-has_toggles").prop('checked');
+                if (has_toggles == false) {
+                    $("#has_toggles").hide();
+                } else {
+                    $("#has_toggles").show();
+                }
+            }
+            hasToggles();
+            $("#node-input-has_toggles").change(hasToggles);
+            $("#label_has_toggles").click(function() {
+                $("#has_toggles").toggle();
+            });
+
+            var optionalTrait = function(name) {
+                $("#node-input-has_" + name).show();
+                $("#label_has_" + name).hide();
+                $("#cb_has_" + name).show();
+                $("#" + name).show();
+            };
+
+            var mandatoryTrait = function(name) {
+                $("#node-input-has_" + name).hide();
+                $("#label_has_" + name).show();
+                $("#cb_has_" + name).hide();
+                $("#has_" + name).show();
+                $("#" + name).show();
+            };
+
+            var noTrait = function(name) {
+                $("#" + name).hide();
+            };
+
+            // Device Type
+            var deviceTypeChanged = function() {
+                var device_type = $("#node-input-device_type").val();
+                switch (device_type) {
+                    case "AUDIO_VIDEO_RECEIVER":
+                        mandatoryTrait("inputs");
+                        mandatoryTrait("on_off");
+                        optionalTrait("apps");
+                        optionalTrait("media_state");
+                        optionalTrait("transport_control");
+                        noTrait("channels");
+                        noTrait("toggles");
+                        noTrait("modes");
+                        break;
+                    case "REMOTECONTROL":
+                        mandatoryTrait("apps");
+                        mandatoryTrait("inputs");
+                        mandatoryTrait("media_state");
+                        mandatoryTrait("on_off");
+                        mandatoryTrait("transport_control");
+                        optionalTrait("channels");
+                        optionalTrait("toggles");
+                        optionalTrait("modes");
+                        break;
+                    case "SETTOP":
+                        mandatoryTrait("apps");
+                        mandatoryTrait("inputs");
+                        mandatoryTrait("media_state");
+                        mandatoryTrait("on_off");
+                        mandatoryTrait("transport_control");
+                        optionalTrait("channels");
+                        noTrait("toggles");
+                        noTrait("modes");
+                        break;
+                    case "SOUNDBAR":
+                    case "SPEAKER":
+                        mandatoryTrait("media_state");
+                        mandatoryTrait("transport_control");
+                        optionalTrait("apps");
+                        optionalTrait("inputs");
+                        optionalTrait("on_off");
+                        noTrait("channels");
+                        noTrait("toggles");
+                        noTrait("modes");
+                        break;
+                    case "STREAMING_BOX":
+                    case "STREAMING_SOUNDBAR":
+                    case "STREAMING_STICK":
+                        mandatoryTrait("apps");
+                        mandatoryTrait("media_state");
+                        mandatoryTrait("transport_control");
+                        optionalTrait("inputs");
+                        optionalTrait("on_off");
+                        noTrait("channels");
+                        noTrait("toggles");
+                        noTrait("modes");
+                        break;
+                    case "TV":
+                        mandatoryTrait("apps");
+                        mandatoryTrait("inputs");
+                        mandatoryTrait("media_state");
+                        mandatoryTrait("on_off");
+                        mandatoryTrait("transport_control");
+                        optionalTrait("channels");
+                        optionalTrait("toggles");
+                        optionalTrait("modes");
+                        break;
+                }
+            }
+            deviceTypeChanged();
+            $("#node-input-device_type").change(deviceTypeChanged);
+
+        }
+    })
+</script>
