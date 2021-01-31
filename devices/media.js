@@ -16,8 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-const { ok } = require('assert');
-
 module.exports = function(RED) {
     "use strict";
 
@@ -163,7 +161,7 @@ module.exports = function(RED) {
                 this.available_applications = this.loadJson(this.available_applications_file, []);
                 if (this.available_applications === undefined) {
                     error_msg += ' Applications file error.';
-                    RED.log.error("Applications " +  this.available_applications_file + "file error.")
+                    RED.log.error("Applications " +  this.available_applications_file + "file error.");
                 }
             } else {
                 this.available_applications = undefined;
@@ -174,7 +172,7 @@ module.exports = function(RED) {
                 this.available_channels = this.loadJson(this.available_channels_file, []);
                 if (this.available_channels === undefined) {
                     error_msg += ' Channels file error.';
-                    RED.log.error("Channels " +  this.available_channels_file + "file error.")
+                    RED.log.error("Channels " +  this.available_channels_file + "file error.");
                 }
             } else {
                 this.available_channels = undefined;
@@ -185,7 +183,7 @@ module.exports = function(RED) {
                 this.available_inputs = this.loadJson(this.available_inputs_file, []);
                 if (this.available_inputs === undefined) {
                     error_msg += ' Inputs file error.';
-                    RED.log.error("Inputs " +  this.available_inputs_file + "file error.")
+                    RED.log.error("Inputs " +  this.available_inputs_file + "file error.");
                 }
             } else {
                 this.available_inputs = undefined;
@@ -196,7 +194,7 @@ module.exports = function(RED) {
                 this.available_modes = this.loadJson(this.available_modes_file, []);
                 if (this.available_modes === undefined) {
                     error_msg += ' Modes file error.';
-                    RED.log.error("Modes " +  this.available_modes_file + "file error.")
+                    RED.log.error("Modes " +  this.available_modes_file + "file error.");
                 }
             } else {
                 this.available_modes = undefined;
@@ -207,7 +205,7 @@ module.exports = function(RED) {
                 this.available_toggles = this.loadJson(this.available_toggles_file, []);
                 if (this.available_toggles === undefined) {
                     error_msg += ' Toggles file error.';
-                    RED.log.error("Toggles " +  this.available_toggles_file + "file error.")
+                    RED.log.error("Toggles " +  this.available_toggles_file + "file error.");
                 }
             } else {
                 this.available_toggles = undefined;
@@ -407,7 +405,7 @@ module.exports = function(RED) {
                         if (typeof msg.payload === undefined) {
                             this.available_applications = this.loadJson(this.available_applications_file, []);
                             if (this.available_applications === undefined) {
-                                RED.log.error("Applications " +  this.available_applications_file + "file not found.")
+                                RED.log.error("Applications " +  this.available_applications_file + "file not found.");
                             }
                         } else {
                             if (!this.writeJson(this.available_applications_file, msg.payload)) {
@@ -425,7 +423,7 @@ module.exports = function(RED) {
                         if (typeof msg.payload === undefined) {
                             this.available_channels = this.loadJson(this.available_channels_file, []);
                             if (this.available_channels === undefined) {
-                                RED.log.error("Channels " +  this.available_channels_file + "file not found.")
+                                RED.log.error("Channels " +  this.available_channels_file + "file not found.");
                             }
                         } else {
                             if (!this.writeJson(this.available_channels_file, msg.payload)) {
@@ -443,7 +441,7 @@ module.exports = function(RED) {
                         if (typeof msg.payload === undefined) {
                             this.available_inputs = this.loadJson(this.available_inputs_file, []);
                             if (this.available_inputs === undefined) {
-                                RED.log.error("Inputs " +  this.available_inputs_file + "file not found.")
+                                RED.log.error("Inputs " +  this.available_inputs_file + "file not found.");
                             }
                         } else {
                             if (!this.writeJson(this.available_inputs_file, msg.payload)) {
@@ -461,7 +459,7 @@ module.exports = function(RED) {
                         if (typeof msg.payload === undefined) {
                             this.available_modes = this.loadJson(this.available_modes_file, []);
                             if (this.available_modes === undefined) {
-                                RED.log.error("Modes " +  this.available_modes_file + "file not found.")
+                                RED.log.error("Modes " +  this.available_modes_file + "file not found.");
                             } else {
                                 this.updateModesState(me, me);
                             }
@@ -482,7 +480,7 @@ module.exports = function(RED) {
                         if (typeof msg.payload === undefined) {
                             this.available_toggles = this.loadJson(this.available_toggles_file, []);
                             if (this.available_toggles === undefined) {
-                                RED.log.error("Toggles " +  this.available_toggles_file + "file not found.")
+                                RED.log.error("Toggles " +  this.available_toggles_file + "file not found.");
                             } else {
                                 this.updateTogglesState(me, me);
                             }
