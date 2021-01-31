@@ -55,8 +55,7 @@
     "googleapis": "^66.0.x",
     "uuid-token-generator": "^1.0.x",
     "util": "^0.12.x",
-    "path": "^0.12.x",
-    "node-persist": "^2.1.x"
+    "path": "^0.12.x"
   },
   "maintainers": [
     {
