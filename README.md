@@ -90,10 +90,16 @@ The Google Sign-In feature allows to login using your Google credentials. See [I
 If you want to use login with username/password instead, skip this section.
 
 1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
-1. Click Create credentials > OAuth client ID.
-1. Select the Web application application type.
-1. Name your OAuth 2.0 client and click Create.
-1. Copy the client ID that was created. You will need it later.
+1. From the project drop-down, select your project.
+1. In the sidebar under "APIs & Services", select Credentials, then click Configure consent screen.
+1. Choose an Email Address, specify a Product Name, and press Save.
+1. In the Credentials tab, select the Create credentials drop-down list, and choose OAuth client ID.
+1. Under Application type, select Web application.
+1. Register the origins from which your app is allowed to access the Google APIs, as follows.
+    * In the Authorized JavaScript origins field, enter the hosted URL of your app, e.g. https://example.com:3001
+    * The Authorized redirect URI field does not require a value.
+    * Press the Create button.
+1. From the resulting OAuth client dialog box, copy the Client ID.
 
 #### Install and configure Node-RED module
 
