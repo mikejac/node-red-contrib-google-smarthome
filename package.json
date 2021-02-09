@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-google-smarthome",
-  "version": "0.0.57",
+  "version": "0.0.60",
   "description": "Lets you control Node-Red via Google Assistant or the Google Home App",
   "main": "google-smarthome.js",
   "scripts": {},
@@ -21,14 +21,18 @@
       "light": "devices/light.js",
       "outlet": "devices/outlet.js",
       "camera": "devices/camera.js",
+      "media": "devices/media.js",
       "scene": "devices/scene.js",
       "shutter": "devices/shutter.js",
       "thermostat": "devices/thermostat.js",
       "window": "devices/window.js",
       "vaccum": "devices/vacuum.js",
       "fan": "devices/fan.js",
+      "hood": "devices/hood.js",
+      "fireplace": "devices/fireplace.js",
       "sensor": "devices/sensor.js",
-      "switch": "devices/switch.js"
+      "switch": "devices/switch.js",
+      "blind": "devices/blind.js"
     }
   },
   "author": {
@@ -51,8 +55,7 @@
     "googleapis": "^66.0.x",
     "uuid-token-generator": "^1.0.x",
     "util": "^0.12.x",
-    "path": "^0.12.x",
-    "node-persist": "^2.1.x"
+    "path": "^0.12.x"
   },
   "maintainers": [
     {
