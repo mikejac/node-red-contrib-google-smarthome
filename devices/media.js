@@ -265,7 +265,7 @@ module.exports = function(RED) {
             this.updateAttributesForTraits(me, device);
             this.updateStatesForTraits(me, device);
 
-            RED.log.debug("MediaNode(updated): device = " + JSON.stringify(device));
+            RED.log.debug("MediaNode(registerDevice): device = " + JSON.stringify(device));
 
             return device;
         }
