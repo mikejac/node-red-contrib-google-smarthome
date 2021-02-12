@@ -692,7 +692,7 @@ module.exports = function(RED) {
                 } else {
                     RED.log.debug('MediaNode:loadJson(): data loaded');
                     const json = JSON.parse(jsonFile);
-                    RED.log.debug('MediaNode:loadAuth(): json = ' + JSON.stringify(json));
+                    RED.log.debug('MediaNode:loadJson(): json = ' + JSON.stringify(json));
                     return json;
                 }
             }
