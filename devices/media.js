@@ -362,7 +362,7 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        updated(device) {
+        updated(device, params) {
             let states = device.states;
             let command = device.command;
             RED.log.debug("MediaNode(updated): states = " + JSON.stringify(states));
@@ -382,6 +382,12 @@ module.exports = function(RED) {
 
             Object.keys(states).forEach(function (key) {
                 msg.payload[key] = states[key];
+             });
+
+             Object.keys(params).forEach(function (key) {
+                 if (!msg.payload.hasOwnProperty(key)) {
+                    msg.payload[key] = params[key];
+                 }
              });
 
             this.send(msg);
