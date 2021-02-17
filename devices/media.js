@@ -974,10 +974,12 @@ module.exports = function(RED) {
                     const channelCode = command.params['channelCode'];
                     let new_channel_index = -1;
                     let new_channel_key = '';
+                    let new_channel_number = '';
                     this.available_channels.forEach(function(channel, index) {
                         if (channel.key === channelCode) {
                             new_channel_index = index;
                             new_channel_key = channel.key;
+                            new_channel_number = channel.number || '';
                         }
                     });
                     if (new_channel_index < 0) {
@@ -988,6 +990,7 @@ module.exports = function(RED) {
                     }
                     this.current_channel_index = new_channel_index;
                     params['currentChannel'] = new_channel_key;
+                    params['currentChannelNumber'] = new_channel_number;
                     // executionStates.push('online', 'currentChannel');
                     return ok_result;
                 }
@@ -998,10 +1001,12 @@ module.exports = function(RED) {
                     const channelNumber = command.params['channelNumber'];
                     let new_channel_index = -1;
                     let new_channel_key = '';
+                    let new_channel_number = '';
                     this.available_channels.forEach(function(channel, index) {
                         if (channel.number === channelNumber) {
                             new_channel_index = index;
                             new_channel_key = channel.key;
+                            new_channel_number = channel.number || '';
                         }
                     });
                     if (new_channel_index < 0) {
@@ -1012,6 +1017,7 @@ module.exports = function(RED) {
                     }
                     me.current_channel_index = new_channel_index;
                     params['currentChannel'] = new_channel_key;
+                    params['currentChannelNumber'] = new_channel_number;
                     // executionStates.push('online', 'currentChannel');
                     return ok_result;
                 }
@@ -1035,6 +1041,7 @@ module.exports = function(RED) {
                         this.current_channel_index = current_channel_index;
                     }
                     params['currentChannel'] = this.available_channels[current_channel_index].key;
+                    params['currentChannelNumber'] = this.available_channels[current_channel_index].number || '';
                     // executionStates.push('online', 'currentChannel');
                     return ok_result;
                 }
@@ -1049,6 +1056,7 @@ module.exports = function(RED) {
                     this.current_channel_index = 0;
                 }
                 params['currentChannel'] = this.available_channels[this.current_channel_index].key;
+                params['currentChannelNumber'] = this.available_channels[current_channel_index].number || '';
                 // executionStates.push('online', 'currentChannel');
                 return ok_result;
             }
