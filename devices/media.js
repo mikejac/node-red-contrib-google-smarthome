@@ -224,6 +224,14 @@ module.exports = function(RED) {
             this.on('close', this.onClose);
         }
 
+        debug(msg) {
+            if (this.clientConn && typeof this.clientConn.debug === 'function') {
+                this.clientConn.debug(msg);
+            } else {
+                RED.log.debug(msg);
+            }
+        }
+
         /******************************************************************************************************************
          * called to register device
          *
@@ -713,7 +721,7 @@ module.exports = function(RED) {
                 const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
             }
-            RED.log.debug('MediaNode:writeJson(): loading ' + filename);
+            RED.log.debug('MediaNode:writeJson(): writing ' + filename);
             if (typeof value === 'object') {
                 value = JSON.stringify(value);
             }
@@ -723,7 +731,7 @@ module.exports = function(RED) {
                     value,
                     {
                         'encoding': 'utf8',
-                        'flag': fs.constants.W_OK | fs.constants.O_CREAT
+                        'flag': fs.constants.W_OK | fs.constants.O_CREAT | fs.constants.O_TRUNC
                     });
     
                 RED.log.debug('MediaNode:writeJson(): data saved');
