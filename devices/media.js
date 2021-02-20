@@ -224,6 +224,14 @@ module.exports = function(RED) {
             this.on('close', this.onClose);
         }
 
+        debug(msg) {
+            if (this.clientConn && typeof this.clientConn.debug === 'function') {
+                this.clientConn.debug(msg);
+            } else {
+                RED.log.debug(msg);
+            }
+        }
+
         /******************************************************************************************************************
          * called to register device
          *
@@ -362,7 +370,7 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        updated(device) {
+        updated(device, params) {
             let states = device.states;
             let command = device.command;
             RED.log.debug("MediaNode(updated): states = " + JSON.stringify(states));
@@ -382,6 +390,12 @@ module.exports = function(RED) {
 
             Object.keys(states).forEach(function (key) {
                 msg.payload[key] = states[key];
+             });
+
+             Object.keys(params).forEach(function (key) {
+                 if (!msg.payload.hasOwnProperty(key)) {
+                    msg.payload[key] = params[key];
+                 }
              });
 
             this.send(msg);
@@ -707,7 +721,7 @@ module.exports = function(RED) {
                 const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
             }
-            RED.log.debug('MediaNode:writeJson(): loading ' + filename);
+            RED.log.debug('MediaNode:writeJson(): writing ' + filename);
             if (typeof value === 'object') {
                 value = JSON.stringify(value);
             }
@@ -717,7 +731,7 @@ module.exports = function(RED) {
                     value,
                     {
                         'encoding': 'utf8',
-                        'flag': fs.constants.W_OK | fs.constants.O_CREAT
+                        'flag': fs.constants.W_OK | fs.constants.O_CREAT | fs.constants.O_TRUNC
                     });
     
                 RED.log.debug('MediaNode:writeJson(): data saved');
@@ -960,10 +974,12 @@ module.exports = function(RED) {
                     const channelCode = command.params['channelCode'];
                     let new_channel_index = -1;
                     let new_channel_key = '';
+                    let new_channel_number = '';
                     this.available_channels.forEach(function(channel, index) {
                         if (channel.key === channelCode) {
                             new_channel_index = index;
                             new_channel_key = channel.key;
+                            new_channel_number = channel.number || '';
                         }
                     });
                     if (new_channel_index < 0) {
@@ -974,6 +990,7 @@ module.exports = function(RED) {
                     }
                     this.current_channel_index = new_channel_index;
                     params['currentChannel'] = new_channel_key;
+                    params['currentChannelNumber'] = new_channel_number;
                     // executionStates.push('online', 'currentChannel');
                     return ok_result;
                 }
@@ -984,10 +1001,12 @@ module.exports = function(RED) {
                     const channelNumber = command.params['channelNumber'];
                     let new_channel_index = -1;
                     let new_channel_key = '';
+                    let new_channel_number = '';
                     this.available_channels.forEach(function(channel, index) {
                         if (channel.number === channelNumber) {
                             new_channel_index = index;
                             new_channel_key = channel.key;
+                            new_channel_number = channel.number || '';
                         }
                     });
                     if (new_channel_index < 0) {
@@ -998,6 +1017,7 @@ module.exports = function(RED) {
                     }
                     me.current_channel_index = new_channel_index;
                     params['currentChannel'] = new_channel_key;
+                    params['currentChannelNumber'] = new_channel_number;
                     // executionStates.push('online', 'currentChannel');
                     return ok_result;
                 }
@@ -1021,6 +1041,7 @@ module.exports = function(RED) {
                         this.current_channel_index = current_channel_index;
                     }
                     params['currentChannel'] = this.available_channels[current_channel_index].key;
+                    params['currentChannelNumber'] = this.available_channels[current_channel_index].number || '';
                     // executionStates.push('online', 'currentChannel');
                     return ok_result;
                 }
@@ -1035,6 +1056,7 @@ module.exports = function(RED) {
                     this.current_channel_index = 0;
                 }
                 params['currentChannel'] = this.available_channels[this.current_channel_index].key;
+                params['currentChannelNumber'] = this.available_channels[current_channel_index].number || '';
                 // executionStates.push('online', 'currentChannel');
                 return ok_result;
             }
