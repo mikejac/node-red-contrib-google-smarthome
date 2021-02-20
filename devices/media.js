@@ -265,7 +265,7 @@ module.exports = function(RED) {
             this.updateAttributesForTraits(me, device);
             this.updateStatesForTraits(me, device);
 
-            RED.log.debug("MediaNode(updated): device = " + JSON.stringify(device));
+            RED.log.debug("MediaNode(registerDevice): device = " + JSON.stringify(device));
 
             return device;
         }
@@ -692,7 +692,7 @@ module.exports = function(RED) {
                 } else {
                     RED.log.debug('MediaNode:loadJson(): data loaded');
                     const json = JSON.parse(jsonFile);
-                    RED.log.debug('MediaNode:loadAuth(): json = ' + JSON.stringify(json));
+                    RED.log.debug('MediaNode:loadJson(): json = ' + JSON.stringify(json));
                     return json;
                 }
             }
