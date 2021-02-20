@@ -100,11 +100,33 @@ module.exports = function(RED) {
             setTimeout(() => { this.status({}) }, 10000);
         }
 
+        execCommand(device, command) {
+            let params = {};
+            let executionStates = [];
+            const ok_result = {
+                online: true,
+                'params' : params,
+                'executionStates': executionStates
+            };
+            if (typeof command.params.deactivate !== "undefined") {
+                params['deactivate'] = command.params.deactivate;
+            }
+            return ok_result;
+        }
+
+        debug(msg) {
+            if (this.clientConn && typeof this.clientConn.debug === 'function') {
+                this.clientConn.debug(msg);
+            } else {
+                RED.log.debug(msg);
+            }
+        }
+
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
          *
          */
-        updated(device) {
+        updated(device, params) {
             let states = device.states;
             let command = device.command;
             RED.log.debug("SceneNode(updated): states = " + JSON.stringify(states));
@@ -117,7 +139,7 @@ module.exports = function(RED) {
                 topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
-                payload: !states.deactivate,
+                payload: !params.deactivate,
             };
 
             this.send(msg);
