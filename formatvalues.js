@@ -31,7 +31,11 @@ module.exports.Formats = Formats;
  *
  *
  */
-module.exports.FormatValue = function FormatValue(format, key, value) {
+module.exports.FormatValue = function FormatValue(format, key, value, default_value) {
+    if (typeof value === 'undefined') {
+        value = default_value;
+    }
+
     if (typeof value === 'string') {
         switch(format) {
             case Formats.BOOL:

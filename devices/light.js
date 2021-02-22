@@ -1773,13 +1773,14 @@ module.exports = function(RED) {
 
             let topicArr = String(msg.topic).split(this.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
+            const has_name  = this.is_hsv || this.is_rgb || this.has_temp;
 
             this.debug("LightNode(input): topic = " + topic);
 
             try {
                 if (topic.toUpperCase() === 'ON') {
                     this.debug("LightNode(input): ON");
-                    let on = formats.FormatValue(formats.Formats.BOOL, 'on', msg.payload);
+                    let on = formats.FormatValue(formats.Formats.BOOL, 'on', msg.payload, this.states.on);
 
                     if (this.states.on !== on) {
                         this.states.on = on;
@@ -1795,7 +1796,7 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     this.debug("LightNode(input): ONLINE");
-                    let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload);
+                    let online = formats.FormatValue(formats.Formats.BOOL, 'online', msg.payload, this.states.online);
 
                     if (this.states.online !== online) {
                         this.states.online = online;
@@ -1809,7 +1810,7 @@ module.exports = function(RED) {
                     }
                 } else if (this.is_dimmable && topic.toUpperCase() === 'BRIGHTNESS') {  // Integer, 0 - 100
                     this.debug("LightNode(input): BRIGHTNESS");
-                    let brightness = formats.FormatBrightness(formats.FormatValue(formats.Formats.INT, 'brightness', msg.payload));
+                    let brightness = formats.FormatBrightness(formats.FormatValue(formats.Formats.INT, 'brightness', msg.payload, this.states.brightness));
 
                     if (this.states.brightness !== brightness) {
                         this.states.brightness = brightness;
@@ -1823,7 +1824,7 @@ module.exports = function(RED) {
                     }
                 } else if (this.is_rgb && topic.toUpperCase() === 'RGB') {  // Integer, 0 - 16777215
                     this.debug("LightNode(input): RGB");
-                    let rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', msg.payload));
+                    let rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', msg.payload, this.states.color.spectrumRgb));
 
                     if (this.states.color.spectrumRgb !== rgb) {
                         this.states.color.spectrumRgb = rgb;
@@ -1837,7 +1838,7 @@ module.exports = function(RED) {
                     }
                 } else if (this.has_temp && topic.toUpperCase() === 'TEMPERATURE') {
                     RED.log.debug("LightColorRgbTempNode(input): TEMPERATURE");
-                    let temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', msg.payload));
+                    let temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', msg.payload, this.states.color.temperatureK));
 
                     if (this.states.color.temperatureK !== temperature) {
                         this.states.color.temperatureK = temperature;
@@ -1851,7 +1852,7 @@ module.exports = function(RED) {
                     }
                 } else if (this.is_hsv && topic.toUpperCase() === 'HUE') {  // Float, 0.0 - 360.0
                     RED.log.debug("LightHsvNode(input): HUE");
-                    let hue = formats.FormatHue(formats.FormatValue(formats.Formats.FLOAT, 'hue', msg.payload));
+                    let hue = formats.FormatHue(formats.FormatValue(formats.Formats.FLOAT, 'hue', msg.payload, this.states.color.spectrumHsv.hue));
 
                     if (this.states.color.spectrumHsv.hue !== hue) {
                         this.states.color.spectrumHsv.hue = hue;
@@ -1865,7 +1866,7 @@ module.exports = function(RED) {
                     }
                 } else if (this.is_hsv && topic.toUpperCase() === 'SATURATION') {  // Float, 0.0 - 100.0
                     RED.log.debug("LightHsvNode(input): SATURATION");
-                    let saturation = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'saturation', msg.payload)) / 100;
+                    let saturation = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'saturation', msg.payload, this.states.color.spectrumHsv.saturation * 100)) / 100;
 
                     if (this.states.color.spectrumHsv.saturation !== saturation) {
                         this.states.color.spectrumHsv.saturation = saturation;
@@ -1879,10 +1880,24 @@ module.exports = function(RED) {
                     }
                 } else if (this.is_hsv && topic.toUpperCase() === 'VALUE') {  // Float, 0.0 - 100.0
                     RED.log.debug("LightHsvNode(input): VALUE");
-                    let value = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'value', msg.payload)) / 100;
+                    let value = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'value', msg.payload, this.states.color.spectrumHsv.value * 100)) / 100;
 
                     if (this.states.color.spectrumHsv.value !== value) {
                         this.states.color.spectrumHsv.value = value;
+
+                        this.clientConn.setState(this, this.states);  // tell Google ...
+
+                        if (this.passthru) {
+                            msg.payload = value;
+                            this.send(msg);
+                        }
+                    }
+                } else if (has_name && topic.toUpperCase() === 'NAME') {
+                    RED.log.debug("LightHsvNode(input): NAME");
+                    let name = formats.FormatValue(formats.Formats.STRING, 'name', msg.payload, this.states.color.name);
+
+                    if (this.states.color.name !== name) {
+                        this.states.color.name = name;
 
                         this.clientConn.setState(this, this.states);  // tell Google ...
 
@@ -1910,12 +1925,13 @@ module.exports = function(RED) {
                     let hue         = this.is_hsv ?  this.states.color.spectrumHsv.hue : 0;
                     let saturation  = this.is_hsv ?  this.states.color.spectrumHsv.saturation : 0;
                     let value       = this.is_hsv ?  this.states.color.spectrumHsv.value : 0;
+                    let name        = has_name ? this.states.color.name : '';
 
                     let differs = false;
 
                     // on
                     if (object.hasOwnProperty('on')) {
-                        on = formats.FormatValue(formats.Formats.BOOL, 'on', object.on);
+                        on = formats.FormatValue(formats.Formats.BOOL, 'on', object.on, on);
                         if (this.states.on !== on) {
                             this.states.on = on;
                             differs = true;
@@ -1924,7 +1940,7 @@ module.exports = function(RED) {
 
                     // online
                     if (object.hasOwnProperty('online')) {
-                        online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online);
+                        online = formats.FormatValue(formats.Formats.BOOL, 'online', object.online, online);
                         if (this.states.online !== online) {
                             this.states.online = online;
                             differs = true;
@@ -1933,7 +1949,7 @@ module.exports = function(RED) {
 
                     // brightness
                     if (this.is_dimmable && object.hasOwnProperty('brightness')) {
-                        brightness = formats.FormatBrightness(formats.FormatValue(formats.Formats.INT, 'brightness', object.brightness));
+                        brightness = formats.FormatBrightness(formats.FormatValue(formats.Formats.INT, 'brightness', object.brightness, brightness));
                         if (this.states.brightness !== brightness) {
                             this.states.brightness = brightness;
                             differs = true;
@@ -1942,7 +1958,7 @@ module.exports = function(RED) {
 
                     // rgb
                     if (this.is_rgb && object.hasOwnProperty('rgb')) {
-                        rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', object.rgb));
+                        rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', object.rgb, rgb));
                         if (this.states.color.spectrumRgb !== rgb) {
                             this.states.color.spectrumRgb = rgb;
                             differs = true;
@@ -1951,7 +1967,7 @@ module.exports = function(RED) {
 
                     // color
                     if (this.has_temp && object.hasOwnProperty('temperature')) {
-                        temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature));
+                        temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature, temperature));
                         if (this.states.color.temperatureK !== temperature) {
                             this.states.color.temperatureK  = temperature;
                             differs = true;
@@ -1960,7 +1976,7 @@ module.exports = function(RED) {
 
                     // hue
                     if (this.is_hsv && object.hasOwnProperty('hue')) {
-                        hue = formats.FormatHue(formats.FormatValue(formats.Formats.FLOAT, 'hue', object.hue));
+                        hue = formats.FormatHue(formats.FormatValue(formats.Formats.FLOAT, 'hue', object.hue, hue));
                         if (this.states.color.spectrumHsv.hue !== hue) {
                             this.states.color.spectrumHsv.hue = hue;
                                 differs = true;
@@ -1969,7 +1985,7 @@ module.exports = function(RED) {
 
                     // saturation
                     if (this.is_hsv && object.hasOwnProperty('saturation')) {
-                        saturation = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'saturation', object.saturation)) / 100;
+                        saturation = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'saturation', object.saturation, saturation * 100)) / 100;
                         if (this.states.color.spectrumHsv.saturation !== saturation) {
                             this.states.color.spectrumHsv.saturation = saturation;
                             differs = true;
@@ -1978,9 +1994,18 @@ module.exports = function(RED) {
 
                     // value
                     if (this.is_hsv && object.hasOwnProperty('value')) {
-                        value = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'value', object.value)) / 100;
+                        value = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'value', object.value, value * 100)) / 100;
                         if (this.states.color.spectrumHsv.value !== value) {
                             this.states.color.spectrumHsv.value = value;
+                            differs = true;
+                        }
+                    }
+
+                    // name
+                    if (has_name && object.hasOwnProperty('name')) {
+                        name = formats.FormatValue(formats.Formats.STRING, 'name', object.name, name);
+                        if (this.states.color.name !== name) {
+                            this.states.color.name = name;
                             differs = true;
                         }
                     }
@@ -1991,30 +2016,29 @@ module.exports = function(RED) {
 
                         if (this.passthru) {
                             msg.payload                 = {};
-                            msg.payload.online          = this.states.online;
-                            msg.payload.on              = this.states.on;
+                            msg.payload.online          = online;
+                            msg.payload.on              = on;
                             if (this.is_rgb) {
-                                msg.payload.name        = this.states.color.name;
-                                msg.payload.rgb         = this.states.color.spectrumRgb;
+                                msg.payload.name        = name;
+                                msg.payload.rgb         = spectrumRgb;
                             }
                             if (this.has_temp) {
-                                msg.payload.name        = this.states.color.name;
-                                msg.payload.temperature = this.states.color.temperatureK;
+                                msg.payload.name        = name;
+                                msg.payload.temperature = temperatureK;
                             }
                             if (this.is_dimmable) {
-                                msg.payload.brightness  = this.states.brightness;
+                                msg.payload.brightness  = brightness;
                             }
                             if (this.is_hsv) {
-                                msg.payload.name        = this.states.color.name;
-                                msg.payload.hue         = this.states.color.spectrumHsv.hue;
-                                msg.payload.saturation  = this.states.color.spectrumHsv.saturation * 100;   // rescale
-                                msg.payload.value       = this.states.color.spectrumHsv.value * 100;        // rescale
+                                msg.payload.name        = name;
+                                msg.payload.hue         = hue;
+                                msg.payload.saturation  = saturation * 100;   // rescale
+                                msg.payload.value       = value * 100;        // rescale
                             }
                             this.send(msg);
                         }
-
-                        this.updateStatusIcon();
                     }
+                    this.updateStatusIcon();
                 }
             } catch (err) {
                 RED.log.error(err);
@@ -2090,8 +2114,7 @@ module.exports = function(RED) {
                 states['brightness'] = 100;
             }
             if (me.is_rgb || me.is_hsv || me.has_temp) {
-                states['color'] = {};
-                states['name'] = "";
+                states['color'] = { 'name' : '' };
                 if (me.has_temp) {
                     states['color']['temperatureK'] = 4000;
                 }

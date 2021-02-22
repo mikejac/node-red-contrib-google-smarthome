@@ -1200,7 +1200,7 @@
             <dd>Brightness for the light. Range is 0 - 100.</dd>
         </dl>
 
-        <p>If <code>msg.topic</code> is <code>color</code> then <code>msg.payload</code> must be an integer and tells the color of the light.</p>
+        <p>If <code>msg.topic</code> is <code>rgb</code> then <code>msg.payload</code> must be an integer and tells the color of the light.</p>
         <dl class="message-properties">
             <dt>payload
                 <span class="property-type">integer</span>
@@ -1214,6 +1214,30 @@
                 <span class="property-type">integer</span>
             </dt>
             <dd>Color temperature for the light. Range is 2000 - 6000.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>hue</code> then <code>msg.payload</code> must be an float and tells the color hue of the light.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">integer</span>
+            </dt>
+            <dd>Color hue for the light. Range is 0 - 1.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>saturation</code> then <code>msg.payload</code> must be an float and tells the color saturation of the light.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">integer</span>
+            </dt>
+            <dd>Color saturation for the light. Range is 0 - 1.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>value</code> then <code>msg.payload</code> must be an float and tells the color lightness of the light.</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">integer</span>
+            </dt>
+            <dd>Color lightness for the light. Range is 0 - 1.</dd>
         </dl>
 
         <p>If <code>msg.topic</code> is <code>on</code> then <code>msg.payload</code> must be boolean and tells the state of the light.</p>
@@ -1238,14 +1262,26 @@
                 <span class="property-type">integer</span>
             </dt>
             <dd>Brightness for the light. Range is 0 - 100.</dd>
-            <dt>payload.color
+            <dt>payload.rgb
                 <span class="property-type">float</span>
             </dt>
-            <dd>Color for the light. Range is 0 - 16777215.</dd>
+            <dd>RGB Color for the light. Range is 0 - 16777215.</dd>
             <dt>payload.temperature
                 <span class="property-type">integer</span>
             </dt>
             <dd>Color temperature for the light. Range is 2000 - 6000.</dd>
+            <dt>payload.hue
+                <span class="property-type">float</span>
+            </dt>
+            <dd>Hue for the light. Range is 0 - 1.</dd>
+            <dt>payload.saturation
+                <span class="property-type">float</span>
+            </dt>
+            <dd>Saturation for the light. Range is 0 - 1.</dd>
+            <dt>payload.value
+                <span class="property-type">float</span>
+            </dt>
+            <dd>Value or lightness for the light. Range is 0 - 1.</dd>
             <dt>payload.on
                 <span class="property-type">boolean</span>
             </dt>
@@ -1270,6 +1306,26 @@
                 <span class="property-type">integer</span>
             </dt>
             <dd>Brightness for the light. Range is 0 - 100.</dd>
+            <dt>payload.rgb
+                <span class="property-type">float</span>
+            </dt>
+            <dd>RGB Color for the light. Range is 0 - 16777215.</dd>
+            <dt>payload.temperature
+                <span class="property-type">integer</span>
+            </dt>
+            <dd>Color temperature for the light. Range is 2000 - 6000.</dd>
+            <dt>payload.hue
+                <span class="property-type">float</span>
+            </dt>
+            <dd>Hue for the light. Range is 0 - 1.</dd>
+            <dt>payload.saturation
+                <span class="property-type">float</span>
+            </dt>
+            <dd>Saturation for the light. Range is 0 - 1.</dd>
+            <dt>payload.value
+                <span class="property-type">float</span>
+            </dt>
+            <dd>Value or lightness for the light. Range is 0 - 1.</dd>
             <dt>payload.on
                 <span class="property-type">boolean</span>
             </dt>
