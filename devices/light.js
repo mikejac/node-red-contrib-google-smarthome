@@ -1749,11 +1749,11 @@ module.exports = function(RED) {
             }
             if (this.has_temp) {
                 msg.payload['name'] = states.color.name;
-                msg.payload['temperature'] = states.color.temperature;
+                msg.payload['temperature'] = states.color.temperatureK;
             }
             if (this.is_rgb) {
                 msg.payload['name'] = states.color.name;
-                msg.payload['rgb'] = states.color.spectrumRgb || states.color.spectrumRgb;
+                msg.payload['rgb'] = states.color.spectrumRGB;
             } else if (this.is_hsv) {
                 msg.payload['name'] = states.color.name;
                 msg.payload['hue'] = states.color.spectrumHsv.hue;
@@ -1771,8 +1771,8 @@ module.exports = function(RED) {
         onInput(msg) {
             this.debug("LightNode(input)");
 
-            let topicArr = String(msg.topic).split(this.topicDelim);
-            let topic    = topicArr[topicArr.length - 1];   // get last part of topic
+            let topicArr    = String(msg.topic).split(this.topicDelim);
+            let topic       = topicArr[topicArr.length - 1];   // get last part of topic
             const has_name  = this.is_hsv || this.is_rgb || this.has_temp;
 
             this.debug("LightNode(input): topic = " + topic);
@@ -1824,10 +1824,10 @@ module.exports = function(RED) {
                     }
                 } else if (this.is_rgb && topic.toUpperCase() === 'RGB') {  // Integer, 0 - 16777215
                     this.debug("LightNode(input): RGB");
-                    let rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', msg.payload, this.states.color.spectrumRgb));
+                    let rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', msg.payload, this.states.color.spectrumRGB));
 
-                    if (this.states.color.spectrumRgb !== rgb) {
-                        this.states.color.spectrumRgb = rgb;
+                    if (this.states.color.spectrumRGB !== rgb) {
+                        this.states.color.spectrumRGB = rgb;
 
                         this.clientConn.setState(this, this.states);  // tell Google ...
 
@@ -1920,7 +1920,7 @@ module.exports = function(RED) {
                     let on          = this.states.on;
                     let online      = this.states.online;
                     let brightness  = this.is_dimmable ? this.states.brightness : 0;
-                    let rgb         = this.is_rgb ? (this.states.color.spectrumRgb): 0;
+                    let rgb         = this.is_rgb ? (this.states.color.spectrumRGB): 0;
                     let temperature = this.has_temp ? this.states.color.temperatureK : 0;
                     let hue         = this.is_hsv ?  this.states.color.spectrumHsv.hue : 0;
                     let saturation  = this.is_hsv ?  this.states.color.spectrumHsv.saturation : 0;
@@ -1959,8 +1959,8 @@ module.exports = function(RED) {
                     // rgb
                     if (this.is_rgb && object.hasOwnProperty('rgb')) {
                         rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', object.rgb, rgb));
-                        if (this.states.color.spectrumRgb !== rgb) {
-                            this.states.color.spectrumRgb = rgb;
+                        if (this.states.color.spectrumRGB !== rgb) {
+                            this.states.color.spectrumRGB = rgb;
                             differs = true;
                         }
                     }
@@ -2020,11 +2020,11 @@ module.exports = function(RED) {
                             msg.payload.on              = on;
                             if (this.is_rgb) {
                                 msg.payload.name        = name;
-                                msg.payload.rgb         = spectrumRgb;
+                                msg.payload.rgb         = rgb;
                             }
                             if (this.has_temp) {
                                 msg.payload.name        = name;
-                                msg.payload.temperature = temperatureK;
+                                msg.payload.temperature = temperature;
                             }
                             if (this.is_dimmable) {
                                 msg.payload.brightness  = brightness;
@@ -2119,8 +2119,8 @@ module.exports = function(RED) {
                     states['color']['temperatureK'] = 4000;
                 }
                 if (me.is_rgb) {
-                    // according to Googles own doc.'s, 'color.spectrumRgb' should actually be 'color.spectrumRgb'
-                    states['color']['spectrumRgb'] = 16777215;
+                    // according to Googles own doc.'s, 'color.spectrumRGB' should actually be 'color.spectrumRgb'
+                    states['color']['spectrumRGB'] = 16777215;
                 } else if (me.is_hsv) {
                     states['color']['spectrumHsv'] = {
                         hue: 0.0,           // float, representing hue as positive degrees in the range of [0.0, 360.0)
