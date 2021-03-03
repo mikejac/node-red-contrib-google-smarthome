@@ -2087,7 +2087,7 @@ module.exports = function(RED) {
                 // this is the default range used by Googles color presets in the Home App
                 attributes['colorTemperatureRange'] = {
                     "temperatureMinK": 2000,
-                    "temperatureMaxK": 6000
+                    "temperatureMaxK": 9000
                 }
             }
             if (me.is_rgb) {
