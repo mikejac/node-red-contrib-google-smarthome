@@ -9,7 +9,7 @@
             "temperature": "Luce con temperatura colore",
             "hsv": "Luce con colore (HSV)",
             "rgb": "Luce con colore (RGB)",
-            "rgb_temp": "Luce con colore (RGB) e temperature"
+            "rgb_temp": "Luce con colore (RGB) e temperatura"
         },
         "placeholder": {
             "name": "Nome",

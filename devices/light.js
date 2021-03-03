@@ -1674,7 +1674,7 @@ module.exports = function(RED) {
         registerDevice(client, name, me) {
             me.debug("LightNode(registerDevice) device_type " + me.device_type);
             const default_name = me.getDefaultName(me.device_type);
-            const default_name_type = default_name.replace(/[_ ()]+/g, '-').toLowerCase();
+            const default_name_type = default_name.replace(/[_ ()/]+/g, '-').toLowerCase();
 
             let states = {
                 online: true,
@@ -1687,7 +1687,7 @@ module.exports = function(RED) {
                     type: 'action.devices.types.LIGHT',
                     traits: me.getTraits(me.device_type),
                     name: {
-                        defaultNames: ["Node-RED " + default_name_type],
+                        defaultNames: ["Node-RED " + default_name],
                         name: name
                     },
                     willReportState: true,
@@ -1695,13 +1695,13 @@ module.exports = function(RED) {
                     },
                     deviceInfo: {
                         manufacturer: 'Node-RED',
-                        model: 'nr-light-' + default_name_type + '-v1',
+                        model: 'nr-' + default_name_type + '-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
                     },
                     customData: {
                         "nodeid": client.id,
-                        "type": 'light-' + default_name_type
+                        "type": 'nr-' + default_name_type
                     }
                 }
             };
@@ -2063,21 +2063,7 @@ module.exports = function(RED) {
         }
 
         getDefaultName(device_type) {
-            switch(device_type) {
-                case "onoff": 
-                    return "On/Off Light";
-                case "dimmable": 
-                    return "Dimmable Light";
-                case "temperature": 
-                    return "Color (Temperature) Light";
-                case "hsv": 
-                    return "Color (HSV) Light";
-                case "rgb": 
-                    return "Color (RGB) Light";
-                case "rgb_temp": 
-                    return "Color (RGB/Temp) Light";    
-            }
-            return '';
+            return RED._('light.label.' + device_type);
         }
 
         getTraits(device_type) {
