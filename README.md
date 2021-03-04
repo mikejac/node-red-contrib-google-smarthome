@@ -13,6 +13,15 @@
   - [Color (RGB) Light](#--color-rgb-light)
   - [Color (RGB/Temp) Light](#--color-rgbtemp-light)
   - [Camera](#--camera)
+  - [Audio/Video Receiver](#--audiovideo-receiver)
+  - [Remote Control](#--remote-control)
+  - [Set-Top Box](#--set-top-box)
+  - [Sound Bar](#--sound-bar)
+  - [Speaker](#--speaker)
+  - [Streaming Box](#--streaming-box)
+  - [Streaming Sound Bar](#--streaming-sound-bar)
+  - [Streaming Stick](#--streaming-stick)
+  - [Television](#--television)
   - [Outlet](#--outlet)
   - [Thermostat](#--thermostat)
   - [Window](#--window)
@@ -40,7 +49,7 @@ A collection of Node-RED nodes to control your smart home devices via Google Ass
 
 1. You are going to need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/).
 2. You also need to be able to forward TCP traffic coming in from the Internet to your Node-RED server on a port you
-specify. This is not your full Node-RED server but a service started by `node-red-contrib-google-smarhome`, providing
+specify. This is not your full Node-RED server but a service started by `node-red-contrib-google-smarthome`, providing
 only the functions needed by Google.
 3. This package requires NodeJS version 7.6.0 at a minimum. If, during start of Node-RED, you get this warning, your version on NodeJS is too old:
 `[warn] [node-red-contrib-google-smarthome/google-smarthome] SyntaxError: Unexpected token ( (line:30)`
@@ -92,10 +101,16 @@ The Google Sign-In feature allows to login using your Google credentials. See [I
 If you want to use login with username/password instead, skip this section.
 
 1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
-1. Click Create credentials > OAuth client ID.
-1. Select the Web application application type.
-1. Name your OAuth 2.0 client and click Create.
-1. Copy the client ID that was created. You will need it later.
+1. From the project drop-down, select your project.
+1. In the sidebar under "APIs & Services", select Credentials, then click Configure consent screen.
+1. Choose an Email Address, specify a Product Name, and press Save.
+1. In the Credentials tab, select the Create credentials drop-down list, and choose OAuth client ID.
+1. Under Application type, select Web application.
+1. Register the origins from which your app is allowed to access the Google APIs, as follows.
+    * In the Authorized JavaScript origins field, enter the hosted URL of your app, e.g. https://example.com:3001
+    * The Authorized redirect URI field does not require a value.
+    * Press the Create button.
+1. From the resulting OAuth client dialog box, copy the Client ID. You will need it later.
 
 #### Install and configure Node-RED module
 
@@ -596,6 +611,29 @@ If `topic` is something else then `payload` must be an object and tells both the
           online: true
         }
         
+#### - Blind
+`topic` can be `openPercent`, `online` or something else.
+
+If `topic` is `openPercent` then `payload` must be integer and indicates the percentage that the blind is opened
+where 0 is closed and 100 is fully open. It can also be boolean where false is closed and true is 100% opened.
+
+        msg.topic = 'openPercent'
+        msg.payload = 50
+
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the blind.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is something else then `payload` must be an object and tells both the open state as well as the online state of the blind.
+
+        msg.topic = 'set'
+        msg.payload = {
+          openPercent: 50,
+          online: true
+        }
+        
 #### - Switch
 `topic` can be `on`, `online` or something else.
 
@@ -617,6 +655,145 @@ If `topic` is something else then `payload` must be an object and tells both the
           online: true
         }
 
+#### - Audio/Video Receiver
+#### - Remote Control
+#### - Set-Top Box
+#### - Sound Bar
+#### - Speaker
+#### - Streaming Box
+#### - Streaming Sound Bar
+#### - Streaming Stick
+#### - Television
+`topic` can be `currentApplication`, `currentInput`, `activityState`, `playbackState`,
+`on`, `currentVolume`, `isMuted`, `toggles`, `modes` or something else.
+
+If `topic` is `currentApplication` then `payload` must be a string and indicates the current application running.
+
+        msg.topic = 'currentApplication'
+        msg.payload = 'yourube'
+
+If `topic` is `currentInput` then `payload` must be a string and indicates the current input selected.
+
+        msg.topic = 'currentInput'
+        msg.payload = 'hdmi_1'
+
+If `topic` is `activityState` then `payload` must be a string and indicates the active state of the media device. Supported values are `INACTIVE`, `STANDBY`, `ACTIVE`.
+
+        msg.topic = 'activityState'
+        msg.payload = 'ACTIVE'
+
+If `topic` is `playbackState` then `payload` must be a string and indicates the playback state of the media device. Supported values are `PAUSED`, `PLAYING`, `FAST_FORWARDING`, `REWINDING`, `BUFFERING`, `STOPPED`.
+
+        msg.topic = 'playbackState'
+        msg.payload = 'PAUSED'
+
+If `topic` is `on` then `payload` must be boolean and tells the state of the media devices.
+
+        msg.topic = 'on'
+        msg.payload = true
+
+If `topic` is `currentVolume` then `payload` must be an integer and indicates the current volume level.
+
+        msg.topic = 'currentVolume'
+        msg.payload = 5
+
+If `topic` is `isMuted` then `payload` must be boolean and tells the mute state of the media devices.
+
+        msg.topic = 'isMuted'
+        msg.payload = true
+
+If `topic` is `currentModeSettings` then `payload` must be an object and indicates the modes state of the media device.
+
+        msg.topic = 'currentModeSettings'
+        msg.payload = {
+                "load_mode": "small_load",
+                "temp_mode": "cold_temp"
+        }
+
+If `topic` is `currentToggleSettings` then `payload` must be an object and indicates the toggles state of the media device.
+
+        msg.topic = 'currentToggleSettings'
+        msg.payload = {
+                "sterilization_toggle": true,
+                "energysaving_toggle": false
+        }
+
+If `topic` is `applications` then `payload` must be json string, json object and tells the available applications of the media devices. The available applications will be saved on the applications file.
+
+        msg.topic = 'applications'
+        msg.payload = {....}
+
+If `topic` is `applications` then `payload` is undefined the available applications will be loaded from the applications file.
+
+        msg.topic = 'applications'
+
+If `topic` is `channels` then `payload` must be json string, json object and tells the available channels of the media devices. The available channels will be saved on the channels file.
+
+        msg.topic = 'channels'
+        msg.payload = {....}
+
+If `topic` is `channels` then `payload` is undefined the available channels will be loaded from the channels file.
+
+        msg.topic = 'channels'
+
+If `topic` is `inputs` then `payload` must be json string, json object and tells the available inputs of the media devices. The available inputs will be saved on the inputs file.
+
+        msg.topic = 'inputs'
+        msg.payload = {....}
+
+If `topic` is `inputs` then `payload` is undefined the available inputs will be loaded from the inputs file.
+
+        msg.topic = 'inputs'
+
+If `topic` is `modes` then `payload` must be json string, json object and tells the available modes of the media devices. The available modes will be saved on the modes file.
+
+        msg.topic = 'modes'
+        msg.payload = {....}
+
+If `topic` is `modes` then `payload` is undefined the available modes will be loaded from the modes file.
+
+        msg.topic = 'modes'
+
+If `topic` is `toggles` then `payload` must be json string, json object and tells the available toggles of the media devices. The available toggles will be saved on the toggles file.
+
+        msg.topic = 'toggles'
+        msg.payload = {....}
+
+If `topic` is `toggles` then `payload` is undefined the available toggles will be loaded from the toggles file.
+
+        msg.topic = 'toggles'
+
+If `topic` is `online` then `payload` must be boolean and tells the online state of the media devices.
+
+        msg.topic = 'online'
+        msg.payload = true
+
+If `topic` is something else then `payload` must be an object and tells the online state, ambient and target temperature of the thermostate.
+
+        msg.topic = 'set'
+        msg.payload = {
+          currentApplication: 'youtube',
+          currentInput: 'hdmi_1',
+          activityState: 'ACTIVE',
+          playbackState: 'PAUSED',
+          on: true,
+          currentVolume: 5,
+          isMuted: false,
+          currentToggleSettings:{
+                "sterilization_toggle": true,
+                "energysaving_toggle": false
+          },
+          currentModeSettings: {
+                "load_mode": "small_load",
+                "temp_mode": "cold_temp"
+          },
+          online: true
+        }
+
+Example flow:
+
+        [{"id":"985701ca.58de9","type":"google-media","z":"6575ac93.01c874","client":"","name":"Example Television","topic":"tv","device_type":"TV","has_apps":false,"has_channels":true,"has_inputs":false,"has_media_state":false,"has_on_off":false,"has_transport_control":false,"has_modes":true,"has_toggles":true,"available_applications_file":"applications.json","available_channels_file":"channels.json","available_inputs_file":"inputs.json","command_only_input_selector":"","ordered_inputs":"","support_activity_state":false,"support_playback_state":false,"command_only_on_off":false,"query_only_on_off":false,"supported_commands":[],"volume_max_level":"50","can_mute_and_unmute":"","volume_default_percentage":40,"level_step_size":1,"command_only_volume":false,"available_modes_file":"modes.json","command_only_modes":false,"query_only_modes":false,"available_toggles_file":"toggles.json","command_only_toggles":false,"query_only_toggles":false,"passthru":false,"x":550,"y":200,"wires":[["48723761.d78bb8"]]},{"id":"48723761.d78bb8","type":"function","z":"6575ac93.01c874","name":"Split","func":"return [\n    { payload: msg.payload.online },\n];","outputs":1,"noerr":0,"x":730,"y":200,"wires":[["6f5daaf0.f5dce4"]],"outputLabels":["online"]},{"id":"6637f52f.da97cc","type":"change","z":"6575ac93.01c874","name":"topic = online","rules":[{"t":"set","p":"topic","pt":"msg","to":"online","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":340,"y":200,"wires":[["985701ca.58de9"]]},{"id":"4d3983f6.6f373c","type":"function","z":"6575ac93.01c874","name":"","func":"let msg1={\"topic\": msg.topic};\nlet lang=msg.lang || 'en';\nlet toggles = [];\nmsg1.payload = toggles;\nmsg.payload.forEach(toggle => {\n    if (typeof toggle == \"string\") {\n        let new_toggle = {};\n        let key = toggle.replace(/ /g, '_');\n        if (!key.toLowerCase().endsWith(\"toggle\")) {\n            key = key + \"_toggle\";\n        }\n        new_toggle['name'] = key.toLowerCase();\n        new_toggle['name_values'] = [{\n            \"lang\": lang,\n            \"name_synonym\": [ toggle ]\n        }];\n        toggles.push(new_toggle);\n    } else if (typeof toggle == \"object\") {\n        let key = toggle['key'];\n        let names = toggle['names'];\n        if (key == undefined) {\n            key = names[0].replace(/ /g, '_');\n        }\n        if (!key.toLowerCase().endsWith(\"toggle\")) {\n            key = key + \"_toggle\";\n        }\n        let new_toggle = {};\n        new_toggle['name'] = key.toLowerCase();\n        new_toggle['name_values'] = [{\n            \"lang\": lang,\n            \"name_synonym\": names\n        }];\n        toggles.push(new_toggle);\n    }\n});\n\nreturn msg1;","outputs":1,"noerr":0,"initialize":"","finalize":"","x":300,"y":240,"wires":[["985701ca.58de9"]]},{"id":"2cfd736e.156d5c","type":"function","z":"6575ac93.01c874","name":"","func":"const topic = msg.topic.toLowerCase().slice(0, -1);\nlet msg1={\"topic\": msg.topic};\nlet lang=msg.lang || 'en';\nlet objs = [];\nmsg1.payload = objs;\nmsg.payload.forEach(obj => {\n    if (typeof obj == \"string\") {\n        let new_obj = {};\n        let key = obj.replace(/ /g, '_').toLowerCase();\n        if (!key.endsWith(topic)) {\n            key = key + \"_\" + topic;\n        }\n        new_obj['key'] = key;\n        new_obj['names'] = [{\n            \"lang\": lang,\n            \"name_synonym\": [ obj ]\n        }];\n        objs.push(new_obj);\n    } else if (typeof obj == \"object\") {\n        let new_obj = {};\n        let key = obj['key'];\n        let names = obj['names'];\n        if (key == undefined) {\n            key = names[0];\n        }\n        key = key.replace(/ /g, '_').toLowerCase();\n        if (!key.endsWith(topic)) {\n            key = key + \"_\" + topic;\n        }\n        new_obj['key'] = key;\n        let new_objt = {};\n        new_obj['key'] = key;\n        new_obj['names'] = [{\n            \"lang\": lang,\n            \"name_synonym\": names\n        }];\n        objs.push(new_obj);\n    }\n});\n\nreturn msg1;","outputs":1,"noerr":0,"initialize":"","finalize":"","x":300,"y":280,"wires":[["985701ca.58de9"]]},{"id":"387845e5.5e2f5a","type":"inject","z":"6575ac93.01c874","name":"Channels","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"Channels","payload":"[{\"key\":\"rai1\",\"names\":[\"Rai 1\"],\"number\":\"1\"},{\"key\":\"rai1_hd\",\"names\":[\"Rai 1 HD\"],\"number\":\"501\"},{\"key\":\"rai2\",\"names\":[\"Rai 2\"],\"number\":\"2\"},{\"key\":\"rai2_hd\",\"names\":[\"Rai 2 HD\"],\"number\":\"502\"},{\"key\":\"rai3\",\"names\":[\"Rai 3\"],\"number\":\"3\"},{\"key\":\"rai3_hd\",\"names\":[\"Rai 3 HD\"],\"number\":\"503\"},{\"key\":\"realtime\",\"names\":[\"Realtime\"],\"number\":\"31\"}]","payloadType":"json","x":120,"y":360,"wires":[["985701ca.58de9"]]},{"id":"3b17441c.9a3f0c","type":"inject","z":"6575ac93.01c874","name":"Modes","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"Modes","payload":"[{\"name\":\"load_mode\",\"name_values\":[{\"name_synonym\":[\"load\",\"size\",\"load size\"],\"lang\":\"en\"}],\"settings\":[{\"setting_name\":\"small_load\",\"setting_values\":[{\"setting_synonym\":[\"small\",\"half\"],\"lang\":\"en\"}]},{\"setting_name\":\"medium_load\",\"setting_values\":[{\"setting_synonym\":[\"medium\",\"normal\"],\"lang\":\"en\"}]},{\"setting_name\":\"large_load\",\"setting_values\":[{\"setting_synonym\":[\"large\",\"full\"],\"lang\":\"en\"}]}],\"ordered\":true},{\"name\":\"temp_mode\",\"name_values\":[{\"name_synonym\":[\"temperature\",\"temp\"],\"lang\":\"en\"}],\"settings\":[{\"setting_name\":\"hot_temp\",\"setting_values\":[{\"setting_synonym\":[\"hot\",\"white\"],\"lang\":\"en\"}]},{\"setting_name\":\"warm_temp\",\"setting_values\":[{\"setting_synonym\":[\"warm\",\"color\"],\"lang\":\"en\"}]},{\"setting_name\":\"cold_temp\",\"setting_values\":[{\"setting_synonym\":[\"cold\",\"delicate\"],\"lang\":\"en\"}]}],\"ordered\":false}]","payloadType":"json","x":110,"y":400,"wires":[["985701ca.58de9"]]},{"id":"6f5daaf0.f5dce4","type":"mqtt out","z":"6575ac93.01c874","name":"","topic":"home/tv/set-power","qos":"","retain":"","broker":"","x":920,"y":200,"wires":[]},{"id":"980e90e8.c7796","type":"mqtt in","z":"6575ac93.01c874","name":"","topic":"home/tv/power","qos":"2","datatype":"auto","broker":"","x":120,"y":200,"wires":[["6637f52f.da97cc"]]},{"id":"8a2472a.979da9","type":"inject","z":"6575ac93.01c874","name":"Toggles","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"toggles","payload":"[\"quiet\",{\"key\":\"extra_bass\",\"names\":[\"Extra bass\",\"Loud bass\",\"Powerful bass\"]},{\"names\":[\"Energy Saving\",\"Low Energy\"]}]","payloadType":"json","x":110,"y":240,"wires":[["4d3983f6.6f373c"]]},{"id":"ce4d650b.8098a8","type":"inject","z":"6575ac93.01c874","name":"Inputs","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"Inputs","payload":"[\"hdmi 1\",{\"key\":\"hdmi_2\",\"names\":[\"hdmi 2\",\"Second HDMI\",\"DVD Reader\",\"DVD\"]},{\"names\":[\"hdmi 3\",\"Third HDMI\",\"Playstation 5\",\"PS5\"]}]","payloadType":"json","x":110,"y":280,"wires":[["2cfd736e.156d5c"]]},{"id":"7fa56940.bf6298","type":"inject","z":"6575ac93.01c874","name":"Apps","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"Applications","payload":"[\"YouTube\",{\"key\":\"video\",\"names\":[\"Google Vide\",\"Video\"]},{\"names\":[\"Amazon Prime Video\",\"Prime Video\"]}]","payloadType":"json","x":110,"y":320,"wires":[["2cfd736e.156d5c"]]}]
+        
 #### - Management
 `topic` can be `restart_server`, `report_state` or `request_sync`.
 

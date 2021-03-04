@@ -116,6 +116,14 @@ module.exports = function(RED) {
             node.app.SetState(client.id, state);
         };
 
+        this.debug = function(msg) {
+            if (config.enabledebug) {
+                console.log(msg)
+            } else {
+                RED.log.degub(msg);
+            }
+        }
+
         this.on('close', function(removed, done) {
             node.app.Stop(done);
             

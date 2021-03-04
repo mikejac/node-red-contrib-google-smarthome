@@ -49,8 +49,18 @@
     </div>
 
     <div class="form-row">
+        <label for="node-input-hls_app_id"><i class="fa fa-tasks"></i> <span data-i18n="camera.label.hls_app_id"></span></label>
+        <input type="text" id="node-input-hls_app_id" data-i18n="[placeholder]camera.placeholder.hls_app_id">
+    </div>
+
+    <div class="form-row">
         <label for="node-input-dash"><i class="fa fa-tasks"></i> <span data-i18n="camera.label.dash"></span></label>
         <input type="text" id="node-input-dash" data-i18n="[placeholder]camera.placeholder.dash">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-dash_app_id"><i class="fa fa-tasks"></i> <span data-i18n="camera.label.dash_app_id"></span></label>
+        <input type="text" id="node-input-dash_app_id" data-i18n="[placeholder]camera.placeholder.dash_app_id">
     </div>
 
     <div class="form-row">
@@ -59,8 +69,18 @@
     </div>
 
     <div class="form-row">
+        <label for="node-input-smooth_stream_app_id"><i class="fa fa-tasks"></i> <span data-i18n="camera.label.smooth_stream_app_id"></span></label>
+        <input type="text" id="node-input-smooth_stream_app_id" data-i18n="[placeholder]camera.placeholder.smooth_stream_app_id">
+    </div>
+
+    <div class="form-row">
         <label for="node-input-progressive_mp4"><i class="fa fa-tasks"></i> <span data-i18n="camera.label.progressive_mp4"></span></label>
         <input type="text" id="node-input-progressive_mp4" data-i18n="[placeholder]camera.placeholder.progressive_mp4">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-progressive_mp4_app_id"><i class="fa fa-tasks"></i> <span data-i18n="camera.label.progressive_mp4_app_id"></span></label>
+        <input type="text" id="node-input-progressive_mp4_app_id" data-i18n="[placeholder]camera.placeholder.progressive_mp4_app_id">
     </div>
 
     <div class="form-row">
@@ -162,13 +182,25 @@
             hls: {
                 value: "", required:false
             },
+            hls_app_id: {
+                value: "", required:false
+            },
             dash: {
+                value: "", required:false
+            },
+            dash_app_id: {
                 value: "", required:false
             },
             smooth_stream: {
                 value: "", required:false
             },
+            smooth_stream_app_id: {
+                value: "", required:false
+            },
             progressive_mp4: {
+                value: "", required:false
+            },
+            progressive_mp4_app_id: {
                 value: "", required:false
             },
             auth_token: {

@@ -1009,7 +1009,7 @@ module.exports = function(RED) {
                         saturation = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'value', object.value)) / 100;
                     }
 
-                    if (this.states.on !== on || this.states.online !== online || this.states.color.brightness !== brightness || this.states.color.spectrumHsv.hue !== hue || this.states.color.spectrumHsv.saturation !== saturation || this.states.color.spectrumHsv.value !== value) {
+                    if (this.states.on !== on || this.states.online !== online || this.states.brightness !== brightness || this.states.color.spectrumHsv.hue !== hue || this.states.color.spectrumHsv.saturation !== saturation || this.states.color.spectrumHsv.value !== value) {
                         this.states.on                              = on;
                         this.states.online                          = online;
                         this.states.brightness                      = brightness;
@@ -1282,7 +1282,7 @@ module.exports = function(RED) {
                         rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', object.rgb));
                     }
 
-                    if (this.states.on !== on || this.states.online !== online || this.states.color.brightness !== brightness || this.states.color.spectrumRGB !== rgb) {
+                    if (this.states.on !== on || this.states.online !== online || this.states.brightness !== brightness || this.states.color.spectrumRGB !== rgb) {
                         this.states.on                  = on;
                         this.states.online              = online;
                         this.states.brightness          = brightness;
@@ -1576,7 +1576,7 @@ module.exports = function(RED) {
                         temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature));
                     }
 
-                    if (this.states.on !== on || this.states.online !== online || this.states.color.brightness !== brightness || this.states.color.spectrumRGB !== rgb || this.states.color.temperatureK !== temperature) {
+                    if (this.states.on !== on || this.states.online !== online || this.states.brightness !== brightness || this.states.color.spectrumRGB !== rgb || this.states.color.temperatureK !== temperature) {
                         this.states.on                  = on;
                         this.states.online              = online;
                         this.states.brightness          = brightness;
