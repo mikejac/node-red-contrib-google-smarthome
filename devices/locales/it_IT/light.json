@@ -8,6 +8,7 @@
             "dimmable": "Luce con regolazione di intensità",
             "temperature": "Luce con temperatura colore",
             "hsv": "Luce con colore (HSV)",
+            "hsv_temp": "Luce con colore (HSV) e temperatura",
             "rgb": "Luce con colore (RGB)",
             "rgb_temp": "Luce con colore (RGB) e temperatura"
         },

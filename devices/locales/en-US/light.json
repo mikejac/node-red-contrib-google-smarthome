@@ -8,6 +8,7 @@
             "dimmable": "Dimmable Light",
             "temperature": "Color (Temperature) Light",
             "hsv": "Color (HSV) Light",
+            "hsv_temp": "Color (HSV/Temp) Light",
             "rgb": "Color (RGB) Light",
             "rgb_temp": "Color (RGB/Temp) Light"
         },
