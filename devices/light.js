@@ -1879,7 +1879,9 @@ module.exports = function(RED) {
                     }
                 } else if (this.has_temp && topic.toUpperCase() === 'TEMPERATURE') {
                     RED.log.debug("LightNode(input): TEMPERATURE");
-                    let temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', msg.payload, this.states.color.temperatureK));
+                    // This limit the temperature to 6000, google send also 7500 
+                    // let temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', msg.payload, this.states.color.temperatureK));
+                    let temperature = formats.FormatValue(formats.Formats.INT, 'temperature', msg.payload, this.states.color.temperatureK);
 
                     if (this.states.color.temperatureK !== temperature) {
                         this.states.color.temperatureK = temperature;
@@ -2025,7 +2027,9 @@ module.exports = function(RED) {
 
                     // temperature
                     if (this.has_temp && object.hasOwnProperty('temperature')) {
-                        temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature, temperature));
+                        // This limit the temperature to 6000, google send also 7500 
+                        // temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature, temperature));
+                        temperature = formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature, temperature);
                         if (this.states.color.temperatureK !== temperature) {
                             this.states.color.temperatureK  = temperature;
                             // Remove color info
@@ -2159,7 +2163,7 @@ module.exports = function(RED) {
             let attributes = device.properties.attributes;
             if (me.has_temp) {
                 attributes["commandOnlyColorSetting"] = false;
-                // this is the default range used by Googles color presets in the Home App
+                // Smart lights supporting color temperature typically have a range of [2000, 9000] Kelvin, which corresponds to conventional lights with fixed Kelvin.
                 attributes['colorTemperatureRange'] = {
                     "temperatureMinK": 2000,
                     "temperatureMaxK": 9000
