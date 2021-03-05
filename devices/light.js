@@ -1721,26 +1721,26 @@ module.exports = function(RED) {
                 if (this.states.on) {
                     text = 'ON';
                     fill = 'green';
-                    if (this.is_dimmable && this.states.brightness != undefined) {
-                        text += " bri: " + this.states.brightness;
-                    }
-                    if (this.has_temp && this.states.color.temperatureK != undefined) {
-                        text += ' temp: ' + this.states.color.temperatureK;
-                    }
-                    if (this.is_rgb && this.states.color.spectrumRgb != undefined) {
-                        text += ' RGB: ' + this.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0');
-                    }
-                    if (this.is_hsv && this.states.color.spectrumHsv != undefined) {
-                        text += ' H: ' + this.states.color.spectrumHsv.hue + 
-                                ' S: ' + this.states.color.spectrumHsv.saturation + 
-                                ' V: ' + this.states.color.spectrumHsv.value;
-                    }
                 } else {
                     text = 'OFF';
                 }
             } else {
                 shape = 'ring';
                 text = "offline";
+            }
+            if (this.is_dimmable && this.states.brightness != undefined) {
+                text += " bri: " + this.states.brightness;
+            }
+            if (this.has_temp && this.states.color.temperatureK != undefined) {
+                text += ' temp: ' + this.states.color.temperatureK;
+            }
+            if (this.is_rgb && this.states.color.spectrumRgb != undefined) {
+                text += ' RGB: ' + this.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0');
+            }
+            if (this.is_hsv && this.states.color.spectrumHsv != undefined) {
+                text += ' H: ' + this.states.color.spectrumHsv.hue + 
+                        ' S: ' + this.states.color.spectrumHsv.saturation + 
+                        ' V: ' + this.states.color.spectrumHsv.value;
             }
             this.status({fill: fill, shape: shape, text: text});
         }
@@ -1796,27 +1796,29 @@ module.exports = function(RED) {
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
-                    online: states.online,
-                    on: states.on,
+                    online: this.states.online,
+                    on: this.states.on,
                 },
             };
 
-            if (this.is_dimmable && params.hasOwnProperty("brightness")) {
-                msg.payload['brightness'] = states.brightness;
+            if (this.is_dimmable) {
+                msg.payload['brightness'] = this.states.brightness;
             }
-            if (params && params.hasOwnProperty('color')) {
-                if (params.color.hasOwnProperty("name")) {
-                    msg.payload['name'] = params.color.name;
+            if (this.has_temp || this.is_rgb || this.is_hsv) {
+                if (params && params.hasOwnProperty('color')) {
+                    if (params.color.hasOwnProperty("name")) {
+                        msg.payload['name'] = params.color.name;
+                    }
                 }
-                if (this.has_temp && params.color.hasOwnProperty("temperatureK")) {
-                    msg.payload['temperature'] = states.color.temperatureK;
-                } else if (this.is_rgb && params.color.hasOwnProperty("spectrumRgb")) {
-                    msg.payload['rgb'] = states.color.spectrumRgb;
-                } else if (this.is_hsv && params.color.hasOwnProperty("spectrumHsv")) {
-                    msg.payload['hue'] = states.color.spectrumHsv.hue;
-                    msg.payload['saturation'] = states.color.spectrumHsv.saturation * 100;  // rescale
-                    msg.payload['value'] = states.color.spectrumHsv.value * 100;            // rescale
-                }
+                if (this.has_temp && this.states.color.hasOwnProperty("temperatureK")) {
+                    msg.payload['temperature'] = this.states.color.temperatureK;
+                } else if (this.is_rgb && this.states.color.hasOwnProperty("spectrumRgb")) {
+                    msg.payload['rgb'] = this.states.color.spectrumRgb;
+                } else if (this.is_hsv && this.states.color.hasOwnProperty("spectrumHsv")) {
+                    msg.payload['hue'] = this.states.color.spectrumHsv.hue;
+                    msg.payload['saturation'] = this.states.color.spectrumHsv.saturation * 100;  // rescale
+                    msg.payload['value'] = this.states.color.spectrumHsv.value * 100;            // rescale
+                }               
             }
 
             this.send(msg);
@@ -2181,7 +2183,7 @@ module.exports = function(RED) {
         updateStatesForTraits(me, device) {
             let states = device.states;
             if (me.is_dimmable) {
-                states['brightness'] = 100;
+                states['brightness'] = 50;
             }
             if (me.is_rgb || me.is_hsv || me.has_temp) {
                 states['color'] = {};
