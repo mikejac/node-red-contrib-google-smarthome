@@ -1714,11 +1714,35 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            if (this.states.on) {
-                this.status({fill: "green", shape: "dot", text: "ON"});
+            let text = 'Unknown';
+            let fill = 'red';
+            let shape = 'dot';
+            if (this.states.online) {
+                if (this.states.on) {
+                    text = 'ON';
+                    fill = 'green';
+                    if (this.is_dimmable && this.states.brightness != undefined) {
+                        text += " bri: " + this.states.brightness;
+                    }
+                    if (this.has_temp && this.states.color.temperatureK != undefined) {
+                        text += ' temp: ' + this.states.color.temperatureK;
+                    }
+                    if (this.is_rgb && this.states.color.spectrumRgb != undefined) {
+                        text += ' RGB: ' + this.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0');
+                    }
+                    if (this.is_hsv && this.states.color.spectrumHsv != undefined) {
+                        text += ' H: ' + this.states.color.spectrumHsv.hue + 
+                                ' S: ' + this.states.color.spectrumHsv.saturation + 
+                                ' V: ' + this.states.color.spectrumHsv.value;
+                    }
+                } else {
+                    text = 'OFF';
+                }
             } else {
-                this.status({fill: "red", shape: "dot", text: "OFF"});
+                shape = 'ring';
+                text = "offline";
             }
+            this.status({fill: fill, shape: shape, text: text});
         }
 
         //
@@ -1824,8 +1848,6 @@ module.exports = function(RED) {
                             msg.payload = on;
                             this.send(msg);
                         }
-
-                        this.updateStatusIcon();
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     this.debug("LightNode(input): ONLINE");
@@ -2096,8 +2118,8 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
                     }
-                    this.updateStatusIcon();
                 }
+                this.updateStatusIcon();
             } catch (err) {
                 RED.log.error(err);
             }
