@@ -1692,6 +1692,8 @@ module.exports = function(RED) {
                     },
                     willReportState: true,
                     attributes: {
+                        commandOnlyOnOff: false,
+                        queryOnlyOnOff: false
                     },
                     deviceInfo: {
                         manufacturer: 'Node-RED',
@@ -1751,8 +1753,11 @@ module.exports = function(RED) {
         execCommand(device, command) {
             if (command.hasOwnProperty('params')) {
                 let params = {};
+                let executionStates = [];
+                executionStates.push('online');
                 const ok_result = {
-                    'params' : params
+                    'params' : params,
+                    'executionStates': executionStates
                 };
                 if (command.params.hasOwnProperty('on')) {
                     params['on'] = command.params.on;
@@ -1772,6 +1777,18 @@ module.exports = function(RED) {
                     } else if (command.params.color.hasOwnProperty('spectrumHSV')) {
                         params.color.spectrumHsv = command.params.color.spectrumHSV;
                     } 
+                }
+                switch(command.command) {
+                    case 'action.devices.commands.OnOff':
+                        executionStates.push('on');
+                        break;
+                    case 'action.devices.commands.ColorAbsolute':
+                        executionStates.push('color');
+                        break;
+                    case 'action.devices.commands.BrightnessAbsolute':
+                    case 'action.devices.commands.BrightnessRelative':
+                            executionStates.push('brightness');
+                        break;
                 }
                 return ok_result;
             }
@@ -2163,6 +2180,9 @@ module.exports = function(RED) {
 
         updateAttributesForTraits(me, device) {
             let attributes = device.properties.attributes;
+            if (me.is_dimmable) {
+                attributes['commandOnlyBrightness'] = false;
+            }
             if (me.has_temp) {
                 attributes["commandOnlyColorSetting"] = false;
                 // Smart lights supporting color temperature typically have a range of [2000, 9000] Kelvin, which corresponds to conventional lights with fixed Kelvin.
