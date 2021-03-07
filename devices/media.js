@@ -228,7 +228,7 @@ module.exports = function(RED) {
             if (this.clientConn && typeof this.clientConn.debug === 'function') {
                 this.clientConn.debug(msg);
             } else {
-                this.debug(msg);
+                RED.log.debug(msg);
             }
         }
 
@@ -237,7 +237,7 @@ module.exports = function(RED) {
          *
          */
         registerDevice(client, name, me) {
-            this.debug("MediaNode(registerDevice) device_type " + me.device_type);
+            me.debug("MediaNode(registerDevice) device_type " + me.device_type);
             let states = {
                 online: true
             };
@@ -273,7 +273,7 @@ module.exports = function(RED) {
             this.updateAttributesForTraits(me, device);
             this.updateStatesForTraits(me, device);
 
-            this.debug("MediaNode(registerDevice): device = " + JSON.stringify(device));
+            me.debug("MediaNode(registerDevice): device = " + JSON.stringify(device));
 
             return device;
         }
@@ -419,12 +419,12 @@ module.exports = function(RED) {
          */
         onInput(msg) {
             const me = this;
-            this.debug("MediaNode(input)");
+            me.debug("MediaNode(input)");
 
             let topicArr = String(msg.topic).split(this.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
-            this.debug("MediaNode(input): topic = " + topic);
+            me.debug("MediaNode(input): topic = " + topic);
             try {
                 if (topic.toUpperCase() === 'APPLICATIONS') {
                     if (this.has_apps) {
@@ -527,14 +527,14 @@ module.exports = function(RED) {
                     Object.keys(this.states).forEach(function (key) {
                         if (topic.toUpperCase() == key.toUpperCase()) {
                             state_key = key;
-                            this.debug("MediaNode(input): found state " + key);
+                            me.debug("MediaNode(input): found state " + key);
                         }
                     });
 
                     if (state_key !== '') {
                         const differs = me.setState(state_key, msg.payload, this.states);
                         if (differs) {
-                            this.debug("MediaNode(input): " + state_key + ' ' + msg.payload);
+                            me.debug("MediaNode(input): " + state_key + ' ' + msg.payload);
                             this.clientConn.setState(this, this.states);  // tell Google ...
         
                             if (this.passthru) {
@@ -545,7 +545,7 @@ module.exports = function(RED) {
                             this.updateStatusIcon();
                         }
                     } else {
-                        this.debug("MediaNode(input): some other topic");
+                        me.debug("MediaNode(input): some other topic");
                         let differs = false;
                         Object.keys(this.states).forEach(function (key) {
                             if (msg.payload.hasOwnProperty(key)) {
@@ -602,7 +602,7 @@ module.exports = function(RED) {
 
         updateModesState(me, device) {
             // Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
-            this.debug("Update Modes device");
+            me.debug("Update Modes device");
             let states = device.states || {};
             const currentModeSettings = states['currentModeSettings']
             let new_modes = {};
