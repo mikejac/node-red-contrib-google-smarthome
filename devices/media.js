@@ -165,7 +165,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_applications = undefined;
-                RED.log.debug("Applications disabled");
+                this.debug("Applications disabled");
             }
 
             if (this.has_channels) {
@@ -176,7 +176,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_channels = undefined;
-                RED.log.debug("Channels disabled");
+                this.debug("Channels disabled");
             }
 
             if (this.has_inputs) {
@@ -187,7 +187,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_inputs = undefined;
-                RED.log.debug("Inputs disabled");
+                this.debug("Inputs disabled");
             }
 
             if (this.has_modes) {
@@ -198,7 +198,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_modes = undefined;
-                RED.log.debug("Modes disabled");
+                this.debug("Modes disabled");
             }
 
             if (this.has_toggles) {
@@ -209,7 +209,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_toggles = undefined;
-                RED.log.debug("Toggles disabled");
+                this.debug("Toggles disabled");
             }
 
             this.states = this.clientConn.register(this, 'media', config.name, this);
@@ -228,7 +228,7 @@ module.exports = function(RED) {
             if (this.clientConn && typeof this.clientConn.debug === 'function') {
                 this.clientConn.debug(msg);
             } else {
-                RED.log.debug(msg);
+                this.debug(msg);
             }
         }
 
@@ -237,7 +237,7 @@ module.exports = function(RED) {
          *
          */
         registerDevice(client, name, me) {
-            RED.log.debug("MediaNode(registerDevice) device_type " + me.device_type);
+            this.debug("MediaNode(registerDevice) device_type " + me.device_type);
             let states = {
                 online: true
             };
@@ -273,7 +273,7 @@ module.exports = function(RED) {
             this.updateAttributesForTraits(me, device);
             this.updateStatesForTraits(me, device);
 
-            RED.log.debug("MediaNode(registerDevice): device = " + JSON.stringify(device));
+            this.debug("MediaNode(registerDevice): device = " + JSON.stringify(device));
 
             return device;
         }
@@ -370,10 +370,12 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        updated(device, params) {
+        updated(device, params, original_params) {
             let states = device.states;
             let command = device.command;
-            RED.log.debug("MediaNode(updated): states = " + JSON.stringify(states));
+            this.debug("MediaNode(updated): states = " + JSON.stringify(states));
+            this.debug("MediaNode(updated): params = " + JSON.stringify(params));
+            this.debug("MediaNode(updated): original_params = " + JSON.stringify(original_params));
 
             Object.assign(this.states, states);
 
@@ -398,6 +400,16 @@ module.exports = function(RED) {
                  }
              });
 
+             if (command === 'action.devices.commands.mediaSeekRelative') {
+                 if (original_params.hasOwnProperty('relativePositionMs')) {
+                     msg.payload.relativePositionMs = original_params.relativePositionMs;
+                 }
+             } else if (command === 'action.devices.commands.mediaSeekToPosition') {
+                if (original_params.hasOwnProperty('absPositionMs')) {
+                    msg.payload.absPositionMs = original_params.absPositionMs;
+                }
+            }
+
             this.send(msg);
         };
 
@@ -407,12 +419,12 @@ module.exports = function(RED) {
          */
         onInput(msg) {
             const me = this;
-            RED.log.debug("MediaNode(input)");
+            this.debug("MediaNode(input)");
 
             let topicArr = String(msg.topic).split(this.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
-            RED.log.debug("MediaNode(input): topic = " + topic);
+            this.debug("MediaNode(input): topic = " + topic);
             try {
                 if (topic.toUpperCase() === 'APPLICATIONS') {
                     if (this.has_apps) {
@@ -515,14 +527,14 @@ module.exports = function(RED) {
                     Object.keys(this.states).forEach(function (key) {
                         if (topic.toUpperCase() == key.toUpperCase()) {
                             state_key = key;
-                            RED.log.debug("MediaNode(input): found state " + key);
+                            this.debug("MediaNode(input): found state " + key);
                         }
                     });
 
                     if (state_key !== '') {
                         const differs = me.setState(state_key, msg.payload, this.states);
                         if (differs) {
-                            RED.log.debug("MediaNode(input): " + state_key + ' ' + msg.payload);
+                            this.debug("MediaNode(input): " + state_key + ' ' + msg.payload);
                             this.clientConn.setState(this, this.states);  // tell Google ...
         
                             if (this.passthru) {
@@ -533,11 +545,11 @@ module.exports = function(RED) {
                             this.updateStatusIcon();
                         }
                     } else {
-                        RED.log.debug("MediaNode(input): some other topic");
+                        this.debug("MediaNode(input): some other topic");
                         let differs = false;
                         Object.keys(this.states).forEach(function (key) {
                             if (msg.payload.hasOwnProperty(key)) {
-                                RED.log.debug("MediaNode(input): set state " + key + ' to ' + msg.payload[key]);
+                                this.debug("MediaNode(input): set state " + key + ' to ' + msg.payload[key]);
                                 if (me.setState(key, msg.payload[key], me.states)) {
                                     differs = true;
                                 }
@@ -590,7 +602,7 @@ module.exports = function(RED) {
 
         updateModesState(me, device) {
             // Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
-            RED.log.debug("Update Modes device");
+            this.debug("Update Modes device");
             let states = device.states || {};
             const currentModeSettings = states['currentModeSettings']
             let new_modes = {};
@@ -690,7 +702,7 @@ module.exports = function(RED) {
                 const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
             }
-            RED.log.debug('MediaNode:loadJson(): loading ' + filename);
+            this.debug('MediaNode:loadJson(): loading ' + filename);
         
             try {
                 let jsonFile = fs.readFileSync(
@@ -701,12 +713,12 @@ module.exports = function(RED) {
                     });
     
                 if (jsonFile === '') {
-                    RED.log.debug('MediaNode:loadJson(): empty data');
+                    this.debug('MediaNode:loadJson(): empty data');
                     return defaultValue;
                 } else {
-                    RED.log.debug('MediaNode:loadJson(): data loaded');
+                    this.debug('MediaNode:loadJson(): data loaded');
                     const json = JSON.parse(jsonFile);
-                    RED.log.debug('MediaNode:loadJson(): json = ' + JSON.stringify(json));
+                    this.debug('MediaNode:loadJson(): json = ' + JSON.stringify(json));
                     return json;
                 }
             }
@@ -721,7 +733,7 @@ module.exports = function(RED) {
                 const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
             }
-            RED.log.debug('MediaNode:writeJson(): writing ' + filename);
+            this.debug('MediaNode:writeJson(): writing ' + filename);
             if (typeof value === 'object') {
                 value = JSON.stringify(value);
             }
@@ -734,7 +746,7 @@ module.exports = function(RED) {
                         'flag': fs.constants.W_OK | fs.constants.O_CREAT | fs.constants.O_TRUNC
                     });
     
-                RED.log.debug('MediaNode:writeJson(): data saved');
+                this.debug('MediaNode:writeJson(): data saved');
                 return true;
             }
             catch (err) {
