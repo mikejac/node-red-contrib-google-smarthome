@@ -752,18 +752,10 @@ module.exports = function(RED) {
                 'executionStates': executionStates
             };
 
-            RED.log.debug("MediaNode:execCommand(command) " +  JSON.stringify(command));
-            RED.log.debug("MediaNode:execCommand(states) " +  JSON.stringify(this.states));
-            // RED.log.debug("MediaNode:execCommand(device) " +  JSON.stringify(device));
+            me.debug("MediaNode:execCommand(command) " +  JSON.stringify(command));
+            me.debug("MediaNode:execCommand(states) " +  JSON.stringify(this.states));
+            // me.debug("MediaNode:execCommand(device) " +  JSON.stringify(device));
 
-            if (!command.hasOwnProperty('params')) {
-                // TransportControl
-                if (command.command == 'action.devices.commands.mediaClosedCaptioningOff') {
-                    executionStates.push('online', 'playbackState');
-                    return ok_result;
-                }
-                return false;
-            }
             // Applications
             if ((command.command == 'action.devices.commands.appInstall') ||
                 (command.command == 'action.devices.commands.appSearch') ||
@@ -919,6 +911,10 @@ module.exports = function(RED) {
                     const userQueryLanguage = command.params['userQueryLanguage'];
                     params['playbackState'] = this.states['playbackState'];
                 }
+                executionStates.push('online', 'playbackState');
+                return ok_result;
+            }
+            else if (command.command == 'action.devices.commands.mediaClosedCaptioningOff') {
                 executionStates.push('online', 'playbackState');
                 return ok_result;
             }
