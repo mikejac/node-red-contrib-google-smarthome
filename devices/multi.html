@@ -1,0 +1,742 @@
+<!--
+ NodeRED Google SmartHome
+ Copyright (C) 2021 Claudio Chimera.
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+    Multi Device
+-->
+<script type="text/html" data-template-name="google-multi">
+    <div class="form-row">
+        <b>Google SmartHome Settings</b>
+    </d iv>
+
+    <div class="form-row">
+        <label for="node-input-client"><i class="fa fa-globe"></i> SmartHome</span></label>
+        <input type="text" id="node-input-client">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="multi.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]multi.placeholder.name">
+    </div>
+
+    <div class="form-row">
+        <b>Node-RED Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.topic"></span></label>
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]multi.placeholder.topic">
+    </div>
+
+    <div class="form-row" id="device_type">
+        <label for="node-input-device_type"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.device_type"></span></label>
+        <select id="node-input-device_type" >
+            <option value='AC_UNIT' data-i18n='multi.device_type.AC_UNIT'></option>
+            <option value='AIRCOOLER' data-i18n='multi.device_type.AIRCOOLER'></option>
+            <option value='AIRFRESHENER' data-i18n='multi.device_type.AIRFRESHENER'></option>
+            <option value='AIRPURIFIER' data-i18n='multi.device_type.AIRPURIFIER'></option>
+            <option value='AUDIO_VIDEO_RECEIVER' data-i18n='multi.device_type.AUDIO_VIDEO_RECEIVER'></option>
+            <option value='AWNING' data-i18n='multi.device_type.AWNING'></option>
+            <option value='BATHTUB' data-i18n='multi.device_type.BATHTUB'></option>
+            <option value='BED' data-i18n='multi.device_type.BED'></option>
+            <option value='BLENDER' data-i18n='multi.device_type.BLENDER'></option>
+            <option value='BLINDS' data-i18n='multi.device_type.BLINDS'></option>
+            <option value='BOILER' data-i18n='multi.device_type.BOILER'></option>
+            <option value='CAMERA' data-i18n='multi.device_type.CAMERA'></option>
+            <option value='CARBON_MONOXIDE_DETECTOR' data-i18n='multi.device_type.CARBON_MONOXIDE_DETECTOR'></option>
+            <option value='CHARGER' data-i18n='multi.device_type.CHARGER'></option>
+            <option value='CLOSET' data-i18n='multi.device_type.CLOSET'></option>
+            <option value='COFFEE_MAKER' data-i18n='multi.device_type.COFFEE_MAKER'></option>
+            <option value='COOKTOP' data-i18n='multi.device_type.COOKTOP'></option>
+            <option value='CURTAIN' data-i18n='multi.device_type.CURTAIN'></option>
+            <option value='DEHUMIDIFIER' data-i18n='multi.device_type.DEHUMIDIFIER'></option>
+            <option value='DEHYDRATOR' data-i18n='multi.device_type.DEHYDRATOR'></option>
+            <option value='DISHWASHER' data-i18n='multi.device_type.DISHWASHER'></option>
+            <option value='DOOR' data-i18n='multi.device_type.DOOR'></option>
+            <option value='DRAWER' data-i18n='multi.device_type.DRAWER'></option>
+            <option value='DRYER' data-i18n='multi.device_type.DRYER'></option>
+            <option value='FAN' data-i18n='multi.device_type.FAN'></option>
+            <option value='FAUCET' data-i18n='multi.device_type.FAUCET'></option>
+            <option value='FIREPLACE' data-i18n='multi.device_type.FIREPLACE'></option>
+            <option value='FREEZER' data-i18n='multi.device_type.FREEZER'></option>
+            <option value='FRYER' data-i18n='multi.device_type.FRYER'></option>
+            <option value='GARAGE' data-i18n='multi.device_type.GARAGE'></option>
+            <option value='GATE' data-i18n='multi.device_type.GATE'></option>
+            <option value='GRILL' data-i18n='multi.device_type.GRILL'></option>
+            <option value='HEATER' data-i18n='multi.device_type.HEATER'></option>
+            <option value='HOOD' data-i18n='multi.device_type.HOOD'></option>
+            <option value='HUMIDIFIER' data-i18n='multi.device_type.HUMIDIFIER'></option>
+            <option value='KETTLE' data-i18n='multi.device_type.KETTLE'></option>
+            <option value='LIGHT' data-i18n='multi.device_type.LIGHT'></option>
+            <option value='LOCK' data-i18n='multi.device_type.LOCK'></option>
+            <option value='MICROWAVE' data-i18n='multi.device_type.MICROWAVE'></option>
+            <option value='MOP' data-i18n='multi.device_type.MOP'></option>
+            <option value='MOWER' data-i18n='multi.device_type.MOWER'></option>
+            <option value='MULTICOOKER' data-i18n='multi.device_type.MULTICOOKER'></option>
+            <option value='NETWORK' data-i18n='multi.device_type.NETWORK'></option>
+            <option value='OUTLET' data-i18n='multi.device_type.OUTLET'></option>
+            <option value='OVEN' data-i18n='multi.device_type.OVEN'></option>
+            <option value='PERGOLA' data-i18n='multi.device_type.PERGOLA'></option>
+            <option value='PETFEEDER' data-i18n='multi.device_type.PETFEEDER'></option>
+            <option value='PRESSURECOOKER' data-i18n='multi.device_type.PRESSURECOOKER'></option>
+            <option value='RADIATOR' data-i18n='multi.device_type.RADIATOR'></option>
+            <option value='REFRIGERATOR' data-i18n='multi.device_type.REFRIGERATOR'></option>
+            <option value='REMOTECONTROL' data-i18n='multi.device_type.REMOTECONTROL'></option>
+            <option value='ROUTER' data-i18n='multi.device_type.ROUTER'></option>
+            <option value='SCENE' data-i18n='multi.device_type.SCENE'></option>
+            <option value='SECURITYSYSTEM' data-i18n='multi.device_type.SECURITYSYSTEM'></option>
+            <option value='SENSOR' data-i18n='multi.device_type.SENSOR'></option>
+            <option value='SETTOP' data-i18n='multi.device_type.SETTOP'></option>
+            <option value='SHOWER' data-i18n='multi.device_type.SHOWER'></option>
+            <option value='SHUTTER' data-i18n='multi.device_type.SHUTTER'></option>
+            <option value='SMOKE_DETECTOR' data-i18n='multi.device_type.SMOKE_DETECTOR'></option>
+            <option value='SOUNDBAR' data-i18n='multi.device_type.SOUNDBAR'></option>
+            <option value='SOUSVIDE' data-i18n='multi.device_type.SOUSVIDE'></option>
+            <option value='SPEAKER' data-i18n='multi.device_type.SPEAKER'></option>
+            <option value='SPRINKLER' data-i18n='multi.device_type.SPRINKLER'></option>
+            <option value='STANDMIXER' data-i18n='multi.device_type.STANDMIXER'></option>
+            <option value='STREAMING_BOX' data-i18n='multi.device_type.STREAMING_BOX'></option>
+            <option value='STREAMING_SOUNDBAR' data-i18n='multi.device_type.STREAMING_SOUNDBAR'></option>
+            <option value='STREAMING_STICK' data-i18n='multi.device_type.STREAMING_STICK'></option>
+            <option value='SWITCH' data-i18n='multi.device_type.SWITCH'></option>
+            <option value='THERMOSTAT' data-i18n='multi.device_type.THERMOSTAT'></option>
+            <option value='TV' data-i18n='multi.device_type.TV'></option>
+            <option value='VACUUM' data-i18n='multi.device_type.VACUUM'></option>
+            <option value='VALVE' data-i18n='multi.device_type.VALVE'></option>
+            <option value='WASHER' data-i18n='multi.device_type.WASHER'></option>
+            <option value='WATERHEATER' data-i18n='multi.device_type.WATERHEATER'></option>
+            <option value='WATERPURIFIER' data-i18n='multi.device_type.WATERPURIFIER'></option>
+            <option value='WATERSOFTENER' data-i18n='multi.device_type.WATERSOFTENER'></option>
+            <option value='WINDOW' data-i18n='multi.device_type.WINDOW'></option>
+            <option value='YOGURTMAKER' data-i18n='multi.device_type.YOGURTMAKER'></option>
+        </select>
+    </div>
+
+        <!-- Volume Trait-->
+        <div class="form-row red-ui-editableList-border" id="volume" style="background: #fbfbfb; padding: 5px;">
+            <div class="form-row" id="cb_trait_volume">
+                <b><label style="width:auto" for="node-input-trait_volume"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.volume"></label></b>
+                <input type="checkbox" checked id="node-input-trait_volume" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+    
+            <div class="form-row" id="label_trait_volume">
+                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.volume"></label></b>
+            </div>
+    
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-volume_max_level"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.volume_max_level"></span></label>
+                    <input type="text" id="node-input-volume_max_level" data-i18n="[placeholder]multi.placeholder.volume_max_level">
+                </div>
+    
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-can_mute_and_unmute"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.can_mute_and_unmute"></label>
+                    <input type="checkbox" checked id="node-input-can_mute_and_unmute" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+    
+                <div class="form-row">
+                    <label for="node-input-volume_default_percentage"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.volume_default_percentage"></span></label>
+                    <input type="text" id="node-input-volume_default_percentage" data-i18n="[placeholder]multi.placeholder.volume_default_percentage">
+                </div>
+    
+                <div class="form-row">
+                    <label for="node-input-level_step_size"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.level_step_size"></span></label>
+                    <input type="text" id="node-input-level_step_size" data-i18n="[placeholder]multi.placeholder.level_step_size">
+                </div>
+    
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_volume"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_volume"></label>
+                    <input type="checkbox" checked id="node-input-command_only_volume" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    
+        <!-- AppSelector Trait-->
+        <div class="form-row red-ui-editableList-border" id="appselector" style="background: #fbfbfb; padding: 5px;">
+            <div class="form-row" id="cb_trait_appselector">
+                <b><label style="width:auto" for="node-input-trait_appselector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.appselector"></label></b>
+                <input type="checkbox" checked id="node-input-trait_appselector" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+    
+            <div class="form-row" id="label_trait_appselector">
+                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.appselector"></label></b>
+            </div>
+    
+            <div id="trait_appselector">
+                <div class="form-row">
+                    <div class="form-row">
+                        <label for="node-input-appselector_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.appselector_file"></span></label>
+                        <input type="text" id="node-input-appselector_file" data-i18n="[placeholder]multi.placeholder.appselector_file">
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Channel Trait-->
+        <div class="form-row red-ui-editableList-border" id="channel" style="background: #fbfbfb; padding: 5px;">
+            <div class="form-row" id="cb_trait_channel">
+                <b><label style="width:auto" for="node-input-trait_channel"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.channel"></label></b>
+                <input type="checkbox" checked id="node-input-trait_channel" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+    
+            <div class="form-row" id="label_trait_channel">
+                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.channel"></label></b>
+            </div>
+    
+            <div id="trait_channel">
+                <div class="form-row">
+                    <div class="form-row">
+                        <label for="node-input-channel_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.channel_file"></span></label>
+                        <input type="text" id="node-input-channel_file" data-i18n="[placeholder]multi.placeholder.channel_file">
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- InputSelector Trait-->
+        <div class="form-row red-ui-editableList-border" id="inputselector" style="background: #fbfbfb; padding: 5px;">
+            <div class="form-row" id="cb_trait_inputselector">
+                <b><label style="width:auto" for="node-input-trait_inputselector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.inputselector"></label></b>
+                <input type="checkbox" checked id="node-input-trait_inputselector" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+    
+            <div class="form-row" id="label_trait_inputselector">
+                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.inputselector"></label></b>
+            </div>
+    
+            <div id="trait_inputselector">
+                <div class="form-row">
+                    <div class="form-row">
+                        <label for="node-input-inputselector_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.inputselector_file"></span></label>
+                        <input type="text" id="node-input-inputselector_file" data-i18n="[placeholder]multi.placeholder.inputselector_file">
+                    </div>
+    
+                    <div class="form-row">
+                        <label style="width:auto" for="node-input-command_only_input_selector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_input_selector"></label>
+                        <input type="checkbox" checked id="node-input-command_only_input_selector" style="display:inline-block; width:auto; vertical-align:top;">
+                    </div>
+    
+                    <div class="form-row">
+                        <label style="width:auto" for="node-input-ordered_inputs"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.ordered_inputs"></label>
+                        <input type="checkbox" checked id="node-input-ordered_inputs" style="display:inline-block; width:auto; vertical-align:top;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- MediaState Trait-->
+        <div class="form-row red-ui-editableList-border" id="mediastate" style="background: #fbfbfb; padding: 5px;">
+            <div class="form-row" id="cb_trait_mediastate">
+                <b><label style="width:auto" for="node-input-trait_mediastate"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.mediastate"></label></b>
+                <input type="checkbox" checked id="node-input-trait_mediastate" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+    
+            <div class="form-row" id="label_trait_mediastate">
+                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.mediastate"></label></b>
+            </div>
+    
+            <div id="trait_mediastate">
+                <div class="form-row">
+                    <div class="form-row">
+                        <label style="width:auto" for="node-input-support_activity_state"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.support_activity_state"></label>
+                        <input type="checkbox" checked id="node-input-support_activity_state" style="display:inline-block; width:auto; vertical-align:top;">
+                    </div>
+    
+                    <div class="form-row">
+                        <label style="width:auto" for="node-input-support_playback_state"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.support_playback_state"></label>
+                        <input type="checkbox" checked id="node-input-support_playback_state" style="display:inline-block; width:auto; vertical-align:top;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- OnOff Trait-->
+        <div class="form-row red-ui-editableList-border" id="onoff" style="background: #fbfbfb; padding: 5px;">
+            <div class="form-row" id="cb_trait_onoff">
+                <b><label style="width:auto" for="node-input-trait_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.onoff"></label></b>
+                <input type="checkbox" checked id="node-input-trait_onoff" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+    
+            <div class="form-row" id="label_trait_onoff">
+                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.onoff"></label></b>
+            </div>
+    
+            <div id="trait_onoff">
+                <div class="form-row">
+                    <div class="form-row">
+                        <label style="width:auto" for="node-input-command_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_onoff"></label>
+                        <input type="checkbox" checked id="node-input-command_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
+                    </div>
+    
+                    <div class="form-row">
+                        <label style="width:auto" for="node-input-query_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_onoff"></label>
+                        <input type="checkbox" checked id="node-input-query_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- TransportControl Trait-->
+        <div class="form-row red-ui-editableList-border" id="transportcontrol" style="background: #fbfbfb; padding: 5px;">
+            <div class="form-row" id="cb_trait_transportcontrol">
+                <b><label style="width:auto" for="node-input-trait_transportcontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.transportcontrol"></label></b>
+                <input type="checkbox" checked id="node-input-trait_transportcontrol" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+    
+            <div class="form-row" id="label_trait_transportcontrol">
+                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.transportcontrol"></label></b>
+            </div>
+    
+            <div id="trait_transportcontrol">
+                <div class="form-row">
+                    <label for="node-input-supported_commands"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_commands"></span></label>
+                    <select multiple id="node-input-supported_commands" >
+                        <option value="CAPTION_CONTROL" data-i18n="multi.label.caption_control"></option>
+                        <option value="NEXT" data-i18n="multi.label.next"></option>
+                        <option value="PAUSE" data-i18n="multi.label.pause"></option>
+                        <option value="PREVIOUS" data-i18n="multi.label.previous"></option>
+                        <option value="RESUME" data-i18n="multi.label.resume"></option>
+                        <option value="SEEK_RELATIVE" data-i18n="multi.label.seek_relative"></option>
+                        <option value="SEEK_TO_POSITION" data-i18n="multi.label.seek_to_position"></option>
+                        <option value="SET_REPEAT" data-i18n="multi.label.set_repeat"></option>
+                        <option value="SHUFFLE" data-i18n="multi.label.shuffle"></option>
+                        <option value="STOP" data-i18n="multi.label.stop"></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Modes Trait-->
+        <div class="form-row red-ui-editableList-border" id="modes" style="background: #fbfbfb; padding: 5px;">
+            <div class="form-row" id="cb_trait_modes">
+                <b><label style="width:auto" for="node-input-trait_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.modes"></label></b>
+                <input type="checkbox" checked id="node-input-trait_modes" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+    
+            <div class="form-row" id="label_trait_modes">
+                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.modes"></label></b>
+            </div>
+    
+            <div id="trait_modes">
+                <div class="form-row">
+                    <div class="form-row">
+                        <label for="node-input-modes_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.modes_file"></span></label>
+                        <input type="text" id="node-input-modes_file" data-i18n="[placeholder]multi.placeholder.modes_file">
+                    </div>
+    
+                    <div class="form-row">
+                        <label style="width:auto" for="node-input-command_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_modes"></label>
+                        <input type="checkbox" checked id="node-input-command_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
+                    </div>
+    
+                    <div class="form-row">
+                        <label style="width:auto" for="node-input-query_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_modes"></label>
+                        <input type="checkbox" checked id="node-input-query_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Toggles Trait-->
+        <div class="form-row red-ui-editableList-border" id="toggles" style="background: #fbfbfb; padding: 5px;">
+            <div class="form-row" id="cb_trait_toggles">
+                <b><label style="width:auto" for="node-input-trait_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.toggles"></label></b>
+                <input type="checkbox" checked id="node-input-trait_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+    
+            <div class="form-row" id="label_trait_toggles">
+                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.toggles"></label></b>
+            </div>
+    
+            <div id="trait_toggles">
+                <div class="form-row">
+                    <div class="form-row">
+                        <label for="node-input-toggles_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.toggles_file"></span></label>
+                        <input type="text" id="node-input-toggles_file" data-i18n="[placeholder]multi.placeholder.toggles_file">
+                    </div>
+    
+                    <div class="form-row">
+                        <label style="width:auto" for="node-input-command_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_toggles"></label>
+                        <input type="checkbox" checked id="node-input-command_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+                    </div>
+    
+                    <div class="form-row">
+                        <label style="width:auto" for="node-input-query_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_toggles"></label>
+                        <input type="checkbox" checked id="node-input-query_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="form-row">
+            <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.passthru"></label>
+            <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+        </div>    
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google-multi',{
+        category: 'Google_SmartHome-function',
+        paletteLabel: function() {
+            return this._("multi.label.node_name");
+        },
+        inputs: 1,
+        outputs: 1,
+        color:"#C0DEED",
+        icon: "google-smarthome.png",
+        label: function() {
+            return this.name || this._('multi.device_type.' + this.device_type);
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : ""
+        },
+        defaults: {
+            client: {
+                type: "googlesmarthome-client", 
+                required: true
+            },
+            name: {
+                value: "", required:true
+            },
+            topic: {
+                value: "", required:false
+            },
+            device_type: {
+                value: "UNKNOWN", required: true, validate: function(v) {
+                    return v !== "UNKNOWN";
+                }
+            },
+            trait_appselector: {
+                value: false, required:false
+            },
+            trait_channel: {
+                value: false, required:false
+                        },
+            trait_inputselector: {
+                value: false, required:false
+            },
+            trait_mediastate: {
+                value: false, required:false
+            },
+            trait_onoff: {
+                value: false, required:false
+            },
+            trait_transportcontrol: {
+                value: false, required:false
+            },
+            trait_modes: {
+                value: false, required:false
+            },
+            trait_toggles: {
+                value: false, required:false
+            },
+            appselector_file: {
+                value: "applications.json", required:false
+            },
+            channel_file: {
+                value: "channels.json", required:false
+            },
+            inputselector_file: {
+                value: "inputs.json", required:false
+            },
+            command_only_input_selector: {
+                value: false, required:false
+            },
+            ordered_inputs: {
+                value: false, required:false
+            },
+            support_activity_state: {
+                value: false, required:false
+            },
+            support_playback_state: {
+                value: false, required:false
+            },
+            command_only_onoff: {
+                value: false, required:false
+            },
+            query_only_onoff: {
+                value: false, required:false
+            },
+            supported_commands: {
+                value: ['CAPTION_CONTROL', 'NEXT', 'PAUSE', 'PREVIOUS', 'RESUME', 'SEEK_RELATIVE', 'SEEK_TO_POSITION', 'SET_REPEAT', 'SHUFFLE', 'STOP'], required:false
+            },
+            volume_max_level: {
+                value: 100, required:true, validate: function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            can_mute_and_unmute: {
+                value: true, required:false
+            },
+            volume_default_percentage: {
+                value: 40, required:false, validate: function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0 && n <= 100;
+                }
+            },
+            level_step_size: {
+                value: 1, required:false, validate: function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
+            },
+            command_only_volume: {
+                value: false, required:false
+            },
+            modes_file: {
+                value: "modes.json", required:false
+            },
+            command_only_modes: {
+                value: false, required:false
+            },
+            query_only_modes: {
+                value: false, required:false
+            },
+            toggles_file: {
+                value: "toggles.json", required:false
+            },
+            command_only_toggles: {
+                value: false, required:false
+            },
+            query_only_toggles: {
+                value: false, required:false
+            },
+            passthru: {
+                value: false
+            },
+        },
+        oneditprepare: function() {
+            // AppSelector
+            var hasAppSelector = function() {
+                var trait_appselector = $("#node-input-trait_appselector").prop('checked');
+                if (trait_appselector == false) {
+                    $("#trait_appselector").hide();
+                } else {
+                    $("#trait_appselector").show();
+                }
+            }
+            hasAppSelector();
+            $("#node-input-trait_appselector").change(hasAppSelector);
+            $("#label_trait_appselector").click(function() {
+                $("#trait_appselector").toggle();
+            });
+
+            // Channel
+            var hasChannel = function() {
+                var trait_channel = $("#node-input-trait_channel").prop('checked');
+                if (trait_channel == false) {
+                    $("#trait_channel").hide();
+                } else {
+                    $("#trait_channel").show();
+                }
+            }
+            hasChannel();
+            $("#node-input-trait_channel").change(hasChannel);
+            $("#label_trait_channel").click(function() {
+                $("#trait_channel").toggle();
+            });
+
+            // InputSelector
+            var hasInputSelector = function() {
+                var trait_inputselector = $("#node-input-trait_inputselector").prop('checked');
+                if (trait_inputselector == false) {
+                    $("#trait_inputselector").hide();
+                } else {
+                    $("#trait_inputselector").show();
+                }
+            }
+            hasInputSelector();
+            $("#node-input-trait_inputselector").change(hasInputSelector);
+            $("#trait_inputselector").click(function() {
+                $("#trait_inputselector").toggle();
+            });
+
+            // Media States
+            var hasMediaState = function() {
+                var trait_mediastate = $("#node-input-trait_mediastate").prop('checked');
+                if (trait_mediastate == false) {
+                    $("#trait_mediastate").hide();
+                } else {
+                    $("#trait_mediastate").show();
+                }
+            }
+            hasMediaState();
+            $("#node-input-trait_mediastate").change(hasMediaState);
+            $("#label_trait_mediastate").click(function() {
+                $("#trait_mediastate").toggle();
+            });
+
+            // OnOff
+            var hasOnOff = function() {
+                var trait_onoff = $("#node-input-trait_onoff").prop('checked');
+                if (trait_onoff == false) {
+                    $("#trait_onoff").hide();
+                } else {
+                    $("#trait_onoff").show();
+                }
+            }
+            hasOnOff();
+            $("#node-input-trait_onoff").change(hasOnOff);
+            $("#label_trait_onoff").click(function() {
+                $("#trait_onoff").toggle();
+            });
+
+            // Transport Control
+            var hasTransportControl = function() {
+                var trait_transportcontrol = $("#node-input-trait_transportcontrol").prop('checked');
+                if (trait_transportcontrol == false) {
+                    $("#trait_transportcontrol").hide();
+                } else {
+                    $("#trait_transportcontrol").show();
+                }
+            }
+            hasTransportControl();
+            $("#node-input-trait_transportcontrol").change(hasTransportControl);
+            $("#label_trait_transportcontrol").click(function() {
+                $("#trait_transportcontrol").toggle();
+            });
+
+            // Modes
+            var hasModes = function() {
+                var trait_modes = $("#node-input-trait_modes").prop('checked');
+                if (trait_modes == false) {
+                    $("#trait_modes").hide();
+                } else {
+                    $("#trait_modes").show();
+                }
+            }
+            hasModes();
+            $("#node-input-trait_modes").change(hasModes);
+            $("#label_trait_modes").click(function() {
+                $("#trait_modes").toggle();
+            });
+
+            // Toggles
+            var hasToggles = function() {
+                var trait_toggles = $("#node-input-trait_toggles").prop('checked');
+                if (trait_toggles == false) {
+                    $("#trait_toggles").hide();
+                } else {
+                    $("#trait_toggles").show();
+                }
+            }
+            hasToggles();
+            $("#node-input-trait_toggles").change(hasToggles);
+            $("#label_trait_toggles").click(function() {
+                $("#trait_toggles").toggle();
+            });
+
+            var optionalTrait = function(name) {
+                $("#node-input-trait_" + name).show();
+                $("#label_trait_" + name).hide();
+                $("#cb_trait_" + name).show();
+                $("#" + name).show();
+            };
+
+            var mandatoryTrait = function(name) {
+                $("#node-input-trait_" + name).hide();
+                $("#label_trait_" + name).show();
+                $("#cb_trait_" + name).hide();
+                $("#trait_" + name).show();
+                $("#" + name).show();
+            };
+
+            // Device Type
+            var deviceTypeChanged = function() {
+                var device_type = $("#node-input-device_type").val();
+                switch (device_type) {
+                    case "AUDIO_VIDEO_RECEIVER":
+                        mandatoryTrait("volume");
+                        mandatoryTrait("inputselector");
+                        mandatoryTrait("onoff");
+                        optionalTrait("appselector");
+                        optionalTrait("mediastate");
+                        optionalTrait("transportcontrol");
+                        optionalTrait("channel");
+                        optionalTrait("toggles");
+                        optionalTrait("modes");
+                        break;
+                    case "REMOTECONTROL":
+                        mandatoryTrait("volume");
+                        mandatoryTrait("appselector");
+                        mandatoryTrait("inputselector");
+                        mandatoryTrait("mediastate");
+                        mandatoryTrait("onoff");
+                        mandatoryTrait("transportcontrol");
+                        optionalTrait("channel");
+                        optionalTrait("toggles");
+                        optionalTrait("modes");
+                        break;
+                    case "SETTOP":
+                        mandatoryTrait("volume");
+                        mandatoryTrait("appselector");
+                        mandatoryTrait("inputselector");
+                        mandatoryTrait("mediastate");
+                        mandatoryTrait("onoff");
+                        mandatoryTrait("transportcontrol");
+                        optionalTrait("channel");
+                        optionalTrait("toggles");
+                        optionalTrait("modes");
+                        break;
+                    case "SOUNDBAR":
+                    case "SPEAKER":
+                        mandatoryTrait("volume");
+                        mandatoryTrait("mediastate");
+                        mandatoryTrait("transportcontrol");
+                        optionalTrait("appselector");
+                        optionalTrait("inputselector");
+                        optionalTrait("onoff");
+                        optionalTrait("channel");
+                        optionalTrait("toggles");
+                        noToptionalTraitrait("modes");
+                        break;
+                    case "STREAMING_BOX":
+                    case "STREAMING_SOUNDBAR":
+                    case "STREAMING_STICK":
+                        mandatoryTrait("volume");
+                        mandatoryTrait("appselector");
+                        mandatoryTrait("mediastate");
+                        mandatoryTrait("transportcontrol");
+                        optionalTrait("inputselector");
+                        optionalTrait("onoff");
+                        optionalTrait("channel");
+                        optionalTrait("toggles");
+                        optionalTrait("modes");
+                        break;
+                    case "TV":
+                        mandatoryTrait("volume");
+                        mandatoryTrait("appselector");
+                        mandatoryTrait("inputselector");
+                        mandatoryTrait("mediastate");
+                        mandatoryTrait("onoff");
+                        mandatoryTrait("transportcontrol");
+                        optionalTrait("channel");
+                        optionalTrait("toggles");
+                        optionalTrait("modes");
+                        break;
+                }
+            }
+            deviceTypeChanged();
+            $("#node-input-device_type").change(deviceTypeChanged);
+        }
+    });
+</script>
