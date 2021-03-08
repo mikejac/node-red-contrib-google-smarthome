@@ -45,7 +45,19 @@
             "toggles_file": "Available toggles file",
             "command_only_toggles": "Command only toggles",
             "query_only_toggles": "Query only toggles",
-            "passthru": "If msg arrives on input, pass through to output:"
+            "passthru": "If msg arrives on input, pass through to output:",
+            "brightness": "Brightness",
+            "command_only_brightness": "Command only brightness",
+            "command_only_colorsetting": "Command only color setting",
+            "color_model": "Color model",
+            "temperature_k": "Temperature K",
+            "rgb": "RGB",
+            "hsv": "HSV",
+            "rgb_temp": "RGB/Temperature K",
+            "hsv_temp": "HSV/Temperature K",
+            "color_temperature_range": "Color temperature range",
+            "temperature_min_k": "Temperature min K",
+            "temperature_max_k": "Temperature max K"
         },
         "placeholder": {
             "name": "Name",
@@ -61,7 +73,11 @@
             "inputselector_file": "Available inputs file",
             "appselector_file": "Available applications file",
             "modes_file": "Available modes file",
-            "toggles_file": "Available toggles file"
+            "toggles_file": "Available toggles file",
+            "command_only_brightness": "Command only brightness",
+            "command_only_colorsetting": "Command only color setting",
+            "temperature_min_k": "Temperature min Kelvin",
+            "temperature_max_k": "Temperature max Kelvin"
         },
         "trait": {
             "appselector": "AppSelector",
