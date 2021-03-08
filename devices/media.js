@@ -165,7 +165,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_applications = undefined;
-                this.debug("Applications disabled");
+                this.debug(".constructor: Applications disabled");
             }
 
             if (this.has_channels) {
@@ -176,7 +176,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_channels = undefined;
-                this.debug("Channels disabled");
+                this.debug(".constructor: Channels disabled");
             }
 
             if (this.has_inputs) {
@@ -187,7 +187,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_inputs = undefined;
-                this.debug("Inputs disabled");
+                this.debug(".constructor Inputs disabled");
             }
 
             if (this.has_modes) {
@@ -198,7 +198,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_modes = undefined;
-                this.debug("Modes disabled");
+                this.debug(".constructor: Modes disabled");
             }
 
             if (this.has_toggles) {
@@ -209,7 +209,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_toggles = undefined;
-                this.debug("Toggles disabled");
+                this.debug(".constructor: Toggles disabled");
             }
 
             this.states = this.clientConn.register(this, 'media', config.name, this);
@@ -225,6 +225,7 @@ module.exports = function(RED) {
         }
 
         debug(msg) {
+            msg = 'google-smarthome:MediaNode' + msg;
             if (this.clientConn && typeof this.clientConn.debug === 'function') {
                 this.clientConn.debug(msg);
             } else {
@@ -237,7 +238,7 @@ module.exports = function(RED) {
          *
          */
         registerDevice(client, name, me) {
-            me.debug("MediaNode(registerDevice) device_type " + me.device_type);
+            me.debug(".registerDevice: device_type " + me.device_type);
             let states = {
                 online: true
             };
@@ -273,7 +274,7 @@ module.exports = function(RED) {
             this.updateAttributesForTraits(me, device);
             this.updateStatesForTraits(me, device);
 
-            me.debug("MediaNode(registerDevice): device = " + JSON.stringify(device));
+            me.debug(".registerDevice: device = " + JSON.stringify(device));
 
             return device;
         }
@@ -373,9 +374,9 @@ module.exports = function(RED) {
         updated(device, params, original_params) {
             let states = device.states;
             let command = device.command;
-            this.debug("MediaNode(updated): states = " + JSON.stringify(states));
-            this.debug("MediaNode(updated): params = " + JSON.stringify(params));
-            this.debug("MediaNode(updated): original_params = " + JSON.stringify(original_params));
+            this.debug(".updated: states = " + JSON.stringify(states));
+            this.debug(".updated: params = " + JSON.stringify(params));
+            this.debug(".updated: original_params = " + JSON.stringify(original_params));
 
             Object.assign(this.states, states);
 
@@ -419,12 +420,11 @@ module.exports = function(RED) {
          */
         onInput(msg) {
             const me = this;
-            me.debug("MediaNode(input)");
+            me.debug(".input: topic = " + msg.topic);
 
             let topicArr = String(msg.topic).split(this.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
-            me.debug("MediaNode(input): topic = " + topic);
             try {
                 if (topic.toUpperCase() === 'APPLICATIONS') {
                     if (this.has_apps) {
@@ -527,14 +527,14 @@ module.exports = function(RED) {
                     Object.keys(this.states).forEach(function (key) {
                         if (topic.toUpperCase() == key.toUpperCase()) {
                             state_key = key;
-                            me.debug("MediaNode(input): found state " + key);
+                            me.debug(".input: found state " + key);
                         }
                     });
 
                     if (state_key !== '') {
                         const differs = me.setState(state_key, msg.payload, this.states);
                         if (differs) {
-                            me.debug("MediaNode(input): " + state_key + ' ' + msg.payload);
+                            me.debug(".input: " + state_key + ' ' + msg.payload);
                             this.clientConn.setState(this, this.states);  // tell Google ...
         
                             if (this.passthru) {
@@ -545,11 +545,11 @@ module.exports = function(RED) {
                             this.updateStatusIcon();
                         }
                     } else {
-                        me.debug("MediaNode(input): some other topic");
+                        me.debug(".input: some other topic");
                         let differs = false;
                         Object.keys(this.states).forEach(function (key) {
                             if (msg.payload.hasOwnProperty(key)) {
-                                this.debug("MediaNode(input): set state " + key + ' to ' + msg.payload[key]);
+                                me.debug(".input: set state " + key + ' to ' + msg.payload[key]);
                                 if (me.setState(key, msg.payload[key], me.states)) {
                                     differs = true;
                                 }
@@ -602,7 +602,7 @@ module.exports = function(RED) {
 
         updateModesState(me, device) {
             // Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
-            me.debug("Update Modes device");
+            me.debug(".updateModesState");
             let states = device.states || {};
             const currentModeSettings = states['currentModeSettings']
             let new_modes = {};
@@ -702,7 +702,7 @@ module.exports = function(RED) {
                 const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
             }
-            this.debug('MediaNode:loadJson(): loading ' + filename);
+            this.debug('.loadJson: filename ' + filename);
         
             try {
                 let jsonFile = fs.readFileSync(
@@ -713,12 +713,12 @@ module.exports = function(RED) {
                     });
     
                 if (jsonFile === '') {
-                    this.debug('MediaNode:loadJson(): empty data');
+                    this.debug('.loadJson: empty data');
                     return defaultValue;
                 } else {
-                    this.debug('MediaNode:loadJson(): data loaded');
+                    this.debug('.loadJson: data loaded');
                     const json = JSON.parse(jsonFile);
-                    this.debug('MediaNode:loadJson(): json = ' + JSON.stringify(json));
+                    this.debug('.loadJson: json = ' + JSON.stringify(json));
                     return json;
                 }
             }
@@ -733,7 +733,7 @@ module.exports = function(RED) {
                 const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
             }
-            this.debug('MediaNode:writeJson(): writing ' + filename);
+            this.debug('.writeJson: filename ' + filename);
             if (typeof value === 'object') {
                 value = JSON.stringify(value);
             }
@@ -746,7 +746,7 @@ module.exports = function(RED) {
                         'flag': fs.constants.W_OK | fs.constants.O_CREAT | fs.constants.O_TRUNC
                     });
     
-                this.debug('MediaNode:writeJson(): data saved');
+                this.debug('writeJson: data saved');
                 return true;
             }
             catch (err) {
@@ -764,9 +764,9 @@ module.exports = function(RED) {
                 'executionStates': executionStates
             };
 
-            me.debug("MediaNode:execCommand(command) " +  JSON.stringify(command));
-            me.debug("MediaNode:execCommand(states) " +  JSON.stringify(this.states));
-            // me.debug("MediaNode:execCommand(device) " +  JSON.stringify(device));
+            me.debug(".execCommand: command " +  JSON.stringify(command));
+            me.debug(".execCommand: states " +  JSON.stringify(this.states));
+            // me.debug(".execCommand: device " +  JSON.stringify(device));
 
             // Applications
             if ((command.command == 'action.devices.commands.appInstall') ||
