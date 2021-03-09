@@ -57,7 +57,16 @@
             "hsv_temp": "HSV/Temperature K",
             "color_temperature_range": "Color temperature range",
             "temperature_min_k": "Temperature min K",
-            "temperature_max_k": "Temperature max K"
+            "temperature_max_k": "Temperature max K",
+            "hls": "Hls url",
+            "hls_app_id": "Hls App Id",
+            "dash": "Dash url",
+            "dash_app_id": "Dash App Id",
+            "smooth_stream": "Smooth stream url",
+            "smooth_stream_app_id": "Smooth stream App Id",
+            "progressive_mp4": "Progressive mp4 url",
+            "progressive_mp4_app_id": "Progressive mp4 App Id",
+            "auth_token": "Authorization token"
         },
         "placeholder": {
             "name": "Name",
@@ -77,7 +86,16 @@
             "command_only_brightness": "Command only brightness",
             "command_only_colorsetting": "Command only color setting",
             "temperature_min_k": "Temperature min Kelvin",
-            "temperature_max_k": "Temperature max Kelvin"
+            "temperature_max_k": "Temperature max Kelvin",
+            "hls": "Hls url",
+            "hls_app_id": "Hls App Id",
+            "dash": "Dash url",
+            "dash_app_id": "Dash App Id",
+            "smooth_stream": "Smooth stream url",
+            "smooth_stream_app_id": "Smooth stream App Id",
+            "progressive_mp4": "Progressive mp4 url",
+            "progressive_mp4_app_id": "Progressive mp4 App Id",
+            "auth_token": "Authorization token"
         },
         "trait": {
             "appselector": "AppSelector",
