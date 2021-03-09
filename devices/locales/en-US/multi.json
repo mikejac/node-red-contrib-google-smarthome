@@ -66,7 +66,8 @@
             "smooth_stream_app_id": "Smooth stream App Id",
             "progressive_mp4": "Progressive mp4 url",
             "progressive_mp4_app_id": "Progressive mp4 App Id",
-            "auth_token": "Authorization token"
+            "auth_token": "Authorization token",
+            "scene_reversible": "Reversible"
         },
         "placeholder": {
             "name": "Name",

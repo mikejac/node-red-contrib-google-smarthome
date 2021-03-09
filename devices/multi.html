@@ -43,6 +43,12 @@
         <input type="text" id="node-input-topic" data-i18n="[placeholder]multi.placeholder.topic">
     </div>
 
+    <!-- Passthru-->
+    <div class="form-row">
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.passthru"></label>
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+    
     <div class="form-row" id="device_type">
         <label for="node-input-device_type"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.device_type"></span></label>
         <select id="node-input-device_type" >
@@ -98,7 +104,7 @@
             <!--<option value='REFRIGERATOR' data-i18n='multi.device_type.REFRIGERATOR'></option>-->
             <option value='REMOTECONTROL' data-i18n='multi.device_type.REMOTECONTROL'></option>
             <!--<option value='ROUTER' data-i18n='multi.device_type.ROUTER'></option>-->
-            <!--<option value='SCENE' data-i18n='multi.device_type.SCENE'></option>-->
+            <option value='SCENE' data-i18n='multi.device_type.SCENE'></option>
             <!--<option value='SECURITYSYSTEM' data-i18n='multi.device_type.SECURITYSYSTEM'></option>-->
             <!--<option value='SENSOR' data-i18n='multi.device_type.SENSOR'></option>-->
             <option value='SETTOP' data-i18n='multi.device_type.SETTOP'></option>
@@ -127,396 +133,410 @@
         </select>
     </div>
 
-        <!-- Volume Trait-->
-        <div class="form-row red-ui-editableList-border div_trait" id="volume" style="background: #fbfbfb; padding: 5px;">
-            <div class="form-row" id="cb_trait_volume">
-                <b><label style="width:auto" for="node-input-trait_volume"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.volume"></label></b>
-                <input type="checkbox" checked id="node-input-trait_volume" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            </div>
-    
-            <div class="form-row label_trait" id="label_trait_volume">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.volume"></label></b>
-            </div>
-    
-            <div id="trait_volume">
-                <div class="form-row">
-                    <div class="form-row">
-                        <label for="node-input-volume_max_level"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.volume_max_level"></span></label>
-                        <input type="text" id="node-input-volume_max_level" data-i18n="[placeholder]multi.placeholder.volume_max_level">
-                    </div>
-
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-can_mute_and_unmute"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.can_mute_and_unmute"></label>
-                        <input type="checkbox" checked id="node-input-can_mute_and_unmute" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-
-                    <div class="form-row">
-                        <label for="node-input-volume_default_percentage"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.volume_default_percentage"></span></label>
-                        <input type="text" id="node-input-volume_default_percentage" data-i18n="[placeholder]multi.placeholder.volume_default_percentage">
-                    </div>
-
-                    <div class="form-row">
-                        <label for="node-input-level_step_size"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.level_step_size"></span></label>
-                        <input type="text" id="node-input-level_step_size" data-i18n="[placeholder]multi.placeholder.level_step_size">
-                    </div>
-
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-command_only_volume"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_volume"></label>
-                        <input type="checkbox" checked id="node-input-command_only_volume" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <!-- AppSelector Trait-->
-        <div class="form-row red-ui-editableList-border div_trait" id="appselector" style="background: #fbfbfb; padding: 5px;">
-            <div class="form-row" id="cb_trait_appselector">
-                <b><label style="width:auto" for="node-input-trait_appselector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.appselector"></label></b>
-                <input type="checkbox" checked id="node-input-trait_appselector" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            </div>
-    
-            <div class="form-row label_trait" id="label_trait_appselector">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.appselector"></label></b>
-            </div>
-    
-            <div id="trait_appselector">
-                <div class="form-row">
-                    <div class="form-row">
-                        <label for="node-input-appselector_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.appselector_file"></span></label>
-                        <input type="text" id="node-input-appselector_file" data-i18n="[placeholder]multi.placeholder.appselector_file">
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <!-- Channel Trait-->
-        <div class="form-row red-ui-editableList-border div_trait" id="channel" style="background: #fbfbfb; padding: 5px;">
-            <div class="form-row" id="cb_trait_channel">
-                <b><label style="width:auto" for="node-input-trait_channel"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.channel"></label></b>
-                <input type="checkbox" checked id="node-input-trait_channel" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            </div>
-    
-            <div class="form-row label_trait" id="label_trait_channel">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.channel"></label></b>
-            </div>
-    
-            <div id="trait_channel">
-                <div class="form-row">
-                    <div class="form-row">
-                        <label for="node-input-channel_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.channel_file"></span></label>
-                        <input type="text" id="node-input-channel_file" data-i18n="[placeholder]multi.placeholder.channel_file">
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <!-- InputSelector Trait-->
-        <div class="form-row red-ui-editableList-border div_trait" id="inputselector" style="background: #fbfbfb; padding: 5px;">
-            <div class="form-row" id="cb_trait_inputselector">
-                <b><label style="width:auto" for="node-input-trait_inputselector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.inputselector"></label></b>
-                <input type="checkbox" checked id="node-input-trait_inputselector" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            </div>
-    
-            <div class="form-row label_trait" id="label_trait_inputselector">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.inputselector"></label></b>
-            </div>
-    
-            <div id="trait_inputselector">
-                <div class="form-row">
-                    <div class="form-row">
-                        <label for="node-input-inputselector_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.inputselector_file"></span></label>
-                        <input type="text" id="node-input-inputselector_file" data-i18n="[placeholder]multi.placeholder.inputselector_file">
-                    </div>
-    
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-command_only_input_selector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_input_selector"></label>
-                        <input type="checkbox" checked id="node-input-command_only_input_selector" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-    
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-ordered_inputs"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.ordered_inputs"></label>
-                        <input type="checkbox" checked id="node-input-ordered_inputs" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- MediaState Trait-->
-        <div class="form-row red-ui-editableList-border div_trait" id="mediastate" style="background: #fbfbfb; padding: 5px;">
-            <div class="form-row" id="cb_trait_mediastate">
-                <b><label style="width:auto" for="node-input-trait_mediastate"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.mediastate"></label></b>
-                <input type="checkbox" checked id="node-input-trait_mediastate" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            </div>
-    
-            <div class="form-row label_trait" id="label_trait_mediastate">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.mediastate"></label></b>
-            </div>
-    
-            <div id="trait_mediastate">
-                <div class="form-row">
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-support_activity_state"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.support_activity_state"></label>
-                        <input type="checkbox" checked id="node-input-support_activity_state" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-    
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-support_playback_state"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.support_playback_state"></label>
-                        <input type="checkbox" checked id="node-input-support_playback_state" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <!-- OnOff Trait-->
-        <div class="form-row red-ui-editableList-border div_trait" id="onoff" style="background: #fbfbfb; padding: 5px;">
-            <div class="form-row" id="cb_trait_onoff">
-                <b><label style="width:auto" for="node-input-trait_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.onoff"></label></b>
-                <input type="checkbox" checked id="node-input-trait_onoff" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            </div>
-    
-            <div class="form-row label_trait" id="label_trait_onoff">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.onoff"></label></b>
-            </div>
-    
-            <div id="trait_onoff">
-                <div class="form-row">
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-command_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_onoff"></label>
-                        <input type="checkbox" checked id="node-input-command_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-    
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-query_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_onoff"></label>
-                        <input type="checkbox" checked id="node-input-query_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <!-- TransportControl Trait-->
-        <div class="form-row red-ui-editableList-border div_trait" id="transportcontrol" style="background: #fbfbfb; padding: 5px;">
-            <div class="form-row" id="cb_trait_transportcontrol">
-                <b><label style="width:auto" for="node-input-trait_transportcontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.transportcontrol"></label></b>
-                <input type="checkbox" checked id="node-input-trait_transportcontrol" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            </div>
-    
-            <div class="form-row label_trait" id="label_trait_transportcontrol">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.transportcontrol"></label></b>
-            </div>
-    
-            <div id="trait_transportcontrol">
-                <div class="form-row">
-                    <label for="node-input-supported_commands"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_commands"></span></label>
-                    <select multiple id="node-input-supported_commands" >
-                        <option value="CAPTION_CONTROL" data-i18n="multi.label.caption_control"></option>
-                        <option value="NEXT" data-i18n="multi.label.next"></option>
-                        <option value="PAUSE" data-i18n="multi.label.pause"></option>
-                        <option value="PREVIOUS" data-i18n="multi.label.previous"></option>
-                        <option value="RESUME" data-i18n="multi.label.resume"></option>
-                        <option value="SEEK_RELATIVE" data-i18n="multi.label.seek_relative"></option>
-                        <option value="SEEK_TO_POSITION" data-i18n="multi.label.seek_to_position"></option>
-                        <option value="SET_REPEAT" data-i18n="multi.label.set_repeat"></option>
-                        <option value="SHUFFLE" data-i18n="multi.label.shuffle"></option>
-                        <option value="STOP" data-i18n="multi.label.stop"></option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    
-        <!-- Modes Trait-->
-        <div class="form-row red-ui-editableList-border div_trait" id="modes" style="background: #fbfbfb; padding: 5px;">
-            <div class="form-row" id="cb_trait_modes">
-                <b><label style="width:auto" for="node-input-trait_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.modes"></label></b>
-                <input type="checkbox" checked id="node-input-trait_modes" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            </div>
-    
-            <div class="form-row label_trait" id="label_trait_modes">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.modes"></label></b>
-            </div>
-    
-            <div id="trait_modes">
-                <div class="form-row">
-                    <div class="form-row">
-                        <label for="node-input-modes_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.modes_file"></span></label>
-                        <input type="text" id="node-input-modes_file" data-i18n="[placeholder]multi.placeholder.modes_file">
-                    </div>
-    
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-command_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_modes"></label>
-                        <input type="checkbox" checked id="node-input-command_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-    
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-query_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_modes"></label>
-                        <input type="checkbox" checked id="node-input-query_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <!-- Toggles Trait-->
-        <div class="form-row red-ui-editableList-border div_trait" id="toggles" style="background: #fbfbfb; padding: 5px;">
-            <div class="form-row" id="cb_trait_toggles">
-                <b><label style="width:auto" for="node-input-trait_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.toggles"></label></b>
-                <input type="checkbox" checked id="node-input-trait_toggles" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            </div>
-    
-            <div class="form-row label_trait" id="label_trait_toggles">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.toggles"></label></b>
-            </div>
-    
-            <div id="trait_toggles">
-                <div class="form-row">
-                    <div class="form-row">
-                        <label for="node-input-toggles_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.toggles_file"></span></label>
-                        <input type="text" id="node-input-toggles_file" data-i18n="[placeholder]multi.placeholder.toggles_file">
-                    </div>
-    
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-command_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_toggles"></label>
-                        <input type="checkbox" checked id="node-input-command_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-    
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-query_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_toggles"></label>
-                        <input type="checkbox" checked id="node-input-query_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-                </div>
-            </div>
+    <!-- AppSelector Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="appselector" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_appselector">
+            <b><label style="width:auto" for="node-input-trait_appselector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.appselector"></label></b>
+            <input type="checkbox" checked id="node-input-trait_appselector" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
         </div>
 
-        <!-- Brightness Trait-->
-        <div class="form-row red-ui-editableList-border div_trait" id="brightness" style="background: #fbfbfb; padding: 5px;">
-            <div class="form-row" id="cb_trait_brightness">
-                <b><label style="width:auto" for="node-input-trait_brightness"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.brightness"></label></b>
-                <input type="checkbox" checked id="node-input-trait_brightness" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            </div>
-    
-            <div class="form-row label_trait" id="label_trait_brightness">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.brightness"></label></b>
-            </div>
-    
-            <div id="trait_brightness">
-                <div class="form-row">
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-command_only_brightness"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_brightness"></label>
-                        <input type="checkbox" checked id="node-input-command_only_brightness" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-                </div>
-            </div>
+        <div class="form-row label_trait" id="label_trait_appselector">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.appselector"></label></b>
         </div>
 
-        <!-- ColorSetting Trait-->
-        <div class="form-row red-ui-editableList-border div_trait" id="colorsetting" style="background: #fbfbfb; padding: 5px;">
-            <div class="form-row" id="cb_trait_colorsetting">
-                <b><label style="width:auto" for="node-input-trait_colorsetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.colorsetting"></label></b>
-                <input type="checkbox" checked id="node-input-trait_colorsetting" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            </div>
-    
-            <div class="form-row label_trait" id="label_trait_colorsetting">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.colorsetting"></label></b>
-            </div>
-    
-            <div id="trait_colorsetting">
+        <div id="trait_appselector">
+            <div class="form-row">
                 <div class="form-row">
-                    <div class="form-row">
-                        <label style="width:auto" for="node-input-command_only_colorsetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_colorsetting"></label>
-                        <input type="checkbox" checked id="node-input-command_only_colorsetting" style="display:inline-block; width:auto; vertical-align:top;">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <label for="node-input-color_model"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.color_model"></span></label>
-                    <select multiple id="node-input-color_model" >
-                        <option value="temp" data-i18n="multi.label.temperature_k"></option>
-                        <option value="rgb" data-i18n="multi.label.rgb"></option>
-                        <option value="hsv" data-i18n="multi.label.hsv"></option>
-                        <option value="rgb_temp" data-i18n="multi.label.rgb_temp"></option>
-                        <option value="hsv_temp" data-i18n="multi.label.hsv_temp"></option>
-                    </select>
-                </div>
-
-                <div class="form-row">
-                    <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.color_temperature_range"></label></b>
-
-                    <div class="form-row">
-                        <label for="node-input-temperature_min_k"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.temperature_min_k"></span></label>
-                        <input type="text" id="node-input-temperature_min_k" data-i18n="[placeholder]multi.placeholder.temperature_min_k">
-                    </div>
-
-                    <div class="form-row">
-                        <label for="node-input-temperature_max_k"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.temperature_max_k"></span></label>
-                        <input type="text" id="node-input-temperature_max_k" data-i18n="[placeholder]multi.placeholder.temperature_max_k">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- CameraStream trait-->
-        <div class="form-row red-ui-editableList-border div_trait" id="camerastream" style="background: #fbfbfb; padding: 5px;">
-            <div class="form-row" id="cb_trait_camerastream">
-                <b><label style="width:auto" for="node-input-trait_camerastream"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.camerastream"></label></b>
-                <input type="checkbox" checked id="node-input-trait_camerastream" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            </div>
-    
-            <div class="form-row label_trait" id="label_trait_camerastream">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.camerastream"></label></b>
-            </div>
-    
-            <div id="trait_camerastream">
-                <div class="form-row">
-                    <label for="node-input-hls"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.hls"></span></label>
-                    <input type="text" id="node-input-hls" data-i18n="[placeholder]multi.placeholder.hls">
-                </div>
-            
-                <div class="form-row">
-                    <label for="node-input-hls_app_id"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.hls_app_id"></span></label>
-                    <input type="text" id="node-input-hls_app_id" data-i18n="[placeholder]multi.placeholder.hls_app_id">
-                </div>
-            
-                <div class="form-row">
-                    <label for="node-input-dash"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.dash"></span></label>
-                    <input type="text" id="node-input-dash" data-i18n="[placeholder]multi.placeholder.dash">
-                </div>
-            
-                <div class="form-row">
-                    <label for="node-input-dash_app_id"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.dash_app_id"></span></label>
-                    <input type="text" id="node-input-dash_app_id" data-i18n="[placeholder]multi.placeholder.dash_app_id">
-                </div>
-            
-                <div class="form-row">
-                    <label for="node-input-smooth_stream"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.smooth_stream"></span></label>
-                    <input type="text" id="node-input-smooth_stream" data-i18n="[placeholder]multi.placeholder.smooth_stream">
-                </div>
-            
-                <div class="form-row">
-                    <label for="node-input-smooth_stream_app_id"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.smooth_stream_app_id"></span></label>
-                    <input type="text" id="node-input-smooth_stream_app_id" data-i18n="[placeholder]multi.placeholder.smooth_stream_app_id">
-                </div>
-            
-                <div class="form-row">
-                    <label for="node-input-progressive_mp4"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.progressive_mp4"></span></label>
-                    <input type="text" id="node-input-progressive_mp4" data-i18n="[placeholder]multi.placeholder.progressive_mp4">
-                </div>
-            
-                <div class="form-row">
-                    <label for="node-input-progressive_mp4_app_id"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.progressive_mp4_app_id"></span></label>
-                    <input type="text" id="node-input-progressive_mp4_app_id" data-i18n="[placeholder]multi.placeholder.progressive_mp4_app_id">
-                </div>
-            
-                <div class="form-row">
-                    <label for="node-input-auth_token"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.auth_token"></span></label>
-                    <input type="text" id="node-input-auth_token" data-i18n="[placeholder]multi.placeholder.auth_token">
+                    <label for="node-input-appselector_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.appselector_file"></span></label>
+                    <input type="text" id="node-input-appselector_file" data-i18n="[placeholder]multi.placeholder.appselector_file">
                 </div>
             </div>
         </div>
     </div>
 
-        <!-- Passthru-->
-        <div class="form-row">
-            <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.passthru"></label>
-            <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
-        </div>    
+
+    <!-- Brightness Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="brightness" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_brightness">
+            <b><label style="width:auto" for="node-input-trait_brightness"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.brightness"></label></b>
+            <input type="checkbox" checked id="node-input-trait_brightness" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_brightness">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.brightness"></label></b>
+        </div>
+
+        <div id="trait_brightness">
+            <div class="form-row">
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_brightness"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_brightness"></label>
+                    <input type="checkbox" checked id="node-input-command_only_brightness" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ColorSetting Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="colorsetting" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_colorsetting">
+            <b><label style="width:auto" for="node-input-trait_colorsetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.colorsetting"></label></b>
+            <input type="checkbox" checked id="node-input-trait_colorsetting" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_colorsetting">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.colorsetting"></label></b>
+        </div>
+
+        <div id="trait_colorsetting">
+            <div class="form-row">
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_colorsetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_colorsetting"></label>
+                    <input type="checkbox" checked id="node-input-command_only_colorsetting" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-color_model"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.color_model"></span></label>
+                <select multiple id="node-input-color_model" >
+                    <option value="temp" data-i18n="multi.label.temperature_k"></option>
+                    <option value="rgb" data-i18n="multi.label.rgb"></option>
+                    <option value="hsv" data-i18n="multi.label.hsv"></option>
+                    <option value="rgb_temp" data-i18n="multi.label.rgb_temp"></option>
+                    <option value="hsv_temp" data-i18n="multi.label.hsv_temp"></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.color_temperature_range"></label></b>
+
+                <div class="form-row">
+                    <label for="node-input-temperature_min_k"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.temperature_min_k"></span></label>
+                    <input type="text" id="node-input-temperature_min_k" data-i18n="[placeholder]multi.placeholder.temperature_min_k">
+                </div>
+
+                <div class="form-row">
+                    <label for="node-input-temperature_max_k"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.temperature_max_k"></span></label>
+                    <input type="text" id="node-input-temperature_max_k" data-i18n="[placeholder]multi.placeholder.temperature_max_k">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CameraStream trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="camerastream" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_camerastream">
+            <b><label style="width:auto" for="node-input-trait_camerastream"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.camerastream"></label></b>
+            <input type="checkbox" checked id="node-input-trait_camerastream" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_camerastream">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.camerastream"></label></b>
+        </div>
+
+        <div id="trait_camerastream">
+            <div class="form-row">
+                <label for="node-input-hls"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.hls"></span></label>
+                <input type="text" id="node-input-hls" data-i18n="[placeholder]multi.placeholder.hls">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-hls_app_id"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.hls_app_id"></span></label>
+                <input type="text" id="node-input-hls_app_id" data-i18n="[placeholder]multi.placeholder.hls_app_id">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-dash"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.dash"></span></label>
+                <input type="text" id="node-input-dash" data-i18n="[placeholder]multi.placeholder.dash">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-dash_app_id"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.dash_app_id"></span></label>
+                <input type="text" id="node-input-dash_app_id" data-i18n="[placeholder]multi.placeholder.dash_app_id">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-smooth_stream"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.smooth_stream"></span></label>
+                <input type="text" id="node-input-smooth_stream" data-i18n="[placeholder]multi.placeholder.smooth_stream">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-smooth_stream_app_id"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.smooth_stream_app_id"></span></label>
+                <input type="text" id="node-input-smooth_stream_app_id" data-i18n="[placeholder]multi.placeholder.smooth_stream_app_id">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-progressive_mp4"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.progressive_mp4"></span></label>
+                <input type="text" id="node-input-progressive_mp4" data-i18n="[placeholder]multi.placeholder.progressive_mp4">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-progressive_mp4_app_id"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.progressive_mp4_app_id"></span></label>
+                <input type="text" id="node-input-progressive_mp4_app_id" data-i18n="[placeholder]multi.placeholder.progressive_mp4_app_id">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-auth_token"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.auth_token"></span></label>
+                <input type="text" id="node-input-auth_token" data-i18n="[placeholder]multi.placeholder.auth_token">
+            </div>
+        </div>
+    </div>
+
+    <!-- Channel Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="channel" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_channel">
+            <b><label style="width:auto" for="node-input-trait_channel"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.channel"></label></b>
+            <input type="checkbox" checked id="node-input-trait_channel" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_channel">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.channel"></label></b>
+        </div>
+
+        <div id="trait_channel">
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-channel_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.channel_file"></span></label>
+                    <input type="text" id="node-input-channel_file" data-i18n="[placeholder]multi.placeholder.channel_file">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- InputSelector Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="inputselector" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_inputselector">
+            <b><label style="width:auto" for="node-input-trait_inputselector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.inputselector"></label></b>
+            <input type="checkbox" checked id="node-input-trait_inputselector" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_inputselector">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.inputselector"></label></b>
+        </div>
+
+        <div id="trait_inputselector">
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-inputselector_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.inputselector_file"></span></label>
+                    <input type="text" id="node-input-inputselector_file" data-i18n="[placeholder]multi.placeholder.inputselector_file">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_input_selector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_input_selector"></label>
+                    <input type="checkbox" checked id="node-input-command_only_input_selector" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-ordered_inputs"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.ordered_inputs"></label>
+                    <input type="checkbox" checked id="node-input-ordered_inputs" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MediaState Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="mediastate" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_mediastate">
+            <b><label style="width:auto" for="node-input-trait_mediastate"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.mediastate"></label></b>
+            <input type="checkbox" checked id="node-input-trait_mediastate" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_mediastate">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.mediastate"></label></b>
+        </div>
+
+        <div id="trait_mediastate">
+            <div class="form-row">
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-support_activity_state"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.support_activity_state"></label>
+                    <input type="checkbox" checked id="node-input-support_activity_state" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-support_playback_state"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.support_playback_state"></label>
+                    <input type="checkbox" checked id="node-input-support_playback_state" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modes Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="modes" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_modes">
+            <b><label style="width:auto" for="node-input-trait_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.modes"></label></b>
+            <input type="checkbox" checked id="node-input-trait_modes" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_modes">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.modes"></label></b>
+        </div>
+
+        <div id="trait_modes">
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-modes_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.modes_file"></span></label>
+                    <input type="text" id="node-input-modes_file" data-i18n="[placeholder]multi.placeholder.modes_file">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_modes"></label>
+                    <input type="checkbox" checked id="node-input-command_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-query_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_modes"></label>
+                    <input type="checkbox" checked id="node-input-query_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OnOff Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="onoff" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_onoff">
+            <b><label style="width:auto" for="node-input-trait_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.onoff"></label></b>
+            <input type="checkbox" checked id="node-input-trait_onoff" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_onoff">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.onoff"></label></b>
+        </div>
+
+        <div id="trait_onoff">
+            <div class="form-row">
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_onoff"></label>
+                    <input type="checkbox" checked id="node-input-command_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-query_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_onoff"></label>
+                    <input type="checkbox" checked id="node-input-query_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scene Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="scene" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_scene">
+            <b><label style="width:auto" for="node-input-trait_scene"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.scene"></label></b>
+            <input type="checkbox" checked id="node-input-trait_scene" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_scene">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.scene"></label></b>
+        </div>
+
+        <div id="trait_scene">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-scene_reversible"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.scene_reversible"></label>
+                <input type="checkbox" checked id="node-input-scene_reversible" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+    
+    <!-- TransportControl Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="transportcontrol" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_transportcontrol">
+            <b><label style="width:auto" for="node-input-trait_transportcontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.transportcontrol"></label></b>
+            <input type="checkbox" checked id="node-input-trait_transportcontrol" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_transportcontrol">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.transportcontrol"></label></b>
+        </div>
+
+        <div id="trait_transportcontrol">
+            <div class="form-row">
+                <label for="node-input-supported_commands"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_commands"></span></label>
+                <select multiple id="node-input-supported_commands" >
+                    <option value="CAPTION_CONTROL" data-i18n="multi.label.caption_control"></option>
+                    <option value="NEXT" data-i18n="multi.label.next"></option>
+                    <option value="PAUSE" data-i18n="multi.label.pause"></option>
+                    <option value="PREVIOUS" data-i18n="multi.label.previous"></option>
+                    <option value="RESUME" data-i18n="multi.label.resume"></option>
+                    <option value="SEEK_RELATIVE" data-i18n="multi.label.seek_relative"></option>
+                    <option value="SEEK_TO_POSITION" data-i18n="multi.label.seek_to_position"></option>
+                    <option value="SET_REPEAT" data-i18n="multi.label.set_repeat"></option>
+                    <option value="SHUFFLE" data-i18n="multi.label.shuffle"></option>
+                    <option value="STOP" data-i18n="multi.label.stop"></option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toggles Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="toggles" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_toggles">
+            <b><label style="width:auto" for="node-input-trait_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.toggles"></label></b>
+            <input type="checkbox" checked id="node-input-trait_toggles" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_toggles">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.toggles"></label></b>
+        </div>
+
+        <div id="trait_toggles">
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-toggles_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.toggles_file"></span></label>
+                    <input type="text" id="node-input-toggles_file" data-i18n="[placeholder]multi.placeholder.toggles_file">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_toggles"></label>
+                    <input type="checkbox" checked id="node-input-command_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-query_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_toggles"></label>
+                    <input type="checkbox" checked id="node-input-query_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Volume Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="volume" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_volume">
+            <b><label style="width:auto" for="node-input-trait_volume"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.volume"></label></b>
+            <input type="checkbox" checked id="node-input-trait_volume" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_volume">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.volume"></label></b>
+        </div>
+
+        <div id="trait_volume">
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-volume_max_level"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.volume_max_level"></span></label>
+                    <input type="text" id="node-input-volume_max_level" data-i18n="[placeholder]multi.placeholder.volume_max_level">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-can_mute_and_unmute"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.can_mute_and_unmute"></label>
+                    <input type="checkbox" checked id="node-input-can_mute_and_unmute" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+
+                <div class="form-row">
+                    <label for="node-input-volume_default_percentage"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.volume_default_percentage"></span></label>
+                    <input type="text" id="node-input-volume_default_percentage" data-i18n="[placeholder]multi.placeholder.volume_default_percentage">
+                </div>
+
+                <div class="form-row">
+                    <label for="node-input-level_step_size"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.level_step_size"></span></label>
+                    <input type="text" id="node-input-level_step_size" data-i18n="[placeholder]multi.placeholder.level_step_size">
+                </div>
+
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_volume"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_volume"></label>
+                    <input type="checkbox" checked id="node-input-command_only_volume" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+        </div>
+    </div>
+    
 </script>
 
 <script type="text/javascript">
@@ -674,6 +694,9 @@
             query_only_toggles: {
                 value: false, required:false
             },
+            trait_camerastream: {
+                value: false, required:false
+            },
             hls: {
                 value: "", required:false
             },
@@ -702,7 +725,13 @@
                 value: "", required:false
             },
             passthru: {
-                value: false
+                value: false, required:false
+            },
+            trait_scene: {
+                value: false, required:false
+            },
+            scene_reversible: {
+                value: false, required:false
             },
         },
         oneditprepare: function() {

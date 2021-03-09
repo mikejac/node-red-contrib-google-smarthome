@@ -34,6 +34,7 @@ module.exports = function(RED) {
 
             this.client                         = config.client;
             this.clientConn                     = RED.nodes.getNode(this.client);
+            this.debug("MultiNode config " + JSON.stringify(config));
             this.trait = {
                 appselector: config.trait_appselector || false,
                 armdisarm: config.trait_armdisarm || false,
@@ -124,6 +125,7 @@ module.exports = function(RED) {
             this.progressiveMp4Url              = config.progressive_mp4.trim();
             this.progressiveMp4AppId            = config.progressive_mp4_app_id.trim();
             this.authToken                      = config.auth_token.trim();
+            this.scene_reversible               = config.scene_reversible;
 
             this.protocols = [];
             if (this.hlsUrl) {
@@ -190,6 +192,9 @@ module.exports = function(RED) {
                     break;
                 case "LIGHT":
                     this.trait.onoff                      = true;
+                    break;
+                case "SCENE":
+                    this.trait.scene                      = true;
                     break;
             }
 
@@ -375,6 +380,9 @@ module.exports = function(RED) {
             if (me.trait.channels) {
                 attributes['availableChannels'] = me.available_channels;
             }
+            if (me.scene) {
+                attributes['sceneReversible'] = me.scene_reversible;
+            }
         }
 
         updateStatesForTraits(me, device) {
@@ -473,6 +481,10 @@ module.exports = function(RED) {
                     msg.payload[key] = params[key];
                  }
              });
+
+             if (this.trait.scene) {
+                 msg.payload['deactivate'] = original_params.deactivate;
+             }
 
              if (command === 'action.devices.commands.mediaSeekRelative') {
                  if (original_params.hasOwnProperty('relativePositionMs')) {
@@ -729,6 +741,9 @@ module.exports = function(RED) {
             }
             if (trait.colorsetting) {
                 traits.push("action.devices.traits.ColorSetting");
+            }
+            if (trait.scene) {
+                traits.push("action.devices.traits.Scene");
             }
             return traits;
         }
