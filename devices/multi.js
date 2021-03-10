@@ -42,12 +42,6 @@ module.exports = function(RED) {
                 camerastream: config.trait_camerastream || false,
                 channel: config.trait_channel || false,
                 colorsetting: config.trait_colorsetting || false,
-                colorspectrum: config.trait_colorspectrum || false,
-                colorsetting: config.trait_colorsetting || false,
-                colortemperature: config.trait_colortemperature || false,
-                colortemperature: config.trait_colortemperature || false,
-                colorsetting: config.trait_colorsetting || false,
-                colorspectrum: config.trait_colorspectrum || false,
                 cook: config.trait_cook || false,
                 dispense: config.trait_dispense || false,
                 dock: config.trait_dock || false,
@@ -63,6 +57,7 @@ module.exports = function(RED) {
                 modes: config.trait_modes || false,
                 toggles: config.trait_toggles || false,
                 networkcontrol: config.trait_networkcontrol || false,
+                objectdetection: config.objectdetection || false,
                 onoff: config.trait_onoff || false,
                 openclose: config.trait_openclose || false,
                 reboot: config.trait_reboot || false,
@@ -80,52 +75,78 @@ module.exports = function(RED) {
                 transportcontrol: config.trait_transportcontrol || false,
                 volume: config.trait_volume || false,
             };
-            this.topicOut                       = config.topic;
-            this.device_type					= config.device_type;
-            this.appselector_file               = config.appselector_file;
-            this.available_applications         = [];
-            this.channel_file                   = config.channel_file;
-            this.available_channels             = [];
-            this.inputselector_file             = config.inputselector_file;
-            this.available_inputs               = [];
-            this.command_only_input_selector    = config.command_only_input_selector;
-            this.ordered_inputs                 = config.ordered_inputs;
-            this.support_activity_state         = config.support_activity_state;
-            this.support_playback_state         = config.support_playback_state;
-            this.command_only_onoff             = config.command_only_onoff;
-            this.query_only_onoff               = config.query_only_onoff;
-            this.supported_commands             = config.supported_commands;
-            this.volume_max_level               = parseInt(config.volume_max_level) || 100;
-            this.can_mute_and_unmute            = config.can_mute_and_unmute;
-            this.volume_default_percentage      = parseInt(config.volume_default_percentage) || 40;
-            this.level_step_size                = parseInt(config.level_step_size) || 1;
-            this.command_only_volume            = config.command_only_volume;
-            this.modes_file                     = config.modes_file;
-            this.available_modes                = [];
-            this.command_only_modes             = config.command_only_modes;
-            this.query_only_modes               = config.query_only_modes;
-            this.toggles_file                   = config.toggles_file;
-            this.available_toggles              = [];
-            this.command_only_toggles           = config.command_only_toggles;
-            this.query_only_toggles             = config.query_only_toggles;
-            this.last_channel_index             = '';
-            this.current_channel_index          = -1;
-            this.current_input_index            = -1;
-            this.command_only_brightness        = config.command_only_brightness;
-            this.command_only_colorsetting      = config.command_only_colorsetting;
-            this.temperature_min_k              = config.temperature_min_k || 2000;
-            this.temperature_max_k              = config.temperature_max_k || 9000;
-            this.color_model                    = config.color_model || 'temp';
-            this.hlsUrl                         = config.hls.trim();
-            this.hlsAppId                       = config.hls_app_id.trim();
-            this.dashUrl                        = config.dash.trim();
-            this.dashAppId                      = config.dash_app_id.trim();
-            this.smoothStreamUrl                = config.smooth_stream.trim();
-            this.smoothStreamAppId              = config.smooth_stream_app_id.trim();
-            this.progressiveMp4Url              = config.progressive_mp4.trim();
-            this.progressiveMp4AppId            = config.progressive_mp4_app_id.trim();
-            this.authToken                      = config.auth_token.trim();
-            this.scene_reversible               = config.scene_reversible;
+            this.topicOut                               = config.topic;
+            this.device_type					        = config.device_type;
+            this.appselector_file                       = config.appselector_file;
+            this.available_applications                 = [];
+            this.channel_file                           = config.channel_file;
+            this.available_channels                     = [];
+            this.inputselector_file                     = config.inputselector_file;
+            this.available_inputs                       = [];
+            this.command_only_input_selector            = config.command_only_input_selector;
+            this.ordered_inputs                         = config.ordered_inputs;
+            this.support_activity_state                 = config.support_activity_state;
+            this.support_playback_state                 = config.support_playback_state;
+            this.command_only_onoff                     = config.command_only_onoff;
+            this.query_only_onoff                       = config.query_only_onoff;
+            this.supported_commands                     = config.supported_commands;
+            this.volume_max_level                       = parseInt(config.volume_max_level) || 100;
+            this.can_mute_and_unmute                    = config.can_mute_and_unmute;
+            this.volume_default_percentage              = parseInt(config.volume_default_percentage) || 40;
+            this.level_step_size                        = parseInt(config.level_step_size) || 1;
+            this.command_only_volume                    = config.command_only_volume;
+            this.modes_file                             = config.modes_file;
+            this.available_modes                        = [];
+            this.command_only_modes                     = config.command_only_modes;
+            this.query_only_modes                       = config.query_only_modes;
+            this.toggles_file                           = config.toggles_file;
+            this.available_toggles                      = [];
+            this.command_only_toggles                   = config.command_only_toggles;
+            this.query_only_toggles                     = config.query_only_toggles;
+            this.last_channel_index                     = '';
+            this.current_channel_index                  = -1;
+            this.current_input_index                    = -1;
+            this.command_only_brightness                = config.command_only_brightness;
+            this.command_only_colorsetting              = config.command_only_colorsetting;
+            this.temperature_min_k                      = parseInt(config.temperature_min_k) || 2000;
+            this.temperature_max_k                      = parseInt(config.temperature_max_k) || 9000;
+            this.color_model                            = config.color_model || 'temp';
+            this.hlsUrl                                 = config.hls.trim();
+            this.hlsAppId                               = config.hls_app_id.trim();
+            this.dashUrl                                = config.dash.trim();
+            this.dashAppId                              = config.dash_app_id.trim();
+            this.smoothStreamUrl                        = config.smooth_stream.trim();
+            this.smoothStreamAppId                      = config.smooth_stream_app_id.trim();
+            this.progressiveMp4Url                      = config.progressive_mp4.trim();
+            this.progressiveMp4AppId                    = config.progressive_mp4_app_id.trim();
+            this.authToken                              = config.auth_token.trim();
+            this.scene_reversible                       = config.scene_reversible;
+            this.command_only_timer                     = config.command_only_timer;
+            this.max_timer_limit_sec                    = config.max_timer_limit_sec;
+            this.trait_temperaturesetting               = config.trait_temperaturesetting;
+            this.available_thermostat_modes             = config.available_thermostat_modes;
+            this.min_threshold_celsius                  = parseInt(config.min_threshold_celsius) || 0;
+            this.max_threshold_celsius                  = parseInt(config.max_threshold_celsius) || 40;
+            this.thermostat_temperature_unit            = config.thermostat_temperature_unit || "C";
+            this.buffer_range_celsius                   = parseInt(config.buffer_range_celsius) || 2;
+            this.command_only_temperaturesetting        = config.command_only_temperaturesetting;
+            this.query_only_temperaturesetting          = config.query_only_temperaturesetting;
+            this.target_temp_reached_estimate_unix_timestamp_sec = undefined;
+            this.thermostat_humidity_ambient            = undefined;
+            this.tc_min_threshold_celsius               = config.tc_min_threshold_celsius;
+            this.tc_max_threshold_celsius               = config.tc_max_threshold_celsius;
+            this.tc_temperature_step_celsius            = config.tc_temperature_step_celsius;
+            this.tc_temperature_unit_for_ux             = config.tc_temperature_unit_for_ux;
+            this.tc_command_only_temperaturecontrol     = config.tc_command_only_temperaturecontrol;
+            this.tc_query_only_temperaturecontrol       = config.tc_query_only_temperaturecontrol;
+            this.min_percent                            = parseInt(config.min_percent) || 0;
+            this.max_percent                            = parseInt(config.max_percent) || 100;
+            this.command_only_humiditysetting           = config.command_only_humiditysetting;
+            this.query_only_humiditysetting             = config.query_only_humiditysetting;
+            this.discrete_only_openclose                = config.discrete_only_openclose;
+            this.open_direction                         = config.open_direction;
+            this.command_only_openclose                 = config.command_only_openclose;
+            this.query_only_openclose                   = config.query_only_openclose;
 
             this.protocols = [];
             if (this.hlsUrl) {
@@ -153,51 +174,261 @@ module.exports = function(RED) {
 
             // Sets required traits
             switch (this.device_type) {
-                case "AUDIO_VIDEO_RECEIVER":
-                    this.trait.inputselector              = true;
-                    this.trait.onoff                      = true;
-                    this.trait.volume                     = true;
+                case "AC_UNIT": // Air conditioning unit
+                    this.trait.temperaturesetting = true;
                     break;
-                case "REMOTECONTROL":
-                    this.trait.inputselector              = true;
-                    this.trait.media_state                = true;
-                    this.trait.onoff                      = true;
-                    this.trait.transport_control          = true;
-                    this.trait.volume                     = true;
+                case "AIRCOOLER": // Air cooler
+                    this.trait.temperaturesetting = true;
                     break;
-                case "SETTOP":
-                    this.trait.appselector                = true;
-                    this.trait.channels                   = true;
-                    this.trait.media_state                = true;
-                    this.trait.transport_control          = true;
+                case "AIRFRESHENER": // Air freshener
+                    this.trait.onoff = true;
                     break;
-                case "SOUNDBAR":
-                case "SPEAKER":
-                    this.trait.volume                     = true;
+                case "AIRPURIFIER": // Air purifier
+                    this.trait.onoff = true;
                     break;
-                case "STREAMING_BOX":
-                case "STREAMING_SOUNDBAR":
-                case "STREAMING_STICK":
-                    this.trait.appselector                = true;
-                    this.trait.media_state                = true;
-                    this.trait.transport_control          = true;
-                    this.trait.volume                     = true;
+                case "AUDIO_VIDEO_RECEIVER": // Audio-Video receiver
+                    this.trait.inputselector = true;
+                    this.trait.onoff	 = true;
+                    this.trait.volume = true;
                     break;
-                case "TV":
-                    this.trait.appselector                = true;
-                    this.trait.media_state                = true;
-                    this.trait.onoff                      = true;
-                    this.trait.transport_control          = true;
-                    this.trait.volume                     = true;
+                case "AWNING": // Awning
+                    this.trait.openclose = true;
                     break;
-                case "LIGHT":
-                    this.trait.onoff                      = true;
+                case "BATHTUB": // Bathtub
+                    this.trait.fill = true;
+                    this.trait.temperaturecontrol = true;
+                    this.trait.startstop = true;
                     break;
-                case "SCENE":
-                    this.trait.scene                      = true;
+                case "BED": // Bed
+                    this.trait.modes = true;
+                    break;
+                case "BLENDER": // Blender
+                    this.trait.onoff = true;
+                    break;
+                case "BLINDS": // Blinds
+                    this.trait.openclose = true;
+                    break;
+                case "BOILER": // Boiler
+                    this.trait.onoff = true;
+                    break;
+                case "CAMERA": // Camera
+                    this.trait.camerastream = true;
+                    break;
+                case "CARBON_MONOXIDE_DETECTOR": // Carbon monoxide detector
+                    this.trait.sensorstate = true;
+                    break;
+                case "CHARGER": // Charger
+                    this.trait.energystorage = true;
+                    break;
+                case "CLOSET": // Closet
+                    this.trait.closet = true;
+                    break;
+                case "COFFEE_MAKER": // Coffee Maker
+                    this.trait.onoff = true;
+                    break;
+                case "COOKTOP": // Cooktop
+                    this.trait.onoff = true;
+                    break;
+                case "CURTAIN": // Curtain
+                    this.trait.openclose = true;
+                    break;
+                case "DEHUMIDIFIER": // Dehumidifier
+                    this.trait.onoff = true;
+                    break;
+                case "DEHYDRATOR": // Dehydrator
+                    this.trait.onoff = true;
+                    break;
+                case "DISHWASHER": // Dishwasher
+                    this.trait.startstop = true;
+                    break;
+                case "DOOR": // Door
+                    this.trait.openclose = true;
+                    break;
+                case "DRAWER": // Drawer
+                    this.trait.openclose = true;
+                    break;
+                case "DRYER": // Dryer
+                    this.trait.startstop = true;
+                    break;
+                case "FAN": // Fan
+                    this.trait.onoff = true;
+                    break;
+                case "FAUCET": // Faucet
+                    break;
+                case "FIREPLACE": // Fireplace
+                    break;
+                case "FREEZER": // Freezer
+                    this.trait.temperaturecontrol = true;
+                    break;
+                case "FRYER": // Fryer
+                    this.trait.onoff = true;
+                    break;
+                case "GARAGE": // Garage
+                    this.trait.openclose = true;
+                    break;
+                case "GATE": // Gate
+                    this.trait.openclose = true;
+                    break;
+                case "GRILL": // Grill
+                    this.trait.startstop = true;
+                    break;
+                case "HEATER": // Heater
+                    this.trait.temperaturesetting = true;
+                    break;
+                case "HOOD": // Hood
+                    this.trait.onoff = true;
+                    break;
+                case "HUMIDIFIER": // Humidifier
+                    this.trait.onoff = true;
+                    break;
+                case "KETTLE": // Kettle
+                    this.trait.onoff = true;
+                    break;
+                case "LIGHT": // Light
+                    this.trait.onoff = true;
+                    break;
+                case "LOCK": // Lock
+                    this.trait.lockunlock = true;
+                    break;
+                case "MICROWAVE": // Microwave
+                    this.trait.startstop = true;
+                    break;
+                case "MOP": // Mop
+                    this.trait.startstop = true;
+                    break;
+                case "MOWER": // Mower
+                    this.trait.startstop = true;
+                    break;
+                case "MULTICOOKER": // Multicooker
+                    this.trait.onoff = true;
+                    break;
+                case "NETWORK": // Network
+                    this.trait.networkcontrol = true;
+                    break;
+                case "OUTLET": // Outlet
+                    this.trait.onoff = true;
+                    break;
+                case "OVEN": // Oven
+                    this.trait.onoff = true;
+                    break;
+                case "PERGOLA": // Pergola
+                    this.trait.openclose = true;
+                    break;
+                case "PETFEEDER": // Pet feeder
+                    this.trait.dispense = true;
+                    break;
+                case "PRESSURECOOKER": // Pressure cooker
+                    this.trait.onoff = true;
+                    break;
+                case "RADIATOR": // Radiator
+                    this.trait.onoff = true;
+                    break;
+                case "REFRIGERATOR": // Refrigerator
+                    this.trait.temperaturecontrol = true;
+                    break;
+                case "REMOTECONTROL": // Remote control
+                    this.trait.inputselector	 = true;
+                    this.trait.mediastate	 = true;
+                    this.trait.onoff	 = true;
+                    this.trait.transportcontrol	 = true;
+                    this.trait.volume = true;
+                    break;
+                case "ROUTER": // Router
+                    this.trait.networkcontrol = true;
+                    break;
+                case "SCENE": // Scene
+                    this.trait.scene = true;
+                    break;
+                case "SECURITYSYSTEM": // Security system
+                    this.trait.armdisarm = true;
+                    break;
+                case "SENSOR": // Sensor
+                    this.trait.sensorstate = true;
+                    break;
+                case "SETTOP": // Settop
+                    this.trait.appselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.channel = true;
+                    this.trait.transportcontrol = true;
+                    break;
+                case "SHOWER": // Shower
+                    this.trait.openclose = true;
+                    break;
+                case "SHUTTER": // Shutter
+                    this.trait.openclose = true;
+                    break;
+                case "SMOKE_DETECTOR": // Smoke detector
+                    break;
+                case "SOUNDBAR": // Soundbar
+                    this.trait.volume = true;
+                    break;
+                case "SOUSVIDE": // Sousvide
+                    this.trait.onoff = true;
+                    break;
+                case "SPEAKER": // Speaker
+                    this.trait.volunme = true;
+                    break;
+                case "SPRINKLER": // Sprinkler
+                    this.trait.startstop = true;
+                    break;
+                case "STANDMIXER": // Stand mixer
+                    this.trait.onoff = true;
+                    break;
+                case "STREAMING_BOX": // Streaming box
+                    this.trait.appselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.transportcontrol	 = true;
+                    this.trait.volume = true;
+                    break;
+                case "STREAMING_SOUNDBAR": // Streaming soundbar
+                    this.trait.appselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.transportcontrol = true;
+                    this.trait.volume = true;
+                    break;
+                case "STREAMING_STICK": // Streaming stick
+                    this.trait.appselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.transportcontrol = true;
+                    this.trait.volume = true;
+                    break;
+                case "SWITCH": // Switch
+                    this.trait.onoff = true;
+                    break;
+                case "THERMOSTAT": // Thermostat
+                    this.trait.temperaturesetting = true;
+                    break;
+                case "TV": // Television
+                    this.trait.appselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.onoff = true;
+                    this.trait.transportcontrol = true;
+                    this.trait.volume = true;
+                    break;
+                case "VACUUM": // Vacuum
+                    this.trait.startstop = true;
+                    break;
+                case "VALVE": // Valve
+                    this.trait.openclose = true;
+                    break;
+                case "WASHER": // Washer
+                    this.trait.startstop = true;
+                    break;
+                case "WATERHEATER": // Water heater
+                    this.trait.onoff = true;
+                    break;
+                case "WATERPURIFIER": // Water purifier
+                    break;
+                case "WATERSOFTENER": // Water softener
+                    break;
+                case "WINDOW": // Window
+                    this.trait.openclose = true;
+                    break;
+                case "YOGURTMAKER": // Yogurt maker
+                    this.trait.onoff = true;
                     break;
             }
-
+            
             let error_msg = '';
             if (this.trait.apps) {
                 this.available_applications = this.loadJson(this.appselector_file, []);
@@ -329,6 +560,9 @@ module.exports = function(RED) {
             if (me.trait.brightness) {
                 attributes['commandOnlyBrightness'] = me.command_only_brightness;
             }
+            if (me.trait.channels) {
+                attributes['availableChannels'] = me.available_channels;
+            }
             if (me.trait.colorsetting) {
                 attributes["commandOnlyColorSetting"] = me.command_only_colorsetting;
                 if (me.color_model !== "rgb" && me.color_model !== "rgb_temp") {
@@ -344,6 +578,20 @@ module.exports = function(RED) {
                     };
                 }
             }
+            if (me.trait.openclose) {
+                attributes['discreteOnlyOpenClose'] = me.discrete_only_openclose;
+                attributes['openDirection'] = me.open_direction;
+                attributes['commandOnlyOpenClose'] = me.command_only_openclose;
+                attributes['queryOnlyOpenClose'] = me.query_only_openclose;
+            }
+            if (me.trait.humiditysetting) {
+                attributes['humiditySetpointRange'] = {
+                    minPercent: me.min_percent,
+                    maxPercent: me.max_percent
+                };
+                attributes['commandOnlyHumiditySetting'] = me.command_only_humiditysetting;
+                attributes['queryOnlyHumiditySetting'] = me.query_only_humiditysetting;
+            }
             if (me.trait.inputs) {
                 attributes['availableInputs'] = me.available_inputs;
                 attributes['commandOnlyInputSelector'] = me.command_only_input_selector;
@@ -353,9 +601,47 @@ module.exports = function(RED) {
                 attributes['supportActivityState'] = me.support_activity_state;
                 attributes['supportPlaybackState'] = me.support_playback_state;
             }
+            if (me.trait.modes) {
+                attributes['availableModes'] = me.available_modes;
+                attributes['commandOnlyModes'] = me.command_only_modes;
+                attributes['queryOnlyModes'] = me.query_only_modees;
+            }
             if (me.trait.onoff) {
                 attributes['commandOnlyOnOff'] = me.command_only_onoff;
                 attributes['queryOnlyOnOff'] = me.query_only_onoff;
+            }
+            if (me.trait.scene) {
+                attributes['sceneReversible'] = me.scene_reversible;
+            }
+            if (me.trait.temperaturecontrol) {
+                attributes['temperatureRange'] = {
+                    minThresholdCelsius: me.tc_min_threshold_celsius,
+                    maxThresholdCelsius: me.tc_max_threshold_celsius
+                }
+                attributes['temperatureStepCelsius'] = me.tc_temperature_step_celsius;
+                attributes['temperatureUnitForUX'] = me.tc_temperature_unit_for_ux;
+                attributes['commandOnlyTemperatureSetting'] = me.command_only_temperaturesetting;
+                attributes['queryOnlyTemperatureSetting'] = me.query_only_temperaturesetting;
+            }
+            if (me.trait.temperaturesetting) {
+                attributes['availableThermostatModes'] = me.available_thermostat_modes;
+                attributes['thermostatTemperatureRange'] = {
+                    minThresholdCelsius: me.min_threshold_celsius,
+                    maxThresholdCelsius: me.max_threshold_celsius
+                }
+                attributes['thermostatTemperatureUnit'] = me.thermostat_temperature_unit;
+                attributes['bufferRangeCelsius'] = me.buffer_range_celsius;
+                attributes['commandOnlyTemperatureSetting'] = me.command_only_temperaturesetting;
+                attributes['queryOnlyTemperatureSetting'] = me.query_only_temperaturesetting;
+            }
+            if (me.trait.timer) {
+                attributes['maxTimerLimitSec'] = me.max_timer_limit_sec;
+                attributes['commandOnlyTimer'] = me.command_only_timer;
+            }
+            if (me.trait.toggles) {
+                attributes['availableToggles'] = me.available_toggles;
+                attributes['commandOnlyToggles'] = me.command_only_toggles;
+                attributes['queryOnlyToggles'] = me.query_only_toggles;
             }
             if (me.trait.transport_control) {
                 attributes['transportControlSupportedCommands'] = me.supported_commands;
@@ -367,27 +653,14 @@ module.exports = function(RED) {
                 attributes['levelStepSize'] = me.level_step_size;
                 attributes['commandOnlyVolume'] = me.command_only_volume;
             }
-            if (me.trait.toggles) {
-                attributes['availableToggles'] = me.available_toggles;
-                attributes['commandOnlyToggles'] = me.command_only_toggles;
-                attributes['queryOnlyToggles'] = me.query_only_toggles;
-            }
-            if (me.trait.modes) {
-                attributes['availableModes'] = me.available_modes;
-                attributes['commandOnlyModes'] = me.command_only_modes;
-                attributes['queryOnlyModes'] = me.query_only_modees;
-            }
-            if (me.trait.channels) {
-                attributes['availableChannels'] = me.available_channels;
-            }
-            if (me.scene) {
-                attributes['sceneReversible'] = me.scene_reversible;
-            }
         }
 
         updateStatesForTraits(me, device) {
             let states = device.states;
 
+            if (me.trait.apps) {
+                states['currentApplication'] = '';
+            }
             if (me.trait.brightness) {
                 states['brightness'] = 50;
             }
@@ -405,8 +678,30 @@ module.exports = function(RED) {
                     states['color'] = { temperatureK : me.temperature_max_k || 6000 };
                 }
             }
-            if (me.trait.apps) {
-                states['currentApplication'] = '';
+            if (me.trait.dock) {
+                states['isDocked'] = false;
+            }
+            if (me.trait.lockunlock) {
+                states['isLocked'] = false;
+                states['isJammed'] = false;
+            }
+            if (me.trait.openclose) {
+                if (me.open_direction.length < 2) {
+                    states['openPercent'] = 0;
+                } else {
+                    openState = [];
+                    states['openState'] = openState;
+                    me.open_direction.forEach(direction => {
+                        openState.push({
+                            openPercent: 0,
+                            openDirection: direction
+                        });
+                    });
+                }
+            }
+            if (me.trait.inputs) {
+                states['humiditySetpointPercent'] = 50;
+                states['humidityAmbientPercent'] = 50;
             }
             if (me.trait.inputs) {
                 states['currentInput'] = '';
@@ -417,27 +712,35 @@ module.exports = function(RED) {
                 // PAUSED PLAYING FAST_FORWARDING REWINDING BUFFERING STOPPED
                 states['playbackState'] = 'STOPPED';
             }
+            if (me.trait.modes) {
+                states['currentModeSettings'] = {};
+                this.updateModesState(me, device);
+            }
             if (me.trait.onoff) {
                 states['on'] = false;
             }
-            // if (me.trait.transport_control) {
-            // NO state
-            // }
-            if (me.trait.volume) {
-                states['currentVolume'] = me.volume_default_percentage;
-                states['isMuted'] = false;
+            if (me.trait.temperaturecontrol) {
+                states['temperatureSetpointCelsius'] = 10;
+                states['temperatureAmbientCelsius'] = 10;
+            }
+            if (me.trait.temperaturesetting) {
+                states['activeThermostatMode'] = "none";
+                states['thermostatMode'] = "none";
+                states['thermostatTemperatureAmbient'] = 10;
+                states['thermostatTemperatureSetpoint'] = 10;
+            }
+            if (me.trait.timer) {
+                states['timerRemainingSec'] = -1;
+                states['timerPaused'] = false;
             }
             if (me.trait.toggles) {
                 states['currentToggleSettings'] = {};
                 this.updateTogglesState(me, device);
             }
-            if (me.trait.modes) {
-                states['currentModeSettings'] = {};
-                this.updateModesState(me, device);
+            if (me.trait.volume) {
+                states['currentVolume'] = me.volume_default_percentage;
+                states['isMuted'] = false;
             }
-            // if (me.trait.channels) {
-            // NO state
-            // }
         }
 
         updateStatusIcon() {
@@ -482,19 +785,11 @@ module.exports = function(RED) {
                  }
              });
 
-             if (this.trait.scene) {
-                 msg.payload['deactivate'] = original_params.deactivate;
-             }
-
-             if (command === 'action.devices.commands.mediaSeekRelative') {
-                 if (original_params.hasOwnProperty('relativePositionMs')) {
-                     msg.payload.relativePositionMs = original_params.relativePositionMs;
-                 }
-             } else if (command === 'action.devices.commands.mediaSeekToPosition') {
-                if (original_params.hasOwnProperty('absPositionMs')) {
-                    msg.payload.absPositionMs = original_params.absPositionMs;
+             Object.keys(original_params).forEach(function (key) {
+                if (!msg.payload.hasOwnProperty(key)) {
+                   msg.payload[key] = original_params[key];
                 }
-            }
+            });
 
             this.send(msg);
         };
@@ -712,38 +1007,113 @@ module.exports = function(RED) {
             if (trait.appselector) {
                 traits.push("action.devices.traits.AppSelector");
             }
+            if (trait.armdisarm) {
+                traits.push("action.devices.traits.ArmDisarm");
+            }
+            if (trait.brightness) {
+                traits.push("action.devices.traits.Brightness");
+            }
+            if (trait.camerastream) {
+                traits.push("action.devices.traits.CameraStream");
+            }
             if (trait.channel) {
                 traits.push("action.devices.traits.Channel");
+            }
+            if (trait.colorsetting) {
+                traits.push("action.devices.traits.ColorSetting");
+            }
+            if (trait.cook) {
+                traits.push("action.devices.traits.Cook");
+            }
+            if (trait.dispense) {
+                traits.push("action.devices.traits.Dispense");
+            }
+            if (trait.dock) {
+                traits.push("action.devices.traits.Dock");
+            }
+            if (trait.energystorage) {
+                traits.push("action.devices.traits.EnergyStorage");
+            }
+            if (trait.fanspeed) {
+                traits.push("action.devices.traits.FanSpeed");
+            }
+            if (trait.fill) {
+                traits.push("action.devices.traits.Fill");
+            }
+            if (trait.humiditysetting) {
+                traits.push("action.devices.traits.HumiditySetting");
             }
             if (trait.inputselector) {
                 traits.push("action.devices.traits.InputSelector");
             }
+            if (trait.LightEffects) {
+                traits.push("action.devices.traits.LightEffects");
+            }
+            if (trait.locator) {
+                traits.push("action.devices.traits.Locator");
+            }
+            if (trait.lockunlock) {
+                traits.push("action.devices.traits.LockUnlock");
+            }
             if (trait.mediastate) {
                 traits.push("action.devices.traits.MediaState");
             }
+            if (trait.modes) {
+                traits.push("action.devices.traits.Modes");
+            }
+            if (trait.networkcontrol) {
+                traits.push("action.devices.traits.NetworkControl");
+            }
+            if (trait.objectdetection) {
+                traits.push("action.devices.traits.ObjectDetection");
+            }
             if (trait.onoff) {
                 traits.push("action.devices.traits.OnOff");
+            }
+            if (trait.openclose) {
+                traits.push("action.devices.traits.OpenClose");
+            }
+            if (trait.reboot) {
+                traits.push("action.devices.traits.Reboot");
+            }
+            if (trait.rotation) {
+                traits.push("action.devices.traits.Rotation");
+            }
+            if (trait.runcycle) {
+                traits.push("action.devices.traits.RunCycle");
+            }
+            if (trait.sensorstate) {
+                traits.push("action.devices.traits.SensorState");
+            }
+            if (trait.scene) {
+                traits.push("action.devices.traits.Scene");
+            }
+            if (trait.softwareupdate) {
+                traits.push("action.devices.traits.SoftwareUpdate");
+            }
+            if (trait.startstop) {
+                traits.push("action.devices.traits.StartStop");
+            }
+            if (trait.statusreport) {
+                traits.push("action.devices.traits.StatusReport");
+            }
+            if (trait.temperaturecontrol) {
+                traits.push("action.devices.traits.TemperatureControl");
+            }
+            if (trait.temperaturesetting) {
+                traits.push("action.devices.traits.TemperatureSetting");
+            }
+            if (trait.timer) {
+                traits.push("action.devices.traits.Timer ");
+            }
+            if (trait.toggles) {
+                traits.push("action.devices.traits.Toggles");
             }
             if (trait.transportcontrol) {
                 traits.push("action.devices.traits.TransportControl");
             }
             if (trait.volume) {
                 traits.push("action.devices.traits.Volume");
-            }
-            if (trait.modes) {
-                traits.push("action.devices.traits.Modes");
-            }
-            if (trait.toggles) {
-                traits.push("action.devices.traits.Toggles");
-            }
-            if (trait.brightness) {
-                traits.push("action.devices.traits.Brightness");
-            }
-            if (trait.colorsetting) {
-                traits.push("action.devices.traits.ColorSetting");
-            }
-            if (trait.scene) {
-                traits.push("action.devices.traits.Scene");
             }
             return traits;
         }
@@ -896,6 +1266,25 @@ module.exports = function(RED) {
                     return ok_result;
                 }
             }
+            // Dock
+            else if (command.command == 'action.devices.commands.Dock') {
+                executionStates.push('online', 'isDocked');
+            }
+            // HumiditySetting
+            else if (command.command == 'action.devices.commands.SetHumidity') {
+                const humidity = command.params['humidity'];
+                me.states['humiditySetpointPercent'] = humidity;
+            }
+            else if (command.command == 'action.devices.commands.HumidityRelative') {
+                if (command.params.hasOwnProperty('humidityRelativePercent')) {
+                    const humidityRelativePercent = command.params['humidityRelativePercent'];
+                    me.states['humiditySetpointPercent'] = me.states['humiditySetpointPercent']  * (1 + humidityRelativePercent / 100);
+                }
+                if (command.params.hasOwnProperty('humidityRelativeWeight')) {
+                    const humidityRelativeWeight = command.params['humidityRelativeWeight'];
+                    me.states['humidityRelativeWeight'] = me.states['humidityRelativeWeight']  + humidityRelativeWeight;
+                }
+            }
             // Inputs
             else if (command.command == 'action.devices.commands.SetInput') {
                 if (command.params.hasOwnProperty('newInput')) {
@@ -943,6 +1332,15 @@ module.exports = function(RED) {
                     params['on'] = on_param;
                     return ok_result;
                 }
+            }
+            // OpenClose
+            else if (command.command == 'action.devices.commands.OpenClose') {
+                const openPercent = parseInt(command.params[openPercent]) || 0;
+                // TODO
+            }
+            else if (command.command == 'action.devices.commands.OpenCloseRelative') {
+                const openPercent = parseInt(command.params[openPercent]) || 0;
+                // TODO
             }
             // TransportControl
             else if (command.command == 'action.devices.commands.mediaStop') {
@@ -1016,6 +1414,37 @@ module.exports = function(RED) {
             else if (command.command == 'action.devices.commands.mediaClosedCaptioningOff') {
                 executionStates.push('online', 'playbackState');
                 return ok_result;
+            }
+            // TempreatureControl
+            else if (command.command == 'action.devices.commands.SetTemperature') {
+                const temperature = parseInt(temperature) || 0;
+                me.states['temperatureSetpointCelsius'] = temperature;
+            }
+            // TemperatureSetting 
+            else if (command.command == 'action.devices.commands.ThermostatTemperatureSetpoint') {
+                delete me.states['thermostatTemperatureSetpointHigh'];
+                delete me.states['thermostatTemperatureSetpointLow'];
+                const thermostatTemperatureSetpoint = command.params['thermostatTemperatureSetpoint'];
+                me.states['thermostatTemperatureSetpointLow'] = parseInt(thermostatTemperatureSetpoint) || 0;
+            }
+            else if (command.command == 'action.devices.commands.ThermostatTemperatureSetRange') {
+                delete me.states['thermostatTemperatureSetpoint'];
+                const thermostatTemperatureSetpointHigh = command.params['thermostatTemperatureSetpointHigh'];
+                me.states['thermostatTemperatureSetpointHigh'] = parseInt(thermostatTemperatureSetpointHigh) || 0;
+                const thermostatTemperatureSetpointLow = command.params['thermostatTemperatureSetpointLow'];
+                me.states['thermostatTemperatureSetpointLow'] = parseInt(thermostatTemperatureSetpointLow) || 0;
+            }
+            //else if (command.command == 'action.devices.commands.ThermostatSetMode') {
+            //}
+            else if (command.command == 'action.devices.commands.TemperatureRelative') {
+                if (command.params.hasOwnProperty('thermostatTemperatureRelativeDegree')) {
+                    const thermostatTemperatureRelativeDegree = command.params['thermostatTemperatureRelativeDegree'];
+                    // TODO
+                }
+                if (command.params.hasOwnProperty('thermostatTemperatureRelativeWeight')) {
+                    const thermostatTemperatureRelativeWeight = command.params['thermostatTemperatureRelativeWeight'];
+                    // TODO
+                }                    
             }
             // Volume
             else if (command.command == 'action.devices.commands.mute') {
