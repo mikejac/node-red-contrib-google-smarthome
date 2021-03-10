@@ -2,7 +2,15 @@
     "light": {
         "label": {
             "name": "Name",
-            "topic": "Out topic"
+            "topic": "Out topic",
+            "device_type": "Light Type",
+            "onoff": "On/Off Light",
+            "dimmable": "Dimmable Light",
+            "temperature": "Color (Temperature) Light",
+            "hsv": "Color (HSV) Light",
+            "hsv_temp": "Color (HSV/Temp) Light",
+            "rgb": "Color (RGB) Light",
+            "rgb_temp": "Color (RGB/Temp) Light"
         },
         "placeholder": {
             "name": "Name",

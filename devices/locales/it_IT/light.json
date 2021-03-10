@@ -2,7 +2,15 @@
     "light": {
         "label": {
             "name": "Nome",
-            "topic": "Oggetto in uscita"
+            "topic": "Oggetto in uscita",
+            "device_type": "Tipo di lampadina",
+            "onoff": "Luce con interruttore",
+            "dimmable": "Luce con regolazione di intensità",
+            "temperature": "Luce con temperatura colore",
+            "hsv": "Luce con colore (HSV)",
+            "hsv_temp": "Luce con colore (HSV) e temperatura",
+            "rgb": "Luce con colore (RGB)",
+            "rgb_temp": "Luce con colore (RGB) e temperatura"
         },
         "placeholder": {
             "name": "Nome",
