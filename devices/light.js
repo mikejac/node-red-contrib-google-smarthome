@@ -1633,9 +1633,9 @@ module.exports = function(RED) {
             this.topicDelim  = '/';
             this.device_type = config.device_type;
             this.is_dimmable = this.device_type !== "onoff";
-            this.has_temp    = (this.device_type === "temperature") || (this.device_type === "rgb_temp");
+            this.has_temp    = (this.device_type === "temperature") || (this.device_type === "rgb_temp") || (this.device_type === "hsv_temp");
             this.is_rgb      = (this.device_type === "rgb") || (this.device_type === "rgb_temp");
-            this.is_hsv      = this.device_type === "hsv";
+            this.is_hsv      = (this.device_type === "hsv") || (this.device_type === "hsv_temp");
 
             if (!this.clientConn) {
                 this.error(RED._("light.errors.missing-config"));
@@ -1692,6 +1692,8 @@ module.exports = function(RED) {
                     },
                     willReportState: true,
                     attributes: {
+                        commandOnlyOnOff: false,
+                        queryOnlyOnOff: false
                     },
                     deviceInfo: {
                         manufacturer: 'Node-RED',
@@ -1714,11 +1716,35 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            if (this.states.on) {
-                this.status({fill: "green", shape: "dot", text: "ON"});
+            let text = 'Unknown';
+            let fill = 'red';
+            let shape = 'dot';
+            if (this.states.online) {
+                if (this.states.on) {
+                    text = 'ON';
+                    fill = 'green';
+                } else {
+                    text = 'OFF';
+                }
             } else {
-                this.status({fill: "red", shape: "dot", text: "OFF"});
+                shape = 'ring';
+                text = "offline";
             }
+            if (this.is_dimmable && this.states.brightness != undefined) {
+                text += " bri: " + this.states.brightness;
+            }
+            if (this.has_temp && this.states.color.temperatureK != undefined) {
+                text += ' temp: ' + this.states.color.temperatureK;
+            }
+            if (this.is_rgb && this.states.color.spectrumRgb != undefined) {
+                text += ' RGB: ' + this.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0');
+            }
+            if (this.is_hsv && this.states.color.spectrumHsv != undefined) {
+                text += ' H: ' + this.states.color.spectrumHsv.hue + 
+                        ' S: ' + this.states.color.spectrumHsv.saturation + 
+                        ' V: ' + this.states.color.spectrumHsv.value;
+            }
+            this.status({fill: fill, shape: shape, text: text});
         }
 
         //
@@ -1727,8 +1753,11 @@ module.exports = function(RED) {
         execCommand(device, command) {
             if (command.hasOwnProperty('params')) {
                 let params = {};
+                let executionStates = [];
+                executionStates.push('online');
                 const ok_result = {
-                    'params' : params
+                    'params' : params,
+                    'executionStates': executionStates
                 };
                 if (command.params.hasOwnProperty('on')) {
                     params['on'] = command.params.on;
@@ -1738,15 +1767,28 @@ module.exports = function(RED) {
                 }
                 if (command.params.hasOwnProperty('color')) {
                     params['color'] = {};
-                    if (command.params.color.hasOwnProperty('spectrumHSV')) {
-                        params.color.spectrumHsv = command.params.color.spectrumHSV;
-                    } 
-                    if (command.params.color.hasOwnProperty('spectrumRGB')) {
-                        params.color.spectrumRgb = command.params.color.spectrumRGB;
-                    } 
+                    /*if (command.params.color.hasOwnProperty('name')) {
+                        params.color.name = command.params.color.name;
+                    }*/
                     if (command.params.color.hasOwnProperty('temperature')) {
                         params.color.temperatureK = command.params.color.temperature;
+                    } else if (command.params.color.hasOwnProperty('spectrumRGB')) {
+                        params.color.spectrumRgb = command.params.color.spectrumRGB;
+                    } else if (command.params.color.hasOwnProperty('spectrumHSV')) {
+                        params.color.spectrumHsv = command.params.color.spectrumHSV;
                     } 
+                }
+                switch(command.command) {
+                    case 'action.devices.commands.OnOff':
+                        executionStates.push('on');
+                        break;
+                    case 'action.devices.commands.ColorAbsolute':
+                        executionStates.push('color');
+                        break;
+                    case 'action.devices.commands.BrightnessAbsolute':
+                    case 'action.devices.commands.BrightnessRelative':
+                            executionStates.push('brightness');
+                        break;
                 }
                 return ok_result;
             }
@@ -1771,26 +1813,29 @@ module.exports = function(RED) {
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
-                    online: states.online,
-                    on: states.on,
+                    online: this.states.online,
+                    on: this.states.on,
                 },
             };
 
             if (this.is_dimmable) {
-                msg.payload['brightness'] = states.brightness;
+                msg.payload['brightness'] = this.states.brightness;
             }
-            if (params && params.hasOwnProperty('color') && params.color.hasOwnProperty("name")) {
-                msg.payload['name'] = params.color.name;
-            }
-            if (this.has_temp) {
-                msg.payload['temperature'] = states.color.temperatureK;
-            }
-            if (this.is_rgb) {
-                msg.payload['rgb'] = states.color.spectrumRgb;
-            } else if (this.is_hsv) {
-                msg.payload['hue'] = states.color.spectrumHsv.hue;
-                msg.payload['saturation'] = states.color.spectrumHsv.saturation * 100;  // rescale
-                msg.payload['value'] = states.color.spectrumHsv.value * 100;            // rescale
+            if (this.has_temp || this.is_rgb || this.is_hsv) {
+                if (params && params.hasOwnProperty('color')) {
+                    if (params.color.hasOwnProperty("name")) {
+                        msg.payload['name'] = params.color.name;
+                    }
+                }
+                if (this.has_temp && this.states.color.hasOwnProperty("temperatureK")) {
+                    msg.payload['temperature'] = this.states.color.temperatureK;
+                } else if (this.is_rgb && this.states.color.hasOwnProperty("spectrumRgb")) {
+                    msg.payload['rgb'] = this.states.color.spectrumRgb;
+                } else if (this.is_hsv && this.states.color.hasOwnProperty("spectrumHsv")) {
+                    msg.payload['hue'] = this.states.color.spectrumHsv.hue;
+                    msg.payload['saturation'] = this.states.color.spectrumHsv.saturation * 100;  // rescale
+                    msg.payload['value'] = this.states.color.spectrumHsv.value * 100;            // rescale
+                }               
             }
 
             this.send(msg);
@@ -1805,7 +1850,6 @@ module.exports = function(RED) {
 
             let topicArr    = String(msg.topic).split(this.topicDelim);
             let topic       = topicArr[topicArr.length - 1];   // get last part of topic
-            const has_name  = this.is_hsv || this.is_rgb || this.has_temp;
 
             this.debug("LightNode(input): topic = " + topic);
 
@@ -1823,8 +1867,6 @@ module.exports = function(RED) {
                             msg.payload = on;
                             this.send(msg);
                         }
-
-                        this.updateStatusIcon();
                     }
                 } else if (topic.toUpperCase() === 'ONLINE') {
                     this.debug("LightNode(input): ONLINE");
@@ -1854,26 +1896,21 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
                     }
-                } else if (this.is_rgb && topic.toUpperCase() === 'RGB') {  // Integer, 0 - 16777215
-                    this.debug("LightNode(input): RGB");
-                    let rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', msg.payload, this.states.color.spectrumRgb));
-
-                    if (this.states.color.spectrumRgb !== rgb) {
-                        this.states.color.spectrumRgb = rgb;
-
-                        this.clientConn.setState(this, this.states);  // tell Google ...
-
-                        if (this.passthru) {
-                            msg.payload = rgb;
-                            this.send(msg);
-                        }
-                    }
                 } else if (this.has_temp && topic.toUpperCase() === 'TEMPERATURE') {
-                    RED.log.debug("LightColorRgbTempNode(input): TEMPERATURE");
-                    let temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', msg.payload, this.states.color.temperatureK));
+                    RED.log.debug("LightNode(input): TEMPERATURE");
+                    // This limit the temperature to 6000, google send also 7500 
+                    // let temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', msg.payload, this.states.color.temperatureK));
+                    let temperature = formats.FormatValue(formats.Formats.INT, 'temperature', msg.payload, this.states.color.temperatureK);
 
                     if (this.states.color.temperatureK !== temperature) {
                         this.states.color.temperatureK = temperature;
+
+                        // Remove color info
+                        if (this.is_rgb) {
+                            this.states.color.spectrumRgb = undefined;
+                        } else if (this.is_hsv) {
+                            this.states.color.spectrumHsv = undefined;
+                        }
 
                         this.clientConn.setState(this, this.states);  // tell Google ...
 
@@ -1882,13 +1919,37 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
                     }
+                } else if (this.is_rgb && topic.toUpperCase() === 'RGB') {  // Integer, 0 - 16777215
+                    this.debug("LightNode(input): RGB");
+                    let rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', msg.payload, this.states.color.spectrumRgb));
+
+                    if (this.states.color.spectrumRgb !== rgb) {
+                        this.states.color.spectrumRgb = rgb;
+
+                        // Remove Temparature Info
+                        if (this.has_temp) {
+                            this.states.color.temperatureK = undefined;
+                        }
+
+                        this.clientConn.setState(this, this.states);  // tell Google ...
+
+                        if (this.passthru) {
+                            msg.payload = rgb;
+                            this.send(msg);
+                        }
+                    }
                 } else if (this.is_hsv && topic.toUpperCase() === 'HUE') {  // Float, 0.0 - 360.0
-                    RED.log.debug("LightHsvNode(input): HUE");
+                    RED.log.debug("LightNode(input): HUE");
                     let hue = formats.FormatHue(formats.FormatValue(formats.Formats.FLOAT, 'hue', msg.payload, this.states.color.spectrumHsv.hue));
 
                     if (this.states.color.spectrumHsv.hue !== hue) {
                         this.states.color.spectrumHsv.hue = hue;
 
+                        // Remove Temparature Info
+                        if (this.has_temp) {
+                            this.states.color.temperatureK = undefined;
+                        }
+                        
                         this.clientConn.setState(this, this.states);  // tell Google ...
 
                         if (this.passthru) {
@@ -1897,11 +1958,16 @@ module.exports = function(RED) {
                         }
                     }
                 } else if (this.is_hsv && topic.toUpperCase() === 'SATURATION') {  // Float, 0.0 - 100.0
-                    RED.log.debug("LightHsvNode(input): SATURATION");
+                    RED.log.debug("LightNode(input): SATURATION");
                     let saturation = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'saturation', msg.payload, this.states.color.spectrumHsv.saturation * 100)) / 100;
 
                     if (this.states.color.spectrumHsv.saturation !== saturation) {
                         this.states.color.spectrumHsv.saturation = saturation;
+
+                        // Remove Temparature Info
+                        if (this.has_temp) {
+                            this.states.color.temperatureK = undefined;
+                        }
 
                         this.clientConn.setState(this, this.states);  // tell Google ...
 
@@ -1911,11 +1977,16 @@ module.exports = function(RED) {
                         }
                     }
                 } else if (this.is_hsv && topic.toUpperCase() === 'VALUE') {  // Float, 0.0 - 100.0
-                    RED.log.debug("LightHsvNode(input): VALUE");
+                    RED.log.debug("LightNode(input): VALUE");
                     let value = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'value', msg.payload, this.states.color.spectrumHsv.value * 100)) / 100;
 
                     if (this.states.color.spectrumHsv.value !== value) {
                         this.states.color.spectrumHsv.value = value;
+
+                        // Remove Temparature Info
+                        if (this.has_temp) {
+                            this.states.color.temperatureK = undefined;
+                        }
 
                         this.clientConn.setState(this, this.states);  // tell Google ...
 
@@ -1937,12 +2008,12 @@ module.exports = function(RED) {
 
                     let on          = this.states.on;
                     let online      = this.states.online;
-                    let brightness  = this.is_dimmable ? this.states.brightness : 0;
-                    let rgb         = this.is_rgb ? (this.states.color.spectrumRgb): 0;
-                    let temperature = this.has_temp ? this.states.color.temperatureK : 0;
-                    let hue         = this.is_hsv ?  this.states.color.spectrumHsv.hue : 0;
-                    let saturation  = this.is_hsv ?  this.states.color.spectrumHsv.saturation : 0;
-                    let value       = this.is_hsv ?  this.states.color.spectrumHsv.value : 0;
+                    let brightness  = this.is_dimmable ? this.states.brightness : undefined;
+                    let rgb         = this.is_rgb ? this.states.color.spectrumRgb: undefined;
+                    let temperature = this.has_temp ? this.states.color.temperatureK : undefined;
+                    let hue         = this.is_hsv ?  this.states.color.spectrumHsv.hue : undefined;
+                    let saturation  = this.is_hsv ?  this.states.color.spectrumHsv.saturation : undefined;
+                    let value       = this.is_hsv ?  this.states.color.spectrumHsv.value : undefined;
 
                     let differs = false;
 
@@ -1973,20 +2044,34 @@ module.exports = function(RED) {
                         }
                     }
 
+                    // temperature
+                    if (this.has_temp && object.hasOwnProperty('temperature')) {
+                        // This limit the temperature to 6000, google send also 7500 
+                        // temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature, temperature));
+                        temperature = formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature, temperature);
+                        if (this.states.color.temperatureK !== temperature) {
+                            this.states.color.temperatureK  = temperature;
+                            // Remove color info
+                            if (this.is_rgb) {
+                                rgb = undefined;
+                                this.states.color.spectrumRgb = undefined;
+                            } else if (this.is_hsv) {
+                                hue = undefined;
+                                this.states.color.spectrumHsv = undefined;
+                            }
+                            differs = true;
+                        }
+                    }
+
                     // rgb
                     if (this.is_rgb && object.hasOwnProperty('rgb')) {
                         rgb = formats.FormatRGB(formats.FormatValue(formats.Formats.INT, 'rgb', object.rgb, rgb));
                         if (this.states.color.spectrumRgb !== rgb) {
                             this.states.color.spectrumRgb = rgb;
-                            differs = true;
-                        }
-                    }
-
-                    // color
-                    if (this.has_temp && object.hasOwnProperty('temperature')) {
-                        temperature = formats.FormatColorTemperature(formats.FormatValue(formats.Formats.INT, 'temperature', object.temperature, temperature));
-                        if (this.states.color.temperatureK !== temperature) {
-                            this.states.color.temperatureK  = temperature;
+                            // Remove Temparature Info
+                            if (this.has_temp) {
+                                this.states.color.temperatureK = undefined;
+                            }
                             differs = true;
                         }
                     }
@@ -1996,7 +2081,12 @@ module.exports = function(RED) {
                         hue = formats.FormatHue(formats.FormatValue(formats.Formats.FLOAT, 'hue', object.hue, hue));
                         if (this.states.color.spectrumHsv.hue !== hue) {
                             this.states.color.spectrumHsv.hue = hue;
-                                differs = true;
+                            // Remove Temparature Info
+                            if (this.has_temp) {
+                                temperature = undefined;
+                                this.states.color.temperatureK = undefined;
+                            }
+                            differs = true;
                         }
                     }
 
@@ -2005,6 +2095,11 @@ module.exports = function(RED) {
                         saturation = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'saturation', object.saturation, saturation * 100)) / 100;
                         if (this.states.color.spectrumHsv.saturation !== saturation) {
                             this.states.color.spectrumHsv.saturation = saturation;
+                            // Remove Temparature Info
+                            if (this.has_temp) {
+                                temperature = undefined;
+                                this.states.color.temperatureK = undefined;
+                            }
                             differs = true;
                         }
                     }
@@ -2014,6 +2109,11 @@ module.exports = function(RED) {
                         value = formats.FormatSaturation(formats.FormatValue(formats.Formats.FLOAT, 'value', object.value, value * 100)) / 100;
                         if (this.states.color.spectrumHsv.value !== value) {
                             this.states.color.spectrumHsv.value = value;
+                            // Remove Temparature Info
+                            if (this.has_temp) {
+                                temperature = undefined;
+                                this.states.color.temperatureK = undefined;
+                            }
                             differs = true;
                         }
                     }
@@ -2026,16 +2126,14 @@ module.exports = function(RED) {
                             msg.payload                 = {};
                             msg.payload.online          = online;
                             msg.payload.on              = on;
-                            if (this.is_rgb) {
-                                msg.payload.rgb         = rgb;
-                            }
-                            if (this.has_temp) {
-                                msg.payload.temperature = temperature;
-                            }
                             if (this.is_dimmable) {
                                 msg.payload.brightness  = brightness;
                             }
-                            if (this.is_hsv) {
+                            if (this.has_temp && temperature !== undefined) {
+                                msg.payload.temperature = temperature;
+                            } else if (this.is_rgb && rgb !== undefined) {
+                                msg.payload.rgb         = rgb;
+                            } else if (this.is_hsv && hue !== undefined && saturation !== undefined && value !== undefined) {
                                 msg.payload.hue         = hue;
                                 msg.payload.saturation  = saturation * 100;   // rescale
                                 msg.payload.value       = value * 100;        // rescale
@@ -2043,8 +2141,8 @@ module.exports = function(RED) {
                             this.send(msg);
                         }
                     }
-                    this.updateStatusIcon();
                 }
+                this.updateStatusIcon();
             } catch (err) {
                 RED.log.error(err);
             }
@@ -2082,9 +2180,12 @@ module.exports = function(RED) {
 
         updateAttributesForTraits(me, device) {
             let attributes = device.properties.attributes;
+            if (me.is_dimmable) {
+                attributes['commandOnlyBrightness'] = false;
+            }
             if (me.has_temp) {
                 attributes["commandOnlyColorSetting"] = false;
-                // this is the default range used by Googles color presets in the Home App
+                // Smart lights supporting color temperature typically have a range of [2000, 9000] Kelvin, which corresponds to conventional lights with fixed Kelvin.
                 attributes['colorTemperatureRange'] = {
                     "temperatureMinK": 2000,
                     "temperatureMaxK": 9000
@@ -2102,14 +2203,13 @@ module.exports = function(RED) {
         updateStatesForTraits(me, device) {
             let states = device.states;
             if (me.is_dimmable) {
-                states['brightness'] = 100;
+                states['brightness'] = 50;
             }
             if (me.is_rgb || me.is_hsv || me.has_temp) {
                 states['color'] = {};
                 if (me.has_temp) {
                     states['color']['temperatureK'] = 4000;
-                }
-                if (me.is_rgb) {
+                } else if (me.is_rgb) {
                     states['color']['spectrumRgb'] = 16777215;
                 } else if (me.is_hsv) {
                     states['color']['spectrumHsv'] = {
