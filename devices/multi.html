@@ -72,7 +72,7 @@
             <option value='CAMERA' data-i18n='multi.device_type.CAMERA'></option>
             <!--<option value='CARBON_MONOXIDE_DETECTOR' data-i18n='multi.device_type.CARBON_MONOXIDE_DETECTOR'></option>-->
             <!--<option value='CHARGER' data-i18n='multi.device_type.CHARGER'></option>-->
-            <!--<option value='CLOSET' data-i18n='multi.device_type.CLOSET'></option>-->
+            <option value='CLOSET' data-i18n='multi.device_type.CLOSET'></option>
             <option value='COFFEE_MAKER' data-i18n='multi.device_type.COFFEE_MAKER'></option>
             <option value='COOKTOP' data-i18n='multi.device_type.COOKTOP'></option>
             <option value='CURTAIN' data-i18n='multi.device_type.CURTAIN'></option>
@@ -142,7 +142,7 @@
     <!-- AppSelector Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="appselector" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_appselector">
-            <b><label style="width:auto" for="node-input-trait_appselector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.appselector"></span>/label></b>
+            <b><label style="width:auto" for="node-input-trait_appselector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.appselector"></span></label></b>
             <input type="checkbox" checked id="node-input-trait_appselector" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
             <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/appselector"><i class="fa fa-external-link"></i></a>
             <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
@@ -164,6 +164,7 @@
         </div>
     </div>
 
+    <!-- ArmDisarm Trait-->
 
     <!-- Brightness Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="brightness" style="background: #fbfbfb; padding: 5px;">
@@ -185,56 +186,6 @@
                 <div class="form-row">
                     <label style="width:auto" for="node-input-command_only_brightness"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_brightness"></span></label>
                     <input type="checkbox" checked id="node-input-command_only_brightness" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ColorSetting Trait-->
-    <div class="form-row red-ui-editableList-border div_trait" id="colorsetting" style="background: #fbfbfb; padding: 5px;">
-        <div class="form-row" id="cb_trait_colorsetting">
-            <b><label style="width:auto" for="node-input-trait_colorsetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.colorsetting"></span></label></b>
-            <input type="checkbox" checked id="node-input-trait_colorsetting" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/colorsetting"><i class="fa fa-external-link"></i></a>
-            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
-        </div>
-
-        <div class="form-row label_trait" id="label_trait_colorsetting">
-            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.colorsetting"></span></label></b>
-            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/colorsetting"><i class="fa fa-external-link"></i></a>
-            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
-        </div>
-
-        <div id="trait_colorsetting">
-            <div class="form-row">
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-command_only_colorsetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_colorsetting"></span></label>
-                    <input type="checkbox" checked id="node-input-command_only_colorsetting" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <label for="node-input-color_model"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.color_model"></span></label>
-                <select multiple id="node-input-color_model" >
-                    <option value="temp" data-i18n="multi.label.temperature_k"></option>
-                    <option value="rgb" data-i18n="multi.label.rgb"></option>
-                    <option value="hsv" data-i18n="multi.label.hsv"></option>
-                    <option value="rgb_temp" data-i18n="multi.label.rgb_temp"></option>
-                    <option value="hsv_temp" data-i18n="multi.label.hsv_temp"></option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.color_temperature_range"></span></label></b>
-
-                <div class="form-row">
-                    <label for="node-input-temperature_min_k"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.temperature_min_k"></span></label>
-                    <input type="text" id="node-input-temperature_min_k" data-i18n="[placeholder]multi.placeholder.temperature_min_k">
-                </div>
-
-                <div class="form-row">
-                    <label for="node-input-temperature_max_k"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.temperature_max_k"></span></label>
-                    <input type="text" id="node-input-temperature_max_k" data-i18n="[placeholder]multi.placeholder.temperature_max_k">
                 </div>
             </div>
         </div>
@@ -302,7 +253,7 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Channel Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="channel" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_channel">
@@ -328,6 +279,59 @@
         </div>
     </div>
 
+    <!-- ColorSetting Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="colorsetting" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_colorsetting">
+            <b><label style="width:auto" for="node-input-trait_colorsetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.colorsetting"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_colorsetting" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/colorsetting"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_colorsetting">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.colorsetting"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/colorsetting"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_colorsetting">
+            <div class="form-row">
+                <div class="form-row">
+                    <label style="width:auto" for="node-input-command_only_colorsetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_colorsetting"></span></label>
+                    <input type="checkbox" checked id="node-input-command_only_colorsetting" style="display:inline-block; width:auto; vertical-align:top;">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-color_model"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.color_model"></span></label>
+                <select multiple id="node-input-color_model" >
+                    <option value="temp" data-i18n="multi.label.temperature_k"></option>
+                    <option value="rgb" data-i18n="multi.label.rgb"></option>
+                    <option value="hsv" data-i18n="multi.label.hsv"></option>
+                    <option value="rgb_temp" data-i18n="multi.label.rgb_temp"></option>
+                    <option value="hsv_temp" data-i18n="multi.label.hsv_temp"></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.color_temperature_range"></span></label></b>
+
+                <div class="form-row">
+                    <label for="node-input-temperature_min_k"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.temperature_min_k"></span></label>
+                    <input type="text" id="node-input-temperature_min_k" data-i18n="[placeholder]multi.placeholder.temperature_min_k">
+                </div>
+
+                <div class="form-row">
+                    <label for="node-input-temperature_max_k"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.temperature_max_k"></span></label>
+                    <input type="text" id="node-input-temperature_max_k" data-i18n="[placeholder]multi.placeholder.temperature_max_k">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cook  Trait-->
+    <!-- Dispanse  Trait-->
+
     <!-- Dock  Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="dock" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_dock">
@@ -347,6 +351,10 @@
             <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
         </div>
     </div>
+
+    <!-- EnergyStorage  Trait-->
+    <!-- FanSpeed Trait-->
+    <!-- Fill Trait-->
 
     <!-- HumiditySetting  Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="humiditysetting" style="background: #fbfbfb; padding: 5px;">
@@ -421,7 +429,9 @@
         </div>
     </div>
 
-    <!-- Locator  Trait-->
+    <!-- LightEffect  Trait-->
+
+    <!-- Locator Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="locator" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_locator">
             <b><label style="width:auto" for="node-input-trait_locator"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.locator"></span></label></b>
@@ -441,7 +451,7 @@
         </div>
     </div>
 
-    <!-- LockUnlock   Trait-->
+    <!-- LockUnlock Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="lockunlock" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_lockunlock">
             <b><label style="width:auto" for="node-input-trait_lockunlock"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.lockunlock"></span></label></b>
@@ -525,6 +535,9 @@
             </div>
         </div>
     </div>
+
+    <!-- NetworkControl Trait-->
+    <!-- ObjectDetection Trait-->
 
     <!-- OnOff Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="onoff" style="background: #fbfbfb; padding: 5px;">
@@ -620,7 +633,10 @@
             <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
         </div>
     </div>
-    
+
+    <!-- Rotation Trait-->
+    <!-- RunCycle Trait-->
+
     <!-- Scene Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="scene" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_scene">
@@ -644,6 +660,9 @@
         </div>
     </div>
 
+    <!-- SensorState Trait-->
+    <!-- SoftwareUpdate Trait-->
+
     <!-- StartStop Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="startstop" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_startstop">
@@ -664,16 +683,18 @@
                 <label style="width:auto" for="node-input-pausable"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.pausable"></span></label>
                 <input type="checkbox" checked id="node-input-pausable" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
-        </div>
 
-        <div class="form-row" style="margin-bottom:0;">
-            <label><i class="fa fa-list"></i> <span data-i18n="multi.label.available_zones"></span></label>
-        </div>
-        <div class="form-row node-input-multi-zone-container-row">
-            <ol id="node-input-multi-zone-container"></ol>
+            <div class="form-row" style="margin-bottom:0;">
+                <label><i class="fa fa-list"></i> <span data-i18n="multi.label.available_zones"></span></label>
+            </div>
+            <div class="form-row node-input-multi-zone-container-row">
+                <ol id="node-input-multi-zone-container"></ol>
+            </div>
         </div>
     </div>
     
+    <!-- StatusReport Trait-->
+
     <!-- TemperatureControl Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="temperaturecontrol" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_temperaturecontrol">
@@ -820,40 +841,6 @@
         </div>
     </div>
     
-    <!-- TransportControl Trait-->
-    <div class="form-row red-ui-editableList-border div_trait" id="transportcontrol" style="background: #fbfbfb; padding: 5px;">
-        <div class="form-row" id="cb_trait_transportcontrol">
-            <b><label style="width:auto" for="node-input-trait_transportcontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.transportcontrol"></span></label></b>
-            <input type="checkbox" checked id="node-input-trait_transportcontrol" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
-            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/transportcontrol"><i class="fa fa-external-link"></i></a>
-            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
-        </div>
-
-        <div class="form-row label_trait" id="label_trait_transportcontrol">
-            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.transportcontrol"></span></label></b>
-            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/transportcontrol"><i class="fa fa-external-link"></i></a>
-            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
-        </div>
-
-        <div id="trait_transportcontrol">
-            <div class="form-row">
-                <label for="node-input-supported_commands"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_commands"></span></label>
-                <select multiple id="node-input-supported_commands" >
-                    <option value="CAPTION_CONTROL" data-i18n="multi.label.caption_control"></option>
-                    <option value="NEXT" data-i18n="multi.label.next"></option>
-                    <option value="PAUSE" data-i18n="multi.label.pause"></option>
-                    <option value="PREVIOUS" data-i18n="multi.label.previous"></option>
-                    <option value="RESUME" data-i18n="multi.label.resume"></option>
-                    <option value="SEEK_RELATIVE" data-i18n="multi.label.seek_relative"></option>
-                    <option value="SEEK_TO_POSITION" data-i18n="multi.label.seek_to_position"></option>
-                    <option value="SET_REPEAT" data-i18n="multi.label.set_repeat"></option>
-                    <option value="SHUFFLE" data-i18n="multi.label.shuffle"></option>
-                    <option value="STOP" data-i18n="multi.label.stop"></option>
-                </select>
-            </div>
-        </div>
-    </div>
-
     <!-- Toggles Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="toggles" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_toggles">
@@ -885,6 +872,40 @@
                     <label style="width:auto" for="node-input-query_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_toggles"></span></label>
                     <input type="checkbox" checked id="node-input-query_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TransportControl Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="transportcontrol" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_transportcontrol">
+            <b><label style="width:auto" for="node-input-trait_transportcontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.transportcontrol"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_transportcontrol" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/transportcontrol"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_transportcontrol">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.transportcontrol"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/transportcontrol"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_transportcontrol">
+            <div class="form-row">
+                <label for="node-input-supported_commands"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_commands"></span></label>
+                <select multiple id="node-input-supported_commands" >
+                    <option value="CAPTION_CONTROL" data-i18n="multi.label.caption_control"></option>
+                    <option value="NEXT" data-i18n="multi.label.next"></option>
+                    <option value="PAUSE" data-i18n="multi.label.pause"></option>
+                    <option value="PREVIOUS" data-i18n="multi.label.previous"></option>
+                    <option value="RESUME" data-i18n="multi.label.resume"></option>
+                    <option value="SEEK_RELATIVE" data-i18n="multi.label.seek_relative"></option>
+                    <option value="SEEK_TO_POSITION" data-i18n="multi.label.seek_to_position"></option>
+                    <option value="SET_REPEAT" data-i18n="multi.label.set_repeat"></option>
+                    <option value="SHUFFLE" data-i18n="multi.label.shuffle"></option>
+                    <option value="STOP" data-i18n="multi.label.stop"></option>
+                </select>
             </div>
         </div>
     </div>
@@ -1282,9 +1303,9 @@
             });
             $(".cb_trait").change();
 
-            $(".label_trait").click(function() {
-                const cb_id =  $( this ).attr('id');
-                const div_id = cb_id.substring(6);
+            /*$(".label_trait").click(function() {
+                const label_id =  $( this ).attr('id');
+                const div_id = label_id.substring(6);
                 $("#" + div_id).toggle();
                 const div_aid = div_id.substring(6);
                 if ($("#" + div_id).is(":visible")) {
@@ -1292,7 +1313,7 @@
                 } else {
                     $("#" + div_aid).find(".oc_trait").removeClass('fa-caret-down').addClass('fa-caret-right');
                 }
-            });
+            });*/
 
             $(".oc_trait").click(function() {
                 const parent_id =  $( this ).parent().parent().attr('id');
@@ -1396,7 +1417,7 @@
                         break;
                     case "CLOSET": // Closet
                         recommended_traits = [];
-                        required_traits = ["closet"];
+                        required_traits = ["openclose"];
                         break;
                     case "COFFEE_MAKER": // Coffee Maker
                         recommended_traits = ["cook", "temperaturecontrol"];
