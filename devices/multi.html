@@ -20,6 +20,12 @@
     Multi Device
 -->
 <script type="text/html" data-template-name="google-multi">
+    <style>
+        ol#node-input-multi-zone-container .red-ui-typedInput-container {
+            flex:1;
+        }
+    </style>
+
     <div class="form-row">
         <b>Google SmartHome Settings</b>
     </div>
@@ -52,8 +58,8 @@
     <div class="form-row" id="device_type">
         <label for="node-input-device_type"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.device_type"></span></label>
         <select id="node-input-device_type" >
-            <!--<option value='AC_UNIT' data-i18n='multi.device_type.AC_UNIT'></option>-->
-            <!--<option value='AIRCOOLER' data-i18n='multi.device_type.AIRCOOLER'></option>-->
+            <option value='AC_UNIT' data-i18n='multi.device_type.AC_UNIT'></option>
+            <option value='AIRCOOLER' data-i18n='multi.device_type.AIRCOOLER'></option>
             <option value='AIRFRESHENER' data-i18n='multi.device_type.AIRFRESHENER'></option>
             <option value='AIRPURIFIER' data-i18n='multi.device_type.AIRPURIFIER'></option>
             <option value='AUDIO_VIDEO_RECEIVER' data-i18n='multi.device_type.AUDIO_VIDEO_RECEIVER'></option>
@@ -72,30 +78,30 @@
             <option value='CURTAIN' data-i18n='multi.device_type.CURTAIN'></option>
             <option value='DEHUMIDIFIER' data-i18n='multi.device_type.DEHUMIDIFIER'></option>
             <option value='DEHYDRATOR' data-i18n='multi.device_type.DEHYDRATOR'></option>
-            <!--<option value='DISHWASHER' data-i18n='multi.device_type.DISHWASHER'></option>-->
+            <option value='DISHWASHER' data-i18n='multi.device_type.DISHWASHER'></option>
             <option value='DOOR' data-i18n='multi.device_type.DOOR'></option>
             <option value='DRAWER' data-i18n='multi.device_type.DRAWER'></option>
-            <!--<option value='DRYER' data-i18n='multi.device_type.DRYER'></option>-->
+            <option value='DRYER' data-i18n='multi.device_type.DRYER'></option>
             <option value='FAN' data-i18n='multi.device_type.FAN'></option>
-            <!--<option value='FAUCET' data-i18n='multi.device_type.FAUCET'></option>-->
+            <option value='FAUCET' data-i18n='multi.device_type.FAUCET'></option>
             <option value='FIREPLACE' data-i18n='multi.device_type.FIREPLACE'></option>
             <option value='FREEZER' data-i18n='multi.device_type.FREEZER'></option>
             <option value='FRYER' data-i18n='multi.device_type.FRYER'></option>
             <option value='GARAGE' data-i18n='multi.device_type.GARAGE'></option>
             <option value='GATE' data-i18n='multi.device_type.GATE'></option>
-            <!--<option value='GRILL' data-i18n='multi.device_type.GRILL'></option>-->
-            <!--<option value='HEATER' data-i18n='multi.device_type.HEATER'></option>-->
+            <option value='GRILL' data-i18n='multi.device_type.GRILL'></option>
+            <option value='HEATER' data-i18n='multi.device_type.HEATER'></option>
             <option value='HOOD' data-i18n='multi.device_type.HOOD'></option>
             <option value='HUMIDIFIER' data-i18n='multi.device_type.HUMIDIFIER'></option>
             <option value='KETTLE' data-i18n='multi.device_type.KETTLE'></option>
             <option value='LIGHT' data-i18n='multi.device_type.LIGHT'></option>
             <option value='LOCK' data-i18n='multi.device_type.LOCK'></option>
-            <!--<option value='MICROWAVE' data-i18n='multi.device_type.MICROWAVE'></option>-->
-            <!--<option value='MOP' data-i18n='multi.device_type.MOP'></option>-->
-            <!--<option value='MOWER' data-i18n='multi.device_type.MOWER'></option>-->
+            <option value='MICROWAVE' data-i18n='multi.device_type.MICROWAVE'></option>
+            <option value='MOP' data-i18n='multi.device_type.MOP'></option>
+            <option value='MOWER' data-i18n='multi.device_type.MOWER'></option>
             <option value='MULTICOOKER' data-i18n='multi.device_type.MULTICOOKER'></option>
             <!--<option value='NETWORK' data-i18n='multi.device_type.NETWORK'></option>-->
-            <!--<option value='OUTLET' data-i18n='multi.device_type.OUTLET'></option>-->
+            <option value='OUTLET' data-i18n='multi.device_type.OUTLET'></option>
             <option value='OVEN' data-i18n='multi.device_type.OVEN'></option>
             <option value='PERGOLA' data-i18n='multi.device_type.PERGOLA'></option>
             <!--<option value='PETFEEDER' data-i18n='multi.device_type.PETFEEDER'></option>-->
@@ -110,21 +116,21 @@
             <option value='SETTOP' data-i18n='multi.device_type.SETTOP'></option>
             <option value='SHOWER' data-i18n='multi.device_type.SHOWER'></option>
             <option value='SHUTTER' data-i18n='multi.device_type.SHUTTER'></option>
-            <option value='SMOKE_DETECTOR' data-i18n='multi.device_type.SMOKE_DETECTOR'></option>
+            <!--<option value='SMOKE_DETECTOR' data-i18n='multi.device_type.SMOKE_DETECTOR'></option>-->
             <option value='SOUNDBAR' data-i18n='multi.device_type.SOUNDBAR'></option>
             <option value='SOUSVIDE' data-i18n='multi.device_type.SOUSVIDE'></option>
             <option value='SPEAKER' data-i18n='multi.device_type.SPEAKER'></option>
-            <!--<option value='SPRINKLER' data-i18n='multi.device_type.SPRINKLER'></option>-->
+            <option value='SPRINKLER' data-i18n='multi.device_type.SPRINKLER'></option>
             <option value='STANDMIXER' data-i18n='multi.device_type.STANDMIXER'></option>
             <option value='STREAMING_BOX' data-i18n='multi.device_type.STREAMING_BOX'></option>
             <option value='STREAMING_SOUNDBAR' data-i18n='multi.device_type.STREAMING_SOUNDBAR'></option>
             <option value='STREAMING_STICK' data-i18n='multi.device_type.STREAMING_STICK'></option>
             <option value='SWITCH' data-i18n='multi.device_type.SWITCH'></option>
-            <!--<option value='THERMOSTAT' data-i18n='multi.device_type.THERMOSTAT'></option>-->
+            <option value='THERMOSTAT' data-i18n='multi.device_type.THERMOSTAT'></option>
             <option value='TV' data-i18n='multi.device_type.TV'></option>
-            <!--<option value='VACUUM' data-i18n='multi.device_type.VACUUM'></option>-->
+            <option value='VACUUM' data-i18n='multi.device_type.VACUUM'></option>
             <option value='VALVE' data-i18n='multi.device_type.VALVE'></option>
-            <!--<option value='WASHER' data-i18n='multi.device_type.WASHER'></option>-->
+            <option value='WASHER' data-i18n='multi.device_type.WASHER'></option>
             <option value='WATERHEATER' data-i18n='multi.device_type.WATERHEATER'></option>
             <option value='WATERPURIFIER' data-i18n='multi.device_type.WATERPURIFIER'></option>
             <option value='WATERSOFTENER' data-i18n='multi.device_type.WATERSOFTENER'></option>
@@ -638,6 +644,36 @@
         </div>
     </div>
 
+    <!-- StartStop Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="startstop" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_startstop">
+            <b><label style="width:auto" for="node-input-trait_startstop"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.startstop"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_startstop" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/startstop"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_startstop">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.startstop"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/startstop"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_startstop">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-pausable"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.pausable"></span></label>
+                <input type="checkbox" checked id="node-input-pausable" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+
+        <div class="form-row" style="margin-bottom:0;">
+            <label><i class="fa fa-list"></i> <span data-i18n="multi.label.available_zones"></span></label>
+        </div>
+        <div class="form-row node-input-multi-zone-container-row">
+            <ol id="node-input-multi-zone-container"></ol>
+        </div>
+    </div>
+    
     <!-- TemperatureControl Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="temperaturecontrol" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_temperaturecontrol">
@@ -1189,9 +1225,46 @@
             },
             query_only_openclose: {
                 value: false, required:false
+            },
+            trait_startstop: {
+                value: false, required:false
+            },
+            pausable: {
+                value: false, required:false
+            },
+            available_zones: {
+                value:[], required:false
             }
         },
         oneditprepare: function() {
+            $('#node-input-multi-zone-container').css('min-height','150px').css('min-width','450px').editableList({
+                addItem: function(container,i,opt) {
+                    var zone=opt;
+                    if (!zone.hasOwnProperty('name')) {
+                        zone={name:""};
+                    }
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    let fragment = document.createDocumentFragment();
+                    var row1 = $('<div/>',{style:"display:flex;"}).appendTo(fragment);
+                    var propertyName = $('<input/>',{class:"node-input-multi-zone-property-name",type:"text"})
+                        .appendTo(row1);
+                    propertyName.val(zone.name);
+
+                    container[0].appendChild(fragment);
+                },
+                removable: true,
+                sortable: true
+            });
+            if (!this.available_zones) {
+                this.available_zones = [];
+            }
+            for (var i=0; i<this.available_zones.length; i++) {
+                var zone = this.available_zones[i];
+                $("#node-input-multi-zone-container").editableList('addItem',{ name: zone});
+            }
             $(".cb_trait").change(function() {
                 const checked = $( this ).prop('checked');
                 const cb_id =  $( this ).attr('id');
@@ -1498,8 +1571,8 @@
                         required_traits = ["openclose"];
                         break;
                     case "SMOKE_DETECTOR": // Smoke detector
-                        recommended_traits = ["sensorstate"];
-                        required_traits = [];
+                        recommended_traits = [];
+                        required_traits = ["sensorstate"];
                         break;
                     case "SOUNDBAR": // Soundbar
                         recommended_traits = ["appselector", "inputselector", "mediastate", "onoff", "transportcontrol"];
@@ -1590,6 +1663,27 @@
             }
             deviceTypeChanged();
             $("#node-input-device_type").change(deviceTypeChanged);
+        },
+        oneditsave: function() {
+            var available_zones = $("#node-input-multi-zone-container").editableList('items');
+            var node = this;
+            node.available_zones= [];
+            available_zones.each(function(i) {
+                var zone = $(this);
+                var name = zone.find(".node-input-multi-zone-property-name").val();
+                node.available_zones.push(name);
+            });
+        },
+        oneditresize: function(size) {
+            var rows = $("#dialog-form>div:not(.node-input-multi-zone-container-row)");
+            var height = size.height;
+            for (var i=0; i<rows.length; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            var editorRow = $("#dialog-form>div.node-input-multi-zone-container-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            height += 16;
+            $("#node-input-multi-zone-container").editableList('height',height);
         }
     });
 </script>

@@ -109,6 +109,8 @@
             "right": "Right",
             "in": "In",
             "out": "Out",
+            "pausable": "Pausable",
+            "available_zones": "Available zones",
             "no_config_for_trait": "No configuration available."
         },
         "placeholder": {

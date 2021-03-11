@@ -147,6 +147,8 @@ module.exports = function(RED) {
             this.open_direction                         = config.open_direction;
             this.command_only_openclose                 = config.command_only_openclose;
             this.query_only_openclose                   = config.query_only_openclose;
+            this.pausable                               = config.pausable;
+            this.available_zones                        = config.available_zones;
 
             this.protocols = [];
             if (this.hlsUrl) {
@@ -578,12 +580,6 @@ module.exports = function(RED) {
                     };
                 }
             }
-            if (me.trait.openclose) {
-                attributes['discreteOnlyOpenClose'] = me.discrete_only_openclose;
-                attributes['openDirection'] = me.open_direction;
-                attributes['commandOnlyOpenClose'] = me.command_only_openclose;
-                attributes['queryOnlyOpenClose'] = me.query_only_openclose;
-            }
             if (me.trait.humiditysetting) {
                 attributes['humiditySetpointRange'] = {
                     minPercent: me.min_percent,
@@ -597,7 +593,7 @@ module.exports = function(RED) {
                 attributes['commandOnlyInputSelector'] = me.command_only_input_selector;
                 attributes['orderedInputs'] = me.ordered_inputs;
             }
-            if (me.trait.media_state) {
+            if (me.trait.mediastate) {
                 attributes['supportActivityState'] = me.support_activity_state;
                 attributes['supportPlaybackState'] = me.support_playback_state;
             }
@@ -610,8 +606,18 @@ module.exports = function(RED) {
                 attributes['commandOnlyOnOff'] = me.command_only_onoff;
                 attributes['queryOnlyOnOff'] = me.query_only_onoff;
             }
+            if (me.trait.openclose) {
+                attributes['discreteOnlyOpenClose'] = me.discrete_only_openclose;
+                attributes['openDirection'] = me.open_direction;
+                attributes['commandOnlyOpenClose'] = me.command_only_openclose;
+                attributes['queryOnlyOpenClose'] = me.query_only_openclose;
+            }
             if (me.trait.scene) {
                 attributes['sceneReversible'] = me.scene_reversible;
+            }
+            if (me.trait.startstop) {
+                attributes['pausable'] = me.pausable;
+                attributes['activeZones'] = me.available_zones;
             }
             if (me.trait.temperaturecontrol) {
                 attributes['temperatureRange'] = {
@@ -699,6 +705,11 @@ module.exports = function(RED) {
                     });
                 }
             }
+            if (me.trait.startstop) {
+                attributes['isRunning'] = false;
+                attributes['isPaused'] = false;
+                attributes['activeZones'] = [];
+            }
             if (me.trait.inputs) {
                 states['humiditySetpointPercent'] = 50;
                 states['humidityAmbientPercent'] = 50;
@@ -706,7 +717,7 @@ module.exports = function(RED) {
             if (me.trait.inputs) {
                 states['currentInput'] = '';
             }
-            if (me.trait.media_state) {
+            if (me.trait.mediastate) {
                 // INACTIVE STANDBY ACTIVE
                 states['activityState'] = 'INACTIVE';
                 // PAUSED PLAYING FAST_FORWARDING REWINDING BUFFERING STOPPED
@@ -1340,6 +1351,21 @@ module.exports = function(RED) {
             }
             else if (command.command == 'action.devices.commands.OpenCloseRelative') {
                 const openPercent = parseInt(command.params[openPercent]) || 0;
+                // TODO
+            }
+            // StartStop
+            else if (command.command == 'action.devices.commands.StartStop') {
+                const start = parseInt(command.params[start]) || false;
+                let zones = [];
+                if (command.params.hasOwnProperty('zone')) {
+                    zones = [command.params['zone']];
+                } else if (command.params.hasOwnProperty('multipleZones')) {
+                    zones = command.params['multipleZones'];
+                }
+                // TODO
+            }
+            else if (command.command == 'action.devices.commands.PauseUnpause') {
+                const pause = parseInt(command.params[pause]) || false;
                 // TODO
             }
             // TransportControl
