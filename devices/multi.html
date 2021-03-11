@@ -55,6 +55,27 @@
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
     
+    <div class="form-row">
+        <label for="node-input-lang"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.lang"></span></label>
+        <select id="node-input-lang" >
+            <option value='da' data-i18n='multi.label.da'></option>
+            <option value='nl' data-i18n='multi.label.nl'></option>
+            <option value='en' data-i18n='multi.label.en'></option>
+            <option value='fr' data-i18n='multi.label.fr'></option>
+            <option value='de' data-i18n='multi.label.de'></option>
+            <option value='hi' data-i18n='multi.label.hi'></option>
+            <option value='id' data-i18n='multi.label.id'></option>
+            <option value='it' data-i18n='multi.label.it'></option>
+            <option value='ja' data-i18n='multi.label.ja'></option>
+            <option value='ko' data-i18n='multi.label.ko'></option>
+            <option value='no' data-i18n='multi.label.no'></option>
+            <option value='pt-BR' data-i18n='multi.label.pt-BR'></option>
+            <option value='es' data-i18n='multi.label.es'></option>
+            <option value='sv' data-i18n='multi.label.sv'></option>
+            <option value='th' data-i18n='multi.label.th'></option>
+        </select>
+    </div>
+
     <div class="form-row" id="device_type">
         <label for="node-input-device_type"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.device_type"></span></label>
         <select id="node-input-device_type" >
@@ -429,7 +450,42 @@
         </div>
     </div>
 
-    <!-- LightEffect  Trait-->
+    <!-- LightEffects Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="lighteffects" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_lighteffects">
+            <b><label style="width:auto" for="node-input-trait_lighteffects"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.lighteffects"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_lighteffects" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/lighteffects"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_lighteffects">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.lighteffects"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/lighteffects"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_lighteffects">
+            <div class="form-row">
+                <label for="node-input-default_sleep_duration"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.default_sleep_duration"></span></label>
+                <input type="text" id="node-input-default_sleep_duration" data-i18n="[placeholder]multi.placeholder.default_sleep_duration">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-default_wake_duration"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.default_wake_duration"></span></label>
+                <input type="text" id="node-input-default_wake_duration" data-i18n="[placeholder]multi.placeholder.default_wake_duration">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-supported_effects"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_effects"></span></label>
+                <select multiple id="node-input-supported_effects" >
+                    <option value="colorLoop" data-i18n="multi.label.color_loop"></option>
+                    <option value="sleep" data-i18n="multi.label.sleep"></option>
+                    <option value="wake" data-i18n="multi.label.wake"></option>
+                </select>
+            </div>
+        </div>
+    </div>
 
     <!-- Locator Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="locator" style="background: #fbfbfb; padding: 5px;">
@@ -635,7 +691,72 @@
     </div>
 
     <!-- Rotation Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="rotation" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_rotation">
+            <b><label style="width:auto" for="node-input-trait_rotation"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.rotation"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_rotation" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/rotation"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_rotation">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.rotation"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/rotation"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_rotation">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_degrees"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_degrees"></span></label>
+                <input type="checkbox" checked id="node-input-supports_degrees" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_percent"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_percent"></span></label>
+                <input type="checkbox" checked id="node-input-supports_percent" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-rotation_degrees_min"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.rotation_degrees_min"></span></label>
+                <input type="text" id="node-input-rotation_degrees_min" data-i18n="[placeholder]multi.placeholder.rotation_degrees_min">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-rotation_degrees_max"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.rotation_degrees_max"></span></label>
+                <input type="text" id="node-input-rotation_degrees_max" data-i18n="[placeholder]multi.placeholder.rotation_degrees_max">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_continuous_rotation"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_continuous_rotation"></span></label>
+                <input type="checkbox" checked id="node-input-supports_continuous_rotation" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-command_only_rotation"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_rotation"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_rotation" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+    
     <!-- RunCycle Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="runcycle" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_runcycle">
+            <b><label style="width:auto" for="node-input-trait_runcycle"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.runcycle"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_runcycle" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/runcycle"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_runcycle">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.runcycle"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/runcycle"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_runcycle">
+            <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
+        </div>
+    </div>
 
     <!-- Scene Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="scene" style="background: #fbfbfb; padding: 5px;">
@@ -661,7 +782,26 @@
     </div>
 
     <!-- SensorState Trait-->
+
     <!-- SoftwareUpdate Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="softwareupdate" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_softwareupdate">
+            <b><label style="width:auto" for="node-input-trait_softwareupdate"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.softwareupdate"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_softwareupdate" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/softwareupdate"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_softwareupdate">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.softwareupdate"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/softwareupdate"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_softwareupdate">
+            <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
+        </div>
+    </div>
 
     <!-- StartStop Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="startstop" style="background: #fbfbfb; padding: 5px;">
@@ -694,6 +834,24 @@
     </div>
     
     <!-- StatusReport Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="statusreport" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_statusreport">
+            <b><label style="width:auto" for="node-input-trait_statusreport"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.statusreport"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_statusreport" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/statusreport"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_statusreport">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.statusreport"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/statusreport"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_statusreport">
+            <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
+        </div>
+    </div>
 
     <!-- TemperatureControl Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="temperaturecontrol" style="background: #fbfbfb; padding: 5px;">
@@ -1255,6 +1413,51 @@
             },
             available_zones: {
                 value:[], required:false
+            },
+            lang: {
+                value:"en", required:false
+            },
+            trait_runcycle: {
+                value: false, required:false
+            },
+            trait_softwareupdate: {
+                value: false, required:false
+            },
+            trait_rotation: {
+                value: false, required:false
+            },
+            supports_degrees: {
+                value: true, required:false
+            },
+            supports_percent: {
+                value: true, required:false
+            },
+            rotation_degrees_min: {
+                value: 0, required:false
+            },
+            rotation_degrees_max: {
+                value: 360, required:false
+            },
+            supports_continuous_rotation: {
+                value: false, required:false
+            },
+            command_only_rotation: {
+                value: false, required:false
+            },
+            trait_lighteffects: {
+                value: false, required:false
+            },
+            default_sleep_duration: {
+                value: 1800, required:false
+            },
+            default_wake_duration: {
+                value: 1800, required:false
+            },
+            supported_effects: {
+                value: ["colorLoop", "sleep", "wake"], required:false
+            },
+            trait_statusreport: {
+                value: false, required:false
             }
         },
         oneditprepare: function() {

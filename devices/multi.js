@@ -77,6 +77,7 @@ module.exports = function(RED) {
             };
             this.topicOut                               = config.topic;
             this.device_type					        = config.device_type;
+            this.lang                                   = config.lang;
             this.appselector_file                       = config.appselector_file;
             this.available_applications                 = [];
             this.channel_file                           = config.channel_file;
@@ -149,6 +150,16 @@ module.exports = function(RED) {
             this.query_only_openclose                   = config.query_only_openclose;
             this.pausable                               = config.pausable;
             this.available_zones                        = config.available_zones;
+            this.supports_degrees                       = config.supports_degrees;
+            this.supports_percent                       = config.supports_percent;
+            this.rotation_degrees_min                   = parseInt(config.rotation_degrees_min) || 0;
+            this.rotation_degrees_max                   = parseInt(config.rotation_degrees_max) || 360;
+            this.supports_continuous_rotation           = config.supports_continuous_rotation;
+            this.command_only_rotation                  = config.command_only_rotation;
+            this.default_sleep_duration                 = config.default_sleep_duration;
+            this.default_wake_duration                  = config.default_wake_duration;
+            this.supported_effects                      = config.supported_effects;
+            
 
             this.protocols = [];
             if (this.hlsUrl) {
@@ -593,6 +604,11 @@ module.exports = function(RED) {
                 attributes['commandOnlyInputSelector'] = me.command_only_input_selector;
                 attributes['orderedInputs'] = me.ordered_inputs;
             }
+            if (me.trait.lighteffects) {
+                attributes['defaultSleepDuration'] = me.default_sleep_duration;
+                attributes['defaultWakeDuration'] = me.default_wake_duration;
+                attributes['supportedEffects'] = me.supported_effects;
+            }
             if (me.trait.mediastate) {
                 attributes['supportActivityState'] = me.support_activity_state;
                 attributes['supportPlaybackState'] = me.support_playback_state;
@@ -611,6 +627,16 @@ module.exports = function(RED) {
                 attributes['openDirection'] = me.open_direction;
                 attributes['commandOnlyOpenClose'] = me.command_only_openclose;
                 attributes['queryOnlyOpenClose'] = me.query_only_openclose;
+            }
+            if (me.trait.rotation) {
+                attributes['supportsDegrees'] = me.supports_degrees;
+                attributes['supportsPercent'] = me.supports_percent;
+                attributes['rotationDegreesRange'] = [{
+                    rotationDegreesMin: me.rotation_degrees_min,
+                    rotationDegreesMax: me.rotation_degrees_max
+                }];
+                attributes['supportsContinuousRotation'] = me.supports_continuous_rotation;
+                attributes['supportsContinuousRotation'] = me.command_only_rotation;
             }
             if (me.trait.scene) {
                 attributes['sceneReversible'] = me.scene_reversible;
@@ -691,6 +717,9 @@ module.exports = function(RED) {
                 states['isLocked'] = false;
                 states['isJammed'] = false;
             }
+            if (me.trait.lighteffects) {
+                states['activeLightEffect'] = "";
+            }
             if (me.trait.openclose) {
                 if (me.open_direction.length < 2) {
                     states['openPercent'] = 0;
@@ -705,12 +734,34 @@ module.exports = function(RED) {
                     });
                 }
             }
-            if (me.trait.startstop) {
-                attributes['isRunning'] = false;
-                attributes['isPaused'] = false;
-                attributes['activeZones'] = [];
+            if (me.trait.rotation) {
+                if (me.supports_degrees) {
+                    states['rotationDegrees'] = 0;
+                }
+                if (me.supports_percent) {
+                    states['rotationPercent'] = 0;
+                }
             }
-            if (me.trait.inputs) {
+            if (me.trait.runcycle) {
+                states['currentRunCycle'] = [{
+                    currentCycle: "unknown",
+                    lang: me.lang
+                }];
+                states['currentTotalRemainingTime'] = 0;
+                states['currentCycleRemainingTime'] = 0;
+            }
+            if (me.trait.softwareupdate) {
+                states['lastSoftwareUpdateUnixTimestampSec'] = 0;
+            }
+            if (me.trait.startstop) {
+                states['isRunning'] = false;
+                states['isPaused'] = false;
+                states['activeZones'] = [];
+            }
+            if (me.trait.statusreport) {
+                states['currentStatusReport'] = [];
+            }
+            if (me.trait.humiditysetting) {
                 states['humiditySetpointPercent'] = 50;
                 states['humidityAmbientPercent'] = 50;
             }
@@ -1057,7 +1108,7 @@ module.exports = function(RED) {
             if (trait.inputselector) {
                 traits.push("action.devices.traits.InputSelector");
             }
-            if (trait.LightEffects) {
+            if (trait.lighteffects) {
                 traits.push("action.devices.traits.LightEffects");
             }
             if (trait.locator) {
