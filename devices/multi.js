@@ -159,7 +159,12 @@ module.exports = function(RED) {
             this.default_sleep_duration                 = config.default_sleep_duration;
             this.default_wake_duration                  = config.default_wake_duration;
             this.supported_effects                      = config.supported_effects;
-            
+            this.supported_cooking_modes                = config.supported_cooking_modes;
+            this.food_presets_file                      = config.food_presets_file;
+            this.reversible                             = config.reversible;
+            this.command_only_fanspeed                  = config.command_only_fanspeed;
+            this.supports_fan_speed_percent             = config.supports_fan_speed_percent;
+            this.available_fan_speeds_file              = config.available_fan_speeds_file;
 
             this.protocols = [];
             if (this.hlsUrl) {
@@ -465,6 +470,28 @@ module.exports = function(RED) {
                 this.debug(".constructor: Channels disabled");
             }
 
+            if (this.trait.cook) {
+                this.food_presets = this.loadJson(this.food_presets_file, []);
+                if (this.food_presets === undefined) {
+                    error_msg += ' Food presets file error.';
+                    RED.log.error("Food presets " +  this.food_presets_file + "file error.");
+                }
+            } else {
+                this.food_presets = undefined;
+                this.debug(".constructor: Food presets disabled");
+            }
+
+            if (this.trait.fanspeed) {
+                this.available_fan_speeds = this.loadJson(this.available_fan_speeds_file, []);
+                if (this.available_fan_speeds === undefined) {
+                    error_msg += ' Food presets file error.';
+                    RED.log.error("Food presets " +  this.available_fan_speeds_file + "file error.");
+                }
+            } else {
+                this.available_fan_speeds = undefined;
+                this.debug(".constructor: Food presets disabled");
+            }
+
             if (this.trait.inputselector) {
                 this.available_inputs = this.loadJson(this.inputselector_file, []);
                 if (this.available_inputs === undefined) {
@@ -591,6 +618,16 @@ module.exports = function(RED) {
                     };
                 }
             }
+            if (me.trait.cook) {
+                attributes['supportedCookingModes'] = me.supported_cooking_modes;
+                attributes['foodPresets'] = me.food_presets;
+            }
+            if (me.trait.fanspeed) {
+                attributes['reversible'] = me.reversible;
+                attributes['commandOnlyFanSpeed'] = me.command_only_fanspeed;
+                attributes['availableFanSpeeds'] = me.available_fan_speeds;
+                attributes['supportsFanSpeedPercent'] = me.supports_fan_speed_percent;
+            }
             if (me.trait.humiditysetting) {
                 attributes['humiditySetpointRange'] = {
                     minPercent: me.min_percent,
@@ -710,8 +747,18 @@ module.exports = function(RED) {
                     states['color'] = { temperatureK : me.temperature_max_k || 6000 };
                 }
             }
+            if (me.trait.cook) {
+                states['currentCookingMode'] = "NONE";
+                states['currentFoodPreset'] = "NONE";
+                states['currencurrentFoodQuantitytCookingMode'] = 0;
+                states['currentFoodUnit'] = "UNKNOWN_UNITS";
+            }
             if (me.trait.dock) {
                 states['isDocked'] = false;
+            }
+            if (me.trait.fanspeed) {
+                states['currentFanSpeedSetting'] = "";
+                states['currentFanSpeedPercent'] = 0;
             }
             if (me.trait.lockunlock) {
                 states['isLocked'] = false;
@@ -1215,22 +1262,25 @@ module.exports = function(RED) {
         }
 
         loadJson(filename, defaultValue) {
+            let full_filename;
             if (!filename.startsWith(path.sep)) {
                 const userDir = RED.settings.userDir;
-                filename = path.join(userDir, filename);
+                full_filename = path.join(userDir, filename);
+            } else {
+                full_filename = filename;
             }
-            this.debug('.loadJson: filename ' + filename);
+            this.debug('.loadJson: filename ' + full_filename);
         
             try {
                 let jsonFile = fs.readFileSync(
-                    filename,
+                    full_filename,
                     {
                         'encoding': 'utf8',
                         'flag': fs.constants.R_OK | fs.constants.W_OK | fs.constants.O_CREAT
                     });
     
                 if (jsonFile === '') {
-                    this.debug('.loadJson: empty data');
+                    this.debug('.loadJson: file ' + filename + ' is empty');
                     return defaultValue;
                 } else {
                     this.debug('.loadJson: data loaded');

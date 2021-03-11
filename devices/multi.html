@@ -351,6 +351,62 @@
     </div>
 
     <!-- Cook  Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="cook" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_cook">
+            <b><label style="width:auto" for="node-input-trait_cook"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.cook"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_cook" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/cook"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_cook">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.cook"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/cook"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_cook">
+            <div class="form-row">
+                <label for="node-input-supported_cooking_modes"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_cooking_modes"></span></label>
+                <select multiple id="node-input-supported_cooking_modes" >
+                    <option value="UNKNOWN_COOKING_MODE" data-i18n="multi.label.UNKNOWN_COOKING_MODE"></option>
+                    <option value="BAKE" data-i18n="multi.label.BAKE"></option>
+                    <option value="BEAT" data-i18n="multi.label.BEAT"></option>
+                    <option value="BLEND" data-i18n="multi.label.BLEND"></option>
+                    <option value="BOIL" data-i18n="multi.label.BOIL"></option>
+                    <option value="BREW" data-i18n="multi.label.BREW"></option>
+                    <option value="BROIL" data-i18n="multi.label.BROIL"></option>
+                    <option value="CONVECTION_BAKE" data-i18n="multi.label.CONVECTION_BAKE"></option>
+                    <option value="COOK" data-i18n="multi.label.COOK"></option>
+                    <option value="DEFROST" data-i18n="multi.label.DEFROST"></option>
+                    <option value="DEHYDRATE" data-i18n="multi.label.DEHYDRATE"></option>
+                    <option value="FERMENT" data-i18n="multi.label.FERMENT"></option>
+                    <option value="FRY" data-i18n="multi.label.FRY"></option>
+                    <option value="GRILL" data-i18n="multi.label.GRILL"></option>
+                    <option value="KNEAD" data-i18n="multi.label.KNEAD"></option>
+                    <option value="MICROWAVE" data-i18n="multi.label.MICROWAVE"></option>
+                    <option value="MIX" data-i18n="multi.label.MIX"></option>
+                    <option value="PRESSURE_COOK" data-i18n="multi.label.PRESSURE_COOK"></option>
+                    <option value="PUREE" data-i18n="multi.label.PUREE"></option>
+                    <option value="ROAST" data-i18n="multi.label.ROAST"></option>
+                    <option value="SAUTE" data-i18n="multi.label.SAUTE"></option>
+                    <option value="SLOW_COOK" data-i18n="multi.label.SLOW_COOK"></option>
+                    <option value="SOUS_VIDE" data-i18n="multi.label.SOUS_VIDE"></option>
+                    <option value="STEAM" data-i18n="multi.label.STEAM"></option>
+                    <option value="STEW" data-i18n="multi.label.STEW"></option>
+                    <option value="STIR" data-i18n="multi.label.STIR"></option>
+                    <option value="WARM" data-i18n="multi.label.WARM"></option>
+                    <option value="WHIP" data-i18n="multi.label.WHIP"></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-food_presets_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.food_presets_file"></span></label>
+                <input type="text" id="node-input-food_presets_file" data-i18n="[placeholder]multi.placeholder.food_presets_file">
+            </div>
+        </div>
+    </div>
+
     <!-- Dispanse  Trait-->
 
     <!-- Dock  Trait-->
@@ -374,7 +430,45 @@
     </div>
 
     <!-- EnergyStorage  Trait-->
+    
     <!-- FanSpeed Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="fanspeed" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_fanspeed">
+            <b><label style="width:auto" for="node-input-trait_fanspeed"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.fanspeed"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_fanspeed" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/fanspeed"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_fanspeed">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.fanspeed"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/fanspeed"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_fanspeed">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-reversible"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.reversible"></span></label>
+                <input type="checkbox" checked id="node-input-reversible" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_fan_speed_percent"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_fan_speed_percent"></span></label>
+                <input type="checkbox" checked id="node-input-supports_fan_speed_percent" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-available_fan_speeds_file"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.available_fan_speeds_file"></span></label>
+                <input type="text" id="node-input-min_percent" data-i18n="[placeholder]multi.placeholder.available_fan_speeds_file">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-command_only_fanspeed"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_fanspeed"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_fanspeed" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+    
     <!-- Fill Trait-->
 
     <!-- HumiditySetting  Trait-->
@@ -1458,6 +1552,27 @@
             },
             trait_statusreport: {
                 value: false, required:false
+            },
+            trait_cook: {
+                value: false, required:false
+            },
+            supported_cooking_modes: {
+                value: [], required:false
+            },
+            food_presets_file: {
+                value: 'foodPresets.json', required:false
+            },
+            trait_fanspeed: {
+                value: false, required:false
+            },
+            reversible: {
+                value: false, required:false
+            },
+            command_only_fanspeed: {
+                value: false, required:false
+            },
+            available_fan_speeds_file:  {
+                value: 'availableFanSpeeds.json', required:false
             }
         },
         oneditprepare: function() {
