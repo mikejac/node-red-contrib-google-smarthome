@@ -120,7 +120,7 @@ module.exports = function(RED) {
             if (config.enabledebug) {
                 console.log(msg)
             } else {
-                RED.log.degub(msg);
+                RED.log.debug(msg);
             }
         }
 
