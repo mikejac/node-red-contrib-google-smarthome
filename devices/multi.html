@@ -24,6 +24,9 @@
         ol#node-input-multi-zone-container .red-ui-typedInput-container {
             flex:1;
         }
+        ol#node-input-multi-network-profiles-container .red-ui-typedInput-container {
+            flex:1;
+        }
     </style>
 
     <div class="form-row">
@@ -85,14 +88,14 @@
             <option value='AIRPURIFIER' data-i18n='multi.device_type.AIRPURIFIER'></option>
             <option value='AUDIO_VIDEO_RECEIVER' data-i18n='multi.device_type.AUDIO_VIDEO_RECEIVER'></option>
             <option value='AWNING' data-i18n='multi.device_type.AWNING'></option>
-            <!--<option value='BATHTUB' data-i18n='multi.device_type.BATHTUB'></option>-->
+            <option value='BATHTUB' data-i18n='multi.device_type.BATHTUB'></option>
             <option value='BED' data-i18n='multi.device_type.BED'></option>
             <option value='BLENDER' data-i18n='multi.device_type.BLENDER'></option>
             <option value='BLINDS' data-i18n='multi.device_type.BLINDS'></option>
             <option value='BOILER' data-i18n='multi.device_type.BOILER'></option>
             <option value='CAMERA' data-i18n='multi.device_type.CAMERA'></option>
-            <!--<option value='CARBON_MONOXIDE_DETECTOR' data-i18n='multi.device_type.CARBON_MONOXIDE_DETECTOR'></option>-->
-            <!--<option value='CHARGER' data-i18n='multi.device_type.CHARGER'></option>-->
+            <option value='CARBON_MONOXIDE_DETECTOR' data-i18n='multi.device_type.CARBON_MONOXIDE_DETECTOR'></option>
+            <option value='CHARGER' data-i18n='multi.device_type.CHARGER'></option>
             <option value='CLOSET' data-i18n='multi.device_type.CLOSET'></option>
             <option value='COFFEE_MAKER' data-i18n='multi.device_type.COFFEE_MAKER'></option>
             <option value='COOKTOP' data-i18n='multi.device_type.COOKTOP'></option>
@@ -125,19 +128,19 @@
             <option value='OUTLET' data-i18n='multi.device_type.OUTLET'></option>
             <option value='OVEN' data-i18n='multi.device_type.OVEN'></option>
             <option value='PERGOLA' data-i18n='multi.device_type.PERGOLA'></option>
-            <!--<option value='PETFEEDER' data-i18n='multi.device_type.PETFEEDER'></option>-->
+            <option value='PETFEEDER' data-i18n='multi.device_type.PETFEEDER'></option>
             <option value='PRESSURECOOKER' data-i18n='multi.device_type.PRESSURECOOKER'></option>
             <option value='RADIATOR' data-i18n='multi.device_type.RADIATOR'></option>
             <option value='REFRIGERATOR' data-i18n='multi.device_type.REFRIGERATOR'></option>
             <option value='REMOTECONTROL' data-i18n='multi.device_type.REMOTECONTROL'></option>
             <!--<option value='ROUTER' data-i18n='multi.device_type.ROUTER'></option>-->
             <option value='SCENE' data-i18n='multi.device_type.SCENE'></option>
-            <!--<option value='SECURITYSYSTEM' data-i18n='multi.device_type.SECURITYSYSTEM'></option>-->
-            <!--<option value='SENSOR' data-i18n='multi.device_type.SENSOR'></option>-->
+            <option value='SECURITYSYSTEM' data-i18n='multi.device_type.SECURITYSYSTEM'></option>
+            <option value='SENSOR' data-i18n='multi.device_type.SENSOR'></option>
             <option value='SETTOP' data-i18n='multi.device_type.SETTOP'></option>
             <option value='SHOWER' data-i18n='multi.device_type.SHOWER'></option>
             <option value='SHUTTER' data-i18n='multi.device_type.SHUTTER'></option>
-            <!--<option value='SMOKE_DETECTOR' data-i18n='multi.device_type.SMOKE_DETECTOR'></option>-->
+            <option value='SMOKE_DETECTOR' data-i18n='multi.device_type.SMOKE_DETECTOR'></option>
             <option value='SOUNDBAR' data-i18n='multi.device_type.SOUNDBAR'></option>
             <option value='SOUSVIDE' data-i18n='multi.device_type.SOUSVIDE'></option>
             <option value='SPEAKER' data-i18n='multi.device_type.SPEAKER'></option>
@@ -186,6 +189,27 @@
     </div>
 
     <!-- ArmDisarm Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="armdisarm" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_armdisarm">
+            <b><label style="width:auto" for="node-input-trait_armdisarm"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.armdisarm"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_armdisarm" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/armdisarm"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_armdisarm">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.armdisarm"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/armdisarm"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_armdisarm">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-available_arm_levels_file"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.available_arm_levels_file"></span></label>
+                <input type="text" id="node-input-available_arm_levels_file" data-i18n="[placeholder]multi.placeholder.available_arm_levels_file">
+            </div>
+        </div>
+    </div>
 
     <!-- Brightness Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="brightness" style="background: #fbfbfb; padding: 5px;">
@@ -350,7 +374,7 @@
         </div>
     </div>
 
-    <!-- Cook  Trait-->
+    <!-- Cook Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="cook" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_cook">
             <b><label style="width:auto" for="node-input-trait_cook"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.cook"></span></label></b>
@@ -407,9 +431,39 @@
         </div>
     </div>
 
-    <!-- Dispanse  Trait-->
+    <!-- Dispense Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="dispense" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_dispense">
+            <b><label style="width:auto" for="node-input-trait_dispense"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.dispense"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_dispense" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/dispense"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
 
-    <!-- Dock  Trait-->
+        <div class="form-row label_trait" id="label_trait_dispense">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.dispense"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/dispense"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_dispense">
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-supported_dispense_items_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_dispense_items_file"></span></label>
+                    <input type="text" id="node-input-supported_dispense_items_file" data-i18n="[placeholder]multi.placeholder.supported_dispense_items_file">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-supported_dispense_presets_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_dispense_presets_file"></span></label>
+                    <input type="text" id="node-input-supported_dispense_presets_file" data-i18n="[placeholder]multi.placeholder.supported_dispense_presets_file">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dock Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="dock" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_dock">
             <b><label style="width:auto" for="node-input-trait_dock"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.dock"></span></label></b>
@@ -429,8 +483,42 @@
         </div>
     </div>
 
-    <!-- EnergyStorage  Trait-->
-    
+    <!-- EnergyStorage Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="energystorage" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_energystorage">
+            <b><label style="width:auto" for="node-input-trait_energystorage"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.energystorage"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_energystorage" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/energystorage"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_energystorage">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.energystorage"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/energystorage"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_energystorage">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-query_only_energy_storage"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_energy_storage"></span></label>
+                <input type="checkbox" checked id="node-input-query_only_energy_storage" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-energy_storage_distance_unit_for_ux"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.energy_storage_distance_unit_for_ux"></span></label>
+                <select id="node-input-energy_storage_distance_unit_for_ux" >
+                    <option value="KILOMETERS" data-i18n="multi.label.KILOMETERS"></option>
+                    <option value="MILES" data-i18n="multi.label.MILES"></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-is_rechargeable"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.is_rechargeable"></span></label>
+                <input type="checkbox" checked id="node-input-is_rechargeable" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
     <!-- FanSpeed Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="fanspeed" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_fanspeed">
@@ -459,7 +547,7 @@
 
             <div class="form-row">
                 <label style="width:auto" for="node-input-available_fan_speeds_file"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.available_fan_speeds_file"></span></label>
-                <input type="text" id="node-input-min_percent" data-i18n="[placeholder]multi.placeholder.available_fan_speeds_file">
+                <input type="text" id="node-input-available_fan_speeds_file" data-i18n="[placeholder]multi.placeholder.available_fan_speeds_file">
             </div>
 
             <div class="form-row">
@@ -470,8 +558,34 @@
     </div>
     
     <!-- Fill Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="fill" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_fill">
+            <b><label style="width:auto" for="node-input-trait_fill"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.fill"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_fill" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/fill"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
 
-    <!-- HumiditySetting  Trait-->
+        <div class="form-row label_trait" id="label_trait_fill">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.fill"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/fill"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_fill">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-available_fill_levels_file"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.available_fill_levels_file"></span></label>
+                <input type="text" id="node-input-available_fill_levels_file" data-i18n="[placeholder]multi.placeholder.available_fill_levels_file">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_fill_percent"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_fill_percent"></span></label>
+                <input type="checkbox" checked id="node-input-supports_fill_percent" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <!-- HumiditySetting Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="humiditysetting" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_humiditysetting">
             <b><label style="width:auto" for="node-input-trait_humiditysetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.humiditysetting"></span></label></b>
@@ -687,7 +801,84 @@
     </div>
 
     <!-- NetworkControl Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="networkcontrol" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_networkcontrol">
+            <b><label style="width:auto" for="node-input-trait_networkcontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.networkcontrol"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_networkcontrol" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/networkcontrol"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_networkcontrol">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.networkcontrol"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/networkcontrol"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_networkcontrol">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_enabling_guest_network"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_enabling_guest_network"></span></label>
+                <input type="checkbox" checked id="node-input-supports_enabling_guest_network" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_disabling_guest_network"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_disabling_guest_network"></span></label>
+                <input type="checkbox" checked id="node-input-supports_disabling_guest_network" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_getting_guest_network_password"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_getting_guest_network_password"></span></label>
+                <input type="checkbox" checked id="node-input-supports_getting_guest_network_password" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row" style="margin-bottom:0;">
+                <label><i class="fa fa-list"></i> <span data-i18n="multi.label.network_profiles"></span></label>
+            </div>
+            <div class="form-row node-input-multi-network-profiles-container-row">
+                <ol id="node-input-multi-network-profiles-container"></ol>
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_enabling_network_profile"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_enabling_network_profile"></span></label>
+                <input type="checkbox" checked id="node-input-supports_enabling_network_profile" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_disabling_network_profile"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_disabling_network_profile"></span></label>
+                <input type="checkbox" checked id="node-input-supports_disabling_network_profile" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_network_download_speedtest"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_network_download_speedtest"></span></label>
+                <input type="checkbox" checked id="node-input-supports_network_download_speedtest" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_network_upload_speedtest"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_network_upload_speedtest"></span></label>
+                <input type="checkbox" checked id="node-input-supports_network_upload_speedtest" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
     <!-- ObjectDetection Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="objectdetection" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_objectdetection">
+            <b><label style="width:auto" for="node-input-trait_objectdetection"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.objectdetection"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_objectdetection" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/objectdetection"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_objectdetection">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.objectdetection"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/objectdetection"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_objectdetection">
+            <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
+        </div>
+    </div>
 
     <!-- OnOff Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="onoff" style="background: #fbfbfb; padding: 5px;">
@@ -876,6 +1067,29 @@
     </div>
 
     <!-- SensorState Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="sensorstate" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_sensorstate">
+            <b><label style="width:auto" for="node-input-trait_sensorstate"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.sensorstate"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_sensorstate" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/sensorstate"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_sensorstate">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.sensorstate"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/sensorstate"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_sensorstate">
+            <div class="form-row">
+                <div class="form-row">
+                    <label for="node-input-sensor_state_supported_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.sensor_state_supported_file"></span></label>
+                    <input type="text" id="node-input-sensor_state_supported_file" data-i18n="[placeholder]multi.placeholder.sensor_state_supported_file">
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- SoftwareUpdate Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="softwareupdate" style="background: #fbfbfb; padding: 5px;">
@@ -1487,6 +1701,9 @@
             trait_reboot: {
                 value: false, required:false
             },
+            trait_openclose: {
+                value: false, required:false
+            },
             discrete_only_openclose: {
                 value: false, required:false
             },
@@ -1573,9 +1790,82 @@
             },
             available_fan_speeds_file:  {
                 value: 'availableFanSpeeds.json', required:false
+            },
+            trait_sensorstate: {
+                value: false, required:false
+            },
+            sensor_state_supported_file:  {
+                value: 'sensorStatesSupported.json', required:false
+            },
+            trait_fill: {
+                value: false, required:false
+            },
+            available_fill_levels_file:  {
+                value: 'availableFillLevels.json', required:false
+            },
+            supports_fill_percent: {
+                value: false, required:false
+            },
+            trait_armdisarm: {
+                value: false, required:false
+            },
+            available_arm_levels_file: {
+                value: 'availableArmLevels.json', required:false
+            },
+            trait_energystorage: {
+                value: false, required:false
+            },
+            is_rechargeable: {
+                value: false, required:false
+            },
+            query_only_energy_storage: {
+                value: false, required:false
+            },
+            energy_storage_distance_unit_for_ux: {
+                value: "KILOMETERS", required:false
+            },
+            trait_dispense: {
+                value: false, required:false
+            },
+            supported_dispense_items_file: {
+                value: 'supportedDispenseItems.json', required:false
+            },
+            supported_dispense_presets_file: {
+                value: 'supportedDispensePresets.json', required:false
+            },
+            trait_networkcontrol: {
+                value: false, required:false
+            },
+            supports_enabling_guest_network: {
+                value: false, required:false
+            },
+            supports_disabling_guest_network: {
+                value: false, required:false
+            },
+            supports_getting_guest_network_password: {
+                value: false, required:false
+            },
+            network_profiles: {
+                value: [], required:false
+            },
+            supports_enabling_network_profile: {
+                value: false, required:false
+            },
+            supports_disabling_network_profile: {
+                value: false, required:false
+            },
+            supports_network_download_speedtest: {
+                value: false, required:false
+            },
+            supports_network_upload_speedtest: {
+                value: false, required:false
+            },
+            trait_objectdetection: {
+                value: false, required:false
             }
         },
         oneditprepare: function() {
+            // Zones
             $('#node-input-multi-zone-container').css('min-height','150px').css('min-width','450px').editableList({
                 addItem: function(container,i,opt) {
                     var zone=opt;
@@ -1604,6 +1894,36 @@
                 var zone = this.available_zones[i];
                 $("#node-input-multi-zone-container").editableList('addItem',{ name: zone});
             }
+            // Network profiles
+            $('#node-input-multi-network-profiles-container').css('min-height','150px').css('min-width','450px').editableList({
+                addItem: function(container,i,opt) {
+                    var network_profiles=opt;
+                    if (!network_profiles.hasOwnProperty('name')) {
+                        network_profiles={name:""};
+                    }
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    let fragment = document.createDocumentFragment();
+                    var row1 = $('<div/>',{style:"display:flex;"}).appendTo(fragment);
+                    var propertyName = $('<input/>',{class:"node-input-multi-network-profiles-property-name",type:"text"})
+                        .appendTo(row1);
+                    propertyName.val(network_profiles.name);
+
+                    container[0].appendChild(fragment);
+                },
+                removable: true,
+                sortable: true
+            });
+            if (!this.network_profiles) {
+                this.network_profiles = [];
+            }
+            for (var i=0; i<this.network_profiles.length; i++) {
+                var network_profiles = this.network_profiles[i];
+                $("#node-input-multi-network-profiles-container").editableList('addItem',{ name: network_profiles});
+            }
+
             $(".cb_trait").change(function() {
                 const checked = $( this ).prop('checked');
                 const cb_id =  $( this ).attr('id');
@@ -2004,6 +2324,7 @@
             $("#node-input-device_type").change(deviceTypeChanged);
         },
         oneditsave: function() {
+            // Zone
             var available_zones = $("#node-input-multi-zone-container").editableList('items');
             var node = this;
             node.available_zones= [];
@@ -2012,8 +2333,18 @@
                 var name = zone.find(".node-input-multi-zone-property-name").val();
                 node.available_zones.push(name);
             });
+            // Network profiles
+            var network_profiles = $("#node-input-multi-network-profiles-container").editableList('items');
+            var node = this;
+            node.network_profiles= [];
+            network_profiles.each(function(i) {
+                var network_profile = $(this);
+                var name = network_profile.find(".node-input-multi-network-profiles-property-name").val();
+                node.network_profiles.push(name);
+            });
         },
         oneditresize: function(size) {
+            // Zone
             var rows = $("#dialog-form>div:not(.node-input-multi-zone-container-row)");
             var height = size.height;
             for (var i=0; i<rows.length; i++) {
@@ -2023,6 +2354,16 @@
             height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
             height += 16;
             $("#node-input-multi-zone-container").editableList('height',height);
+            // Network profiles
+            var rows = $("#dialog-form>div:not(.node-input-multi-network-profiles-container-row)");
+            var height = size.height;
+            for (var i=0; i<rows.length; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            var editorRow = $("#dialog-form>div.node-input-multi-network-profiles-container-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            height += 16;
+            $("#node-input-multi-network-profiles-container").editableList('height',height);
         }
     });
 </script>

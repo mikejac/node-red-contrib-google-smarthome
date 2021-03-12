@@ -75,97 +75,118 @@ module.exports = function(RED) {
                 transportcontrol: config.trait_transportcontrol || false,
                 volume: config.trait_volume || false,
             };
-            this.topicOut                               = config.topic;
-            this.device_type					        = config.device_type;
-            this.lang                                   = config.lang;
-            this.appselector_file                       = config.appselector_file;
-            this.available_applications                 = [];
-            this.channel_file                           = config.channel_file;
-            this.available_channels                     = [];
-            this.inputselector_file                     = config.inputselector_file;
-            this.available_inputs                       = [];
-            this.command_only_input_selector            = config.command_only_input_selector;
-            this.ordered_inputs                         = config.ordered_inputs;
-            this.support_activity_state                 = config.support_activity_state;
-            this.support_playback_state                 = config.support_playback_state;
-            this.command_only_onoff                     = config.command_only_onoff;
-            this.query_only_onoff                       = config.query_only_onoff;
-            this.supported_commands                     = config.supported_commands;
-            this.volume_max_level                       = parseInt(config.volume_max_level) || 100;
-            this.can_mute_and_unmute                    = config.can_mute_and_unmute;
-            this.volume_default_percentage              = parseInt(config.volume_default_percentage) || 40;
-            this.level_step_size                        = parseInt(config.level_step_size) || 1;
-            this.command_only_volume                    = config.command_only_volume;
-            this.modes_file                             = config.modes_file;
-            this.available_modes                        = [];
-            this.command_only_modes                     = config.command_only_modes;
-            this.query_only_modes                       = config.query_only_modes;
-            this.toggles_file                           = config.toggles_file;
-            this.available_toggles                      = [];
-            this.command_only_toggles                   = config.command_only_toggles;
-            this.query_only_toggles                     = config.query_only_toggles;
-            this.last_channel_index                     = '';
-            this.current_channel_index                  = -1;
-            this.current_input_index                    = -1;
-            this.command_only_brightness                = config.command_only_brightness;
-            this.command_only_colorsetting              = config.command_only_colorsetting;
-            this.temperature_min_k                      = parseInt(config.temperature_min_k) || 2000;
-            this.temperature_max_k                      = parseInt(config.temperature_max_k) || 9000;
-            this.color_model                            = config.color_model || 'temp';
-            this.hlsUrl                                 = config.hls.trim();
-            this.hlsAppId                               = config.hls_app_id.trim();
-            this.dashUrl                                = config.dash.trim();
-            this.dashAppId                              = config.dash_app_id.trim();
-            this.smoothStreamUrl                        = config.smooth_stream.trim();
-            this.smoothStreamAppId                      = config.smooth_stream_app_id.trim();
-            this.progressiveMp4Url                      = config.progressive_mp4.trim();
-            this.progressiveMp4AppId                    = config.progressive_mp4_app_id.trim();
-            this.authToken                              = config.auth_token.trim();
-            this.scene_reversible                       = config.scene_reversible;
-            this.command_only_timer                     = config.command_only_timer;
-            this.max_timer_limit_sec                    = config.max_timer_limit_sec;
-            this.trait_temperaturesetting               = config.trait_temperaturesetting;
-            this.available_thermostat_modes             = config.available_thermostat_modes;
-            this.min_threshold_celsius                  = parseInt(config.min_threshold_celsius) || 0;
-            this.max_threshold_celsius                  = parseInt(config.max_threshold_celsius) || 40;
-            this.thermostat_temperature_unit            = config.thermostat_temperature_unit || "C";
-            this.buffer_range_celsius                   = parseInt(config.buffer_range_celsius) || 2;
-            this.command_only_temperaturesetting        = config.command_only_temperaturesetting;
-            this.query_only_temperaturesetting          = config.query_only_temperaturesetting;
+            this.topicOut                                   = config.topic;
+            this.device_type					            = config.device_type;
+            this.lang                                       = config.lang;
+            this.appselector_file                           = config.appselector_file;
+            this.available_applications                     = [];
+            this.channel_file                               = config.channel_file;
+            this.available_channels                         = [];
+            this.inputselector_file                         = config.inputselector_file;
+            this.available_inputs                           = [];
+            this.command_only_input_selector                = config.command_only_input_selector;
+            this.ordered_inputs                             = config.ordered_inputs;
+            this.support_activity_state                     = config.support_activity_state;
+            this.support_playback_state                     = config.support_playback_state;
+            this.command_only_onoff                         = config.command_only_onoff;
+            this.query_only_onoff                           = config.query_only_onoff;
+            this.supported_commands                         = config.supported_commands;
+            this.volume_max_level                           = parseInt(config.volume_max_level) || 100;
+            this.can_mute_and_unmute                        = config.can_mute_and_unmute;
+            this.volume_default_percentage                  = parseInt(config.volume_default_percentage) || 40;
+            this.level_step_size                            = parseInt(config.level_step_size) || 1;
+            this.command_only_volume                        = config.command_only_volume;
+            this.modes_file                                 = config.modes_file;
+            this.available_modes                            = [];
+            this.command_only_modes                         = config.command_only_modes;
+            this.query_only_modes                           = config.query_only_modes;
+            this.toggles_file                               = config.toggles_file;
+            this.available_toggles                          = [];
+            this.command_only_toggles                       = config.command_only_toggles;
+            this.query_only_toggles                         = config.query_only_toggles;
+            this.last_channel_index                         = '';
+            this.current_channel_index                      = -1;
+            this.current_input_index                        = -1;
+            this.command_only_brightness                    = config.command_only_brightness;
+            this.command_only_colorsetting                  = config.command_only_colorsetting;
+            this.temperature_min_k                          = parseInt(config.temperature_min_k) || 2000;
+            this.temperature_max_k                          = parseInt(config.temperature_max_k) || 9000;
+            this.color_model                                = config.color_model || 'temp';
+            this.hlsUrl                                     = config.hls.trim();
+            this.hlsAppId                                   = config.hls_app_id.trim();
+            this.dashUrl                                    = config.dash.trim();
+            this.dashAppId                                  = config.dash_app_id.trim();
+            this.smoothStreamUrl                            = config.smooth_stream.trim();
+            this.smoothStreamAppId                          = config.smooth_stream_app_id.trim();
+            this.progressiveMp4Url                          = config.progressive_mp4.trim();
+            this.progressiveMp4AppId                        = config.progressive_mp4_app_id.trim();
+            this.authToken                                  = config.auth_token.trim();
+            this.scene_reversible                           = config.scene_reversible;
+            this.command_only_timer                         = config.command_only_timer;
+            this.max_timer_limit_sec                        = config.max_timer_limit_sec;
+            this.trait_temperaturesetting                   = config.trait_temperaturesetting;
+            this.available_thermostat_modes                 = config.available_thermostat_modes;
+            this.min_threshold_celsius                      = parseInt(config.min_threshold_celsius) || 0;
+            this.max_threshold_celsius                      = parseInt(config.max_threshold_celsius) || 40;
+            this.thermostat_temperature_unit                = config.thermostat_temperature_unit || "C";
+            this.buffer_range_celsius                       = parseInt(config.buffer_range_celsius) || 2;
+            this.command_only_temperaturesetting            = config.command_only_temperaturesetting;
+            this.query_only_temperaturesetting              = config.query_only_temperaturesetting;
             this.target_temp_reached_estimate_unix_timestamp_sec = undefined;
-            this.thermostat_humidity_ambient            = undefined;
-            this.tc_min_threshold_celsius               = config.tc_min_threshold_celsius;
-            this.tc_max_threshold_celsius               = config.tc_max_threshold_celsius;
-            this.tc_temperature_step_celsius            = config.tc_temperature_step_celsius;
-            this.tc_temperature_unit_for_ux             = config.tc_temperature_unit_for_ux;
-            this.tc_command_only_temperaturecontrol     = config.tc_command_only_temperaturecontrol;
-            this.tc_query_only_temperaturecontrol       = config.tc_query_only_temperaturecontrol;
-            this.min_percent                            = parseInt(config.min_percent) || 0;
-            this.max_percent                            = parseInt(config.max_percent) || 100;
-            this.command_only_humiditysetting           = config.command_only_humiditysetting;
-            this.query_only_humiditysetting             = config.query_only_humiditysetting;
-            this.discrete_only_openclose                = config.discrete_only_openclose;
-            this.open_direction                         = config.open_direction;
-            this.command_only_openclose                 = config.command_only_openclose;
-            this.query_only_openclose                   = config.query_only_openclose;
-            this.pausable                               = config.pausable;
-            this.available_zones                        = config.available_zones;
-            this.supports_degrees                       = config.supports_degrees;
-            this.supports_percent                       = config.supports_percent;
-            this.rotation_degrees_min                   = parseInt(config.rotation_degrees_min) || 0;
-            this.rotation_degrees_max                   = parseInt(config.rotation_degrees_max) || 360;
-            this.supports_continuous_rotation           = config.supports_continuous_rotation;
-            this.command_only_rotation                  = config.command_only_rotation;
-            this.default_sleep_duration                 = config.default_sleep_duration;
-            this.default_wake_duration                  = config.default_wake_duration;
-            this.supported_effects                      = config.supported_effects;
-            this.supported_cooking_modes                = config.supported_cooking_modes;
-            this.food_presets_file                      = config.food_presets_file;
-            this.reversible                             = config.reversible;
-            this.command_only_fanspeed                  = config.command_only_fanspeed;
-            this.supports_fan_speed_percent             = config.supports_fan_speed_percent;
-            this.available_fan_speeds_file              = config.available_fan_speeds_file;
-
+            this.thermostat_humidity_ambient                = undefined;
+            this.tc_min_threshold_celsius                   = config.tc_min_threshold_celsius;
+            this.tc_max_threshold_celsius                   = config.tc_max_threshold_celsius;
+            this.tc_temperature_step_celsius                = config.tc_temperature_step_celsius;
+            this.tc_temperature_unit_for_ux                 = config.tc_temperature_unit_for_ux;
+            this.tc_command_only_temperaturecontrol         = config.tc_command_only_temperaturecontrol;
+            this.tc_query_only_temperaturecontrol           = config.tc_query_only_temperaturecontrol;
+            this.min_percent                                = parseInt(config.min_percent) || 0;
+            this.max_percent                                = parseInt(config.max_percent) || 100;
+            this.command_only_humiditysetting               = config.command_only_humiditysetting;
+            this.query_only_humiditysetting                 = config.query_only_humiditysetting;
+            this.discrete_only_openclose                    = config.discrete_only_openclose;
+            this.open_direction                             = config.open_direction;
+            this.command_only_openclose                     = config.command_only_openclose;
+            this.query_only_openclose                       = config.query_only_openclose;
+            this.pausable                                   = config.pausable;
+            this.available_zones                            = config.available_zones;
+            this.supports_degrees                           = config.supports_degrees;
+            this.supports_percent                           = config.supports_percent;
+            this.rotation_degrees_min                       = parseInt(config.rotation_degrees_min) || 0;
+            this.rotation_degrees_max                       = parseInt(config.rotation_degrees_max) || 360;
+            this.supports_continuous_rotation               = config.supports_continuous_rotation;
+            this.command_only_rotation                      = config.command_only_rotation;
+            this.default_sleep_duration                     = config.default_sleep_duration;
+            this.default_wake_duration                      = config.default_wake_duration;
+            this.supported_effects                          = config.supported_effects;
+            this.supported_cooking_modes                    = config.supported_cooking_modes;
+            this.food_presets_file                          = config.food_presets_file;
+            this.reversible                                 = config.reversible;
+            this.command_only_fanspeed                      = config.command_only_fanspeed;
+            this.supports_fan_speed_percent                 = config.supports_fan_speed_percent;
+            this.available_fan_speeds_file                  = config.available_fan_speeds_file;
+            this.sensor_state_supported_file                = config.sensor_state_supported_file;
+            this.available_fill_levels_file                 = config.available_fill_levels_file;
+            this.available_fill_levels                      = [];
+            this.ordered                                    = config.ordered;
+            this.supports_fill_percent                      = config.supports_fill_percent;
+            this.available_arm_levels_file                  = config.available_arm_levels_file;
+            this.energy_storage_distance_unit_for_ux        = config.energy_storage_distance_unit_for_ux;
+            this.query_only_energy_storage                  = config.query_only_energy_storage;
+            this.is_rechargeable                            = config.is_rechargeable;
+            this.supported_dispense_items_file              = config.supported_dispense_items_file;
+            this.supported_dispense_items                   = [];
+            this.supported_dispense_presets_file            = config.supported_dispense_presets_file;
+            this.supported_dispense_presets                 = [];
+            this.supports_enabling_guest_network            = config.supports_enabling_guest_network;
+            this.supports_disabling_guest_network           = config.supports_disabling_guest_network;
+            this.supports_getting_guest_network_password    = config.supports_getting_guest_network_password;
+            this.network_profiles                           = config.network_profiles;
+            this.supports_enabling_network_profile          = config.supports_enabling_network_profile;
+            this.supports_disabling_network_profile         = config.supports_disabling_network_profile;
+            this.supports_network_download_speedtest        = config.supports_network_download_speedtest;
+            this.supports_network_upload_speedtest          = config.supports_network_upload_speedtest;
+            
             this.protocols = [];
             if (this.hlsUrl) {
                 this.protocols.push('hls');
@@ -459,6 +480,17 @@ module.exports = function(RED) {
                 this.debug(".constructor: Applications disabled");
             }
 
+            if (this.trait.armdisarm) {
+                this.available_arm_levels = this.loadJson(this.available_arm_levels_file, []);
+                if (this.available_arm_levels === undefined) {
+                    error_msg += ' Applications file error.';
+                    RED.log.error("Applications " +  this.available_arm_levels_file + "file error.");
+                }
+            } else {
+                this.available_applications = undefined;
+                this.debug(".constructor: Applications disabled");
+            }
+
             if (this.trait.channel) {
                 this.available_channels = this.loadJson(this.channel_file, []);
                 if (this.available_channels === undefined) {
@@ -481,15 +513,44 @@ module.exports = function(RED) {
                 this.debug(".constructor: Food presets disabled");
             }
 
+            if (this.trait.dispense) {
+                this.supported_dispense_items = this.loadJson(this.supported_dispense_items_file, []);
+                if (this.supported_dispense_items === undefined) {
+                    error_msg += ' Supported dispense items file error.';
+                    RED.log.error("Supported dispense items " +  this.supported_dispense_items_file + "file error.");
+                }
+
+                this.supported_dispense_presets = this.loadJson(this.supported_dispense_presets_file, []);
+                if (this.supported_dispense_presets === undefined) {
+                    error_msg += ' Supported dispense presets file error.';
+                    RED.log.error("Supported dispense presets " +  this.supported_dispense_presets_file + "file error.");
+                }
+            } else {
+                this.supported_dispense_items = undefined;
+                this.supported_dispense_presets = undefined;
+                this.debug(".constructor: Supported dispense disabled");
+            }
+
             if (this.trait.fanspeed) {
                 this.available_fan_speeds = this.loadJson(this.available_fan_speeds_file, []);
                 if (this.available_fan_speeds === undefined) {
-                    error_msg += ' Food presets file error.';
-                    RED.log.error("Food presets " +  this.available_fan_speeds_file + "file error.");
+                    error_msg += ' Fan speeds file error.';
+                    RED.log.error("Fan speeds " +  this.available_fan_speeds_file + "file error.");
                 }
             } else {
                 this.available_fan_speeds = undefined;
                 this.debug(".constructor: Food presets disabled");
+            }
+
+            if (this.trait.fill) {
+                this.available_fill_levels = this.loadJson(this.available_fill_levels_file, []);
+                if (this.available_fill_levels === undefined) {
+                    error_msg += ' Available fill levels file error.';
+                    RED.log.error("Available fill levels " +  this.available_fill_levels_file + "file error.");
+                }
+            } else {
+                this.available_fill_levels = undefined;
+                this.debug(".constructor: Available fill levels disabled");
             }
 
             if (this.trait.inputselector) {
@@ -512,6 +573,17 @@ module.exports = function(RED) {
             } else {
                 this.available_modes = undefined;
                 this.debug(".constructor: Modes disabled");
+            }
+
+            if (this.trait.sensorstate) {
+                this.sensor_state_supported = this.loadJson(this.sensor_state_supported_file, []);
+                if (this.sensor_state_supported === undefined) {
+                    error_msg += ' Toggles file error.';
+                    RED.log.error("Toggles " +  this.sensor_state_supported_file + "file error.");
+                }
+            } else {
+                this.available_toggles = undefined;
+                this.debug(".constructor: Toggles disabled");
             }
 
             if (this.trait.toggles) {
@@ -597,6 +669,9 @@ module.exports = function(RED) {
             if (me.trait.apps) {
                 attributes['availableApplications'] = me.available_applications;
             }
+            if (me.trait.armdisarm) {
+                attributes['availableArmLevels'] = me.available_arm_levels;
+            }
             if (me.trait.brightness) {
                 attributes['commandOnlyBrightness'] = me.command_only_brightness;
             }
@@ -622,11 +697,21 @@ module.exports = function(RED) {
                 attributes['supportedCookingModes'] = me.supported_cooking_modes;
                 attributes['foodPresets'] = me.food_presets;
             }
+            if (me.trait.energystorage) {
+                attributes['queryOnlyEnergyStorage'] = me.query_only_energy_storage;
+                attributes['energyStorageDistanceUnitForUX'] = me.energy_storage_distance_unit_for_ux;
+                attributes['isRechargeable'] = me.is_rechargeable;
+            }
             if (me.trait.fanspeed) {
                 attributes['reversible'] = me.reversible;
                 attributes['commandOnlyFanSpeed'] = me.command_only_fanspeed;
                 attributes['availableFanSpeeds'] = me.available_fan_speeds;
                 attributes['supportsFanSpeedPercent'] = me.supports_fan_speed_percent;
+            }
+            if (me.trait.fill) {
+                attributes['availableFillLevels'] = me.available_fill_levels;
+                attributes['ordered'] = me.ordered;
+                attributes['supportsFillPercent'] = me.supports_fill_percent;
             }
             if (me.trait.humiditysetting) {
                 attributes['humiditySetpointRange'] = {
@@ -655,6 +740,16 @@ module.exports = function(RED) {
                 attributes['commandOnlyModes'] = me.command_only_modes;
                 attributes['queryOnlyModes'] = me.query_only_modees;
             }
+            if (me.trait.networkcontrol) {
+                attributes['supportsEnablingGuestNetwork'] = me.supports_enabling_guest_network;
+                attributes['supportsDisablingGuestNetwork'] = me.supports_disabling_guest_network;
+                attributes['supportsGettingGuestNetworkPassword'] = me.supports_getting_guest_network_password;
+                attributes['networkProfiles'] = me.network_profiles;
+                attributes['supportsEnablingNetworkProfile'] = me.supports_enabling_network_profile;
+                attributes['supportsDisablingNetworkProfile'] = me.supports_disabling_network_profile;
+                attributes['supportsNetworkDownloadSpeedTest'] = me.supports_network_download_speedtest;
+                attributes['supportsNetworkUploadSpeedTest'] = me.supports_network_upload_speedtest;
+            }
             if (me.trait.onoff) {
                 attributes['commandOnlyOnOff'] = me.command_only_onoff;
                 attributes['queryOnlyOnOff'] = me.query_only_onoff;
@@ -677,6 +772,9 @@ module.exports = function(RED) {
             }
             if (me.trait.scene) {
                 attributes['sceneReversible'] = me.scene_reversible;
+            }
+            if (me.trait.sensorstate) {
+                attributes['sensorStatesSupported'] = me.sensor_state_supported;
             }
             if (me.trait.startstop) {
                 attributes['pausable'] = me.pausable;
@@ -730,6 +828,11 @@ module.exports = function(RED) {
             if (me.trait.apps) {
                 states['currentApplication'] = '';
             }
+            if (me.trait.armdisarm) {
+                states['isArmed'] = false;
+                states['currentArmLevel'] = [];
+                states['exitAllowance'] = 60;
+            }
             if (me.trait.brightness) {
                 states['brightness'] = 50;
             }
@@ -756,6 +859,13 @@ module.exports = function(RED) {
             if (me.trait.dock) {
                 states['isDocked'] = false;
             }
+            if (me.trait.energystorage) {
+                states['descriptiveCapacityRemaining'] = "FULL";
+                states['capacityRemaining'] = [];
+                states['capacityUntilFull'] = [];
+                states['isCharging'] = false;
+                states['isPluggedIn'] = false;
+            }
             if (me.trait.fanspeed) {
                 states['currentFanSpeedSetting'] = "";
                 states['currentFanSpeedPercent'] = 0;
@@ -766,6 +876,11 @@ module.exports = function(RED) {
             }
             if (me.trait.lighteffects) {
                 states['activeLightEffect'] = "";
+            }
+            if (me.trait.networkcontrol) {
+                states['isLonetworkEnabledcked'] = false;
+                states['networkSpeedTestInProgress'] = false;
+                // TODO
             }
             if (me.trait.openclose) {
                 if (me.open_direction.length < 2) {
@@ -796,6 +911,9 @@ module.exports = function(RED) {
                 }];
                 states['currentTotalRemainingTime'] = 0;
                 states['currentCycleRemainingTime'] = 0;
+            }
+            if (me.trait.sensorstate) {
+                states['currentSensorStateData'] = [];
             }
             if (me.trait.softwareupdate) {
                 states['lastSoftwareUpdateUnixTimestampSec'] = 0;
@@ -915,6 +1033,7 @@ module.exports = function(RED) {
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             try {
+                // TODO
                 if (topic.toUpperCase() === 'APPLICATIONS') {
                     if (this.trait.apps) {
                         if (typeof msg.payload === undefined) {
