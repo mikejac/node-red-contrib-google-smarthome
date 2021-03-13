@@ -195,7 +195,8 @@
             "show_trait": "Show trait",
             "selected": "Selected",
             "recommended": "Recommended",
-            "all": "All"
+            "all": "All",
+            "advanced_settings": "Advanced settings"
         },
         "placeholder": {
             "name": "Name",

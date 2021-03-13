@@ -48,7 +48,7 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.topic"></span></label>
+        <label for="node-input-topic"><i class="fa fa-tag"></i> <span data-i18n="multi.label.topic"></span></label>
         <input type="text" id="node-input-topic" data-i18n="[placeholder]multi.placeholder.topic">
     </div>
 
@@ -59,7 +59,7 @@
     </div>
     
     <div class="form-row">
-        <label for="node-input-lang"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.lang"></span></label>
+        <label for="node-input-lang"><i class="fa fa-tag"></i> <span data-i18n="multi.label.lang"></span></label>
         <select id="node-input-lang" >
             <option value='da' data-i18n='multi.label.da'></option>
             <option value='nl' data-i18n='multi.label.nl'></option>
@@ -80,7 +80,7 @@
     </div>
 
     <div class="form-row" id="device_type">
-        <label for="node-input-device_type"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.device_type"></span></label>
+        <label for="node-input-device_type"><i class="fa fa-tag"></i> <span data-i18n="multi.label.device_type"></span></label>
         <select id="node-input-device_type" >
             <option value='AC_UNIT' data-i18n='multi.device_type.AC_UNIT'></option>
             <option value='AIRCOOLER' data-i18n='multi.device_type.AIRCOOLER'></option>
@@ -164,12 +164,17 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-show_trait"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.show_trait"></span></label>
+        <label for="node-input-show_trait"><i class="fa fa-tag"></i> <span data-i18n="multi.label.show_trait"></span></label>
         <select id="node-input-show_trait" >
             <option value="selected" data-i18n="multi.label.selected"></option>
             <option value="recommended" data-i18n="multi.label.recommended"></option>
             <option value="all" data-i18n="multi.label.all"></option>
         </select>
+    </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-advanced_settings"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.advanced_settings"></span></label>
+        <input type="checkbox" checked id="node-input-advanced_settings" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
 
     <!-- AppSelector Trait-->
@@ -189,10 +194,8 @@
 
         <div id="trait_appselector">
             <div class="form-row">
-                <div class="form-row">
-                    <label for="node-input-appselector_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.appselector_file"></span></label>
-                    <input type="text" id="node-input-appselector_file" data-i18n="[placeholder]multi.placeholder.appselector_file">
-                </div>
+                <label for="node-input-appselector_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.appselector_file"></span></label>
+                <input type="text" id="node-input-appselector_file" data-i18n="[placeholder]multi.placeholder.appselector_file">
             </div>
         </div>
     </div>
@@ -214,7 +217,7 @@
 
         <div id="trait_armdisarm">
             <div class="form-row">
-                <label style="width:auto" for="node-input-available_arm_levels_file"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.available_arm_levels_file"></span></label>
+                <label style="width:auto" for="node-input-available_arm_levels_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.available_arm_levels_file"></span></label>
                 <input type="text" id="node-input-available_arm_levels_file" data-i18n="[placeholder]multi.placeholder.available_arm_levels_file">
             </div>
         </div>
@@ -236,11 +239,9 @@
         </div>
 
         <div id="trait_brightness">
-            <div class="form-row">
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-command_only_brightness"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_brightness"></span></label>
-                    <input type="checkbox" checked id="node-input-command_only_brightness" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_brightness"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_brightness"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_brightness" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
         </div>
     </div>
@@ -262,47 +263,47 @@
 
         <div id="trait_camerastream">
             <div class="form-row">
-                <label for="node-input-hls"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.hls"></span></label>
+                <label for="node-input-hls"><i class="fa fa-globe"></i> <span data-i18n="multi.label.hls"></span></label>
                 <input type="text" id="node-input-hls" data-i18n="[placeholder]multi.placeholder.hls">
             </div>
         
             <div class="form-row">
-                <label for="node-input-hls_app_id"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.hls_app_id"></span></label>
+                <label for="node-input-hls_app_id"><i class="fa fa-tag"></i> <span data-i18n="multi.label.hls_app_id"></span></label>
                 <input type="text" id="node-input-hls_app_id" data-i18n="[placeholder]multi.placeholder.hls_app_id">
             </div>
         
             <div class="form-row">
-                <label for="node-input-dash"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.dash"></span></label>
+                <label for="node-input-dash"><i class="fa fa-globe"></i> <span data-i18n="multi.label.dash"></span></label>
                 <input type="text" id="node-input-dash" data-i18n="[placeholder]multi.placeholder.dash">
             </div>
         
             <div class="form-row">
-                <label for="node-input-dash_app_id"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.dash_app_id"></span></label>
+                <label for="node-input-dash_app_id"><i class="fa fa-tag"></i> <span data-i18n="multi.label.dash_app_id"></span></label>
                 <input type="text" id="node-input-dash_app_id" data-i18n="[placeholder]multi.placeholder.dash_app_id">
             </div>
         
             <div class="form-row">
-                <label for="node-input-smooth_stream"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.smooth_stream"></span></label>
+                <label for="node-input-smooth_stream"><i class="fa fa-globe"></i> <span data-i18n="multi.label.smooth_stream"></span></label>
                 <input type="text" id="node-input-smooth_stream" data-i18n="[placeholder]multi.placeholder.smooth_stream">
             </div>
         
             <div class="form-row">
-                <label for="node-input-smooth_stream_app_id"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.smooth_stream_app_id"></span></label>
+                <label for="node-input-smooth_stream_app_id"><i class="fa fa-tag"></i> <span data-i18n="multi.label.smooth_stream_app_id"></span></label>
                 <input type="text" id="node-input-smooth_stream_app_id" data-i18n="[placeholder]multi.placeholder.smooth_stream_app_id">
             </div>
         
             <div class="form-row">
-                <label for="node-input-progressive_mp4"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.progressive_mp4"></span></label>
+                <label for="node-input-progressive_mp4"><i class="fa fa-globe"></i> <span data-i18n="multi.label.progressive_mp4"></span></label>
                 <input type="text" id="node-input-progressive_mp4" data-i18n="[placeholder]multi.placeholder.progressive_mp4">
             </div>
         
             <div class="form-row">
-                <label for="node-input-progressive_mp4_app_id"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.progressive_mp4_app_id"></span></label>
+                <label for="node-input-progressive_mp4_app_id"><i class="fa fa-tag"></i> <span data-i18n="multi.label.progressive_mp4_app_id"></span></label>
                 <input type="text" id="node-input-progressive_mp4_app_id" data-i18n="[placeholder]multi.placeholder.progressive_mp4_app_id">
             </div>
         
             <div class="form-row">
-                <label for="node-input-auth_token"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.auth_token"></span></label>
+                <label for="node-input-auth_token"><i class="fa fa-tag"></i> <span data-i18n="multi.label.auth_token"></span></label>
                 <input type="text" id="node-input-auth_token" data-i18n="[placeholder]multi.placeholder.auth_token">
             </div>
         </div>
@@ -325,10 +326,8 @@
 
         <div id="trait_channel">
             <div class="form-row">
-                <div class="form-row">
-                    <label for="node-input-channel_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.channel_file"></span></label>
-                    <input type="text" id="node-input-channel_file" data-i18n="[placeholder]multi.placeholder.channel_file">
-                </div>
+                <label for="node-input-channel_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.channel_file"></span></label>
+                <input type="text" id="node-input-channel_file" data-i18n="[placeholder]multi.placeholder.channel_file">
             </div>
         </div>
     </div>
@@ -349,15 +348,13 @@
         </div>
 
         <div id="trait_colorsetting">
-            <div class="form-row">
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-command_only_colorsetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_colorsetting"></span></label>
-                    <input type="checkbox" checked id="node-input-command_only_colorsetting" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_colorsetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_colorsetting"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_colorsetting" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
 
             <div class="form-row">
-                <label for="node-input-color_model"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.color_model"></span></label>
+                <label for="node-input-color_model"><i class="fa fa-tag"></i> <span data-i18n="multi.label.color_model"></span></label>
                 <select multiple id="node-input-color_model" >
                     <option value="temp" data-i18n="multi.label.temperature_k"></option>
                     <option value="rgb" data-i18n="multi.label.rgb"></option>
@@ -371,12 +368,12 @@
                 <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.color_temperature_range"></span></label></b>
 
                 <div class="form-row">
-                    <label for="node-input-temperature_min_k"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.temperature_min_k"></span></label>
+                    <label for="node-input-temperature_min_k"><i class="fa fa-tag"></i> <span data-i18n="multi.label.temperature_min_k"></span></label>
                     <input type="text" id="node-input-temperature_min_k" data-i18n="[placeholder]multi.placeholder.temperature_min_k">
                 </div>
 
                 <div class="form-row">
-                    <label for="node-input-temperature_max_k"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.temperature_max_k"></span></label>
+                    <label for="node-input-temperature_max_k"><i class="fa fa-tag"></i> <span data-i18n="multi.label.temperature_max_k"></span></label>
                     <input type="text" id="node-input-temperature_max_k" data-i18n="[placeholder]multi.placeholder.temperature_max_k">
                 </div>
             </div>
@@ -400,7 +397,7 @@
 
         <div id="trait_cook">
             <div class="form-row">
-                <label for="node-input-supported_cooking_modes"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_cooking_modes"></span></label>
+                <label for="node-input-supported_cooking_modes"><i class="fa fa-tag"></i> <span data-i18n="multi.label.supported_cooking_modes"></span></label>
                 <select multiple id="node-input-supported_cooking_modes" >
                     <option value="UNKNOWN_COOKING_MODE" data-i18n="multi.label.UNKNOWN_COOKING_MODE"></option>
                     <option value="BAKE" data-i18n="multi.label.BAKE"></option>
@@ -434,7 +431,7 @@
             </div>
 
             <div class="form-row">
-                <label for="node-input-food_presets_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.food_presets_file"></span></label>
+                <label for="node-input-food_presets_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.food_presets_file"></span></label>
                 <input type="text" id="node-input-food_presets_file" data-i18n="[placeholder]multi.placeholder.food_presets_file">
             </div>
         </div>
@@ -457,17 +454,13 @@
 
         <div id="trait_dispense">
             <div class="form-row">
-                <div class="form-row">
-                    <label for="node-input-supported_dispense_items_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_dispense_items_file"></span></label>
-                    <input type="text" id="node-input-supported_dispense_items_file" data-i18n="[placeholder]multi.placeholder.supported_dispense_items_file">
-                </div>
+                <label for="node-input-supported_dispense_items_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.supported_dispense_items_file"></span></label>
+                <input type="text" id="node-input-supported_dispense_items_file" data-i18n="[placeholder]multi.placeholder.supported_dispense_items_file">
             </div>
 
             <div class="form-row">
-                <div class="form-row">
-                    <label for="node-input-supported_dispense_presets_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_dispense_presets_file"></span></label>
-                    <input type="text" id="node-input-supported_dispense_presets_file" data-i18n="[placeholder]multi.placeholder.supported_dispense_presets_file">
-                </div>
+                <label for="node-input-supported_dispense_presets_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.supported_dispense_presets_file"></span></label>
+                <input type="text" id="node-input-supported_dispense_presets_file" data-i18n="[placeholder]multi.placeholder.supported_dispense_presets_file">
             </div>
         </div>
     </div>
@@ -508,13 +501,13 @@
         </div>
 
         <div id="trait_energystorage">
-            <div class="form-row">
+            <div class="form-row multi-advanced">
                 <label style="width:auto" for="node-input-query_only_energy_storage"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_energy_storage"></span></label>
                 <input type="checkbox" checked id="node-input-query_only_energy_storage" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
 
             <div class="form-row">
-                <label for="node-input-energy_storage_distance_unit_for_ux"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.energy_storage_distance_unit_for_ux"></span></label>
+                <label for="node-input-energy_storage_distance_unit_for_ux"><i class="fa fa-tag"></i> <span data-i18n="multi.label.energy_storage_distance_unit_for_ux"></span></label>
                 <select id="node-input-energy_storage_distance_unit_for_ux" >
                     <option value="KILOMETERS" data-i18n="multi.label.KILOMETERS"></option>
                     <option value="MILES" data-i18n="multi.label.MILES"></option>
@@ -555,11 +548,11 @@
             </div>
 
             <div class="form-row">
-                <label style="width:auto" for="node-input-available_fan_speeds_file"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.available_fan_speeds_file"></span></label>
+                <label style="width:auto" for="node-input-available_fan_speeds_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.available_fan_speeds_file"></span></label>
                 <input type="text" id="node-input-available_fan_speeds_file" data-i18n="[placeholder]multi.placeholder.available_fan_speeds_file">
             </div>
 
-            <div class="form-row">
+            <div class="form-row multi-advanced">
                 <label style="width:auto" for="node-input-command_only_fanspeed"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_fanspeed"></span></label>
                 <input type="checkbox" checked id="node-input-command_only_fanspeed" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
@@ -583,7 +576,7 @@
 
         <div id="trait_fill">
             <div class="form-row">
-                <label style="width:auto" for="node-input-available_fill_levels_file"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.available_fill_levels_file"></span></label>
+                <label style="width:auto" for="node-input-available_fill_levels_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.available_fill_levels_file"></span></label>
                 <input type="text" id="node-input-available_fill_levels_file" data-i18n="[placeholder]multi.placeholder.available_fill_levels_file">
             </div>
 
@@ -620,12 +613,12 @@
                 <input type="text" id="node-input-max_percent" data-i18n="[placeholder]multi.placeholder.max_percent">
             </div>
 
-            <div class="form-row">
+            <div class="form-row multi-advanced">
                 <label style="width:auto" for="node-input-command_only_humiditysetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_humiditysetting"></span></label>
                 <input type="checkbox" checked id="node-input-command_only_humiditysetting" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
 
-            <div class="form-row">
+            <div class="form-row multi-advanced">
                 <label style="width:auto" for="node-input-query_only_humiditysetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_humiditysetting"></span></label>
                 <input type="checkbox" checked id="node-input-query_only_humiditysetting" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
@@ -649,20 +642,18 @@
 
         <div id="trait_inputselector">
             <div class="form-row">
-                <div class="form-row">
-                    <label for="node-input-inputselector_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.inputselector_file"></span></label>
-                    <input type="text" id="node-input-inputselector_file" data-i18n="[placeholder]multi.placeholder.inputselector_file">
-                </div>
+                <label for="node-input-inputselector_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.inputselector_file"></span></label>
+                <input type="text" id="node-input-inputselector_file" data-i18n="[placeholder]multi.placeholder.inputselector_file">
+            </div>
 
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-command_only_input_selector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_input_selector"></span></label>
-                    <input type="checkbox" checked id="node-input-command_only_input_selector" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row">
+                <label style="width:auto" for="node-input-ordered_inputs"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.ordered_inputs"></span></label>
+                <input type="checkbox" checked id="node-input-ordered_inputs" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
 
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-ordered_inputs"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.ordered_inputs"></span></label>
-                    <input type="checkbox" checked id="node-input-ordered_inputs" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_input_selector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_input_selector"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_input_selector" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
         </div>
     </div>
@@ -684,17 +675,17 @@
 
         <div id="trait_lighteffects">
             <div class="form-row">
-                <label for="node-input-default_sleep_duration"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.default_sleep_duration"></span></label>
+                <label for="node-input-default_sleep_duration"><i class="fa fa-tag"></i> <span data-i18n="multi.label.default_sleep_duration"></span></label>
                 <input type="text" id="node-input-default_sleep_duration" data-i18n="[placeholder]multi.placeholder.default_sleep_duration">
             </div>
 
             <div class="form-row">
-                <label for="node-input-default_wake_duration"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.default_wake_duration"></span></label>
+                <label for="node-input-default_wake_duration"><i class="fa fa-tag"></i> <span data-i18n="multi.label.default_wake_duration"></span></label>
                 <input type="text" id="node-input-default_wake_duration" data-i18n="[placeholder]multi.placeholder.default_wake_duration">
             </div>
 
             <div class="form-row">
-                <label for="node-input-supported_effects"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_effects"></span></label>
+                <label for="node-input-supported_effects"><i class="fa fa-tag"></i> <span data-i18n="multi.label.supported_effects"></span></label>
                 <select multiple id="node-input-supported_effects" >
                     <option value="colorLoop" data-i18n="multi.label.color_loop"></option>
                     <option value="sleep" data-i18n="multi.label.sleep"></option>
@@ -761,15 +752,13 @@
 
         <div id="trait_mediastate">
             <div class="form-row">
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-support_activity_state"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.support_activity_state"></span></label>
-                    <input type="checkbox" checked id="node-input-support_activity_state" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+                <label style="width:auto" for="node-input-support_activity_state"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.support_activity_state"></span></label>
+                <input type="checkbox" checked id="node-input-support_activity_state" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
 
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-support_playback_state"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.support_playback_state"></span></label>
-                    <input type="checkbox" checked id="node-input-support_playback_state" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row">
+                <label style="width:auto" for="node-input-support_playback_state"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.support_playback_state"></span></label>
+                <input type="checkbox" checked id="node-input-support_playback_state" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
         </div>
     </div>
@@ -791,20 +780,18 @@
 
         <div id="trait_modes">
             <div class="form-row">
-                <div class="form-row">
-                    <label for="node-input-modes_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.modes_file"></span></label>
-                    <input type="text" id="node-input-modes_file" data-i18n="[placeholder]multi.placeholder.modes_file">
-                </div>
+                <label for="node-input-modes_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.modes_file"></span></label>
+                <input type="text" id="node-input-modes_file" data-i18n="[placeholder]multi.placeholder.modes_file">
+            </div>
 
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-command_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_modes"></span></label>
-                    <input type="checkbox" checked id="node-input-command_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_modes"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
 
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-query_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_modes"></span></label>
-                    <input type="checkbox" checked id="node-input-query_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-query_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_modes"></span></label>
+                <input type="checkbox" checked id="node-input-query_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
         </div>
     </div>
@@ -905,16 +892,14 @@
         </div>
 
         <div id="trait_onoff">
-            <div class="form-row">
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-command_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_onoff"></span></label>
-                    <input type="checkbox" checked id="node-input-command_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_onoff"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
 
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-query_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_onoff"></span></label>
-                    <input type="checkbox" checked id="node-input-query_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-query_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_onoff"></span></label>
+                <input type="checkbox" checked id="node-input-query_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
         </div>
     </div>
@@ -941,7 +926,7 @@
             </div>
 
             <div class="form-row">
-                <label for="node-input-open_direction"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.open_direction"></span></label>
+                <label for="node-input-open_direction"><i class="fa fa-tag"></i> <span data-i18n="multi.label.open_direction"></span></label>
                 <select multiple id="node-input-open_direction" >
                     <option value="up" data-i18n="multi.label.up"></option>
                     <option value="down" data-i18n="multi.label.down"></option>
@@ -952,12 +937,12 @@
                 </select>
             </div>
 
-            <div class="form-row">
+            <div class="form-row multi-advanced">
                 <label style="width:auto" for="node-input-command_only_openclose"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_openclose"></span></label>
                 <input type="checkbox" checked id="node-input-command_only_openclose" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
 
-            <div class="form-row">
+            <div class="form-row multi-advanced">
                 <label style="width:auto" for="node-input-query_only_openclose"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_openclose"></span></label>
                 <input type="checkbox" checked id="node-input-query_only_openclose" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
@@ -1025,7 +1010,7 @@
                 <input type="checkbox" checked id="node-input-supports_continuous_rotation" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
 
-            <div class="form-row">
+            <div class="form-row multi-advanced">
                 <label style="width:auto" for="node-input-command_only_rotation"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_rotation"></span></label>
                 <input type="checkbox" checked id="node-input-command_only_rotation" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
@@ -1092,10 +1077,8 @@
 
         <div id="trait_sensorstate">
             <div class="form-row">
-                <div class="form-row">
-                    <label for="node-input-sensor_state_supported_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.sensor_state_supported_file"></span></label>
-                    <input type="text" id="node-input-sensor_state_supported_file" data-i18n="[placeholder]multi.placeholder.sensor_state_supported_file">
-                </div>
+                <label for="node-input-sensor_state_supported_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.sensor_state_supported_file"></span></label>
+                <input type="text" id="node-input-sensor_state_supported_file" data-i18n="[placeholder]multi.placeholder.sensor_state_supported_file">
             </div>
         </div>
     </div>
@@ -1202,19 +1185,19 @@
             </div>
 
             <div class="form-row">
-                <label for="node-input-tc_temperature_unit_for_ux"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.tc_temperature_unit_for_ux"></span></label>
+                <label for="node-input-tc_temperature_unit_for_ux"><i class="fa fa-tag"></i> <span data-i18n="multi.label.tc_temperature_unit_for_ux"></span></label>
                 <select id="node-input-tc_temperature_unit_for_ux" >
                     <option value="C" data-i18n="multi.label._c"></option>
                     <option value="F" data-i18n="multi.label._f"></option>
                 </select>
             </div>
 
-            <div class="form-row">
+            <div class="form-row multi-advanced">
                 <label style="width:auto" for="node-input-tc_command_only_temperaturecontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.tc_command_only_temperaturecontrol"></span></label>
                 <input type="checkbox" checked id="node-input-tc_command_only_temperaturecontrol" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
 
-            <div class="form-row">
+            <div class="form-row multi-advanced">
                 <label style="width:auto" for="node-input-tc_query_only_temperaturecontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.tc_query_only_temperaturecontrol"></span></label>
                 <input type="checkbox" checked id="node-input-tc_query_only_temperaturecontrol" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
@@ -1238,7 +1221,7 @@
 
         <div id="trait_temperaturesetting">
             <div class="form-row">
-                <label for="node-input-available_thermostat_modes"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.available_thermostat_modes"></span></label>
+                <label for="node-input-available_thermostat_modes"><i class="fa fa-tag"></i> <span data-i18n="multi.label.available_thermostat_modes"></span></label>
                 <select multiple id="node-input-available_thermostat_modes" >
                     <option value="off" data-i18n="multi.label.off"></option>
                     <option value="heat" data-i18n="multi.label.heat"></option>
@@ -1264,7 +1247,7 @@
             </div>
 
             <div class="form-row">
-                <label for="node-input-thermostat_temperature_unit"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.thermostat_temperature_unit"></span></label>
+                <label for="node-input-thermostat_temperature_unit"><i class="fa fa-tag"></i> <span data-i18n="multi.label.thermostat_temperature_unit"></span></label>
                 <select id="node-input-thermostat_temperature_unit" >
                     <option value="C" data-i18n="multi.label._c"></option>
                     <option value="F" data-i18n="multi.label._f"></option>
@@ -1276,12 +1259,12 @@
                 <input type="text" id="node-input-buffer_range_celsius" data-i18n="[placeholder]multi.placeholder.buffer_range_celsius">
             </div>
 
-            <div class="form-row">
+            <div class="form-row multi-advanced">
                 <label style="width:auto" for="node-input-command_only_temperaturesetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_temperaturesetting"></span></label>
                 <input type="checkbox" checked id="node-input-command_only_temperaturesetting" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
 
-            <div class="form-row">
+            <div class="form-row multi-advanced">
                 <label style="width:auto" for="node-input-query_only_temperaturesetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_temperaturesetting"></span></label>
                 <input type="checkbox" checked id="node-input-query_only_temperaturesetting" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
@@ -1305,13 +1288,13 @@
 
         <div id="trait_timer">
             <div class="form-row">
-                <label style="width:auto" for="node-input-command_only_timer"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_timer"></span></label>
-                <input type="checkbox" checked id="node-input-command_only_timer" style="display:inline-block; width:auto; vertical-align:top;">
-            </div>
-
-            <div class="form-row">
                 <label style="width:auto" for="node-input-max_timer_limit_sec"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.max_timer_limit_sec"></span></label>
                 <input type="text" id="node-input-max_timer_limit_sec" data-i18n="[placeholder]multi.placeholder.max_timer_limit_sec">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_timer"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_timer"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_timer" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
         </div>
     </div>
@@ -1333,20 +1316,18 @@
 
         <div id="trait_toggles">
             <div class="form-row">
-                <div class="form-row">
-                    <label for="node-input-toggles_file"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.toggles_file"></span></label>
-                    <input type="text" id="node-input-toggles_file" data-i18n="[placeholder]multi.placeholder.toggles_file">
-                </div>
+                <label for="node-input-toggles_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.toggles_file"></span></label>
+                <input type="text" id="node-input-toggles_file" data-i18n="[placeholder]multi.placeholder.toggles_file">
+            </div>
 
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-command_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_toggles"></span></label>
-                    <input type="checkbox" checked id="node-input-command_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_toggles"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
 
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-query_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_toggles"></span></label>
-                    <input type="checkbox" checked id="node-input-query_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-query_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_toggles"></span></label>
+                <input type="checkbox" checked id="node-input-query_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
         </div>
     </div>
@@ -1368,7 +1349,7 @@
 
         <div id="trait_transportcontrol">
             <div class="form-row">
-                <label for="node-input-supported_commands"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.supported_commands"></span></label>
+                <label for="node-input-supported_commands"><i class="fa fa-tag"></i> <span data-i18n="multi.label.supported_commands"></span></label>
                 <select multiple id="node-input-supported_commands" >
                     <option value="CAPTION_CONTROL" data-i18n="multi.label.caption_control"></option>
                     <option value="NEXT" data-i18n="multi.label.next"></option>
@@ -1402,30 +1383,28 @@
 
         <div id="trait_volume">
             <div class="form-row">
-                <div class="form-row">
-                    <label for="node-input-volume_max_level"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.volume_max_level"></span></label>
-                    <input type="text" id="node-input-volume_max_level" data-i18n="[placeholder]multi.placeholder.volume_max_level">
-                </div>
+                <label for="node-input-volume_max_level"><i class="fa fa-tag"></i> <span data-i18n="multi.label.volume_max_level"></span></label>
+                <input type="text" id="node-input-volume_max_level" data-i18n="[placeholder]multi.placeholder.volume_max_level">
+            </div>
 
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-can_mute_and_unmute"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.can_mute_and_unmute"></span></label>
-                    <input type="checkbox" checked id="node-input-can_mute_and_unmute" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row">
+                <label style="width:auto" for="node-input-can_mute_and_unmute"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.can_mute_and_unmute"></span></label>
+                <input type="checkbox" checked id="node-input-can_mute_and_unmute" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
 
-                <div class="form-row">
-                    <label for="node-input-volume_default_percentage"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.volume_default_percentage"></span></label>
-                    <input type="text" id="node-input-volume_default_percentage" data-i18n="[placeholder]multi.placeholder.volume_default_percentage">
-                </div>
+            <div class="form-row">
+                <label for="node-input-volume_default_percentage"><i class="fa fa-tag"></i> <span data-i18n="multi.label.volume_default_percentage"></span></label>
+                <input type="text" id="node-input-volume_default_percentage" data-i18n="[placeholder]multi.placeholder.volume_default_percentage">
+            </div>
 
-                <div class="form-row">
-                    <label for="node-input-level_step_size"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.level_step_size"></span></label>
-                    <input type="text" id="node-input-level_step_size" data-i18n="[placeholder]multi.placeholder.level_step_size">
-                </div>
+            <div class="form-row">
+                <label for="node-input-level_step_size"><i class="fa fa-tag"></i> <span data-i18n="multi.label.level_step_size"></span></label>
+                <input type="text" id="node-input-level_step_size" data-i18n="[placeholder]multi.placeholder.level_step_size">
+            </div>
 
-                <div class="form-row">
-                    <label style="width:auto" for="node-input-command_only_volume"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_volume"></span></label>
-                    <input type="checkbox" checked id="node-input-command_only_volume" style="display:inline-block; width:auto; vertical-align:top;">
-                </div>
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_volume"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_volume"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_volume" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
         </div>
     </div>
@@ -1874,6 +1853,9 @@
             },
             show_trait: {
                 value: "selected", required:false
+            },
+            advanced_settings: {
+                value: false, required:false
             }
         },
         oneditprepare: function() {
@@ -1976,6 +1958,16 @@
                     $("#" + div_aid).find(".oc_trait").removeClass('fa-caret-down').addClass('fa-caret-right');
                 }
             });
+
+            $("#node-input-advanced_settings").change(function() {
+                const checked = $( this ).prop('checked');
+                if (checked) {
+                    $(".multi-advanced").show();
+                } else {
+                    $(".multi-advanced" ).hide();
+                }
+            });
+            $("#node-input-advanced_settings").change();
 
             var setTraitRecomended = function(name, recommended, show_Trait) {
                 $("#node-input-trait_" + name).show();
