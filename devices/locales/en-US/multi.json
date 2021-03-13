@@ -191,7 +191,11 @@
             "supports_enabling_network_profile": "Supports Enabling Network Profile",
             "supports_disabling_network_profile": "Supports Disabling Network Profile",
             "supports_network_download_speedtest": "Supports Network Download SpeedTest",
-            "supports_network_upload_speedtest": "Supports Network Upload SpeedTest"
+            "supports_network_upload_speedtest": "Supports Network Upload SpeedTest",
+            "show_trait": "Show trait",
+            "selected": "Selected",
+            "recommended": "Recommended",
+            "all": "All"
         },
         "placeholder": {
             "name": "Name",

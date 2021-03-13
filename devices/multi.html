@@ -1,4 +1,4 @@
-<!--
+    <!--
  NodeRED Google SmartHome
  Copyright (C) 2021 Claudio Chimera.
 
@@ -160,6 +160,15 @@
             <option value='WATERSOFTENER' data-i18n='multi.device_type.WATERSOFTENER'></option>
             <option value='WINDOW' data-i18n='multi.device_type.WINDOW'></option>
             <option value='YOGURTMAKER' data-i18n='multi.device_type.YOGURTMAKER'></option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-show_trait"><i class="fa fa-tasks"></i> <span data-i18n="multi.label.show_trait"></span></label>
+        <select id="node-input-show_trait" >
+            <option value="selected" data-i18n="multi.label.selected"></option>
+            <option value="recommended" data-i18n="multi.label.recommended"></option>
+            <option value="all" data-i18n="multi.label.all"></option>
         </select>
     </div>
 
@@ -1862,6 +1871,9 @@
             },
             trait_objectdetection: {
                 value: false, required:false
+            },
+            show_trait: {
+                value: "selected", required:false
             }
         },
         oneditprepare: function() {
@@ -1965,15 +1977,25 @@
                 }
             });
 
-            var setTraitRecomended = function(name, default_value) {
+            var setTraitRecomended = function(name, recommended, show_Trait) {
                 $("#node-input-trait_" + name).show();
                 $("#label_trait_" + name).hide();
                 $("#cb_trait_" + name).show();
-                $("#" + name).show();
-                /*if (typeof default_value === "boolean") {
-                    $("#node-input-trait_" + name).prop('checked', default_value);
+                /*if (typeof recommended === "boolean") {
+                    $("#node-input-trait_" + name).prop('checked', recommended);
                 }*/
-                if (default_value === true) {
+                let show_trait = show_Trait == "all";
+                if (show_Trait === "selected") {
+                    show_trait = $("#node-input-trait_" + name).prop('checked');
+                } else if (show_Trait === "recommended") {
+                    show_trait = recommended;
+                }
+                if (show_trait) {
+                    $("#" + name).show();
+                } else {
+                    $("#" + name).hide();
+                }
+                if (recommended === true) {
                     $("#trait_" + name).show();
                     $("#" + name).find(".oc_trait").removeClass('fa-caret-right').addClass('fa-caret-down');
                 } else {
@@ -1994,6 +2016,7 @@
             // Device Type
             var deviceTypeChanged = function() {
                 var device_type = $("#node-input-device_type").val();
+                var show_trait = $("#node-input-show_trait").val();
                 var required_traits = [];
                 var recommended_traits = [];
                 switch (device_type) {
@@ -2315,13 +2338,14 @@
                     if (required_traits.includes(div_id)) {
                         setTraitRequired(div_id);
                     } else {
-                        setTraitRecomended(div_id, recommended_traits.includes(div_id));
+                        setTraitRecomended(div_id, recommended_traits.includes(div_id), show_trait);
                         //setTraitRecomended(div_id);
                     }
                 });
             }
             deviceTypeChanged();
             $("#node-input-device_type").change(deviceTypeChanged);
+            $("#node-input-show_trait").change(deviceTypeChanged);
         },
         oneditsave: function() {
             // Zone
