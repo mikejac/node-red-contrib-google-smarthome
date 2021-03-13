@@ -42,7 +42,7 @@
 ---
 ## Introduction
 
-A collection of Node-RED nodes to control your smart home devices via Google Assistant.
+A collection of Node-RED nodes to control your smart home devices via Google Assistant or the Google Home App.
 
 What this module does NOT:
 It does not directly interface with devices made by Google, for example Nest thermostats 
