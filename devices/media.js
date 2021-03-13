@@ -416,7 +416,7 @@ module.exports = function(RED) {
             try {
                 if (topic.toUpperCase() === 'APPLICATIONS') {
                     if (this.has_apps) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_applications = this.loadJson(this.available_applications_file, []);
                             if (this.available_applications === undefined) {
                                 RED.log.error("Applications " +  this.available_applications_file + "file not found.");
@@ -434,7 +434,7 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'CHANNELS') {
                     if (this.has_channels) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_channels = this.loadJson(this.available_channels_file, []);
                             if (this.available_channels === undefined) {
                                 RED.log.error("Channels " +  this.available_channels_file + "file not found.");
@@ -452,7 +452,7 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'INPUTS') {
                     if (this.has_inputs) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_inputs = this.loadJson(this.available_inputs_file, []);
                             if (this.available_inputs === undefined) {
                                 RED.log.error("Inputs " +  this.available_inputs_file + "file not found.");
@@ -470,7 +470,7 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'MODES') {
                     if (this.has_modes) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_modes = this.loadJson(this.available_modes_file, []);
                             if (this.available_modes === undefined) {
                                 RED.log.error("Modes " +  this.available_modes_file + "file not found.");
@@ -491,7 +491,7 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'TOGGLES') {
                     if (this.has_toggles) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_toggles = this.loadJson(this.available_toggles_file, []);
                             if (this.available_toggles === undefined) {
                                 RED.log.error("Toggles " +  this.available_toggles_file + "file not found.");
@@ -669,7 +669,7 @@ module.exports = function(RED) {
                 new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
             } else if (val_type === 'object') {
                 Object.keys(old_state).forEach(function (key) {
-                    if (typeof new_state[key] !== undefined) {
+                    if (typeof new_state[key] !== 'undefined') {
                         if (me.setState(key, new_state[key], old_State)) {
                             differs = true;
                         }
