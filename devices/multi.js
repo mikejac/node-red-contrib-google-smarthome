@@ -1680,6 +1680,19 @@ module.exports = function(RED) {
                 params['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
                 return ok_result;
             }
+            // Light
+            else if (command.command == 'action.devices.commands.ColorAbsolute') {
+                if (command.params.color.hasOwnProperty('temperature')) {
+                    command.params.color.temperatureK = command.params.color.temperature;
+                    delete command.params.color.temperature;
+                } else if (command.params.color.hasOwnProperty('spectrumRGB')) {
+                    command.params.color.spectrumRgb = command.params.color.spectrumRGB;
+                    delete command.params.color.spectrumRGB;
+                } else if (command.params.color.hasOwnProperty('spectrumHSV')) {
+                    command.params.color.spectrumHsv = command.params.color.spectrumHSV;
+                    delete command.params.color.spectrumHSV;
+                } 
+            }
             // On/Off
             else if (command.command == 'action.devices.commands.OnOff') {
                 if (command.params.hasOwnProperty('on')) {
