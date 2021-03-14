@@ -1033,10 +1033,9 @@ module.exports = function(RED) {
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             try {
-                // TODO
                 if (topic.toUpperCase() === 'APPLICATIONS') {
                     if (this.trait.apps) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_applications = this.loadJson(this.available_applications_file, []);
                             if (this.available_applications === undefined) {
                                 RED.log.error("Applications " +  this.available_applications_file + "file not found.");
@@ -1052,9 +1051,27 @@ module.exports = function(RED) {
                         this.available_applications = [];
                         RED.log.error("Applications disabled");
                     }
+                } else if (topic.toUpperCase() === 'ARMLEVELS') {
+                    if (this.trait.armdisarm) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.available_arm_levels = this.loadJson(this.available_arm_levels_file, []);
+                            if (this.available_arm_levels === undefined) {
+                                RED.log.error("Arm levels " +  this.available_arm_levels_file + "file not found.");
+                            }
+                        } else {
+                            if (!this.writeJson(this.available_arm_levels_file, msg.payload)) {
+                                RED.log.error("Error saving Arm levels to file " + this.available_arm_levels_file);
+                            } else {
+                                this.available_arm_levels = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.available_arm_levels = [];
+                        RED.log.error("Arm levels disabled");
+                    }
                 } else if (topic.toUpperCase() === 'CHANNELS') {
                     if (this.trait.channels) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_channels = this.loadJson(this.available_channels_file, []);
                             if (this.available_channels === undefined) {
                                 RED.log.error("Channels " +  this.available_channels_file + "file not found.");
@@ -1070,9 +1087,99 @@ module.exports = function(RED) {
                         this.available_channels = [];
                         RED.log.error("Channels disabled");
                     }
+                } else if (topic.toUpperCase() === 'DISPENSEITEMS') {
+                    if (this.trait.dispense) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.supported_dispense_items = this.loadJson(this.supported_dispense_items_file, []);
+                            if (this.supported_dispense_items === undefined) {
+                                RED.log.error("Dispense items " +  this.supported_dispense_items_file + "file not found.");
+                            }
+                        } else {
+                            if (!this.writeJson(this.supported_dispense_items_file, msg.payload)) {
+                                RED.log.error("Error saving Dispense items to file " + this.supported_dispense_items_file);
+                            } else {
+                                this.supported_dispense_items = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.supported_dispense_items = [];
+                        RED.log.error("Dispense items disabled");
+                    }
+                } else if (topic.toUpperCase() === 'DISPENSEPRESETS') {
+                    if (this.trait.dispense) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.supported_dispense_presets = this.loadJson(this.supported_dispense_presets_file, []);
+                            if (this.supported_dispense_presets === undefined) {
+                                RED.log.error("Dispense presets " +  this.supported_dispense_presets_file + "file not found.");
+                            }
+                        } else {
+                            if (!this.writeJson(this.supported_dispense_presets_file, msg.payload)) {
+                                RED.log.error("Error saving Dispense presets to file " + this.supported_dispense_presets_file);
+                            } else {
+                                this.supported_dispense_presets = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.supported_dispense_presets = [];
+                        RED.log.error("Dispense presets disabled");
+                    }
+                } else if (topic.toUpperCase() === 'FANSPEEDS') {
+                    if (this.trait.fanspeed) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.available_fan_speeds = this.loadJson(this.available_fan_speeds_file, []);
+                            if (this.available_fan_speeds === undefined) {
+                                RED.log.error("Fan speeds " +  this.available_fan_speeds_file + "file not found.");
+                            }
+                        } else {
+                            if (!this.writeJson(this.available_fan_speeds_file, msg.payload)) {
+                                RED.log.error("Error saving Fan speeds to file " + this.available_fan_speeds_file);
+                            } else {
+                                this.available_fan_speeds = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.available_fan_speeds = [];
+                        RED.log.error("Fan speeds disabled");
+                    }
+                } else if (topic.toUpperCase() === 'FILLLEVELS') {
+                    if (this.trait.dispense) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.available_fill_levels = this.loadJson(this.available_fill_levels_file, []);
+                            if (this.available_fill_levels === undefined) {
+                                RED.log.error("Fill levels " +  this.available_fill_levels_file + "file not found.");
+                            }
+                        } else {
+                            if (!this.writeJson(this.available_fill_levels_file, msg.payload)) {
+                                RED.log.error("Error saving Fill levels to file " + this.available_fill_levels_file);
+                            } else {
+                                this.available_fill_levels = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.available_fill_levels = [];
+                        RED.log.error("Fill levels disabled");
+                    }
+                } else if (topic.toUpperCase() === 'FOODPRESETS') {
+                    if (this.trait.cook) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.food_presets = this.loadJson(this.food_presets_file, []);
+                            if (this.food_presets === undefined) {
+                                RED.log.error("Food presets " +  this.food_presets_file + "file not found.");
+                            }
+                        } else {
+                            if (!this.writeJson(this.food_presets_file, msg.payload)) {
+                                RED.log.error("Error saving Food presets to file " + this.food_presets_file);
+                            } else {
+                                this.food_presets = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.food_presets = [];
+                        RED.log.error("Food presets disabled");
+                    }
                 } else if (topic.toUpperCase() === 'INPUTS') {
                     if (this.trait.inputs) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_inputs = this.loadJson(this.available_inputs_file, []);
                             if (this.available_inputs === undefined) {
                                 RED.log.error("Inputs " +  this.available_inputs_file + "file not found.");
@@ -1090,7 +1197,7 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'MODES') {
                     if (this.trait.modes) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_modes = this.loadJson(this.available_modes_file, []);
                             if (this.available_modes === undefined) {
                                 RED.log.error("Modes " +  this.available_modes_file + "file not found.");
@@ -1109,9 +1216,27 @@ module.exports = function(RED) {
                         this.available_modes = [];
                         RED.log.error("Modes disabled");
                     }
+                } else if (topic.toUpperCase() === 'SENSORSTATES') {
+                    if (this.trait.sensorstate) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.sensor_state_supported = this.loadJson(this.sensor_state_supported_file, []);
+                            if (this.sensor_state_supported === undefined) {
+                                RED.log.error("Sensor states " +  this.sensor_state_supported_file + "file not found.");
+                            }
+                        } else {
+                            if (!this.writeJson(this.sensor_state_supported_file, msg.payload)) {
+                                RED.log.error("Error saving Sensor states to file " + this.sensor_state_supported_file);
+                            } else {
+                                this.sensor_state_supported = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.sensor_state_supported = [];
+                        RED.log.error("Sensor states disabled");
+                    }
                 } else if (topic.toUpperCase() === 'TOGGLES') {
                     if (this.trait.toggles) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_toggles = this.loadJson(this.available_toggles_file, []);
                             if (this.available_toggles === undefined) {
                                 RED.log.error("Toggles " +  this.available_toggles_file + "file not found.");
