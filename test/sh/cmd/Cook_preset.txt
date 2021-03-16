@@ -1,0 +1,7 @@
+{
+    "start": PARAM1,
+    "cookingMode": "PARAM2",
+    "foodPreset": "PARAM3",
+    "quantity": PARAM4,
+    "unit": "PARAM5"
+}

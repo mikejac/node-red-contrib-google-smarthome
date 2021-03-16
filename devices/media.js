@@ -1089,7 +1089,7 @@ module.exports = function(RED) {
                     const updateToggleSettings = command.params['updateToggleSettings'];
                     let toggles = this.states['currentToggleSettings'];
                     this.available_toggles.forEach(function (toggle) {
-                        if (typeof updateToggleSettings[toggle].name === 'boolean') {
+                        if (typeof updateToggleSettings[toggle.name] === 'boolean') {
                             toggles[toggle.name] = updateToggleSettings[toggle.name];
                         }
                     });

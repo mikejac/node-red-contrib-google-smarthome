@@ -1,0 +1,3 @@
+{
+    "openPercent": PARAM1
+}

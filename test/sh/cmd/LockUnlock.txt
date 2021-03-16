@@ -1,0 +1,4 @@
+{
+    "lock": PARAM1,
+    "followUpToken": "PARAM2"
+}

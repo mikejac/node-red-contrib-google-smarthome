@@ -1,0 +1,3 @@
+{
+    "charge": PARAM1
+}

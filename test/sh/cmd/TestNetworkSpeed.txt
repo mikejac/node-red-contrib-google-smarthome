@@ -1,0 +1,4 @@
+{
+    "testDownloadSpeed": PARAM1,
+    "testUploadSpeed": PARAM2
+}

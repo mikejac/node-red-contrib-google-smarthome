@@ -1,0 +1,5 @@
+{
+    "amount": PARAM1,
+    "unit": "PARAM2",
+    "item": "PARAM3"
+  }

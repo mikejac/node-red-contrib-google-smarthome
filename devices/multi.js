@@ -55,7 +55,6 @@ module.exports = function(RED) {
                 lockunlock: config.trait_lockunlock || false,
                 mediastate: config.trait_mediastate || false,
                 modes: config.trait_modes || false,
-                toggles: config.trait_toggles || false,
                 networkcontrol: config.trait_networkcontrol || false,
                 objectdetection: config.objectdetection || false,
                 onoff: config.trait_onoff || false,
@@ -469,131 +468,82 @@ module.exports = function(RED) {
             }
             
             let error_msg = '';
-            if (this.trait.apps) {
-                this.available_applications = this.loadJson(this.appselector_file, []);
-                if (this.available_applications === undefined) {
-                    error_msg += ' Applications file error.';
-                    RED.log.error("Applications " +  this.appselector_file + "file error.");
-                }
+            if (this.trait.appselector) {
+                this.available_applications = this.loadJson('Applications', this.appselector_file, []);
             } else {
-                this.available_applications = undefined;
-                this.debug(".constructor: Applications disabled");
+                this.available_applications = [];
+                this.debug(".constructor: AppSelector disabled");
             }
 
             if (this.trait.armdisarm) {
-                this.available_arm_levels = this.loadJson(this.available_arm_levels_file, []);
-                if (this.available_arm_levels === undefined) {
-                    error_msg += ' Applications file error.';
-                    RED.log.error("Applications " +  this.available_arm_levels_file + "file error.");
-                }
+                this.available_arm_levels = this.loadJson('Available arm levels', this.available_arm_levels_file, []);
             } else {
-                this.available_applications = undefined;
-                this.debug(".constructor: Applications disabled");
+                this.available_applications = [];
+                this.debug(".constructor: ArmDisarm disabled");
             }
 
             if (this.trait.channel) {
-                this.available_channels = this.loadJson(this.channel_file, []);
-                if (this.available_channels === undefined) {
-                    error_msg += ' Channels file error.';
-                    RED.log.error("Channels " +  this.channel_file + "file error.");
-                }
+                this.available_channels = this.loadJson('Channels', this.channel_file, []);
             } else {
-                this.available_channels = undefined;
-                this.debug(".constructor: Channels disabled");
+                this.available_channels = [];
+                this.debug(".constructor: Channel disabled");
             }
 
             if (this.trait.cook) {
-                this.food_presets = this.loadJson(this.food_presets_file, []);
-                if (this.food_presets === undefined) {
-                    error_msg += ' Food presets file error.';
-                    RED.log.error("Food presets " +  this.food_presets_file + "file error.");
-                }
+                this.food_presets = this.loadJson('Food presets', this.food_presets_file, []);
             } else {
-                this.food_presets = undefined;
-                this.debug(".constructor: Food presets disabled");
+                this.food_presets = [];
+                this.debug(".constructor: Cook disabled");
             }
 
             if (this.trait.dispense) {
-                this.supported_dispense_items = this.loadJson(this.supported_dispense_items_file, []);
-                if (this.supported_dispense_items === undefined) {
-                    error_msg += ' Supported dispense items file error.';
-                    RED.log.error("Supported dispense items " +  this.supported_dispense_items_file + "file error.");
-                }
-
-                this.supported_dispense_presets = this.loadJson(this.supported_dispense_presets_file, []);
-                if (this.supported_dispense_presets === undefined) {
-                    error_msg += ' Supported dispense presets file error.';
-                    RED.log.error("Supported dispense presets " +  this.supported_dispense_presets_file + "file error.");
-                }
+                this.supported_dispense_items = this.loadJson('Supported dispense', this.supported_dispense_items_file, []);
+                this.supported_dispense_presets = this.loadJson('Supported dispense presets', this.supported_dispense_presets_file, []);
             } else {
-                this.supported_dispense_items = undefined;
-                this.supported_dispense_presets = undefined;
-                this.debug(".constructor: Supported dispense disabled");
+                this.supported_dispense_items = [];
+                this.supported_dispense_presets = [];
+                this.debug(".constructor: Dispense disabled");
             }
 
             if (this.trait.fanspeed) {
-                this.available_fan_speeds = this.loadJson(this.available_fan_speeds_file, []);
-                if (this.available_fan_speeds === undefined) {
-                    error_msg += ' Fan speeds file error.';
-                    RED.log.error("Fan speeds " +  this.available_fan_speeds_file + "file error.");
-                }
+                this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file, []);
             } else {
-                this.available_fan_speeds = undefined;
-                this.debug(".constructor: Food presets disabled");
+                this.available_fan_speeds = [];
+                this.debug(".constructor: FanSpeeds disabled");
             }
 
             if (this.trait.fill) {
-                this.available_fill_levels = this.loadJson(this.available_fill_levels_file, []);
-                if (this.available_fill_levels === undefined) {
-                    error_msg += ' Available fill levels file error.';
-                    RED.log.error("Available fill levels " +  this.available_fill_levels_file + "file error.");
-                }
+                this.available_fill_levels = this.loadJson('Available fill levels', this.available_fill_levels_file, []);
             } else {
-                this.available_fill_levels = undefined;
-                this.debug(".constructor: Available fill levels disabled");
+                this.available_fill_levels = [];
+                this.debug(".constructor: Fill disabled");
             }
 
             if (this.trait.inputselector) {
-                this.available_inputs = this.loadJson(this.inputselector_file, []);
-                if (this.available_inputs === undefined) {
-                    error_msg += ' Inputs file error.';
-                    RED.log.error("Inputs " +  this.inputselector_file + "file error.");
-                }
+                this.available_inputs = this.loadJson('Available inputs', this.inputselector_file, []);
             } else {
-                this.available_inputs = undefined;
-                this.debug(".constructor Inputs disabled");
+                this.available_inputs = [];
+                this.debug(".constructor InputSelector disabled");
             }
 
             if (this.trait.modes) {
-                this.available_modes = this.loadJson(this.modes_file, []);
-                if (this.available_modes === undefined) {
-                    error_msg += ' Modes file error.';
-                    RED.log.error("Modes " +  this.modes_file + "file error.");
-                }
+                this.available_modes = this.loadJson('Modes', this.modes_file, []);
             } else {
-                this.available_modes = undefined;
+                this.available_modes = [];
                 this.debug(".constructor: Modes disabled");
             }
 
             if (this.trait.sensorstate) {
-                this.sensor_state_supported = this.loadJson(this.sensor_state_supported_file, []);
-                if (this.sensor_state_supported === undefined) {
-                    error_msg += ' Toggles file error.';
-                    RED.log.error("Toggles " +  this.sensor_state_supported_file + "file error.");
-                }
+                this.sensor_state_supported = this.loadJson('SensorState', this.sensor_state_supported_file, []);
             } else {
-                this.available_toggles = undefined;
-                this.debug(".constructor: Toggles disabled");
+                this.available_toggles = [];
+                this.debug(".constructor: SensorState disabled");
             }
 
             if (this.trait.toggles) {
-                this.available_toggles = this.loadJson(this.toggles_file, []);
-                if (this.available_toggles === undefined) {
-                    error_msg += ' Toggles file error.';
-                    RED.log.error("Toggles " +  this.toggles_file + "file error.");
-                }
+                this.available_toggles = this.loadJson('Toggles', this.toggles_file, []);
             } else {
-                this.available_toggles = undefined;
+                this.available_toggles = [];
                 this.debug(".constructor: Toggles disabled");
             }
 
@@ -886,7 +836,7 @@ module.exports = function(RED) {
                 if (me.open_direction.length < 2) {
                     states['openPercent'] = 0;
                 } else {
-                    openState = [];
+                    let openState = [];
                     states['openState'] = openState;
                     me.open_direction.forEach(direction => {
                         openState.push({
@@ -1034,15 +984,12 @@ module.exports = function(RED) {
 
             try {
                 if (topic.toUpperCase() === 'APPLICATIONS') {
-                    if (this.trait.apps) {
+                    if (this.trait.appselector) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_applications = this.loadJson(this.available_applications_file, []);
-                            if (this.available_applications === undefined) {
-                                RED.log.error("Applications " +  this.available_applications_file + "file not found.");
-                            }
+                            this.available_applications = this.loadJson('Applications', this.appselector_file, []);
                         } else {
-                            if (!this.writeJson(this.available_applications_file, msg.payload)) {
-                                RED.log.error("Error saving Applications to file " + this.available_applications_file);
+                            if (!this.writeJson('Applications', this.appselector_file, msg.payload)) {
+                                RED.log.error("Error saving Applications to file " + this.appselector_file);
                             } else {
                                 this.available_applications = msg.payload;
                             }
@@ -1054,12 +1001,9 @@ module.exports = function(RED) {
                 } else if (topic.toUpperCase() === 'ARMLEVELS') {
                     if (this.trait.armdisarm) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_arm_levels = this.loadJson(this.available_arm_levels_file, []);
-                            if (this.available_arm_levels === undefined) {
-                                RED.log.error("Arm levels " +  this.available_arm_levels_file + "file not found.");
-                            }
+                            this.available_arm_levels = this.loadJson('Arm levels', this.available_arm_levels_file, []);
                         } else {
-                            if (!this.writeJson(this.available_arm_levels_file, msg.payload)) {
+                            if (!this.writeJson('Arm levels', this.available_arm_levels_file, msg.payload)) {
                                 RED.log.error("Error saving Arm levels to file " + this.available_arm_levels_file);
                             } else {
                                 this.available_arm_levels = msg.payload;
@@ -1070,15 +1014,12 @@ module.exports = function(RED) {
                         RED.log.error("Arm levels disabled");
                     }
                 } else if (topic.toUpperCase() === 'CHANNELS') {
-                    if (this.trait.channels) {
+                    if (this.trait.channel) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_channels = this.loadJson(this.available_channels_file, []);
-                            if (this.available_channels === undefined) {
-                                RED.log.error("Channels " +  this.available_channels_file + "file not found.");
-                            }
+                            this.available_channels = this.loadJson('Channels', this.channel_file, []);
                         } else {
-                            if (!this.writeJson(this.available_channels_file, msg.payload)) {
-                                RED.log.error("Error saving Channels to file " + this.available_channels_file);
+                            if (!this.writeJson('Channels', this.channel_file, msg.payload)) {
+                                RED.log.error("Error saving Channels to file " + this.channel_file);
                             } else {
                                 this.available_channels = msg.payload;
                             }
@@ -1090,12 +1031,9 @@ module.exports = function(RED) {
                 } else if (topic.toUpperCase() === 'DISPENSEITEMS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
-                            this.supported_dispense_items = this.loadJson(this.supported_dispense_items_file, []);
-                            if (this.supported_dispense_items === undefined) {
-                                RED.log.error("Dispense items " +  this.supported_dispense_items_file + "file not found.");
-                            }
+                            this.supported_dispense_items = this.loadJson('Dispense items', this.supported_dispense_items_file, []);
                         } else {
-                            if (!this.writeJson(this.supported_dispense_items_file, msg.payload)) {
+                            if (!this.writeJson('Dispense items', this.supported_dispense_items_file, msg.payload)) {
                                 RED.log.error("Error saving Dispense items to file " + this.supported_dispense_items_file);
                             } else {
                                 this.supported_dispense_items = msg.payload;
@@ -1108,12 +1046,9 @@ module.exports = function(RED) {
                 } else if (topic.toUpperCase() === 'DISPENSEPRESETS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
-                            this.supported_dispense_presets = this.loadJson(this.supported_dispense_presets_file, []);
-                            if (this.supported_dispense_presets === undefined) {
-                                RED.log.error("Dispense presets " +  this.supported_dispense_presets_file + "file not found.");
-                            }
+                            this.supported_dispense_presets = this.loadJson('Dispense presets', this.supported_dispense_presets_file, []);
                         } else {
-                            if (!this.writeJson(this.supported_dispense_presets_file, msg.payload)) {
+                            if (!this.writeJson('Dispense presets', this.supported_dispense_presets_file, msg.payload)) {
                                 RED.log.error("Error saving Dispense presets to file " + this.supported_dispense_presets_file);
                             } else {
                                 this.supported_dispense_presets = msg.payload;
@@ -1126,12 +1061,9 @@ module.exports = function(RED) {
                 } else if (topic.toUpperCase() === 'FANSPEEDS') {
                     if (this.trait.fanspeed) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_fan_speeds = this.loadJson(this.available_fan_speeds_file, []);
-                            if (this.available_fan_speeds === undefined) {
-                                RED.log.error("Fan speeds " +  this.available_fan_speeds_file + "file not found.");
-                            }
+                            this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file, []);
                         } else {
-                            if (!this.writeJson(this.available_fan_speeds_file, msg.payload)) {
+                            if (!this.writeJson('Fan speeds', this.available_fan_speeds_file, msg.payload)) {
                                 RED.log.error("Error saving Fan speeds to file " + this.available_fan_speeds_file);
                             } else {
                                 this.available_fan_speeds = msg.payload;
@@ -1144,12 +1076,9 @@ module.exports = function(RED) {
                 } else if (topic.toUpperCase() === 'FILLLEVELS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_fill_levels = this.loadJson(this.available_fill_levels_file, []);
-                            if (this.available_fill_levels === undefined) {
-                                RED.log.error("Fill levels " +  this.available_fill_levels_file + "file not found.");
-                            }
+                            this.available_fill_levels = this.loadJson(' Fill levels', this.available_fill_levels_file, []);
                         } else {
-                            if (!this.writeJson(this.available_fill_levels_file, msg.payload)) {
+                            if (!this.writeJson(' Fill levels', this.available_fill_levels_file, msg.payload)) {
                                 RED.log.error("Error saving Fill levels to file " + this.available_fill_levels_file);
                             } else {
                                 this.available_fill_levels = msg.payload;
@@ -1162,12 +1091,9 @@ module.exports = function(RED) {
                 } else if (topic.toUpperCase() === 'FOODPRESETS') {
                     if (this.trait.cook) {
                         if (typeof msg.payload === 'undefined') {
-                            this.food_presets = this.loadJson(this.food_presets_file, []);
-                            if (this.food_presets === undefined) {
-                                RED.log.error("Food presets " +  this.food_presets_file + "file not found.");
-                            }
+                            this.food_presets = this.loadJson('Food presets', this.food_presets_file, []);
                         } else {
-                            if (!this.writeJson(this.food_presets_file, msg.payload)) {
+                            if (!this.writeJson('Food presets', this.food_presets_file, msg.payload)) {
                                 RED.log.error("Error saving Food presets to file " + this.food_presets_file);
                             } else {
                                 this.food_presets = msg.payload;
@@ -1178,15 +1104,12 @@ module.exports = function(RED) {
                         RED.log.error("Food presets disabled");
                     }
                 } else if (topic.toUpperCase() === 'INPUTS') {
-                    if (this.trait.inputs) {
+                    if (this.trait.inputselector) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_inputs = this.loadJson(this.available_inputs_file, []);
-                            if (this.available_inputs === undefined) {
-                                RED.log.error("Inputs " +  this.available_inputs_file + "file not found.");
-                            }
+                            this.available_inputs = this.loadJson('Inputs', this.inputselector_file, []);
                         } else {
-                            if (!this.writeJson(this.available_inputs_file, msg.payload)) {
-                                RED.log.error("Error saving Inputs to file " + this.available_inputs_file);
+                            if (!this.writeJson('Inputs', this.inputselector_file, msg.payload)) {
+                                RED.log.error("Error saving Inputs to file " + this.inputselector_file);
                             } else {
                                 this.available_inputs = msg.payload;
                             }
@@ -1198,15 +1121,11 @@ module.exports = function(RED) {
                 } else if (topic.toUpperCase() === 'MODES') {
                     if (this.trait.modes) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_modes = this.loadJson(this.available_modes_file, []);
-                            if (this.available_modes === undefined) {
-                                RED.log.error("Modes " +  this.available_modes_file + "file not found.");
-                            } else {
-                                this.updateModesState(me, me);
-                            }
+                            this.available_modes = this.loadJson('Modes', this.modes_file, []);
+                            this.updateModesState(me, me);
                         } else {
-                            if (!this.writeJson(this.available_modes_file, msg.payload)) {
-                                RED.log.error("Error saving Modes to file " + this.available_modes_file);
+                            if (!this.writeJson('Modes', this.modes_file, msg.payload)) {
+                                RED.log.error("Error saving Modes to file " + this.modes_file);
                             } else {
                                 this.available_modes = msg.payload;
                                 this.updateModesState(me, me);
@@ -1219,12 +1138,9 @@ module.exports = function(RED) {
                 } else if (topic.toUpperCase() === 'SENSORSTATES') {
                     if (this.trait.sensorstate) {
                         if (typeof msg.payload === 'undefined') {
-                            this.sensor_state_supported = this.loadJson(this.sensor_state_supported_file, []);
-                            if (this.sensor_state_supported === undefined) {
-                                RED.log.error("Sensor states " +  this.sensor_state_supported_file + "file not found.");
-                            }
+                            this.sensor_state_supported = this.loadJson('Sensor states', this.sensor_state_supported_file, []);
                         } else {
-                            if (!this.writeJson(this.sensor_state_supported_file, msg.payload)) {
+                            if (!this.writeJson('Sensor states', this.sensor_state_supported_file, msg.payload)) {
                                 RED.log.error("Error saving Sensor states to file " + this.sensor_state_supported_file);
                             } else {
                                 this.sensor_state_supported = msg.payload;
@@ -1237,15 +1153,11 @@ module.exports = function(RED) {
                 } else if (topic.toUpperCase() === 'TOGGLES') {
                     if (this.trait.toggles) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_toggles = this.loadJson(this.available_toggles_file, []);
-                            if (this.available_toggles === undefined) {
-                                RED.log.error("Toggles " +  this.available_toggles_file + "file not found.");
-                            } else {
-                                this.updateTogglesState(me, me);
-                            }
+                            this.available_toggles = this.loadJson('Toggles', this.toggles_file, []);
+                            this.updateTogglesState(me, me);
                         } else {
-                            if (!this.writeJson(this.available_toggles_file, msg.payload)) {
-                                RED.log.error("Error saving Toggles to file " + this.available_toggles_file);
+                            if (!this.writeJson('Toggles', this.toggles_file, msg.payload)) {
+                                RED.log.error("Error saving Toggles to file " + this.toggles_file);
                             } else {
                                 this.available_toggles = msg.payload;
                                 this.updateTogglesState(me, me);
@@ -1320,6 +1232,7 @@ module.exports = function(RED) {
 
         updateTogglesState(me, device) {
             // Key/value pair with the toggle name of the device as the key, and the current state as the value.
+            me.debug(".updateTogglesState");
             let states = device.states || {};
             const currentToggleSettings = states['currentToggleSettings']
             let new_toggles = {};
@@ -1505,7 +1418,8 @@ module.exports = function(RED) {
             return differs;
         }
 
-        loadJson(filename, defaultValue) {
+        loadJson(text, filename, defaultValue) {
+            this.debug('.loadJson: ' + text);
             let full_filename;
             if (!filename.startsWith(path.sep)) {
                 const userDir = RED.settings.userDir;
@@ -1534,12 +1448,13 @@ module.exports = function(RED) {
                 }
             }
             catch (err) {
-                RED.log.error('Error on loading ' + filename + ': ' + err.toString());
-                return undefined;
+                RED.log.error('Error on loading ' + text + ' filename ' + filename + ': ' + err.toString());
+                return defaultValue;
             }
         }
 
-        writeJson(filename, value) {
+        writeJson(text, filename, value) {
+            this.debug('.writeJson: ' + text);
             if (!filename.startsWith(path.sep)) {
                 const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
@@ -1557,11 +1472,11 @@ module.exports = function(RED) {
                         'flag': fs.constants.W_OK | fs.constants.O_CREAT | fs.constants.O_TRUNC
                     });
     
-                this.debug('writeJson: data saved');
+                this.debug('writeJson: ' + text + ' saved');
                 return true;
             }
             catch (err) {
-                RED.log.error('Error on saving ' + filename + ': ' + err.toString());
+                RED.log.error('Error on saving ' + text + ' filename + ' + filename + ': ' + err.toString());
                 return false;
             }
         }
@@ -1569,7 +1484,7 @@ module.exports = function(RED) {
         execCommand(device, command) {
             let me = this;
             let params = {};
-            let executionStates = [];
+            let executionStates = [ 'online' ];
             const ok_result = {
                 'params' : params,
                 'executionStates': executionStates
@@ -1591,40 +1506,59 @@ module.exports = function(RED) {
                             application_index = index;
                         }
                     });
-                    if (application_index < 0) {
-                        return {
-                            status: 'ERROR',
-                            errorCode: 'noAvailableApp'
-                        };
+                    if (command.command == 'action.devices.commands.appInstall') {
+                        if (application_index >= 0) {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'alreadyInstalledApp'
+                            };
+                        }
+                        return false;
+                    } else {
+                        if (application_index < 0) {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'noAvailableApp'
+                            };
+                        }
+                        executionStates.push('online', 'currentApplication');
+                        params['currentApplication'] = newApplication;
+                        return ok_result;
                     }
-                    executionStates.push('online', 'currentApplication');
-                    params['currentApplication'] = newApplication;
-                    return ok_result;
                 }
                 if (command.params.hasOwnProperty('newApplicationName')) {
                     const newApplicationName = command.params['newApplicationName'];
                     let application_key = '';
-                    this.available_applications.forEach(function(application, index) {
+                    me.available_applications.forEach(function(application, index) {
                         application.names.forEach(function(name) {
                             if (name.name_synonym.includes(newApplicationName)) {
                                 application_key = application.key;
                             }
                         });
                     });
-                    if (application_key === '') {
-                        return {
-                            status: 'ERROR',
-                            errorCode: 'noAvailableApp'
-                        };
+                    if (command.command == 'action.devices.commands.appInstall') {
+                        if (application_key !== '') {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'alreadyInstalledApp'
+                            };
+                        }
+                    } else {
+                        if (application_key === '') {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'noAvailableApp'
+                            };
+                        }
+                        params['currentApplication'] = application_key;
+                        executionStates.push('currentApplication');
+                        return ok_result;
                     }
-                    params['currentApplication'] = application_key;
-                    executionStates.push('online', 'currentApplication');
-                    return ok_result;
                 }
             }
             // Dock
             else if (command.command == 'action.devices.commands.Dock') {
-                executionStates.push('online', 'isDocked');
+                executionStates.push('isDocked');
             }
             // HumiditySetting
             else if (command.command == 'action.devices.commands.SetHumidity') {
@@ -1658,7 +1592,7 @@ module.exports = function(RED) {
                         };
                     }
                     params['currentInput'] = newInput;
-                    executionStates.push('online', 'currentInput');
+                    executionStates.push('currentInput');
                     return ok_result;
                 }
             }
@@ -1667,7 +1601,7 @@ module.exports = function(RED) {
                 if (this.current_input_index >= this.available_inputs.length) {
                     this.current_input_index = 0;
                 }
-                executionStates.push('online', 'currentInput');
+                executionStates.push('currentInput');
                 params['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
                 return ok_result;
             }
@@ -1676,7 +1610,7 @@ module.exports = function(RED) {
                     this.current_input_index = this.available_inputs.length;
                 }
                 this.current_input_index --;
-                executionStates.push('online', 'currentInput');
+                executionStates.push('currentInput');
                 params['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
                 return ok_result;
             }
@@ -1697,23 +1631,23 @@ module.exports = function(RED) {
             else if (command.command == 'action.devices.commands.OnOff') {
                 if (command.params.hasOwnProperty('on')) {
                     const on_param = command.params['on'];
-                    executionStates.push('online', 'on');
+                    executionStates.push('on');
                     params['on'] = on_param;
                     return ok_result;
                 }
             }
             // OpenClose
             else if (command.command == 'action.devices.commands.OpenClose') {
-                const openPercent = parseInt(command.params[openPercent]) || 0;
+                const openPercent = parseInt(command.params['openPercent']) || 0;
                 // TODO
             }
             else if (command.command == 'action.devices.commands.OpenCloseRelative') {
-                const openPercent = parseInt(command.params[openPercent]) || 0;
+                const openPercent = parseInt(command.params['openPercent']) || 0;
                 // TODO
             }
             // StartStop
             else if (command.command == 'action.devices.commands.StartStop') {
-                const start = parseInt(command.params[start]) || false;
+                const start = parseInt(command.params['start']) || false;
                 let zones = [];
                 if (command.params.hasOwnProperty('zone')) {
                     zones = [command.params['zone']];
@@ -1723,40 +1657,40 @@ module.exports = function(RED) {
                 // TODO
             }
             else if (command.command == 'action.devices.commands.PauseUnpause') {
-                const pause = parseInt(command.params[pause]) || false;
+                const pause = parseInt(command.params['pause']) || false;
                 // TODO
             }
             // TransportControl
             else if (command.command == 'action.devices.commands.mediaStop') {
                 params['playbackState'] = 'STOPPED';
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaNext') {
                 params['playbackState'] = 'FAST_FORWARDING';
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaPrevious') {
                 params['playbackState'] = 'REWINDING';
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaPause') {
                 params['playbackState'] = 'PAUSED';
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaResume') {
                 params['playbackState'] = 'PLAYING';
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaSeekRelative') {
                 if (command.params.hasOwnProperty('relativePositionMs')) {
                     const relative_position_ms = command.params['relativePositionMs'];
                     params['playbackState'] = 'PLAYING';
-                    executionStates.push('online', 'playbackState');
+                    executionStates.push('playbackState');
                     return ok_result;
                 }
             }
@@ -1764,7 +1698,7 @@ module.exports = function(RED) {
                 if (command.params.hasOwnProperty('absPositionMs')) {
                     const abs_position_ms = command.params['absPositionMs'];
                     params['playbackState'] = 'PLAYING';
-                    executionStates.push('online', 'playbackState');
+                    executionStates.push('playbackState');
                     return ok_result;
                 }
             }
@@ -1792,16 +1726,16 @@ module.exports = function(RED) {
                     const userQueryLanguage = command.params['userQueryLanguage'];
                     params['playbackState'] = this.states['playbackState'];
                 }
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaClosedCaptioningOff') {
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             // TempreatureControl
             else if (command.command == 'action.devices.commands.SetTemperature') {
-                const temperature = parseInt(temperature) || 0;
+                const temperature = parseInt('temperature') || 0;
                 me.states['temperatureSetpointCelsius'] = temperature;
             }
             // TemperatureSetting 
@@ -1835,7 +1769,7 @@ module.exports = function(RED) {
                 if (command.params.hasOwnProperty('mute')) {
                     const mute = command.params['mute'];
                     params['isMuted'] = mute;
-                    executionStates.push('online', 'isMuted', 'currentVolume');
+                    executionStates.push('isMuted', 'currentVolume');
                     return ok_result;
                 }
             }
@@ -1846,7 +1780,7 @@ module.exports = function(RED) {
                         volumeLevel = this.volumeMaxLevel;
                     }
                     params['currentVolume'] = volumeLevel;
-                    executionStates.push('online', 'isMuted', 'currentVolume');
+                    executionStates.push('isMuted', 'currentVolume');
                     return ok_result;
                 }
             }
@@ -1872,7 +1806,7 @@ module.exports = function(RED) {
                         current_volume = 0;
                     }
                     params['currentVolume'] = current_volume;
-                    executionStates.push('online', 'currentVolume');
+                    executionStates.push('currentVolume');
                     return ok_result;
                 }
             }
@@ -1899,7 +1833,7 @@ module.exports = function(RED) {
                     this.current_channel_index = new_channel_index;
                     params['currentChannel'] = new_channel_key;
                     params['currentChannelNumber'] = new_channel_number;
-                    // executionStates.push('online', 'currentChannel');
+                    // executionStates.push('currentChannel');
                     return ok_result;
                 }
                 /*if (command.params.hasOwnProperty('channelName')) {
@@ -1926,7 +1860,7 @@ module.exports = function(RED) {
                     me.current_channel_index = new_channel_index;
                     params['currentChannel'] = new_channel_key;
                     params['currentChannelNumber'] = new_channel_number;
-                    // executionStates.push('online', 'currentChannel');
+                    // executionStates.push('currentChannel');
                     return ok_result;
                 }
             }
@@ -1950,7 +1884,7 @@ module.exports = function(RED) {
                     }
                     params['currentChannel'] = this.available_channels[current_channel_index].key;
                     params['currentChannelNumber'] = this.available_channels[current_channel_index].number || '';
-                    // executionStates.push('online', 'currentChannel');
+                    // executionStates.push('currentChannel');
                     return ok_result;
                 }
             }
@@ -1965,7 +1899,7 @@ module.exports = function(RED) {
                 }
                 params['currentChannel'] = this.available_channels[this.current_channel_index].key;
                 params['currentChannelNumber'] = this.available_channels[current_channel_index].number || '';
-                // executionStates.push('online', 'currentChannel');
+                // executionStates.push('currentChannel');
                 return ok_result;
             }
             // Modes
@@ -1979,7 +1913,7 @@ module.exports = function(RED) {
                         }
                     });
                     params['currentModeSettings'] = modes;
-                    executionStates.push('online', 'currentModeSettings');
+                    executionStates.push('currentModeSettings');
                     return ok_result;
                 }
             }
@@ -1989,12 +1923,12 @@ module.exports = function(RED) {
                     const updateToggleSettings = command.params['updateToggleSettings'];
                     let toggles = this.states['currentToggleSettings'];
                     this.available_toggles.forEach(function (toggle) {
-                        if (typeof updateToggleSettings[toggle].name === 'boolean') {
+                        if (typeof updateToggleSettings[toggle.name] === 'boolean') {
                             toggles[toggle.name] = updateToggleSettings[toggle.name];
                         }
                     });
                     params['currentToggleSettings'] = toggles;
-                    executionStates.push('online', 'currentToggleSettings');
+                    executionStates.push('currentToggleSettings');
                     return ok_result;
                 }
             }
@@ -2002,7 +1936,7 @@ module.exports = function(RED) {
             else if (command.command == 'action.devices.commands.BrightnessAbsolute') {
                 const brightness = command.params['brightness'];
                 params['brightness'] = brightness;
-                executionStates.push('online', 'brightness');
+                executionStates.push('brightness');
             }
             else if (command.command == 'action.devices.commands.BrightnessRelative') {
                 let brightness = this.states['brightness'];
@@ -2015,7 +1949,7 @@ module.exports = function(RED) {
                     brightness = brightness + parseInt(brightnessRelativePercent);
                 }
                 params['brightness'] = brightness;
-                executionStates.push('online', 'brightness');
+                executionStates.push('brightness');
                 return ok_result;
             }
             // ColorSetting
@@ -2032,7 +1966,7 @@ module.exports = function(RED) {
                     } else if (command.params.color.hasOwnProperty('spectrumHSV')) {
                         params['color'] = { spectrumHsv: command.params.color.spectrumHSV};
                     }
-                    executionStates.push('online', 'color');
+                    executionStates.push('color');
                     return ok_result;
                 }
             }
@@ -2050,7 +1984,7 @@ module.exports = function(RED) {
                         }
                     });
                     if (protocol.length > 0) {
-                        let executionStates = ['online', 'cameraStreamAccessUrl', 'cameraStreamProtocol'];
+                        executionStates.push('cameraStreamAccessUrl', 'cameraStreamProtocol');
                         if (me.authToken.length > 0) {
                             executionStates.push('cameraStreamAuthToken');
                         }

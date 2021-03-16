@@ -1,0 +1,4 @@
+{
+    "start": PARAM1,
+    "cookingMode": "PARAM2"
+}
