@@ -673,7 +673,7 @@ If `topic` is something else then `payload` must be an object and tells both the
 If `topic` is `currentApplication` then `payload` must be a string and indicates the current application running.
 
         msg.topic = 'currentApplication'
-        msg.payload = 'yourube'
+        msg.payload = 'youtube'
 
 If `topic` is `currentInput` then `payload` must be a string and indicates the current input selected.
 
@@ -771,7 +771,7 @@ If `topic` is `online` then `payload` must be boolean and tells the online state
         msg.topic = 'online'
         msg.payload = true
 
-If `topic` is something else then `payload` must be an object and tells the online state, ambient and target temperature of the thermostate.
+If `topic` is something else then `payload` must be an object and tells every attribute.
 
         msg.topic = 'set'
         msg.payload = {
