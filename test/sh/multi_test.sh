@@ -18,12 +18,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+NODE_ID="98599ced.c9cc6"
+PAYLOAD_FILE="$HOME/payload.json"
+OUT_FILE="$HOME/out.json"
+
+./refresh_token
+
+dos2unix cmd/* 2>/dev/null
+
 test_json() {
     STR=$1
     JPATH=$2
     VAL=$3
     V=$(echo $STR | jq $JPATH)
     if [ "$V" != "$VAL" ] ; then
+        echo
+        echo "CMD: ./execute $CMD_EXEC"
         echo "Response: $STR"
         echo "JSON tag: $JPATH"
         echo "Value expected: $VAL"
@@ -36,499 +46,594 @@ test_json() {
     echo -n .
 }
 
-execute() {
-    ./execute "$@"
+test_out() {
+    test_json "$OUT" "$@"
 }
 
-NODE_ID="98599ced.c9cc6"
+test_payload() {
+    test_json "$PAYLOAD" "$@"
+}
 
-./refresh_token
+test_no_payload() {
+    if [ "$PAYLOAD" != "{}" ] ; then
+        echo
+        echo "CMD: ./exec $CMD_EXEC"
+        echo "Value expected: {}"
+        echo "Value found: $PAYLOAD"
+        echo ERROR
+        echo "Request: "
+        cat request.json
+        exit 2
+    fi
+}
 
-dos2unix cmd/* 2>/dev/null
+execute() {
+    CMD_EXEC="$@"
+    echo
+    CMD_=$2
+    CMD="${CMD_%%_*}"
+    echo $CMD
+    echo "{}" > "$PAYLOAD_FILE" 
+    ./execute "$@" > "$OUT_FILE"
+    OUT=$(cat  "$OUT_FILE")
+    PAYLOAD=$(cat "$PAYLOAD_FILE")
+    test_out ".payload.commands[0].status" '"SUCCESS"'
+    test_payload .online true
+    test_payload .command "\"$CMD\""
+}
+
+execute_no_payload() {
+    echo "{}" > "$PAYLOAD_FILE" 
+    ./execute "$@" > "$OUT_FILE"
+    OUT=$(cat  "$OUT_FILE")
+    PAYLOAD=$(cat "$PAYLOAD_FILE")
+    test_out ".payload.commands[0].status" '"SUCCESS"'
+    test_no_payload
+}
+
+execute_error() {
+    echo "{}" > "$PAYLOAD_FILE" 
+    OUT=$(./execute "$@")
+    PAYLOAD=$(cat "$PAYLOAD_FILE")
+    test_out ".payload.commands[0].status" '"ERROR"'
+    test_no_payload
+}
 
 # AppSelector 
 echo AppSelector
-OUT=$(execute $NODE_ID appInstall mia_application)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID appInstall mia_application
+test_payload ".params.newApplication" '"mia_application"'
 
-OUT=$(execute $NODE_ID appInstall_name mia_application)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID appInstall_name mia_application
 
-OUT=$(execute $NODE_ID appInstall youtube_application)
-test_json "$OUT" ".payload.commands[0].status" '"ERROR"'
-test_json "$OUT" ".payload.commands[0].errorCode" '"alreadyInstalledApp"'
+execute_error $NODE_ID appInstall youtube_application
+test_out ".payload.commands[0].errorCode" '"alreadyInstalledApp"'
 
-OUT=$(execute $NODE_ID appInstall_name YouTube)
-test_json "$OUT" ".payload.commands[0].status" '"ERROR"'
-test_json "$OUT" ".payload.commands[0].errorCode" '"alreadyInstalledApp"'
+execute_error $NODE_ID appInstall_name YouTube
+test_out ".payload.commands[0].errorCode" '"alreadyInstalledApp"'
 
-OUT=$(execute $NODE_ID appSearch youtube_application)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID appSearch youtube_application
 
-OUT=$(execute $NODE_ID appSearch_name YouTube)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID appSearch_name YouTube
 
-OUT=$(execute $NODE_ID appSearch no_installed_app)
-test_json "$OUT" ".payload.commands[0].status" '"ERROR"'
-test_json "$OUT" ".payload.commands[0].errorCode" '"noAvailableApp"'
+execute_error $NODE_ID appSearch no_installed_app
+test_out ".payload.commands[0].errorCode" '"noAvailableApp"'
 
-OUT=$(execute $NODE_ID appSearch_name no_installed_app1)
-test_json "$OUT" ".payload.commands[0].status" '"ERROR"'
-test_json "$OUT" ".payload.commands[0].errorCode" '"noAvailableApp"'
+execute_error $NODE_ID appSearch_name no_installed_app1
+test_out ".payload.commands[0].errorCode" '"noAvailableApp"'
 
-OUT=$(execute $NODE_ID appSelect youtube_application)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID appSelect_name "Prime Video"
+test_payload .currentApplication '"amazon_prime_video_application"'
+test_payload .params.newApplicationName '"Prime Video"'
 
-OUT=$(execute $NODE_ID appSelect_name YouTube)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID appSelect youtube_application
+test_payload .params.newApplication '"youtube_application"'
 
-OUT=$(execute $NODE_ID appSelect no_installed_app2)
-test_json "$OUT" ".payload.commands[0].status" '"ERROR"'
-test_json "$OUT" ".payload.commands[0].errorCode" '"noAvailableApp"'
+execute $NODE_ID appSelect amazon_prime_video_application
+test_payload .params.newApplication '"amazon_prime_video_application"'
 
-OUT=$(execute $NODE_ID appSelect_name no_installed_app3)
-test_json "$OUT" ".payload.commands[0].status" '"ERROR"'
-test_json "$OUT" ".payload.commands[0].errorCode" '"noAvailableApp"'
+execute $NODE_ID appSelect_name YouTube
+test_payload .currentApplication '"youtube_application"'
+test_payload .params.newApplicationName '"YouTube"'
+
+execute_error $NODE_ID appSelect no_installed_app2
+test_out ".payload.commands[0].errorCode" '"noAvailableApp"'
+
+execute_error $NODE_ID appSelect_name no_installed_app3
+test_out ".payload.commands[0].errorCode" '"noAvailableApp"'
 
 # ArmDisarm
 echo
-echo ArmDisarm
-OUT=$(execute $NODE_ID ArmDisarm true 123)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-# test_json "$OUT" ".payload.commands[0].states.online" 'true'
+echo ArmDisarm TODO
+execute $NODE_ID ArmDisarm true 123
+# test_out ".payload.commands[0].states.online" 'true'
 
-OUT=$(execute $NODE_ID ArmDisarm_level true 123 level3)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-# test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID ArmDisarm_level true 123 level3
+# test_out ".payload.commands[0].states.online" 'true'
 
-OUT=$(execute $NODE_ID ArmDisarm_cancel true)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-# test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID ArmDisarm_cancel true
+# test_out ".payload.commands[0].states.online" 'true'
 
 # Brightness
 echo
 echo Brightness
 
-OUT=$(execute $NODE_ID BrightnessAbsolute 128)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-# test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID BrightnessAbsolute 128
+test_payload ".brightness" 128
 
-OUT=$(execute $NODE_ID BrightnessRelative 4)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID BrightnessAbsolute 200
+test_payload ".brightness" 200
+
+execute $NODE_ID BrightnessRelative 4
+test_out ".payload.commands[0].states.online" true
+test_payload ".brightness" 208
 
 # CameraStream
 echo
 echo CameraStream
-OUT=$(execute $NODE_ID GetCameraStream true '"progressive_mp4"')
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-test_json "$OUT" ".payload.commands[0].states.online" 'true'
-
-test_json "$OUT" ".payload.commands[0].states.cameraStreamAccessUrl" '"http://PROGRESSIVE_MP4"'
-test_json "$OUT" ".payload.commands[0].states.cameraStreamProtocol" '"progressive_mp4"'
-test_json "$OUT" ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
-test_json "$OUT" ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_ID"'
+execute_no_payload $NODE_ID GetCameraStream true '"progressive_mp4"'
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://PROGRESSIVE_MP4"'
+test_out ".payload.commands[0].states.cameraStreamProtocol" '"progressive_mp4"'
+test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
+test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_ID"'
 
 # Channel 
 echo
 echo Channel 
-OUT=$(execute $NODE_ID selectChannel 'NO channel' 'NO channel name')
-test_json "$OUT" ".payload.commands[0].status" '"ERROR"'
-test_json "$OUT" ".payload.commands[0].errorCode" '"noAvailableChannel"'
+execute_error $NODE_ID selectChannel 'NO channel' 'NO channel name'
+test_out ".payload.commands[0].errorCode" '"noAvailableChannel"'
 
-OUT=$(execute $NODE_ID selectChannel 'rai1' 'Rai 1')
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID selectChannel 'rai1' 'Rai 1'
+test_out ".payload.commands[0].states.online" 'true'
+test_payload ".currentChannel" '"rai1"'
+test_payload ".currentChannelNumber" '"1"'
 
-OUT=$(execute $NODE_ID selectChannel_number 'No channel number')
-test_json "$OUT" ".payload.commands[0].status" '"ERROR"'
-test_json "$OUT" ".payload.commands[0].errorCode" '"noAvailableChannel"'
+execute_error $NODE_ID selectChannel_number 'No channel number'
+test_out ".payload.commands[0].errorCode" '"noAvailableChannel"'
 
-OUT=$(execute $NODE_ID selectChannel_number '501')
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID selectChannel_number '501'
+test_out ".payload.commands[0].states.online" 'true'
+test_payload ".currentChannel" '"rai1_hd"'
+test_payload ".currentChannelNumber" '"501"'
 
 # ColorSetting 
 echo
 echo ColorSetting 
-OUT=$(execute $NODE_ID ColorAbsolute 'Bianco Caldo' 3000)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-# test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID ColorAbsolute 'Bianco Caldo' 3000
+test_payload ".color.temperatureK" 3000
+# test_out ".payload.commands[0].states.online" 'true'
 
-OUT=$(execute $NODE_ID ColorAbsolute_rgb 'Magenta' 16711935)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-# test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID ColorAbsolute_rgb 'Magenta' 16711935
+test_payload ".color.spectrumRgb" 16711935
+test_payload ".color.temperatureK" null
+# test_out ".payload.commands[0].states.online" 'true'
 
-OUT=$(execute $NODE_ID ColorAbsolute_hsv 'Magenta' 300 1 1)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-# test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID ColorAbsolute_hsv 'Magenta' 300 1 1
+# test_out ".payload.commands[0].states.online" 'true'
+test_payload ".color.spectrumHsv.hue" 300
+test_payload ".color.spectrumHsv.saturation" 1
+test_payload ".color.spectrumHsv.value" 1
+test_payload ".color.temperatureK" null
+test_payload ".color.spectrumRgb" null
+
+execute $NODE_ID ColorAbsolute 'Bianco Freddo' 7000
+test_payload ".color.spectrumRgb" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+# test_out ".payload.commands[0].states.online" 'true'
 
 # Cook
 echo
-echo Cook
-OUT=$(execute $NODE_ID Cook true 'BAKE')
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-# test_json "$OUT" ".payload.commands[0].states.online" 'true'
+echo Cook TODO
+execute $NODE_ID Cook true 'BAKE'
+# test_out ".payload.commands[0].states.online" 'true'
 
-OUT=$(execute $NODE_ID Cook_preset true 'COOK' 'white_rice' 2 "CUPS")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-# test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID Cook_preset true 'COOK' 'white_rice' 2 "CUPS"
+# test_out ".payload.commands[0].states.online" 'true'
 
-OUT=$(execute $NODE_ID Cook true 'NO MODE')
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR
+execute $NODE_ID Cook true 'NO MODE'
+test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR
 
-OUT=$(execute $NODE_ID Cook_preset true 'COOK' 'no_preset' 2 "CUPS")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset 
-# test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID Cook_preset true 'COOK' 'no_preset' 2 "CUPS"
+test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset 
+# test_out ".payload.commands[0].states.online" 'true'
 
-OUT=$(execute $NODE_ID Cook_preset true 'COOK' 'white_rice' 2 "NO_UNIT")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset?
+execute $NODE_ID Cook_preset true 'COOK' 'white_rice' 2 "NO_UNIT"
+test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset?
 
 # Dispense 
 echo
-echo Dispense 
-OUT=$(execute $NODE_ID Dispense 1 "CUP" 'water')
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset?
+echo Dispense TODO
+execute $NODE_ID Dispense 1 "CUP" 'water'
+test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset?
 
-OUT=$(execute $NODE_ID Dispense 1 'no_unit' "water")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset 
-# test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID Dispense 1 'no_unit' "water"
+test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset 
+# test_out ".payload.commands[0].states.online" 'true'
 
-OUT=$(execute $NODE_ID Dispense 1 'CUP' 'no_item')
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset?
+execute $NODE_ID Dispense 1 'CUP' 'no_item'
+test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset?
 
-OUT=$(execute $NODE_ID Dispense_preset "cat_bowl")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Dispense_preset "cat_bowl"
+test_out ".payload.commands[0].status" '"SUCCESS"'
 
-OUT=$(execute $NODE_ID Dispense_preset "no_preset")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset?
+execute $NODE_ID Dispense_preset "no_preset"
+test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset?
 
-OUT=$(execute $NODE_ID Dispense_none )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Dispense_none 
+test_out ".payload.commands[0].status" '"SUCCESS"'
 
 # Dock
 echo
 echo Dock
-OUT=$(execute $NODE_ID Dock )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Dock 
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.isDocked" true
+test_payload ".isDocked" true
 
-# EnergyStorage 
+execute $NODE_ID Dock 
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.isDocked" true
+test_payload ".isDocked" true
+
+# EnergyStorage TODO
 echo
 echo EnergyStorage 
-OUT=$(execute $NODE_ID Charge true )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Charge true 
 
-OUT=$(execute $NODE_ID Charge false )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Charge false 
 
 # FanSpeed 
 echo
-echo FanSpeed 
-OUT=$(execute $NODE_ID SetFanSpeed "speed_high" )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+echo FanSpeed
+execute_error $NODE_ID SetFanSpeed "unkwnown_speed"
 
-OUT=$(execute $NODE_ID SetFanSpeed_percent 50 )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetFanSpeed "speed_high"
+test_payload ".currentFanSpeedSetting" '"speed_high"'
 
-OUT=$(execute $NODE_ID SetFanSpeedRelative -2 )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetFanSpeed_percent 50 
+test_payload ".currentFanSpeedPercent" 50
+test_payload ".currentFanSpeedSetting" '"speed_high"'
 
-OUT=$(execute $NODE_ID SetFanSpeedRelative_percent 15 )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetFanSpeedRelative -2 
+test_payload ".currentFanSpeedPercent" 48
+test_payload ".currentFanSpeedSetting" '"speed_high"'
 
-OUT=$(execute $NODE_ID Reverse )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetFanSpeedRelative_percent 15 
+test_payload ".currentFanSpeedPercent" 55
+test_payload ".currentFanSpeedSetting" '"speed_high"'
 
-# Fill 
+execute $NODE_ID Reverse 
+
+# Fill
 echo
-echo Fill 
-OUT=$(execute $NODE_ID Fill true )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+echo Fill
+execute $NODE_ID Fill true 
+test_payload ".params.fill" true
 
-OUT=$(execute $NODE_ID Fill_level true "half_level" )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Fill_level true "half_level" 
+test_payload ".params.fill" true
+test_payload ".params.fillLevel" '"half_level"'
 
-OUT=$(execute $NODE_ID Fill_level true "full_level" )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Fill_level true "full_level" 
+test_payload ".params.fillLevel" '"full_level"'
 
-OUT=$(execute $NODE_ID Fill_percent true 30 )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Fill_percent true 30 
+test_payload ".params.fillPercent" 30
 
 # HumiditySetting 
 echo
 echo HumiditySetting 
-OUT=$(execute $NODE_ID SetHumidity 30 )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetHumidity 30 
+test_payload ".humiditySetpointPercent" 30
 
-OUT=$(execute $NODE_ID HumidityRelative -6 )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID HumidityRelative -6 
+test_payload ".humiditySetpointPercent" 24
 
-OUT=$(execute $NODE_ID HumidityRelative_percent 30 )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID HumidityRelative_percent 5 
+test_payload ".humiditySetpointPercent" 25
 
 # InputSelector 
 echo
 echo InputSelector 
-OUT=$(execute $NODE_ID SetInput "usb_1" )
-test_json "$OUT" ".payload.commands[0].status" '"ERROR"'
-test_json "$OUT" ".payload.commands[0].errorCode" '"unsupportedInput"'
+execute_error $NODE_ID SetInput "usb_1" 
+test_out ".payload.commands[0].errorCode" '"unsupportedInput"'
 
-OUT=$(execute $NODE_ID SetInput "hdmi_2_input" )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetInput "hdmi_2_input" 
+test_payload ".currentInput" '"hdmi_2_input"'
 
-OUT=$(execute $NODE_ID NextInput )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID NextInput 
+test_payload ".currentInput" '"hdmi_3_input"'
 
-OUT=$(execute $NODE_ID PreviousInput )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID PreviousInput 
+test_payload ".currentInput" '"hdmi_2_input"'
 
 # LightEffects 
 echo
 echo LightEffects
-OUT=$(execute $NODE_ID ColorLoop 3600 )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID ColorLoop 3600 
+test_payload ".activeLightEffect" '"colorLoop"'
 
-OUT=$(execute $NODE_ID Sleep 3601 )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Sleep 3601 
+test_payload ".activeLightEffect" '"sleep"'
 
-OUT=$(execute $NODE_ID StopEffect )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID StopEffect 
+test_payload ".activeLightEffect" '""'
 
-OUT=$(execute $NODE_ID Wake 3602 )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Wake 3602 
+test_payload ".activeLightEffect" '"wake"'
 
 # Locator
 echo
 echo Locator
-OUT=$(execute $NODE_ID Locate true )
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Locate true 
 
-OUT=$(execute $NODE_ID Locate_lang true "it")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Locate_lang true "it"
 
 # LockUnlock 
 echo
 echo LockUnlock 
-OUT=$(execute $NODE_ID LockUnlock true "125")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID LockUnlock true "125"
+test_payload ".isLocked" false
+
+execute $NODE_ID LockUnlock false "125"
+test_payload ".isLocked" false
 
 # Modes 
 echo
 echo Modes 
-OUT=$(execute $NODE_ID SetModes "load_mode" "small_load")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetModes_all '"load_mode":"","temp_mode":""'
+test_payload ".currentModeSettings.load_mode" '""'
+test_payload ".currentModeSettings.temp_mode" '""'
 
-OUT=$(execute $NODE_ID SetModes "load_mode" "no_mode_value")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetModes "load_mode" "small_load"
+test_payload ".currentModeSettings.load_mode" '"small_load"'
+test_payload ".currentModeSettings.temp_mode" '""'
 
-OUT=$(execute $NODE_ID SetModes "no_mode" "no_mode_value")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetModes "load_mode" "no_mode_value"
+test_payload ".currentModeSettings.load_mode" '"small_load"'
+test_payload ".currentModeSettings.temp_mode" '""'
 
-OUT=$(execute $NODE_ID SetModes_all '"load_mode":"small_load","temp_mode":"hot_temp"')
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetModes "no_mode" "no_mode_value"
+test_payload ".currentModeSettings.load_mode" '"small_load"'
+test_payload ".currentModeSettings.temp_mode" '""'
 
-# NetworkControl 
+execute $NODE_ID SetModes_all '"load_mode":"small_load","temp_mode":"hot_temp"'
+test_payload ".currentModeSettings.load_mode" '"small_load"'
+test_payload ".currentModeSettings.temp_mode" '"hot_temp"'
+
+# NetworkControl TODO
 echo
 echo NetworkControl 
-OUT=$(execute $NODE_ID EnableDisableGuestNetwork true)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID EnableDisableGuestNetwork true
 
-OUT=$(execute $NODE_ID EnableDisableNetworkProfile "kids" true)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID EnableDisableNetworkProfile "kids" true
 
-OUT=$(execute $NODE_ID GetGuestNetworkPassword)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-# test_json "$OUT" ".payload.commands[0].guestNetworkPassword" '"PASSWORD"' TODO
+execute $NODE_ID GetGuestNetworkPassword
+# test_out ".payload.commands[0].guestNetworkPassword" '"PASSWORD"' TODO
 
-OUT=$(execute $NODE_ID TestNetworkSpeed true true)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID TestNetworkSpeed true true
 
 # OnOff
 echo
 echo OnOff
-OUT=$(execute $NODE_ID OnOff false)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-test_json "$OUT" ".payload.commands[0].states.on" 'false'
-test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID OnOff false
+test_out ".payload.commands[0].states.on" 'false'
+test_out ".payload.commands[0].states.online" 'true'
 
-OUT=$(execute $NODE_ID OnOff true)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
-test_json "$OUT" ".payload.commands[0].states.on" 'true'
-test_json "$OUT" ".payload.commands[0].states.online" 'true'
+execute $NODE_ID OnOff true
+test_out ".payload.commands[0].states.on" 'true'
+test_out ".payload.commands[0].states.online" 'true'
 
-# OpenClose 
+# OpenClose TODO 1
 echo
 echo OpenClose 
-OUT=$(execute $NODE_ID OpenClose 70)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID OpenClose 70
 
-OUT=$(execute $NODE_ID OpenClose_dir 70 "DOWN")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID OpenClose_dir 70 "DOWN"
 
-OUT=$(execute $NODE_ID OpenClose_dir 70 "NO_DIR")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR
+execute $NODE_ID OpenClose_dir 70 "NO_DIR"
+test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR
 
-OUT=$(execute $NODE_ID OpenCloseRelative 5)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID OpenCloseRelative 5
 
-OUT=$(execute $NODE_ID OpenCloseRelative_dir -7 "UP")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID OpenCloseRelative_dir -7 "UP"
 
-OUT=$(execute $NODE_ID OpenCloseRelative_dir -9 "NO_DIR")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR
+execute $NODE_ID OpenCloseRelative_dir -9 "NO_DIR"
+test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR
 
 # Reboot 
 echo
 echo Reboot 
-OUT=$(execute $NODE_ID Reboot)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID Reboot
 
 # Rotation 
 echo
 echo Rotation 
-OUT=$(execute $NODE_ID RotateAbsolute 10)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID RotateAbsolute 10
+test_payload ".rotationPercent" 10
 
-OUT=$(execute $NODE_ID RotateAbsolute_deg 30)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID RotateAbsolute_deg 30
+test_payload ".rotationDegrees" 30
+test_payload ".rotationPercent" 10
 
 # Scene
 echo
 echo Scene
-OUT=$(execute $NODE_ID ActivateScene true)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID ActivateScene true
+test_payload ".params.deactivate" true
 
-OUT=$(execute $NODE_ID ActivateScene true)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID ActivateScene false
+test_payload ".params.deactivate" false
 
 # SoftwareUpdate 
 echo
 echo SoftwareUpdate 
-OUT=$(execute $NODE_ID SoftwareUpdate)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SoftwareUpdate
 
 # StartStop 
 echo
 echo StartStop 
-OUT=$(execute $NODE_ID StartStop false)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID StartStop false
+test_payload ".isRunning" false
 
-OUT=$(execute $NODE_ID StartStop_zone true "Cucina")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID StartStop_zone true "Cucina"
+test_payload ".isRunning" true
+test_payload ".isPaused" false
+test_payload ".activeZones[0]" '"Cucina"'
+test_payload ".activeZones[1]" null
 
-OUT=$(execute $NODE_ID StartStop_zones true '"Cucina","Salotto"')
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID StartStop false
+test_payload ".isRunning" false
+test_payload ".isPaused" false
+test_payload ".activeZones[0]" '"Cucina"'
+test_payload ".activeZones[1]" null
 
-OUT=$(execute $NODE_ID PauseUnpause true)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID StartStop_zone true "None"
+test_payload ".isRunning" true
+test_payload ".isPaused" false
+test_payload ".activeZones" '[]'
 
-OUT=$(execute $NODE_ID PauseUnpause false)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID StartStop_zones true '"Cucina","Salotto"'
+test_payload ".isRunning" true
+test_payload ".isPaused" false
+test_payload ".activeZones[0]" '"Cucina"'
+test_payload ".activeZones[1]" '"Salotto"'
+test_payload ".activeZones[2]" null
+
+execute $NODE_ID PauseUnpause true
+test_payload ".isRunning" true
+test_payload ".isPaused" true
+test_payload ".activeZones[0]" '"Cucina"'
+test_payload ".activeZones[1]" '"Salotto"'
+test_payload ".activeZones[2]" null
+
+execute $NODE_ID PauseUnpause false
+test_payload ".isRunning" true
+test_payload ".isPaused" false
+test_payload ".activeZones[0]" '"Cucina"'
+test_payload ".activeZones[1]" '"Salotto"'
+test_payload ".activeZones[2]" null
 
 # TemperatureControl 
 echo
 echo TemperatureControl 
-OUT=$(execute $NODE_ID SetTemperature 176.67)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetTemperature 28.5
+test_payload ".temperatureSetpointCelsius" 28.5
+
+execute $NODE_ID SetTemperature 16.5
+test_payload ".temperatureSetpointCelsius" 16.5
 
 # TemperatureSetting 
 echo
 echo TemperatureSetting 
-OUT=$(execute $NODE_ID ThermostatTemperatureSetpoint 176.67)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID ThermostatTemperatureSetpoint 17.67
+test_payload ".thermostatTemperatureSetpoint" 17.67
+test_payload ".thermostatTemperatureSetpointHigh" null
+test_payload ".thermostatTemperatureSetpointLow" null
 
-OUT=$(execute $NODE_ID ThermostatTemperatureSetRange 26 22)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID ThermostatTemperatureSetRange 26.2 22.8
+# test_payload ".thermostatTemperatureSetpoint" null
+test_payload ".thermostatTemperatureSetpointHigh" 26.2
+test_payload ".thermostatTemperatureSetpointLow" 22.8
 
-OUT=$(execute $NODE_ID ThermostatSetMode "heatcool")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID ThermostatTemperatureSetpoint 27.67
+test_payload ".thermostatTemperatureSetpoint" 27.67
+# test_payload ".thermostatTemperatureSetpointHigh" null
+# test_payload ".thermostatTemperatureSetpointLow" null
 
-OUT=$(execute $NODE_ID TemperatureRelative "20")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID ThermostatSetMode "heatcool"
+test_payload ".thermostatMode" '"heatcool"'
 
-OUT=$(execute $NODE_ID TemperatureRelative "20")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID ThermostatSetMode "eco"
+test_payload ".thermostatMode" '"eco"'
 
-OUT=$(execute $NODE_ID TemperatureRelative_deg "10")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID ThermostatTemperatureSetpoint 15.67
+test_payload ".thermostatTemperatureSetpoint" 15.67
+test_payload ".thermostatTemperatureSetpointHigh" null
+test_payload ".thermostatTemperatureSetpointLow" null
+
+execute $NODE_ID TemperatureRelative 20
+# test_payload ".thermostatTemperatureSetpoint" 35.67
+
+execute $NODE_ID TemperatureRelative 5
+# test_payload ".thermostatTemperatureSetpoint" 40.67
+
+execute $NODE_ID TemperatureRelative_deg 10
+# test_payload ".thermostatTemperatureSetpoint" 50.67
 
 # Timer
 echo
 echo Timer
-OUT=$(execute $NODE_ID TimerStart "10")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID TimerStart "10"
+# test_payload ".timerTimeSec" 10
+test_payload ".timerPaused" false
 
-OUT=$(execute $NODE_ID TimerAdjust "-5")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID TimerAdjust "-5"
 
-OUT=$(execute $NODE_ID TimerPause)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID TimerPause
+test_payload ".timerPaused" true
 
-OUT=$(execute $NODE_ID TimerResume)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID TimerResume
+test_payload ".timerPaused" false
 
-OUT=$(execute $NODE_ID TimerCancel)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID TimerCancel
 
 # Toggle
 echo
 echo Toggle
-OUT=$(execute $NODE_ID SetToggles energysaving_toggle true)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetToggles quiet_toggle true
+test_payload ".currentToggleSettings.quiet_toggle" true
 
-OUT=$(execute $NODE_ID SetToggles_all '"energysaving_toggle": true,"boost_toggle": false')
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID SetToggles quiet_toggle false
+test_payload ".currentToggleSettings.quiet_toggle" false
+
+execute $NODE_ID SetToggles_all '"extra_bass_toggle": true,"energy_saving_toggle": false'
+test_payload ".currentToggleSettings.extra_bass_toggle" true
+test_payload ".currentToggleSettings.energy_saving_toggle" false
 
 # TransportControl 
 echo
 echo TransportControl 
-OUT=$(execute $NODE_ID mediaStop)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mediaStop
 
-OUT=$(execute $NODE_ID mediaNext)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mediaNext
 
-OUT=$(execute $NODE_ID mediaPrevious)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mediaPrevious
 
-OUT=$(execute $NODE_ID mediaResume)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mediaResume
 
-OUT=$(execute $NODE_ID mediaSeekRelative 1000)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mediaSeekRelative 1000
 
-OUT=$(execute $NODE_ID mediaSeekToPosition 30000)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mediaSeekToPosition 30000
 
-OUT=$(execute $NODE_ID mediaRepeatMode true)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mediaRepeatMode true
 
-OUT=$(execute $NODE_ID mediaRepeatMode_2 true true)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mediaRepeatMode_2 true true
 
-OUT=$(execute $NODE_ID mediaShuffle)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mediaShuffle
 
-OUT=$(execute $NODE_ID mediaClosedCaptioningOn en)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mediaClosedCaptioningOn en
 
-OUT=$(execute $NODE_ID mediaClosedCaptioningOn_2 it "en-US")
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mediaClosedCaptioningOn_2 it "en-US"
 
-OUT=$(execute $NODE_ID mediaClosedCaptioningOff)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mediaClosedCaptioningOff
 
 # Volume
 echo
 echo Volume
-OUT=$(execute $NODE_ID mute true)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID mute true
+test_payload ".isMuted" true
 
-OUT=$(execute $NODE_ID setVolume 8)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID setVolume 8
+test_payload ".currentVolume" 8
+test_payload ".isMuted" false
 
-OUT=$(execute $NODE_ID volumeRelative -3)
-test_json "$OUT" ".payload.commands[0].status" '"SUCCESS"'
+execute $NODE_ID volumeRelative -3
+test_payload ".currentVolume" 5
+test_payload ".isMuted" false
 
 echo
 echo OK

@@ -577,11 +577,12 @@ module.exports = function(RED) {
 
             const default_name = me.getDefaultName(me.device_type);
             const default_name_type = default_name.replace(/[_ ()/]+/g, '-').toLowerCase();
+            me.states = {
+                online: true
+            };
             let device = {
                 id: client.id,
-                states: {
-                    online: true
-                },
+                states: me.states,
                 properties: {
                     type: 'action.devices.types.' + me.device_type,
                     traits: me.getTraits(me),
@@ -933,13 +934,26 @@ module.exports = function(RED) {
          *
          */
         updated(device, params, original_params) {
+            let me=this;
             let states = device.states;
-            let command = device.command;
+            let command = device.command.startsWith('action.devices.commands.') ? device.command.substr(24) : device.command;
+            this.debug(".updated: command = " + JSON.stringify(command));
             this.debug(".updated: states = " + JSON.stringify(states));
             this.debug(".updated: params = " + JSON.stringify(params));
             this.debug(".updated: original_params = " + JSON.stringify(original_params));
 
-            Object.assign(this.states, states);
+            /*if (command === 'ThermostatTemperatureSetRange') {
+                if (me.states.hasOwnProperty('thermostatTemperatureSetpoint')) {
+                    delete me.states.thermostatTemperatureSetpoint;
+                }
+                this.debug(".updated: CCHI REMOVE thermostatTemperatureSetpoint " + JSON.stringify(me.states));
+            }*/
+            // Object.assign(this.states, states);
+            Object.keys(me.states).forEach(function(key) {
+                if (states.hasOwnProperty(key)) {
+                    me.setState(key, states[key], me.states);
+                }
+            });
 
             this.updateStatusIcon();
 
@@ -947,26 +961,39 @@ module.exports = function(RED) {
                 topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
+                params: original_params,
                 payload: {
                     online: states.online
                 },
             };
 
-            Object.keys(states).forEach(function (key) {
-                msg.payload[key] = states[key];
+            // Copy the device state to the payload
+            Object.keys(me.states).forEach(function (key) {
+                msg.payload[key] = me.states[key];
              });
 
-             Object.keys(params).forEach(function (key) {
+            // Copy the command state to the payload
+            Object.keys(states).forEach(function (key) {
+                if (!msg.payload.hasOwnProperty(key)) {
+                    msg.payload[key] = states[key];
+                }
+             });
+
+            // Copy the command params to the payload
+            Object.keys(params).forEach(function (key) {
                  if (!msg.payload.hasOwnProperty(key)) {
                     msg.payload[key] = params[key];
                  }
              });
 
-             Object.keys(original_params).forEach(function (key) {
+            // Copy the command original params to the payload
+            /*Object.keys(original_params).forEach(function (key) {
                 if (!msg.payload.hasOwnProperty(key)) {
                    msg.payload[key] = original_params[key];
                 }
-            });
+            });*/
+
+            // this.debug(".updated: msg = " + JSON.stringify(msg));
 
             this.send(msg);
         };
@@ -1401,13 +1428,19 @@ module.exports = function(RED) {
             } else if (val_type === 'boolean') {
                 new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
             } else if (val_type === 'object') {
-                Object.keys(old_state).forEach(function (key) {
-                    if (typeof new_state[key] !== undefined) {
-                        if (me.setState(key, new_state[key], old_State)) {
-                            differs = true;
-                        }
+                if (typeof value === "object") {
+                    if (!Array.isArray(old_state)) {
+                        Object.keys(old_state).forEach(function (key) {
+                            if (typeof value[key] !== 'undefined') {
+                                if (me.setState(key, value[key], old_state)) {
+                                    differs = true;
+                                }
+                            }
+                        });
+                    } else {
+                        states[key] = value;
                     }
-                });
+                }
             }
             if (val_type !== 'object') {
                 if (new_state !== undefined) {
@@ -1491,7 +1524,7 @@ module.exports = function(RED) {
             };
 
             me.debug(".execCommand: command " +  JSON.stringify(command));
-            me.debug(".execCommand: states " +  JSON.stringify(this.states));
+            me.debug(".execCommand: states " +  JSON.stringify(me.states));
             // me.debug(".execCommand: device " +  JSON.stringify(device));
 
             // Applications
@@ -1513,7 +1546,7 @@ module.exports = function(RED) {
                                 errorCode: 'alreadyInstalledApp'
                             };
                         }
-                        return false;
+                        return ok_result;
                     } else {
                         if (application_index < 0) {
                             return {
@@ -1556,23 +1589,88 @@ module.exports = function(RED) {
                     }
                 }
             }
+            // ColorLoop
+            else if (command.command == 'action.devices.commands.ColorLoop') {
+                params['activeLightEffect'] = 'colorLoop';
+                executionStates.push('activeLightEffect');
+                return ok_result;
+            }
+            else if (command.command == 'action.devices.commands.Sleep') {
+                params['activeLightEffect'] = 'sleep';
+                executionStates.push('activeLightEffect');
+                return ok_result;
+            }
+            else if (command.command == 'action.devices.commands.StopEffect') {
+                params['activeLightEffect'] = '';
+                executionStates.push('activeLightEffect');
+                return ok_result;
+            }
+            else if (command.command == 'action.devices.commands.Wake') {
+                params['activeLightEffect'] = 'wake';
+                executionStates.push('activeLightEffect');
+                return ok_result;
+            }
             // Dock
             else if (command.command == 'action.devices.commands.Dock') {
+                params['isDocked'] = true;
                 executionStates.push('isDocked');
+                return ok_result;
+            }
+            // FanSpeed 
+            else if (command.command == 'action.devices.commands.SetFanSpeed') {
+                if (command.params.hasOwnProperty('fanSpeed')) {
+                    const fanSpeed = command.params['fanSpeed'];
+                    let new_fanspeed = '';
+                    this.available_fan_speeds.forEach(function(fanspeed) {
+                        if (fanspeed.speed_name === fanSpeed) {
+                            new_fanspeed = fanspeed.speed_name;
+                        }
+                    });
+                    if (new_fanspeed === '') {
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'transientError'
+                        };
+                    }
+                    params['currentFanSpeedSetting'] = fanSpeed;
+                    executionStates.push('currentFanSpeedSetting');
+                }
+                if (command.params.hasOwnProperty('fanSpeedPercent')) {
+                    const fanSpeedPercent = command.params['fanSpeedPercent'];
+                    params['currentFanSpeedPercent'] = fanSpeedPercent;
+                    executionStates.push('currentFanSpeedPercent');
+                }
+                return ok_result;
+            }
+            else if (command.command == 'action.devices.commands.SetFanSpeedRelative') {
+                if (command.params.hasOwnProperty('fanSpeedRelativeWeight')) {
+                    const fanSpeedRelativeWeight = command.params['fanSpeedRelativeWeight'];
+                    params['currentFanSpeedPercent'] = me.states['currentFanSpeedPercent'] + fanSpeedRelativeWeight;
+                    executionStates.push('currentFanSpeedPercent');
+                }
+                if (command.params.hasOwnProperty('fanSpeedRelativePercent')) {
+                    const fanSpeedRelativePercent = command.params['fanSpeedRelativePercent'];
+                    params['currentFanSpeedPercent'] =  Math.round(me.states['currentFanSpeedPercent'] * ( 1 + fanSpeedRelativePercent / 100));
+                    executionStates.push('currentFanSpeedPercent');
+                }
+                return ok_result;
             }
             // HumiditySetting
             else if (command.command == 'action.devices.commands.SetHumidity') {
                 const humidity = command.params['humidity'];
-                me.states['humiditySetpointPercent'] = humidity;
+                params['humiditySetpointPercent'] = humidity;
+                executionStates.push('humiditySetpointPercent');
             }
             else if (command.command == 'action.devices.commands.HumidityRelative') {
                 if (command.params.hasOwnProperty('humidityRelativePercent')) {
                     const humidityRelativePercent = command.params['humidityRelativePercent'];
-                    me.states['humiditySetpointPercent'] = me.states['humiditySetpointPercent']  * (1 + humidityRelativePercent / 100);
+                    params['humiditySetpointPercent'] = Math.round(me.states['humiditySetpointPercent']  * (1 + humidityRelativePercent / 100));
+                    executionStates.push('humiditySetpointPercent');
                 }
                 if (command.params.hasOwnProperty('humidityRelativeWeight')) {
                     const humidityRelativeWeight = command.params['humidityRelativeWeight'];
-                    me.states['humidityRelativeWeight'] = me.states['humidityRelativeWeight']  + humidityRelativeWeight;
+                    params['humiditySetpointPercent'] = me.states['humiditySetpointPercent']  + humidityRelativeWeight;
+                    executionStates.push('humiditySetpointPercent');
                 }
             }
             // Inputs
@@ -1591,6 +1689,7 @@ module.exports = function(RED) {
                             errorCode: 'unsupportedInput'
                         };
                     }
+                    this.current_input_index = current_input_index;
                     params['currentInput'] = newInput;
                     executionStates.push('currentInput');
                     return ok_result;
@@ -1602,7 +1701,7 @@ module.exports = function(RED) {
                     this.current_input_index = 0;
                 }
                 executionStates.push('currentInput');
-                params['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
+                params['currentInput'] = this.available_inputs[this.current_input_index].key;
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.PreviousInput') {
@@ -1611,7 +1710,7 @@ module.exports = function(RED) {
                 }
                 this.current_input_index --;
                 executionStates.push('currentInput');
-                params['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
+                params['currentInput'] = this.available_inputs[this.current_input_index].key;
                 return ok_result;
             }
             // Light
@@ -1619,12 +1718,25 @@ module.exports = function(RED) {
                 if (command.params.color.hasOwnProperty('temperature')) {
                     command.params.color.temperatureK = command.params.color.temperature;
                     delete command.params.color.temperature;
+                    if (!me.states.color.hasOwnProperty("temperatureK")) {
+                        me.states.color = { temperatureK: -1 };
+                    }
                 } else if (command.params.color.hasOwnProperty('spectrumRGB')) {
                     command.params.color.spectrumRgb = command.params.color.spectrumRGB;
                     delete command.params.color.spectrumRGB;
+                    if (!me.states.color.hasOwnProperty("spectrumRgb")) {
+                        me.states.color = { spectrumRgb: -1 };
+                    }
                 } else if (command.params.color.hasOwnProperty('spectrumHSV')) {
                     command.params.color.spectrumHsv = command.params.color.spectrumHSV;
                     delete command.params.color.spectrumHSV;
+                    if (!me.states.color.hasOwnProperty("spectrumHsv")) {
+                        me.states.color = { spectrumHsv: {
+                            hue: -1,
+                            saturation: -1,
+                            value: -1
+                        } };
+                    }
                 } 
             }
             // On/Off
@@ -1647,18 +1759,34 @@ module.exports = function(RED) {
             }
             // StartStop
             else if (command.command == 'action.devices.commands.StartStop') {
-                const start = parseInt(command.params['start']) || false;
-                let zones = [];
+                const start = command.params['start'] || false;
+                let zones = undefined;
                 if (command.params.hasOwnProperty('zone')) {
                     zones = [command.params['zone']];
                 } else if (command.params.hasOwnProperty('multipleZones')) {
                     zones = command.params['multipleZones'];
                 }
-                // TODO
+                params['isRunning'] = start;
+                executionStates.push('isRunning');
+                if (start) {
+                    params['isPaused'] = false;
+                    executionStates.push('isPaused');
+                    if (zones !== undefined) {
+                        let active_zones=[];
+                        zones.forEach(function(zone) {
+                            if (me.available_zones.includes(zone)) {
+                                active_zones.push(zone);
+                            }
+                        });
+                        params['activeZones'] = active_zones;
+                        executionStates.push('activeZones');
+                    }
+                }
             }
             else if (command.command == 'action.devices.commands.PauseUnpause') {
-                const pause = parseInt(command.params['pause']) || false;
-                // TODO
+                const pause = command.params['pause'] || false;
+                params['isPaused'] = pause;
+                executionStates.push('isPaused');
             }
             // TransportControl
             else if (command.command == 'action.devices.commands.mediaStop') {
@@ -1735,34 +1863,70 @@ module.exports = function(RED) {
             }
             // TempreatureControl
             else if (command.command == 'action.devices.commands.SetTemperature') {
-                const temperature = parseInt('temperature') || 0;
-                me.states['temperatureSetpointCelsius'] = temperature;
+                const temperature = command.params['temperature'];
+                params['temperatureSetpointCelsius'] = temperature;
+                executionStates.push('temperatureSetpointCelsius');
             }
             // TemperatureSetting 
             else if (command.command == 'action.devices.commands.ThermostatTemperatureSetpoint') {
-                delete me.states['thermostatTemperatureSetpointHigh'];
-                delete me.states['thermostatTemperatureSetpointLow'];
-                const thermostatTemperatureSetpoint = command.params['thermostatTemperatureSetpoint'];
-                me.states['thermostatTemperatureSetpointLow'] = parseInt(thermostatTemperatureSetpoint) || 0;
+                let thermostatTemperatureSetpoint = command.params['thermostatTemperatureSetpoint'];
+                delete me.states['thermostatTemperatureSetpointHigh']; // TODO
+                delete me.states['thermostatTemperatureSetpointLow']; // TODO
+                if (me.states.hasOwnProperty("thermostatTemperatureSetpoint")) {
+                    me.states['thermostatTemperatureSetpoint'] = -365;
+                }
+                params['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint;
+                executionStates.push('thermostatTemperatureSetpoint');
             }
             else if (command.command == 'action.devices.commands.ThermostatTemperatureSetRange') {
-                delete me.states['thermostatTemperatureSetpoint'];
+                me.debug(".CCHI thermostatTemperatureSetpoint " + me.states['thermostatTemperatureSetpoint']);
+                delete me.states['thermostatTemperatureSetpoint'];  // TODO
+                me.debug(".CCHI thermostatTemperatureSetpoint " + me.states['thermostatTemperatureSetpoint']);
+                if (me.states.hasOwnProperty("thermostatTemperatureSetpointHigh")) {
+                    me.states['thermostatTemperatureSetpointHigh'] = -365;
+                    me.states['thermostatTemperatureSetpointLow'] = -365;
+                }
                 const thermostatTemperatureSetpointHigh = command.params['thermostatTemperatureSetpointHigh'];
-                me.states['thermostatTemperatureSetpointHigh'] = parseInt(thermostatTemperatureSetpointHigh) || 0;
                 const thermostatTemperatureSetpointLow = command.params['thermostatTemperatureSetpointLow'];
-                me.states['thermostatTemperatureSetpointLow'] = parseInt(thermostatTemperatureSetpointLow) || 0;
+                params['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh;
+                params['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow;
+                executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
             }
-            //else if (command.command == 'action.devices.commands.ThermostatSetMode') {
-            //}
+            else if (command.command == 'action.devices.commands.ThermostatSetMode') {
+                const thermostatMode = command.params.thermostatMode;
+                params['thermostatMode'] = thermostatMode;
+                executionStates.push('thermostatMode');
+            }
             else if (command.command == 'action.devices.commands.TemperatureRelative') {
                 if (command.params.hasOwnProperty('thermostatTemperatureRelativeDegree')) {
                     const thermostatTemperatureRelativeDegree = command.params['thermostatTemperatureRelativeDegree'];
-                    // TODO
+                    params['thermostatTemperatureSetpoint'] = me.states['thermostatTemperatureSetpoint'] + thermostatTemperatureRelativeDegree;
+                    executionStates.push('thermostatTemperatureSetpoint');
                 }
                 if (command.params.hasOwnProperty('thermostatTemperatureRelativeWeight')) {
                     const thermostatTemperatureRelativeWeight = command.params['thermostatTemperatureRelativeWeight'];
-                    // TODO
+                    me.debug("C CHI thermostatTemperatureRelativeWeight " + thermostatTemperatureRelativeWeight);
+                    me.debug("C CHI thermostatTemperatureSetpoint " + me.states['thermostatTemperatureSetpoint']);
+                    params['thermostatTemperatureSetpoint'] = me.states['thermostatTemperatureSetpoint'] + thermostatTemperatureRelativeWeight;
+                    executionStates.push('thermostatTemperatureSetpoint');
                 }                    
+            }
+            // Timer
+            else if (command.command == 'action.devices.commands.TimerStart') {
+                const timerTimeSec = command.params['timerTimeSec'];
+                params['timerRemainingSec'] = timerTimeSec;
+                executionStates.push('timerRemainingSec');
+            }
+            else if (command.command == 'action.devices.commands.TimerResume') {
+                params['timerPaused'] = false;
+                executionStates.push('timerPaused');
+            }
+            else if (command.command == 'action.devices.commands.TimerPause') {
+                params['timerPaused'] = true;
+                executionStates.push('timerPaused');
+            }
+            else if (command.command == 'action.devices.commands.TimerCancel') {
+                me.states['timerRemainingSec'] = 0;
             }
             // Volume
             else if (command.command == 'action.devices.commands.mute') {
@@ -1780,6 +1944,7 @@ module.exports = function(RED) {
                         volumeLevel = this.volumeMaxLevel;
                     }
                     params['currentVolume'] = volumeLevel;
+                    params['isMuted'] = false;
                     executionStates.push('isMuted', 'currentVolume');
                     return ok_result;
                 }
@@ -1906,15 +2071,33 @@ module.exports = function(RED) {
             else if (command.command == 'action.devices.commands.SetModes') {
                 if (command.params.hasOwnProperty('updateModeSettings')) {
                     const updateModeSettings = command.params['updateModeSettings'];
-                    let modes = this.states['currentModeSettings'];
+                    let new_modes = {};
                     this.available_modes.forEach(function (mode) {
                         if (typeof updateModeSettings[mode.name] === 'string') {
-                            modes[mode.name] = updateModeSettings[mode];
+                            let mode_value = updateModeSettings[mode.name];
+                            mode.settings.forEach(function(setting) {
+                                if (setting.setting_name === mode_value) {
+                                    new_modes[mode.name] = mode_value;
+                                }
+                            });
                         }
                     });
-                    params['currentModeSettings'] = modes;
+                    params['currentModeSettings'] = new_modes;
                     executionStates.push('currentModeSettings');
                     return ok_result;
+                }
+            }
+            // Rotation
+            else if (command.command == 'action.devices.commands.RotateAbsolute') {
+                if (command.params.hasOwnProperty('rotationDegrees')) {
+                    const rotationDegrees = command.params['rotationDegrees'];
+                    params['rotationDegrees'] = rotationDegrees;
+                    executionStates.push('rotationDegrees');
+                }
+                if (command.params.hasOwnProperty('rotationPercent')) {
+                    const rotationPercent = command.params['rotationPercent'];
+                    params['rotationPercent'] = rotationPercent;
+                    executionStates.push('rotationPercent');
                 }
             }
             // Traits
@@ -1942,7 +2125,7 @@ module.exports = function(RED) {
                 let brightness = this.states['brightness'];
                 if (command.params.hasOwnProperty('brightnessRelativePercent')) {
                     const brightnessRelativePercent = command.params['brightnessRelativePercent'];
-                    brightness = brightness * (1 + parseInt(brightnessRelativePercent) / 100);
+                    brightness = Math.round(brightness * (1 + parseInt(brightnessRelativePercent) / 100));
                 }
                 if (command.params.hasOwnProperty('brightnessRelativeWeight')) {
                     const brightnessRelativeWeight = command.params['brightnessRelativeWeight'];
@@ -2007,7 +2190,7 @@ module.exports = function(RED) {
                 }
             }
 
-            return false;
+            return ok_result;
         }
 
         getStreamUrl(protocol_type) {
