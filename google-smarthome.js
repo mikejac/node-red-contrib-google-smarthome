@@ -122,7 +122,7 @@ module.exports = function(RED) {
             } else {
                 RED.log.debug(msg);
             }
-        }
+        };
 
         this.on('close', function(removed, done) {
             node.app.Stop(done);

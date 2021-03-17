@@ -42,7 +42,10 @@
 ---
 ## Introduction
 
-A collection of Node-RED nodes to control your smart home devices via Google Assistant.
+A collection of Node-RED nodes to control your smart home devices via Google Assistant or the Google Home App.
+
+What this module does NOT:
+It does not directly interface with devices made by Google, for example Nest thermostats 
 
 ---
 ## Prerequisites
@@ -850,6 +853,9 @@ Example flow:
 ---
 ## Troubleshooting
 
+- Some devices can be controlled via voice, but not via Google Home App. For example windows and sensors. These devices
+  only show a general page with their room assignments in the app, but they don't show their current state or buttons to
+  control it. There is nothing we can do about it, this has to be implemented by Google. 
 - Some errors and possible solutions are listed at
   [Possible errors](https://github.com/mikejac/node-red-contrib-google-smarthome/wiki/Possible-errors).
 - Look at Node-Red's debug panel for error messages.

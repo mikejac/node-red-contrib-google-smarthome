@@ -1,0 +1,6 @@
+{
+    "color": {
+        "name": "PARAM1",
+        "spectrumRGB": PARAM2
+    }
+}

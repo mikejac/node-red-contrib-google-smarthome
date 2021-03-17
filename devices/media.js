@@ -165,7 +165,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_applications = undefined;
-                RED.log.debug("Applications disabled");
+                this.debug(".constructor: Applications disabled");
             }
 
             if (this.has_channels) {
@@ -176,7 +176,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_channels = undefined;
-                RED.log.debug("Channels disabled");
+                this.debug(".constructor: Channels disabled");
             }
 
             if (this.has_inputs) {
@@ -187,7 +187,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_inputs = undefined;
-                RED.log.debug("Inputs disabled");
+                this.debug(".constructor Inputs disabled");
             }
 
             if (this.has_modes) {
@@ -198,7 +198,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_modes = undefined;
-                RED.log.debug("Modes disabled");
+                this.debug(".constructor: Modes disabled");
             }
 
             if (this.has_toggles) {
@@ -209,7 +209,7 @@ module.exports = function(RED) {
                 }
             } else {
                 this.available_toggles = undefined;
-                RED.log.debug("Toggles disabled");
+                this.debug(".constructor: Toggles disabled");
             }
 
             this.states = this.clientConn.register(this, 'media', config.name, this);
@@ -225,6 +225,7 @@ module.exports = function(RED) {
         }
 
         debug(msg) {
+            msg = 'google-smarthome:MediaNode' + msg;
             if (this.clientConn && typeof this.clientConn.debug === 'function') {
                 this.clientConn.debug(msg);
             } else {
@@ -237,7 +238,7 @@ module.exports = function(RED) {
          *
          */
         registerDevice(client, name, me) {
-            RED.log.debug("MediaNode(registerDevice) device_type " + me.device_type);
+            me.debug(".registerDevice: device_type " + me.device_type);
             let states = {
                 online: true
             };
@@ -273,7 +274,7 @@ module.exports = function(RED) {
             this.updateAttributesForTraits(me, device);
             this.updateStatesForTraits(me, device);
 
-            RED.log.debug("MediaNode(registerDevice): device = " + JSON.stringify(device));
+            me.debug(".registerDevice: device = " + JSON.stringify(device));
 
             return device;
         }
@@ -370,10 +371,12 @@ module.exports = function(RED) {
          * called when state is updated from Google Assistant
          *
          */
-        updated(device, params) {
+        updated(device, params, original_params) {
             let states = device.states;
             let command = device.command;
-            RED.log.debug("MediaNode(updated): states = " + JSON.stringify(states));
+            this.debug(".updated: states = " + JSON.stringify(states));
+            this.debug(".updated: params = " + JSON.stringify(params));
+            this.debug(".updated: original_params = " + JSON.stringify(original_params));
 
             Object.assign(this.states, states);
 
@@ -398,6 +401,16 @@ module.exports = function(RED) {
                  }
              });
 
+             if (command === 'action.devices.commands.mediaSeekRelative') {
+                 if (original_params.hasOwnProperty('relativePositionMs')) {
+                     msg.payload.relativePositionMs = original_params.relativePositionMs;
+                 }
+             } else if (command === 'action.devices.commands.mediaSeekToPosition') {
+                if (original_params.hasOwnProperty('absPositionMs')) {
+                    msg.payload.absPositionMs = original_params.absPositionMs;
+                }
+            }
+
             this.send(msg);
         };
 
@@ -407,16 +420,15 @@ module.exports = function(RED) {
          */
         onInput(msg) {
             const me = this;
-            RED.log.debug("MediaNode(input)");
+            me.debug(".input: topic = " + msg.topic);
 
             let topicArr = String(msg.topic).split(this.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
-            RED.log.debug("MediaNode(input): topic = " + topic);
             try {
                 if (topic.toUpperCase() === 'APPLICATIONS') {
                     if (this.has_apps) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_applications = this.loadJson(this.available_applications_file, []);
                             if (this.available_applications === undefined) {
                                 RED.log.error("Applications " +  this.available_applications_file + "file not found.");
@@ -434,7 +446,7 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'CHANNELS') {
                     if (this.has_channels) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_channels = this.loadJson(this.available_channels_file, []);
                             if (this.available_channels === undefined) {
                                 RED.log.error("Channels " +  this.available_channels_file + "file not found.");
@@ -452,7 +464,7 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'INPUTS') {
                     if (this.has_inputs) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_inputs = this.loadJson(this.available_inputs_file, []);
                             if (this.available_inputs === undefined) {
                                 RED.log.error("Inputs " +  this.available_inputs_file + "file not found.");
@@ -470,7 +482,7 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'MODES') {
                     if (this.has_modes) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_modes = this.loadJson(this.available_modes_file, []);
                             if (this.available_modes === undefined) {
                                 RED.log.error("Modes " +  this.available_modes_file + "file not found.");
@@ -491,7 +503,7 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'TOGGLES') {
                     if (this.has_toggles) {
-                        if (typeof msg.payload === undefined) {
+                        if (typeof msg.payload === 'undefined') {
                             this.available_toggles = this.loadJson(this.available_toggles_file, []);
                             if (this.available_toggles === undefined) {
                                 RED.log.error("Toggles " +  this.available_toggles_file + "file not found.");
@@ -515,14 +527,14 @@ module.exports = function(RED) {
                     Object.keys(this.states).forEach(function (key) {
                         if (topic.toUpperCase() == key.toUpperCase()) {
                             state_key = key;
-                            RED.log.debug("MediaNode(input): found state " + key);
+                            me.debug(".input: found state " + key);
                         }
                     });
 
                     if (state_key !== '') {
                         const differs = me.setState(state_key, msg.payload, this.states);
                         if (differs) {
-                            RED.log.debug("MediaNode(input): " + state_key + ' ' + msg.payload);
+                            me.debug(".input: " + state_key + ' ' + msg.payload);
                             this.clientConn.setState(this, this.states);  // tell Google ...
         
                             if (this.passthru) {
@@ -533,11 +545,11 @@ module.exports = function(RED) {
                             this.updateStatusIcon();
                         }
                     } else {
-                        RED.log.debug("MediaNode(input): some other topic");
+                        me.debug(".input: some other topic");
                         let differs = false;
                         Object.keys(this.states).forEach(function (key) {
                             if (msg.payload.hasOwnProperty(key)) {
-                                RED.log.debug("MediaNode(input): set state " + key + ' to ' + msg.payload[key]);
+                                me.debug(".input: set state " + key + ' to ' + msg.payload[key]);
                                 if (me.setState(key, msg.payload[key], me.states)) {
                                     differs = true;
                                 }
@@ -590,7 +602,7 @@ module.exports = function(RED) {
 
         updateModesState(me, device) {
             // Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
-            RED.log.debug("Update Modes device");
+            me.debug(".updateModesState");
             let states = device.states || {};
             const currentModeSettings = states['currentModeSettings']
             let new_modes = {};
@@ -669,7 +681,7 @@ module.exports = function(RED) {
                 new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
             } else if (val_type === 'object') {
                 Object.keys(old_state).forEach(function (key) {
-                    if (typeof new_state[key] !== undefined) {
+                    if (typeof new_state[key] !== 'undefined') {
                         if (me.setState(key, new_state[key], old_State)) {
                             differs = true;
                         }
@@ -690,7 +702,7 @@ module.exports = function(RED) {
                 const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
             }
-            RED.log.debug('MediaNode:loadJson(): loading ' + filename);
+            this.debug('.loadJson: filename ' + filename);
         
             try {
                 let jsonFile = fs.readFileSync(
@@ -701,12 +713,12 @@ module.exports = function(RED) {
                     });
     
                 if (jsonFile === '') {
-                    RED.log.debug('MediaNode:loadJson(): empty data');
+                    this.debug('.loadJson: empty data');
                     return defaultValue;
                 } else {
-                    RED.log.debug('MediaNode:loadJson(): data loaded');
+                    this.debug('.loadJson: data loaded');
                     const json = JSON.parse(jsonFile);
-                    RED.log.debug('MediaNode:loadJson(): json = ' + JSON.stringify(json));
+                    this.debug('.loadJson: json = ' + JSON.stringify(json));
                     return json;
                 }
             }
@@ -721,7 +733,7 @@ module.exports = function(RED) {
                 const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
             }
-            RED.log.debug('MediaNode:writeJson(): writing ' + filename);
+            this.debug('.writeJson: filename ' + filename);
             if (typeof value === 'object') {
                 value = JSON.stringify(value);
             }
@@ -734,7 +746,7 @@ module.exports = function(RED) {
                         'flag': fs.constants.W_OK | fs.constants.O_CREAT | fs.constants.O_TRUNC
                     });
     
-                RED.log.debug('MediaNode:writeJson(): data saved');
+                this.debug('writeJson: data saved');
                 return true;
             }
             catch (err) {
@@ -752,18 +764,10 @@ module.exports = function(RED) {
                 'executionStates': executionStates
             };
 
-            RED.log.debug("MediaNode:execCommand(command) " +  JSON.stringify(command));
-            RED.log.debug("MediaNode:execCommand(states) " +  JSON.stringify(this.states));
-            // RED.log.debug("MediaNode:execCommand(device) " +  JSON.stringify(device));
+            me.debug(".execCommand: command " +  JSON.stringify(command));
+            me.debug(".execCommand: states " +  JSON.stringify(this.states));
+            // me.debug(".execCommand: device " +  JSON.stringify(device));
 
-            if (!command.hasOwnProperty('params')) {
-                // TransportControl
-                if (command.command == 'action.devices.commands.mediaClosedCaptioningOff') {
-                    executionStates.push('online', 'playbackState');
-                    return ok_result;
-                }
-                return false;
-            }
             // Applications
             if ((command.command == 'action.devices.commands.appInstall') ||
                 (command.command == 'action.devices.commands.appSearch') ||
@@ -919,6 +923,10 @@ module.exports = function(RED) {
                     const userQueryLanguage = command.params['userQueryLanguage'];
                     params['playbackState'] = this.states['playbackState'];
                 }
+                executionStates.push('online', 'playbackState');
+                return ok_result;
+            }
+            else if (command.command == 'action.devices.commands.mediaClosedCaptioningOff') {
                 executionStates.push('online', 'playbackState');
                 return ok_result;
             }
@@ -1081,7 +1089,7 @@ module.exports = function(RED) {
                     const updateToggleSettings = command.params['updateToggleSettings'];
                     let toggles = this.states['currentToggleSettings'];
                     this.available_toggles.forEach(function (toggle) {
-                        if (typeof updateToggleSettings[toggle].name === 'boolean') {
+                        if (typeof updateToggleSettings[toggle.name] === 'boolean') {
                             toggles[toggle.name] = updateToggleSettings[toggle.name];
                         }
                     });

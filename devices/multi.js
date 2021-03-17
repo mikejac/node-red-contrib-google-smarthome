@@ -55,7 +55,6 @@ module.exports = function(RED) {
                 lockunlock: config.trait_lockunlock || false,
                 mediastate: config.trait_mediastate || false,
                 modes: config.trait_modes || false,
-                toggles: config.trait_toggles || false,
                 networkcontrol: config.trait_networkcontrol || false,
                 objectdetection: config.objectdetection || false,
                 onoff: config.trait_onoff || false,
@@ -75,79 +74,118 @@ module.exports = function(RED) {
                 transportcontrol: config.trait_transportcontrol || false,
                 volume: config.trait_volume || false,
             };
-            this.topicOut                               = config.topic;
-            this.device_type					        = config.device_type;
-            this.appselector_file                       = config.appselector_file;
-            this.available_applications                 = [];
-            this.channel_file                           = config.channel_file;
-            this.available_channels                     = [];
-            this.inputselector_file                     = config.inputselector_file;
-            this.available_inputs                       = [];
-            this.command_only_input_selector            = config.command_only_input_selector;
-            this.ordered_inputs                         = config.ordered_inputs;
-            this.support_activity_state                 = config.support_activity_state;
-            this.support_playback_state                 = config.support_playback_state;
-            this.command_only_onoff                     = config.command_only_onoff;
-            this.query_only_onoff                       = config.query_only_onoff;
-            this.supported_commands                     = config.supported_commands;
-            this.volume_max_level                       = parseInt(config.volume_max_level) || 100;
-            this.can_mute_and_unmute                    = config.can_mute_and_unmute;
-            this.volume_default_percentage              = parseInt(config.volume_default_percentage) || 40;
-            this.level_step_size                        = parseInt(config.level_step_size) || 1;
-            this.command_only_volume                    = config.command_only_volume;
-            this.modes_file                             = config.modes_file;
-            this.available_modes                        = [];
-            this.command_only_modes                     = config.command_only_modes;
-            this.query_only_modes                       = config.query_only_modes;
-            this.toggles_file                           = config.toggles_file;
-            this.available_toggles                      = [];
-            this.command_only_toggles                   = config.command_only_toggles;
-            this.query_only_toggles                     = config.query_only_toggles;
-            this.last_channel_index                     = '';
-            this.current_channel_index                  = -1;
-            this.current_input_index                    = -1;
-            this.command_only_brightness                = config.command_only_brightness;
-            this.command_only_colorsetting              = config.command_only_colorsetting;
-            this.temperature_min_k                      = parseInt(config.temperature_min_k) || 2000;
-            this.temperature_max_k                      = parseInt(config.temperature_max_k) || 9000;
-            this.color_model                            = config.color_model || 'temp';
-            this.hlsUrl                                 = config.hls.trim();
-            this.hlsAppId                               = config.hls_app_id.trim();
-            this.dashUrl                                = config.dash.trim();
-            this.dashAppId                              = config.dash_app_id.trim();
-            this.smoothStreamUrl                        = config.smooth_stream.trim();
-            this.smoothStreamAppId                      = config.smooth_stream_app_id.trim();
-            this.progressiveMp4Url                      = config.progressive_mp4.trim();
-            this.progressiveMp4AppId                    = config.progressive_mp4_app_id.trim();
-            this.authToken                              = config.auth_token.trim();
-            this.scene_reversible                       = config.scene_reversible;
-            this.command_only_timer                     = config.command_only_timer;
-            this.max_timer_limit_sec                    = config.max_timer_limit_sec;
-            this.trait_temperaturesetting               = config.trait_temperaturesetting;
-            this.available_thermostat_modes             = config.available_thermostat_modes;
-            this.min_threshold_celsius                  = parseInt(config.min_threshold_celsius) || 0;
-            this.max_threshold_celsius                  = parseInt(config.max_threshold_celsius) || 40;
-            this.thermostat_temperature_unit            = config.thermostat_temperature_unit || "C";
-            this.buffer_range_celsius                   = parseInt(config.buffer_range_celsius) || 2;
-            this.command_only_temperaturesetting        = config.command_only_temperaturesetting;
-            this.query_only_temperaturesetting          = config.query_only_temperaturesetting;
+            this.topicOut                                   = config.topic;
+            this.device_type					            = config.device_type;
+            this.lang                                       = config.lang;
+            this.appselector_file                           = config.appselector_file;
+            this.available_applications                     = [];
+            this.channel_file                               = config.channel_file;
+            this.available_channels                         = [];
+            this.inputselector_file                         = config.inputselector_file;
+            this.available_inputs                           = [];
+            this.command_only_input_selector                = config.command_only_input_selector;
+            this.ordered_inputs                             = config.ordered_inputs;
+            this.support_activity_state                     = config.support_activity_state;
+            this.support_playback_state                     = config.support_playback_state;
+            this.command_only_onoff                         = config.command_only_onoff;
+            this.query_only_onoff                           = config.query_only_onoff;
+            this.supported_commands                         = config.supported_commands;
+            this.volume_max_level                           = parseInt(config.volume_max_level) || 100;
+            this.can_mute_and_unmute                        = config.can_mute_and_unmute;
+            this.volume_default_percentage                  = parseInt(config.volume_default_percentage) || 40;
+            this.level_step_size                            = parseInt(config.level_step_size) || 1;
+            this.command_only_volume                        = config.command_only_volume;
+            this.modes_file                                 = config.modes_file;
+            this.available_modes                            = [];
+            this.command_only_modes                         = config.command_only_modes;
+            this.query_only_modes                           = config.query_only_modes;
+            this.toggles_file                               = config.toggles_file;
+            this.available_toggles                          = [];
+            this.command_only_toggles                       = config.command_only_toggles;
+            this.query_only_toggles                         = config.query_only_toggles;
+            this.last_channel_index                         = '';
+            this.current_channel_index                      = -1;
+            this.current_input_index                        = -1;
+            this.command_only_brightness                    = config.command_only_brightness;
+            this.command_only_colorsetting                  = config.command_only_colorsetting;
+            this.temperature_min_k                          = parseInt(config.temperature_min_k) || 2000;
+            this.temperature_max_k                          = parseInt(config.temperature_max_k) || 9000;
+            this.color_model                                = config.color_model || 'temp';
+            this.hlsUrl                                     = config.hls.trim();
+            this.hlsAppId                                   = config.hls_app_id.trim();
+            this.dashUrl                                    = config.dash.trim();
+            this.dashAppId                                  = config.dash_app_id.trim();
+            this.smoothStreamUrl                            = config.smooth_stream.trim();
+            this.smoothStreamAppId                          = config.smooth_stream_app_id.trim();
+            this.progressiveMp4Url                          = config.progressive_mp4.trim();
+            this.progressiveMp4AppId                        = config.progressive_mp4_app_id.trim();
+            this.authToken                                  = config.auth_token.trim();
+            this.scene_reversible                           = config.scene_reversible;
+            this.command_only_timer                         = config.command_only_timer;
+            this.max_timer_limit_sec                        = config.max_timer_limit_sec;
+            this.trait_temperaturesetting                   = config.trait_temperaturesetting;
+            this.available_thermostat_modes                 = config.available_thermostat_modes;
+            this.min_threshold_celsius                      = parseInt(config.min_threshold_celsius) || 0;
+            this.max_threshold_celsius                      = parseInt(config.max_threshold_celsius) || 40;
+            this.thermostat_temperature_unit                = config.thermostat_temperature_unit || "C";
+            this.buffer_range_celsius                       = parseInt(config.buffer_range_celsius) || 2;
+            this.command_only_temperaturesetting            = config.command_only_temperaturesetting;
+            this.query_only_temperaturesetting              = config.query_only_temperaturesetting;
             this.target_temp_reached_estimate_unix_timestamp_sec = undefined;
-            this.thermostat_humidity_ambient            = undefined;
-            this.tc_min_threshold_celsius               = config.tc_min_threshold_celsius;
-            this.tc_max_threshold_celsius               = config.tc_max_threshold_celsius;
-            this.tc_temperature_step_celsius            = config.tc_temperature_step_celsius;
-            this.tc_temperature_unit_for_ux             = config.tc_temperature_unit_for_ux;
-            this.tc_command_only_temperaturecontrol     = config.tc_command_only_temperaturecontrol;
-            this.tc_query_only_temperaturecontrol       = config.tc_query_only_temperaturecontrol;
-            this.min_percent                            = parseInt(config.min_percent) || 0;
-            this.max_percent                            = parseInt(config.max_percent) || 100;
-            this.command_only_humiditysetting           = config.command_only_humiditysetting;
-            this.query_only_humiditysetting             = config.query_only_humiditysetting;
-            this.discrete_only_openclose                = config.discrete_only_openclose;
-            this.open_direction                         = config.open_direction;
-            this.command_only_openclose                 = config.command_only_openclose;
-            this.query_only_openclose                   = config.query_only_openclose;
-
+            this.thermostat_humidity_ambient                = undefined;
+            this.tc_min_threshold_celsius                   = config.tc_min_threshold_celsius;
+            this.tc_max_threshold_celsius                   = config.tc_max_threshold_celsius;
+            this.tc_temperature_step_celsius                = config.tc_temperature_step_celsius;
+            this.tc_temperature_unit_for_ux                 = config.tc_temperature_unit_for_ux;
+            this.tc_command_only_temperaturecontrol         = config.tc_command_only_temperaturecontrol;
+            this.tc_query_only_temperaturecontrol           = config.tc_query_only_temperaturecontrol;
+            this.min_percent                                = parseInt(config.min_percent) || 0;
+            this.max_percent                                = parseInt(config.max_percent) || 100;
+            this.command_only_humiditysetting               = config.command_only_humiditysetting;
+            this.query_only_humiditysetting                 = config.query_only_humiditysetting;
+            this.discrete_only_openclose                    = config.discrete_only_openclose;
+            this.open_direction                             = config.open_direction;
+            this.command_only_openclose                     = config.command_only_openclose;
+            this.query_only_openclose                       = config.query_only_openclose;
+            this.pausable                                   = config.pausable;
+            this.available_zones                            = config.available_zones;
+            this.supports_degrees                           = config.supports_degrees;
+            this.supports_percent                           = config.supports_percent;
+            this.rotation_degrees_min                       = parseInt(config.rotation_degrees_min) || 0;
+            this.rotation_degrees_max                       = parseInt(config.rotation_degrees_max) || 360;
+            this.supports_continuous_rotation               = config.supports_continuous_rotation;
+            this.command_only_rotation                      = config.command_only_rotation;
+            this.default_sleep_duration                     = config.default_sleep_duration;
+            this.default_wake_duration                      = config.default_wake_duration;
+            this.supported_effects                          = config.supported_effects;
+            this.supported_cooking_modes                    = config.supported_cooking_modes;
+            this.food_presets_file                          = config.food_presets_file;
+            this.reversible                                 = config.reversible;
+            this.command_only_fanspeed                      = config.command_only_fanspeed;
+            this.supports_fan_speed_percent                 = config.supports_fan_speed_percent;
+            this.available_fan_speeds_file                  = config.available_fan_speeds_file;
+            this.sensor_state_supported_file                = config.sensor_state_supported_file;
+            this.available_fill_levels_file                 = config.available_fill_levels_file;
+            this.available_fill_levels                      = [];
+            this.ordered                                    = config.ordered;
+            this.supports_fill_percent                      = config.supports_fill_percent;
+            this.available_arm_levels_file                  = config.available_arm_levels_file;
+            this.energy_storage_distance_unit_for_ux        = config.energy_storage_distance_unit_for_ux;
+            this.query_only_energy_storage                  = config.query_only_energy_storage;
+            this.is_rechargeable                            = config.is_rechargeable;
+            this.supported_dispense_items_file              = config.supported_dispense_items_file;
+            this.supported_dispense_items                   = [];
+            this.supported_dispense_presets_file            = config.supported_dispense_presets_file;
+            this.supported_dispense_presets                 = [];
+            this.supports_enabling_guest_network            = config.supports_enabling_guest_network;
+            this.supports_disabling_guest_network           = config.supports_disabling_guest_network;
+            this.supports_getting_guest_network_password    = config.supports_getting_guest_network_password;
+            this.network_profiles                           = config.network_profiles;
+            this.supports_enabling_network_profile          = config.supports_enabling_network_profile;
+            this.supports_disabling_network_profile         = config.supports_disabling_network_profile;
+            this.supports_network_download_speedtest        = config.supports_network_download_speedtest;
+            this.supports_network_upload_speedtest          = config.supports_network_upload_speedtest;
+            
             this.protocols = [];
             if (this.hlsUrl) {
                 this.protocols.push('hls');
@@ -430,58 +468,82 @@ module.exports = function(RED) {
             }
             
             let error_msg = '';
-            if (this.trait.apps) {
-                this.available_applications = this.loadJson(this.appselector_file, []);
-                if (this.available_applications === undefined) {
-                    error_msg += ' Applications file error.';
-                    RED.log.error("Applications " +  this.appselector_file + "file error.");
-                }
+            if (this.trait.appselector) {
+                this.available_applications = this.loadJson('Applications', this.appselector_file, []);
             } else {
-                this.available_applications = undefined;
-                this.debug(".constructor: Applications disabled");
+                this.available_applications = [];
+                this.debug(".constructor: AppSelector disabled");
+            }
+
+            if (this.trait.armdisarm) {
+                this.available_arm_levels = this.loadJson('Available arm levels', this.available_arm_levels_file, []);
+            } else {
+                this.available_applications = [];
+                this.debug(".constructor: ArmDisarm disabled");
             }
 
             if (this.trait.channel) {
-                this.available_channels = this.loadJson(this.channel_file, []);
-                if (this.available_channels === undefined) {
-                    error_msg += ' Channels file error.';
-                    RED.log.error("Channels " +  this.channel_file + "file error.");
-                }
+                this.available_channels = this.loadJson('Channels', this.channel_file, []);
             } else {
-                this.available_channels = undefined;
-                this.debug(".constructor: Channels disabled");
+                this.available_channels = [];
+                this.debug(".constructor: Channel disabled");
+            }
+
+            if (this.trait.cook) {
+                this.food_presets = this.loadJson('Food presets', this.food_presets_file, []);
+            } else {
+                this.food_presets = [];
+                this.debug(".constructor: Cook disabled");
+            }
+
+            if (this.trait.dispense) {
+                this.supported_dispense_items = this.loadJson('Supported dispense', this.supported_dispense_items_file, []);
+                this.supported_dispense_presets = this.loadJson('Supported dispense presets', this.supported_dispense_presets_file, []);
+            } else {
+                this.supported_dispense_items = [];
+                this.supported_dispense_presets = [];
+                this.debug(".constructor: Dispense disabled");
+            }
+
+            if (this.trait.fanspeed) {
+                this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file, []);
+            } else {
+                this.available_fan_speeds = [];
+                this.debug(".constructor: FanSpeeds disabled");
+            }
+
+            if (this.trait.fill) {
+                this.available_fill_levels = this.loadJson('Available fill levels', this.available_fill_levels_file, []);
+            } else {
+                this.available_fill_levels = [];
+                this.debug(".constructor: Fill disabled");
             }
 
             if (this.trait.inputselector) {
-                this.available_inputs = this.loadJson(this.inputselector_file, []);
-                if (this.available_inputs === undefined) {
-                    error_msg += ' Inputs file error.';
-                    RED.log.error("Inputs " +  this.inputselector_file + "file error.");
-                }
+                this.available_inputs = this.loadJson('Available inputs', this.inputselector_file, []);
             } else {
-                this.available_inputs = undefined;
-                this.debug(".constructor Inputs disabled");
+                this.available_inputs = [];
+                this.debug(".constructor InputSelector disabled");
             }
 
             if (this.trait.modes) {
-                this.available_modes = this.loadJson(this.modes_file, []);
-                if (this.available_modes === undefined) {
-                    error_msg += ' Modes file error.';
-                    RED.log.error("Modes " +  this.modes_file + "file error.");
-                }
+                this.available_modes = this.loadJson('Modes', this.modes_file, []);
             } else {
-                this.available_modes = undefined;
+                this.available_modes = [];
                 this.debug(".constructor: Modes disabled");
             }
 
-            if (this.trait.toggles) {
-                this.available_toggles = this.loadJson(this.toggles_file, []);
-                if (this.available_toggles === undefined) {
-                    error_msg += ' Toggles file error.';
-                    RED.log.error("Toggles " +  this.toggles_file + "file error.");
-                }
+            if (this.trait.sensorstate) {
+                this.sensor_state_supported = this.loadJson('SensorState', this.sensor_state_supported_file, []);
             } else {
-                this.available_toggles = undefined;
+                this.available_toggles = [];
+                this.debug(".constructor: SensorState disabled");
+            }
+
+            if (this.trait.toggles) {
+                this.available_toggles = this.loadJson('Toggles', this.toggles_file, []);
+            } else {
+                this.available_toggles = [];
                 this.debug(".constructor: Toggles disabled");
             }
 
@@ -557,6 +619,9 @@ module.exports = function(RED) {
             if (me.trait.apps) {
                 attributes['availableApplications'] = me.available_applications;
             }
+            if (me.trait.armdisarm) {
+                attributes['availableArmLevels'] = me.available_arm_levels;
+            }
             if (me.trait.brightness) {
                 attributes['commandOnlyBrightness'] = me.command_only_brightness;
             }
@@ -578,11 +643,25 @@ module.exports = function(RED) {
                     };
                 }
             }
-            if (me.trait.openclose) {
-                attributes['discreteOnlyOpenClose'] = me.discrete_only_openclose;
-                attributes['openDirection'] = me.open_direction;
-                attributes['commandOnlyOpenClose'] = me.command_only_openclose;
-                attributes['queryOnlyOpenClose'] = me.query_only_openclose;
+            if (me.trait.cook) {
+                attributes['supportedCookingModes'] = me.supported_cooking_modes;
+                attributes['foodPresets'] = me.food_presets;
+            }
+            if (me.trait.energystorage) {
+                attributes['queryOnlyEnergyStorage'] = me.query_only_energy_storage;
+                attributes['energyStorageDistanceUnitForUX'] = me.energy_storage_distance_unit_for_ux;
+                attributes['isRechargeable'] = me.is_rechargeable;
+            }
+            if (me.trait.fanspeed) {
+                attributes['reversible'] = me.reversible;
+                attributes['commandOnlyFanSpeed'] = me.command_only_fanspeed;
+                attributes['availableFanSpeeds'] = me.available_fan_speeds;
+                attributes['supportsFanSpeedPercent'] = me.supports_fan_speed_percent;
+            }
+            if (me.trait.fill) {
+                attributes['availableFillLevels'] = me.available_fill_levels;
+                attributes['ordered'] = me.ordered;
+                attributes['supportsFillPercent'] = me.supports_fill_percent;
             }
             if (me.trait.humiditysetting) {
                 attributes['humiditySetpointRange'] = {
@@ -597,7 +676,12 @@ module.exports = function(RED) {
                 attributes['commandOnlyInputSelector'] = me.command_only_input_selector;
                 attributes['orderedInputs'] = me.ordered_inputs;
             }
-            if (me.trait.media_state) {
+            if (me.trait.lighteffects) {
+                attributes['defaultSleepDuration'] = me.default_sleep_duration;
+                attributes['defaultWakeDuration'] = me.default_wake_duration;
+                attributes['supportedEffects'] = me.supported_effects;
+            }
+            if (me.trait.mediastate) {
                 attributes['supportActivityState'] = me.support_activity_state;
                 attributes['supportPlaybackState'] = me.support_playback_state;
             }
@@ -606,12 +690,45 @@ module.exports = function(RED) {
                 attributes['commandOnlyModes'] = me.command_only_modes;
                 attributes['queryOnlyModes'] = me.query_only_modees;
             }
+            if (me.trait.networkcontrol) {
+                attributes['supportsEnablingGuestNetwork'] = me.supports_enabling_guest_network;
+                attributes['supportsDisablingGuestNetwork'] = me.supports_disabling_guest_network;
+                attributes['supportsGettingGuestNetworkPassword'] = me.supports_getting_guest_network_password;
+                attributes['networkProfiles'] = me.network_profiles;
+                attributes['supportsEnablingNetworkProfile'] = me.supports_enabling_network_profile;
+                attributes['supportsDisablingNetworkProfile'] = me.supports_disabling_network_profile;
+                attributes['supportsNetworkDownloadSpeedTest'] = me.supports_network_download_speedtest;
+                attributes['supportsNetworkUploadSpeedTest'] = me.supports_network_upload_speedtest;
+            }
             if (me.trait.onoff) {
                 attributes['commandOnlyOnOff'] = me.command_only_onoff;
                 attributes['queryOnlyOnOff'] = me.query_only_onoff;
             }
+            if (me.trait.openclose) {
+                attributes['discreteOnlyOpenClose'] = me.discrete_only_openclose;
+                attributes['openDirection'] = me.open_direction;
+                attributes['commandOnlyOpenClose'] = me.command_only_openclose;
+                attributes['queryOnlyOpenClose'] = me.query_only_openclose;
+            }
+            if (me.trait.rotation) {
+                attributes['supportsDegrees'] = me.supports_degrees;
+                attributes['supportsPercent'] = me.supports_percent;
+                attributes['rotationDegreesRange'] = [{
+                    rotationDegreesMin: me.rotation_degrees_min,
+                    rotationDegreesMax: me.rotation_degrees_max
+                }];
+                attributes['supportsContinuousRotation'] = me.supports_continuous_rotation;
+                attributes['supportsContinuousRotation'] = me.command_only_rotation;
+            }
             if (me.trait.scene) {
                 attributes['sceneReversible'] = me.scene_reversible;
+            }
+            if (me.trait.sensorstate) {
+                attributes['sensorStatesSupported'] = me.sensor_state_supported;
+            }
+            if (me.trait.startstop) {
+                attributes['pausable'] = me.pausable;
+                attributes['activeZones'] = me.available_zones;
             }
             if (me.trait.temperaturecontrol) {
                 attributes['temperatureRange'] = {
@@ -661,6 +778,11 @@ module.exports = function(RED) {
             if (me.trait.apps) {
                 states['currentApplication'] = '';
             }
+            if (me.trait.armdisarm) {
+                states['isArmed'] = false;
+                states['currentArmLevel'] = [];
+                states['exitAllowance'] = 60;
+            }
             if (me.trait.brightness) {
                 states['brightness'] = 50;
             }
@@ -678,18 +800,43 @@ module.exports = function(RED) {
                     states['color'] = { temperatureK : me.temperature_max_k || 6000 };
                 }
             }
+            if (me.trait.cook) {
+                states['currentCookingMode'] = "NONE";
+                states['currentFoodPreset'] = "NONE";
+                states['currencurrentFoodQuantitytCookingMode'] = 0;
+                states['currentFoodUnit'] = "UNKNOWN_UNITS";
+            }
             if (me.trait.dock) {
                 states['isDocked'] = false;
+            }
+            if (me.trait.energystorage) {
+                states['descriptiveCapacityRemaining'] = "FULL";
+                states['capacityRemaining'] = [];
+                states['capacityUntilFull'] = [];
+                states['isCharging'] = false;
+                states['isPluggedIn'] = false;
+            }
+            if (me.trait.fanspeed) {
+                states['currentFanSpeedSetting'] = "";
+                states['currentFanSpeedPercent'] = 0;
             }
             if (me.trait.lockunlock) {
                 states['isLocked'] = false;
                 states['isJammed'] = false;
             }
+            if (me.trait.lighteffects) {
+                states['activeLightEffect'] = "";
+            }
+            if (me.trait.networkcontrol) {
+                states['isLonetworkEnabledcked'] = false;
+                states['networkSpeedTestInProgress'] = false;
+                // TODO
+            }
             if (me.trait.openclose) {
                 if (me.open_direction.length < 2) {
                     states['openPercent'] = 0;
                 } else {
-                    openState = [];
+                    let openState = [];
                     states['openState'] = openState;
                     me.open_direction.forEach(direction => {
                         openState.push({
@@ -699,14 +846,44 @@ module.exports = function(RED) {
                     });
                 }
             }
-            if (me.trait.inputs) {
+            if (me.trait.rotation) {
+                if (me.supports_degrees) {
+                    states['rotationDegrees'] = 0;
+                }
+                if (me.supports_percent) {
+                    states['rotationPercent'] = 0;
+                }
+            }
+            if (me.trait.runcycle) {
+                states['currentRunCycle'] = [{
+                    currentCycle: "unknown",
+                    lang: me.lang
+                }];
+                states['currentTotalRemainingTime'] = 0;
+                states['currentCycleRemainingTime'] = 0;
+            }
+            if (me.trait.sensorstate) {
+                states['currentSensorStateData'] = [];
+            }
+            if (me.trait.softwareupdate) {
+                states['lastSoftwareUpdateUnixTimestampSec'] = 0;
+            }
+            if (me.trait.startstop) {
+                states['isRunning'] = false;
+                states['isPaused'] = false;
+                states['activeZones'] = [];
+            }
+            if (me.trait.statusreport) {
+                states['currentStatusReport'] = [];
+            }
+            if (me.trait.humiditysetting) {
                 states['humiditySetpointPercent'] = 50;
                 states['humidityAmbientPercent'] = 50;
             }
             if (me.trait.inputs) {
                 states['currentInput'] = '';
             }
-            if (me.trait.media_state) {
+            if (me.trait.mediastate) {
                 // INACTIVE STANDBY ACTIVE
                 states['activityState'] = 'INACTIVE';
                 // PAUSED PLAYING FAST_FORWARDING REWINDING BUFFERING STOPPED
@@ -807,15 +984,12 @@ module.exports = function(RED) {
 
             try {
                 if (topic.toUpperCase() === 'APPLICATIONS') {
-                    if (this.trait.apps) {
-                        if (typeof msg.payload === undefined) {
-                            this.available_applications = this.loadJson(this.available_applications_file, []);
-                            if (this.available_applications === undefined) {
-                                RED.log.error("Applications " +  this.available_applications_file + "file not found.");
-                            }
+                    if (this.trait.appselector) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.available_applications = this.loadJson('Applications', this.appselector_file, []);
                         } else {
-                            if (!this.writeJson(this.available_applications_file, msg.payload)) {
-                                RED.log.error("Error saving Applications to file " + this.available_applications_file);
+                            if (!this.writeJson('Applications', this.appselector_file, msg.payload)) {
+                                RED.log.error("Error saving Applications to file " + this.appselector_file);
                             } else {
                                 this.available_applications = msg.payload;
                             }
@@ -824,16 +998,28 @@ module.exports = function(RED) {
                         this.available_applications = [];
                         RED.log.error("Applications disabled");
                     }
-                } else if (topic.toUpperCase() === 'CHANNELS') {
-                    if (this.trait.channels) {
-                        if (typeof msg.payload === undefined) {
-                            this.available_channels = this.loadJson(this.available_channels_file, []);
-                            if (this.available_channels === undefined) {
-                                RED.log.error("Channels " +  this.available_channels_file + "file not found.");
-                            }
+                } else if (topic.toUpperCase() === 'ARMLEVELS') {
+                    if (this.trait.armdisarm) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.available_arm_levels = this.loadJson('Arm levels', this.available_arm_levels_file, []);
                         } else {
-                            if (!this.writeJson(this.available_channels_file, msg.payload)) {
-                                RED.log.error("Error saving Channels to file " + this.available_channels_file);
+                            if (!this.writeJson('Arm levels', this.available_arm_levels_file, msg.payload)) {
+                                RED.log.error("Error saving Arm levels to file " + this.available_arm_levels_file);
+                            } else {
+                                this.available_arm_levels = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.available_arm_levels = [];
+                        RED.log.error("Arm levels disabled");
+                    }
+                } else if (topic.toUpperCase() === 'CHANNELS') {
+                    if (this.trait.channel) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.available_channels = this.loadJson('Channels', this.channel_file, []);
+                        } else {
+                            if (!this.writeJson('Channels', this.channel_file, msg.payload)) {
+                                RED.log.error("Error saving Channels to file " + this.channel_file);
                             } else {
                                 this.available_channels = msg.payload;
                             }
@@ -842,16 +1028,88 @@ module.exports = function(RED) {
                         this.available_channels = [];
                         RED.log.error("Channels disabled");
                     }
-                } else if (topic.toUpperCase() === 'INPUTS') {
-                    if (this.trait.inputs) {
-                        if (typeof msg.payload === undefined) {
-                            this.available_inputs = this.loadJson(this.available_inputs_file, []);
-                            if (this.available_inputs === undefined) {
-                                RED.log.error("Inputs " +  this.available_inputs_file + "file not found.");
-                            }
+                } else if (topic.toUpperCase() === 'DISPENSEITEMS') {
+                    if (this.trait.dispense) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.supported_dispense_items = this.loadJson('Dispense items', this.supported_dispense_items_file, []);
                         } else {
-                            if (!this.writeJson(this.available_inputs_file, msg.payload)) {
-                                RED.log.error("Error saving Inputs to file " + this.available_inputs_file);
+                            if (!this.writeJson('Dispense items', this.supported_dispense_items_file, msg.payload)) {
+                                RED.log.error("Error saving Dispense items to file " + this.supported_dispense_items_file);
+                            } else {
+                                this.supported_dispense_items = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.supported_dispense_items = [];
+                        RED.log.error("Dispense items disabled");
+                    }
+                } else if (topic.toUpperCase() === 'DISPENSEPRESETS') {
+                    if (this.trait.dispense) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.supported_dispense_presets = this.loadJson('Dispense presets', this.supported_dispense_presets_file, []);
+                        } else {
+                            if (!this.writeJson('Dispense presets', this.supported_dispense_presets_file, msg.payload)) {
+                                RED.log.error("Error saving Dispense presets to file " + this.supported_dispense_presets_file);
+                            } else {
+                                this.supported_dispense_presets = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.supported_dispense_presets = [];
+                        RED.log.error("Dispense presets disabled");
+                    }
+                } else if (topic.toUpperCase() === 'FANSPEEDS') {
+                    if (this.trait.fanspeed) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file, []);
+                        } else {
+                            if (!this.writeJson('Fan speeds', this.available_fan_speeds_file, msg.payload)) {
+                                RED.log.error("Error saving Fan speeds to file " + this.available_fan_speeds_file);
+                            } else {
+                                this.available_fan_speeds = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.available_fan_speeds = [];
+                        RED.log.error("Fan speeds disabled");
+                    }
+                } else if (topic.toUpperCase() === 'FILLLEVELS') {
+                    if (this.trait.dispense) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.available_fill_levels = this.loadJson(' Fill levels', this.available_fill_levels_file, []);
+                        } else {
+                            if (!this.writeJson(' Fill levels', this.available_fill_levels_file, msg.payload)) {
+                                RED.log.error("Error saving Fill levels to file " + this.available_fill_levels_file);
+                            } else {
+                                this.available_fill_levels = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.available_fill_levels = [];
+                        RED.log.error("Fill levels disabled");
+                    }
+                } else if (topic.toUpperCase() === 'FOODPRESETS') {
+                    if (this.trait.cook) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.food_presets = this.loadJson('Food presets', this.food_presets_file, []);
+                        } else {
+                            if (!this.writeJson('Food presets', this.food_presets_file, msg.payload)) {
+                                RED.log.error("Error saving Food presets to file " + this.food_presets_file);
+                            } else {
+                                this.food_presets = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.food_presets = [];
+                        RED.log.error("Food presets disabled");
+                    }
+                } else if (topic.toUpperCase() === 'INPUTS') {
+                    if (this.trait.inputselector) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.available_inputs = this.loadJson('Inputs', this.inputselector_file, []);
+                        } else {
+                            if (!this.writeJson('Inputs', this.inputselector_file, msg.payload)) {
+                                RED.log.error("Error saving Inputs to file " + this.inputselector_file);
                             } else {
                                 this.available_inputs = msg.payload;
                             }
@@ -862,16 +1120,12 @@ module.exports = function(RED) {
                     }
                 } else if (topic.toUpperCase() === 'MODES') {
                     if (this.trait.modes) {
-                        if (typeof msg.payload === undefined) {
-                            this.available_modes = this.loadJson(this.available_modes_file, []);
-                            if (this.available_modes === undefined) {
-                                RED.log.error("Modes " +  this.available_modes_file + "file not found.");
-                            } else {
-                                this.updateModesState(me, me);
-                            }
+                        if (typeof msg.payload === 'undefined') {
+                            this.available_modes = this.loadJson('Modes', this.modes_file, []);
+                            this.updateModesState(me, me);
                         } else {
-                            if (!this.writeJson(this.available_modes_file, msg.payload)) {
-                                RED.log.error("Error saving Modes to file " + this.available_modes_file);
+                            if (!this.writeJson('Modes', this.modes_file, msg.payload)) {
+                                RED.log.error("Error saving Modes to file " + this.modes_file);
                             } else {
                                 this.available_modes = msg.payload;
                                 this.updateModesState(me, me);
@@ -881,18 +1135,29 @@ module.exports = function(RED) {
                         this.available_modes = [];
                         RED.log.error("Modes disabled");
                     }
+                } else if (topic.toUpperCase() === 'SENSORSTATES') {
+                    if (this.trait.sensorstate) {
+                        if (typeof msg.payload === 'undefined') {
+                            this.sensor_state_supported = this.loadJson('Sensor states', this.sensor_state_supported_file, []);
+                        } else {
+                            if (!this.writeJson('Sensor states', this.sensor_state_supported_file, msg.payload)) {
+                                RED.log.error("Error saving Sensor states to file " + this.sensor_state_supported_file);
+                            } else {
+                                this.sensor_state_supported = msg.payload;
+                            }
+                        }
+                    } else {
+                        this.sensor_state_supported = [];
+                        RED.log.error("Sensor states disabled");
+                    }
                 } else if (topic.toUpperCase() === 'TOGGLES') {
                     if (this.trait.toggles) {
-                        if (typeof msg.payload === undefined) {
-                            this.available_toggles = this.loadJson(this.available_toggles_file, []);
-                            if (this.available_toggles === undefined) {
-                                RED.log.error("Toggles " +  this.available_toggles_file + "file not found.");
-                            } else {
-                                this.updateTogglesState(me, me);
-                            }
+                        if (typeof msg.payload === 'undefined') {
+                            this.available_toggles = this.loadJson('Toggles', this.toggles_file, []);
+                            this.updateTogglesState(me, me);
                         } else {
-                            if (!this.writeJson(this.available_toggles_file, msg.payload)) {
-                                RED.log.error("Error saving Toggles to file " + this.available_toggles_file);
+                            if (!this.writeJson('Toggles', this.toggles_file, msg.payload)) {
+                                RED.log.error("Error saving Toggles to file " + this.toggles_file);
                             } else {
                                 this.available_toggles = msg.payload;
                                 this.updateTogglesState(me, me);
@@ -967,6 +1232,7 @@ module.exports = function(RED) {
 
         updateTogglesState(me, device) {
             // Key/value pair with the toggle name of the device as the key, and the current state as the value.
+            me.debug(".updateTogglesState");
             let states = device.states || {};
             const currentToggleSettings = states['currentToggleSettings']
             let new_toggles = {};
@@ -1046,7 +1312,7 @@ module.exports = function(RED) {
             if (trait.inputselector) {
                 traits.push("action.devices.traits.InputSelector");
             }
-            if (trait.LightEffects) {
+            if (trait.lighteffects) {
                 traits.push("action.devices.traits.LightEffects");
             }
             if (trait.locator) {
@@ -1152,23 +1418,27 @@ module.exports = function(RED) {
             return differs;
         }
 
-        loadJson(filename, defaultValue) {
+        loadJson(text, filename, defaultValue) {
+            this.debug('.loadJson: ' + text);
+            let full_filename;
             if (!filename.startsWith(path.sep)) {
                 const userDir = RED.settings.userDir;
-                filename = path.join(userDir, filename);
+                full_filename = path.join(userDir, filename);
+            } else {
+                full_filename = filename;
             }
-            this.debug('.loadJson: filename ' + filename);
+            this.debug('.loadJson: filename ' + full_filename);
         
             try {
                 let jsonFile = fs.readFileSync(
-                    filename,
+                    full_filename,
                     {
                         'encoding': 'utf8',
                         'flag': fs.constants.R_OK | fs.constants.W_OK | fs.constants.O_CREAT
                     });
     
                 if (jsonFile === '') {
-                    this.debug('.loadJson: empty data');
+                    this.debug('.loadJson: file ' + filename + ' is empty');
                     return defaultValue;
                 } else {
                     this.debug('.loadJson: data loaded');
@@ -1178,12 +1448,13 @@ module.exports = function(RED) {
                 }
             }
             catch (err) {
-                RED.log.error('Error on loading ' + filename + ': ' + err.toString());
-                return undefined;
+                RED.log.error('Error on loading ' + text + ' filename ' + filename + ': ' + err.toString());
+                return defaultValue;
             }
         }
 
-        writeJson(filename, value) {
+        writeJson(text, filename, value) {
+            this.debug('.writeJson: ' + text);
             if (!filename.startsWith(path.sep)) {
                 const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
@@ -1201,11 +1472,11 @@ module.exports = function(RED) {
                         'flag': fs.constants.W_OK | fs.constants.O_CREAT | fs.constants.O_TRUNC
                     });
     
-                this.debug('writeJson: data saved');
+                this.debug('writeJson: ' + text + ' saved');
                 return true;
             }
             catch (err) {
-                RED.log.error('Error on saving ' + filename + ': ' + err.toString());
+                RED.log.error('Error on saving ' + text + ' filename + ' + filename + ': ' + err.toString());
                 return false;
             }
         }
@@ -1213,7 +1484,7 @@ module.exports = function(RED) {
         execCommand(device, command) {
             let me = this;
             let params = {};
-            let executionStates = [];
+            let executionStates = [ 'online' ];
             const ok_result = {
                 'params' : params,
                 'executionStates': executionStates
@@ -1235,40 +1506,59 @@ module.exports = function(RED) {
                             application_index = index;
                         }
                     });
-                    if (application_index < 0) {
-                        return {
-                            status: 'ERROR',
-                            errorCode: 'noAvailableApp'
-                        };
+                    if (command.command == 'action.devices.commands.appInstall') {
+                        if (application_index >= 0) {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'alreadyInstalledApp'
+                            };
+                        }
+                        return false;
+                    } else {
+                        if (application_index < 0) {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'noAvailableApp'
+                            };
+                        }
+                        executionStates.push('online', 'currentApplication');
+                        params['currentApplication'] = newApplication;
+                        return ok_result;
                     }
-                    executionStates.push('online', 'currentApplication');
-                    params['currentApplication'] = newApplication;
-                    return ok_result;
                 }
                 if (command.params.hasOwnProperty('newApplicationName')) {
                     const newApplicationName = command.params['newApplicationName'];
                     let application_key = '';
-                    this.available_applications.forEach(function(application, index) {
+                    me.available_applications.forEach(function(application, index) {
                         application.names.forEach(function(name) {
                             if (name.name_synonym.includes(newApplicationName)) {
                                 application_key = application.key;
                             }
                         });
                     });
-                    if (application_key === '') {
-                        return {
-                            status: 'ERROR',
-                            errorCode: 'noAvailableApp'
-                        };
+                    if (command.command == 'action.devices.commands.appInstall') {
+                        if (application_key !== '') {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'alreadyInstalledApp'
+                            };
+                        }
+                    } else {
+                        if (application_key === '') {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'noAvailableApp'
+                            };
+                        }
+                        params['currentApplication'] = application_key;
+                        executionStates.push('currentApplication');
+                        return ok_result;
                     }
-                    params['currentApplication'] = application_key;
-                    executionStates.push('online', 'currentApplication');
-                    return ok_result;
                 }
             }
             // Dock
             else if (command.command == 'action.devices.commands.Dock') {
-                executionStates.push('online', 'isDocked');
+                executionStates.push('isDocked');
             }
             // HumiditySetting
             else if (command.command == 'action.devices.commands.SetHumidity') {
@@ -1302,7 +1592,7 @@ module.exports = function(RED) {
                         };
                     }
                     params['currentInput'] = newInput;
-                    executionStates.push('online', 'currentInput');
+                    executionStates.push('currentInput');
                     return ok_result;
                 }
             }
@@ -1311,7 +1601,7 @@ module.exports = function(RED) {
                 if (this.current_input_index >= this.available_inputs.length) {
                     this.current_input_index = 0;
                 }
-                executionStates.push('online', 'currentInput');
+                executionStates.push('currentInput');
                 params['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
                 return ok_result;
             }
@@ -1320,59 +1610,87 @@ module.exports = function(RED) {
                     this.current_input_index = this.available_inputs.length;
                 }
                 this.current_input_index --;
-                executionStates.push('online', 'currentInput');
+                executionStates.push('currentInput');
                 params['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
                 return ok_result;
+            }
+            // Light
+            else if (command.command == 'action.devices.commands.ColorAbsolute') {
+                if (command.params.color.hasOwnProperty('temperature')) {
+                    command.params.color.temperatureK = command.params.color.temperature;
+                    delete command.params.color.temperature;
+                } else if (command.params.color.hasOwnProperty('spectrumRGB')) {
+                    command.params.color.spectrumRgb = command.params.color.spectrumRGB;
+                    delete command.params.color.spectrumRGB;
+                } else if (command.params.color.hasOwnProperty('spectrumHSV')) {
+                    command.params.color.spectrumHsv = command.params.color.spectrumHSV;
+                    delete command.params.color.spectrumHSV;
+                } 
             }
             // On/Off
             else if (command.command == 'action.devices.commands.OnOff') {
                 if (command.params.hasOwnProperty('on')) {
                     const on_param = command.params['on'];
-                    executionStates.push('online', 'on');
+                    executionStates.push('on');
                     params['on'] = on_param;
                     return ok_result;
                 }
             }
             // OpenClose
             else if (command.command == 'action.devices.commands.OpenClose') {
-                const openPercent = parseInt(command.params[openPercent]) || 0;
+                const openPercent = parseInt(command.params['openPercent']) || 0;
                 // TODO
             }
             else if (command.command == 'action.devices.commands.OpenCloseRelative') {
-                const openPercent = parseInt(command.params[openPercent]) || 0;
+                const openPercent = parseInt(command.params['openPercent']) || 0;
+                // TODO
+            }
+            // StartStop
+            else if (command.command == 'action.devices.commands.StartStop') {
+                const start = parseInt(command.params['start']) || false;
+                let zones = [];
+                if (command.params.hasOwnProperty('zone')) {
+                    zones = [command.params['zone']];
+                } else if (command.params.hasOwnProperty('multipleZones')) {
+                    zones = command.params['multipleZones'];
+                }
+                // TODO
+            }
+            else if (command.command == 'action.devices.commands.PauseUnpause') {
+                const pause = parseInt(command.params['pause']) || false;
                 // TODO
             }
             // TransportControl
             else if (command.command == 'action.devices.commands.mediaStop') {
                 params['playbackState'] = 'STOPPED';
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaNext') {
                 params['playbackState'] = 'FAST_FORWARDING';
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaPrevious') {
                 params['playbackState'] = 'REWINDING';
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaPause') {
                 params['playbackState'] = 'PAUSED';
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaResume') {
                 params['playbackState'] = 'PLAYING';
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaSeekRelative') {
                 if (command.params.hasOwnProperty('relativePositionMs')) {
                     const relative_position_ms = command.params['relativePositionMs'];
                     params['playbackState'] = 'PLAYING';
-                    executionStates.push('online', 'playbackState');
+                    executionStates.push('playbackState');
                     return ok_result;
                 }
             }
@@ -1380,7 +1698,7 @@ module.exports = function(RED) {
                 if (command.params.hasOwnProperty('absPositionMs')) {
                     const abs_position_ms = command.params['absPositionMs'];
                     params['playbackState'] = 'PLAYING';
-                    executionStates.push('online', 'playbackState');
+                    executionStates.push('playbackState');
                     return ok_result;
                 }
             }
@@ -1408,16 +1726,16 @@ module.exports = function(RED) {
                     const userQueryLanguage = command.params['userQueryLanguage'];
                     params['playbackState'] = this.states['playbackState'];
                 }
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.mediaClosedCaptioningOff') {
-                executionStates.push('online', 'playbackState');
+                executionStates.push('playbackState');
                 return ok_result;
             }
             // TempreatureControl
             else if (command.command == 'action.devices.commands.SetTemperature') {
-                const temperature = parseInt(temperature) || 0;
+                const temperature = parseInt('temperature') || 0;
                 me.states['temperatureSetpointCelsius'] = temperature;
             }
             // TemperatureSetting 
@@ -1451,7 +1769,7 @@ module.exports = function(RED) {
                 if (command.params.hasOwnProperty('mute')) {
                     const mute = command.params['mute'];
                     params['isMuted'] = mute;
-                    executionStates.push('online', 'isMuted', 'currentVolume');
+                    executionStates.push('isMuted', 'currentVolume');
                     return ok_result;
                 }
             }
@@ -1462,7 +1780,7 @@ module.exports = function(RED) {
                         volumeLevel = this.volumeMaxLevel;
                     }
                     params['currentVolume'] = volumeLevel;
-                    executionStates.push('online', 'isMuted', 'currentVolume');
+                    executionStates.push('isMuted', 'currentVolume');
                     return ok_result;
                 }
             }
@@ -1488,7 +1806,7 @@ module.exports = function(RED) {
                         current_volume = 0;
                     }
                     params['currentVolume'] = current_volume;
-                    executionStates.push('online', 'currentVolume');
+                    executionStates.push('currentVolume');
                     return ok_result;
                 }
             }
@@ -1515,7 +1833,7 @@ module.exports = function(RED) {
                     this.current_channel_index = new_channel_index;
                     params['currentChannel'] = new_channel_key;
                     params['currentChannelNumber'] = new_channel_number;
-                    // executionStates.push('online', 'currentChannel');
+                    // executionStates.push('currentChannel');
                     return ok_result;
                 }
                 /*if (command.params.hasOwnProperty('channelName')) {
@@ -1542,7 +1860,7 @@ module.exports = function(RED) {
                     me.current_channel_index = new_channel_index;
                     params['currentChannel'] = new_channel_key;
                     params['currentChannelNumber'] = new_channel_number;
-                    // executionStates.push('online', 'currentChannel');
+                    // executionStates.push('currentChannel');
                     return ok_result;
                 }
             }
@@ -1566,7 +1884,7 @@ module.exports = function(RED) {
                     }
                     params['currentChannel'] = this.available_channels[current_channel_index].key;
                     params['currentChannelNumber'] = this.available_channels[current_channel_index].number || '';
-                    // executionStates.push('online', 'currentChannel');
+                    // executionStates.push('currentChannel');
                     return ok_result;
                 }
             }
@@ -1581,7 +1899,7 @@ module.exports = function(RED) {
                 }
                 params['currentChannel'] = this.available_channels[this.current_channel_index].key;
                 params['currentChannelNumber'] = this.available_channels[current_channel_index].number || '';
-                // executionStates.push('online', 'currentChannel');
+                // executionStates.push('currentChannel');
                 return ok_result;
             }
             // Modes
@@ -1595,7 +1913,7 @@ module.exports = function(RED) {
                         }
                     });
                     params['currentModeSettings'] = modes;
-                    executionStates.push('online', 'currentModeSettings');
+                    executionStates.push('currentModeSettings');
                     return ok_result;
                 }
             }
@@ -1605,12 +1923,12 @@ module.exports = function(RED) {
                     const updateToggleSettings = command.params['updateToggleSettings'];
                     let toggles = this.states['currentToggleSettings'];
                     this.available_toggles.forEach(function (toggle) {
-                        if (typeof updateToggleSettings[toggle].name === 'boolean') {
+                        if (typeof updateToggleSettings[toggle.name] === 'boolean') {
                             toggles[toggle.name] = updateToggleSettings[toggle.name];
                         }
                     });
                     params['currentToggleSettings'] = toggles;
-                    executionStates.push('online', 'currentToggleSettings');
+                    executionStates.push('currentToggleSettings');
                     return ok_result;
                 }
             }
@@ -1618,7 +1936,7 @@ module.exports = function(RED) {
             else if (command.command == 'action.devices.commands.BrightnessAbsolute') {
                 const brightness = command.params['brightness'];
                 params['brightness'] = brightness;
-                executionStates.push('online', 'brightness');
+                executionStates.push('brightness');
             }
             else if (command.command == 'action.devices.commands.BrightnessRelative') {
                 let brightness = this.states['brightness'];
@@ -1631,7 +1949,7 @@ module.exports = function(RED) {
                     brightness = brightness + parseInt(brightnessRelativePercent);
                 }
                 params['brightness'] = brightness;
-                executionStates.push('online', 'brightness');
+                executionStates.push('brightness');
                 return ok_result;
             }
             // ColorSetting
@@ -1648,7 +1966,7 @@ module.exports = function(RED) {
                     } else if (command.params.color.hasOwnProperty('spectrumHSV')) {
                         params['color'] = { spectrumHsv: command.params.color.spectrumHSV};
                     }
-                    executionStates.push('online', 'color');
+                    executionStates.push('color');
                     return ok_result;
                 }
             }
@@ -1666,7 +1984,7 @@ module.exports = function(RED) {
                         }
                     });
                     if (protocol.length > 0) {
-                        let executionStates = ['online', 'cameraStreamAccessUrl', 'cameraStreamProtocol'];
+                        executionStates.push('cameraStreamAccessUrl', 'cameraStreamProtocol');
                         if (me.authToken.length > 0) {
                             executionStates.push('cameraStreamAuthToken');
                         }

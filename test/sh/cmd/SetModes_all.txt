@@ -1,0 +1,5 @@
+{
+    "updateModeSettings": {
+        PARAM1
+    }
+}

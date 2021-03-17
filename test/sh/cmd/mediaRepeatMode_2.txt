@@ -1,0 +1,4 @@
+{
+    "isOn": PARAM1,
+    "isSingle": PARAM2
+}

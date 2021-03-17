@@ -1,0 +1,6 @@
+{
+    "color": {
+        "name": "PARAM1",
+        "temperature": PARAM2
+    }
+}

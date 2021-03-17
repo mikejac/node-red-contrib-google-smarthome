@@ -1,0 +1,5 @@
+{
+    "updateToggleSettings": {
+      "PARAM1": PARAM2
+    }
+}

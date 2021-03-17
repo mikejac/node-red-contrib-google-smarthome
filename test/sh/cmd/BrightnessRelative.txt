@@ -1,0 +1,3 @@
+{
+    "brightnessRelativePercent": PARAM1
+}
