@@ -680,13 +680,15 @@ module.exports = function(RED) {
             } else if (val_type === 'boolean') {
                 new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
             } else if (val_type === 'object') {
-                Object.keys(old_state).forEach(function (key) {
-                    if (typeof new_state[key] !== 'undefined') {
-                        if (me.setState(key, new_state[key], old_State)) {
-                            differs = true;
+                if (typeof value === "object") {
+                    Object.keys(old_state).forEach(function (key) {
+                        if (typeof new_state[key] !== 'undefined') {
+                            if (me.setState(key, new_state[key], old_state)) {
+                                differs = true;
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
             if (val_type !== 'object') {
                 if (new_state !== undefined) {
@@ -827,6 +829,7 @@ module.exports = function(RED) {
                             errorCode: 'unsupportedInput'
                         };
                     }
+                    this.current_input_index = current_input_index;
                     params['currentInput'] = newInput;
                     executionStates.push('online', 'currentInput');
                     return ok_result;
@@ -838,7 +841,7 @@ module.exports = function(RED) {
                     this.current_input_index = 0;
                 }
                 executionStates.push('online', 'currentInput');
-                params['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
+                params['currentInput'] = this.available_inputs[this.current_input_index].names[0].key;
                 return ok_result;
             }
             else if (command.command == 'action.devices.commands.PreviousInput') {
@@ -847,8 +850,7 @@ module.exports = function(RED) {
                 }
                 this.current_input_index --;
                 executionStates.push('online', 'currentInput');
-                params['currentInput'] = this.available_inputs[this.current_input_index].names[0].name_synonym[0]; // Ignore Language?
-                return ok_result;
+                params['currentInput'] = this.available_inputs[this.current_input_index].names[0].key;
             }
             // On/Off
             /*else if (command.command == 'action.devices.commands.OnOff') {
@@ -1072,13 +1074,18 @@ module.exports = function(RED) {
             else if (command.command == 'action.devices.commands.SetModes') {
                 if (command.params.hasOwnProperty('updateModeSettings')) {
                     const updateModeSettings = command.params['updateModeSettings'];
-                    let modes = this.states['currentModeSettings'];
+                    let new_modes = {};
                     this.available_modes.forEach(function (mode) {
                         if (typeof updateModeSettings[mode.name] === 'string') {
-                            modes[mode.name] = updateModeSettings[mode];
+                            let mode_value = updateModeSettings[mode.name];
+                            mode.settings.forEach(function(setting) {
+                                if (setting.setting_name === mode_value) {
+                                    new_modes[mode.name] = mode_value;
+                                }
+                            });
                         }
                     });
-                    params['currentModeSettings'] = modes;
+                    params['currentModeSettings'] = new_modes;
                     executionStates.push('online', 'currentModeSettings');
                     return ok_result;
                 }
@@ -1089,7 +1096,7 @@ module.exports = function(RED) {
                     const updateToggleSettings = command.params['updateToggleSettings'];
                     let toggles = this.states['currentToggleSettings'];
                     this.available_toggles.forEach(function (toggle) {
-                        if (typeof updateToggleSettings[toggle].name === 'boolean') {
+                        if (typeof updateToggleSettings[toggle.name] === 'boolean') {
                             toggles[toggle.name] = updateToggleSettings[toggle.name];
                         }
                     });

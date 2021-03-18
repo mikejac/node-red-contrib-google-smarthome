@@ -1,0 +1,4 @@
+{
+    "fill": PARAM1,
+    "fillPercent": PARAM2
+}

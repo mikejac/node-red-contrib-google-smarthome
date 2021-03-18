@@ -1,0 +1,2385 @@
+    <!--
+ NodeRED Google SmartHome
+ Copyright (C) 2021 Claudio Chimera.
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+    Multi Device
+-->
+<script type="text/html" data-template-name="google-multi">
+    <style>
+        ol#node-input-multi-zone-container .red-ui-typedInput-container {
+            flex:1;
+        }
+        ol#node-input-multi-network-profiles-container .red-ui-typedInput-container {
+            flex:1;
+        }
+    </style>
+
+    <div class="form-row">
+        <b>Google SmartHome Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-client"><i class="fa fa-globe"></i> SmartHome</span></label>
+        <input type="text" id="node-input-client">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="multi.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]multi.placeholder.name">
+    </div>
+
+    <div class="form-row">
+        <b>Node-RED Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tag"></i> <span data-i18n="multi.label.topic"></span></label>
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]multi.placeholder.topic">
+    </div>
+
+    <!-- Passthru-->
+    <div class="form-row">
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.passthru"></span></label>
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-lang"><i class="fa fa-tag"></i> <span data-i18n="multi.label.lang"></span></label>
+        <select id="node-input-lang" >
+            <option value='da' data-i18n='multi.label.da'></option>
+            <option value='nl' data-i18n='multi.label.nl'></option>
+            <option value='en' data-i18n='multi.label.en'></option>
+            <option value='fr' data-i18n='multi.label.fr'></option>
+            <option value='de' data-i18n='multi.label.de'></option>
+            <option value='hi' data-i18n='multi.label.hi'></option>
+            <option value='id' data-i18n='multi.label.id'></option>
+            <option value='it' data-i18n='multi.label.it'></option>
+            <option value='ja' data-i18n='multi.label.ja'></option>
+            <option value='ko' data-i18n='multi.label.ko'></option>
+            <option value='no' data-i18n='multi.label.no'></option>
+            <option value='pt-BR' data-i18n='multi.label.pt-BR'></option>
+            <option value='es' data-i18n='multi.label.es'></option>
+            <option value='sv' data-i18n='multi.label.sv'></option>
+            <option value='th' data-i18n='multi.label.th'></option>
+        </select>
+    </div>
+
+    <div class="form-row" id="device_type">
+        <label for="node-input-device_type"><i class="fa fa-tag"></i> <span data-i18n="multi.label.device_type"></span></label>
+        <select id="node-input-device_type" >
+            <option value='AC_UNIT' data-i18n='multi.device_type.AC_UNIT'></option>
+            <option value='AIRCOOLER' data-i18n='multi.device_type.AIRCOOLER'></option>
+            <option value='AIRFRESHENER' data-i18n='multi.device_type.AIRFRESHENER'></option>
+            <option value='AIRPURIFIER' data-i18n='multi.device_type.AIRPURIFIER'></option>
+            <option value='AUDIO_VIDEO_RECEIVER' data-i18n='multi.device_type.AUDIO_VIDEO_RECEIVER'></option>
+            <option value='AWNING' data-i18n='multi.device_type.AWNING'></option>
+            <option value='BATHTUB' data-i18n='multi.device_type.BATHTUB'></option>
+            <option value='BED' data-i18n='multi.device_type.BED'></option>
+            <option value='BLENDER' data-i18n='multi.device_type.BLENDER'></option>
+            <option value='BLINDS' data-i18n='multi.device_type.BLINDS'></option>
+            <option value='BOILER' data-i18n='multi.device_type.BOILER'></option>
+            <option value='CAMERA' data-i18n='multi.device_type.CAMERA'></option>
+            <option value='CARBON_MONOXIDE_DETECTOR' data-i18n='multi.device_type.CARBON_MONOXIDE_DETECTOR'></option>
+            <option value='CHARGER' data-i18n='multi.device_type.CHARGER'></option>
+            <option value='CLOSET' data-i18n='multi.device_type.CLOSET'></option>
+            <option value='COFFEE_MAKER' data-i18n='multi.device_type.COFFEE_MAKER'></option>
+            <option value='COOKTOP' data-i18n='multi.device_type.COOKTOP'></option>
+            <option value='CURTAIN' data-i18n='multi.device_type.CURTAIN'></option>
+            <option value='DEHUMIDIFIER' data-i18n='multi.device_type.DEHUMIDIFIER'></option>
+            <option value='DEHYDRATOR' data-i18n='multi.device_type.DEHYDRATOR'></option>
+            <option value='DISHWASHER' data-i18n='multi.device_type.DISHWASHER'></option>
+            <option value='DOOR' data-i18n='multi.device_type.DOOR'></option>
+            <option value='DRAWER' data-i18n='multi.device_type.DRAWER'></option>
+            <option value='DRYER' data-i18n='multi.device_type.DRYER'></option>
+            <option value='FAN' data-i18n='multi.device_type.FAN'></option>
+            <option value='FAUCET' data-i18n='multi.device_type.FAUCET'></option>
+            <option value='FIREPLACE' data-i18n='multi.device_type.FIREPLACE'></option>
+            <option value='FREEZER' data-i18n='multi.device_type.FREEZER'></option>
+            <option value='FRYER' data-i18n='multi.device_type.FRYER'></option>
+            <option value='GARAGE' data-i18n='multi.device_type.GARAGE'></option>
+            <option value='GATE' data-i18n='multi.device_type.GATE'></option>
+            <option value='GRILL' data-i18n='multi.device_type.GRILL'></option>
+            <option value='HEATER' data-i18n='multi.device_type.HEATER'></option>
+            <option value='HOOD' data-i18n='multi.device_type.HOOD'></option>
+            <option value='HUMIDIFIER' data-i18n='multi.device_type.HUMIDIFIER'></option>
+            <option value='KETTLE' data-i18n='multi.device_type.KETTLE'></option>
+            <option value='LIGHT' data-i18n='multi.device_type.LIGHT'></option>
+            <option value='LOCK' data-i18n='multi.device_type.LOCK'></option>
+            <option value='MICROWAVE' data-i18n='multi.device_type.MICROWAVE'></option>
+            <option value='MOP' data-i18n='multi.device_type.MOP'></option>
+            <option value='MOWER' data-i18n='multi.device_type.MOWER'></option>
+            <option value='MULTICOOKER' data-i18n='multi.device_type.MULTICOOKER'></option>
+            <!--<option value='NETWORK' data-i18n='multi.device_type.NETWORK'></option>-->
+            <option value='OUTLET' data-i18n='multi.device_type.OUTLET'></option>
+            <option value='OVEN' data-i18n='multi.device_type.OVEN'></option>
+            <option value='PERGOLA' data-i18n='multi.device_type.PERGOLA'></option>
+            <option value='PETFEEDER' data-i18n='multi.device_type.PETFEEDER'></option>
+            <option value='PRESSURECOOKER' data-i18n='multi.device_type.PRESSURECOOKER'></option>
+            <option value='RADIATOR' data-i18n='multi.device_type.RADIATOR'></option>
+            <option value='REFRIGERATOR' data-i18n='multi.device_type.REFRIGERATOR'></option>
+            <option value='REMOTECONTROL' data-i18n='multi.device_type.REMOTECONTROL'></option>
+            <!--<option value='ROUTER' data-i18n='multi.device_type.ROUTER'></option>-->
+            <option value='SCENE' data-i18n='multi.device_type.SCENE'></option>
+            <option value='SECURITYSYSTEM' data-i18n='multi.device_type.SECURITYSYSTEM'></option>
+            <option value='SENSOR' data-i18n='multi.device_type.SENSOR'></option>
+            <option value='SETTOP' data-i18n='multi.device_type.SETTOP'></option>
+            <option value='SHOWER' data-i18n='multi.device_type.SHOWER'></option>
+            <option value='SHUTTER' data-i18n='multi.device_type.SHUTTER'></option>
+            <option value='SMOKE_DETECTOR' data-i18n='multi.device_type.SMOKE_DETECTOR'></option>
+            <option value='SOUNDBAR' data-i18n='multi.device_type.SOUNDBAR'></option>
+            <option value='SOUSVIDE' data-i18n='multi.device_type.SOUSVIDE'></option>
+            <option value='SPEAKER' data-i18n='multi.device_type.SPEAKER'></option>
+            <option value='SPRINKLER' data-i18n='multi.device_type.SPRINKLER'></option>
+            <option value='STANDMIXER' data-i18n='multi.device_type.STANDMIXER'></option>
+            <option value='STREAMING_BOX' data-i18n='multi.device_type.STREAMING_BOX'></option>
+            <option value='STREAMING_SOUNDBAR' data-i18n='multi.device_type.STREAMING_SOUNDBAR'></option>
+            <option value='STREAMING_STICK' data-i18n='multi.device_type.STREAMING_STICK'></option>
+            <option value='SWITCH' data-i18n='multi.device_type.SWITCH'></option>
+            <option value='THERMOSTAT' data-i18n='multi.device_type.THERMOSTAT'></option>
+            <option value='TV' data-i18n='multi.device_type.TV'></option>
+            <option value='VACUUM' data-i18n='multi.device_type.VACUUM'></option>
+            <option value='VALVE' data-i18n='multi.device_type.VALVE'></option>
+            <option value='WASHER' data-i18n='multi.device_type.WASHER'></option>
+            <option value='WATERHEATER' data-i18n='multi.device_type.WATERHEATER'></option>
+            <option value='WATERPURIFIER' data-i18n='multi.device_type.WATERPURIFIER'></option>
+            <option value='WATERSOFTENER' data-i18n='multi.device_type.WATERSOFTENER'></option>
+            <option value='WINDOW' data-i18n='multi.device_type.WINDOW'></option>
+            <option value='YOGURTMAKER' data-i18n='multi.device_type.YOGURTMAKER'></option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-show_trait"><i class="fa fa-tag"></i> <span data-i18n="multi.label.show_trait"></span></label>
+        <select id="node-input-show_trait" >
+            <option value="selected" data-i18n="multi.label.selected"></option>
+            <option value="recommended" data-i18n="multi.label.recommended"></option>
+            <option value="all" data-i18n="multi.label.all"></option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-advanced_settings"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.advanced_settings"></span></label>
+        <input type="checkbox" checked id="node-input-advanced_settings" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+
+    <!-- AppSelector Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="appselector" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_appselector">
+            <b><label style="width:auto" for="node-input-trait_appselector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.appselector"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_appselector" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/appselector"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_appselector">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.appselector"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/appselector"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_appselector">
+            <div class="form-row">
+                <label for="node-input-appselector_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.appselector_file"></span></label>
+                <input type="text" id="node-input-appselector_file" data-i18n="[placeholder]multi.placeholder.appselector_file">
+            </div>
+        </div>
+    </div>
+
+    <!-- ArmDisarm Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="armdisarm" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_armdisarm">
+            <b><label style="width:auto" for="node-input-trait_armdisarm"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.armdisarm"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_armdisarm" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/armdisarm"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_armdisarm">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.armdisarm"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/armdisarm"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_armdisarm">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-available_arm_levels_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.available_arm_levels_file"></span></label>
+                <input type="text" id="node-input-available_arm_levels_file" data-i18n="[placeholder]multi.placeholder.available_arm_levels_file">
+            </div>
+        </div>
+    </div>
+
+    <!-- Brightness Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="brightness" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_brightness">
+            <b><label style="width:auto" for="node-input-trait_brightness"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.brightness"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_brightness" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/brightness"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_brightness">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.brightness"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/brightness"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_brightness">
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_brightness"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_brightness"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_brightness" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <!-- CameraStream trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="camerastream" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_camerastream">
+            <b><label style="width:auto" for="node-input-trait_camerastream"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.camerastream"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_camerastream" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/camerastream"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_camerastream">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.camerastream"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/camerastream"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_camerastream">
+            <div class="form-row">
+                <label for="node-input-hls"><i class="fa fa-globe"></i> <span data-i18n="multi.label.hls"></span></label>
+                <input type="text" id="node-input-hls" data-i18n="[placeholder]multi.placeholder.hls">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-hls_app_id"><i class="fa fa-tag"></i> <span data-i18n="multi.label.hls_app_id"></span></label>
+                <input type="text" id="node-input-hls_app_id" data-i18n="[placeholder]multi.placeholder.hls_app_id">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-dash"><i class="fa fa-globe"></i> <span data-i18n="multi.label.dash"></span></label>
+                <input type="text" id="node-input-dash" data-i18n="[placeholder]multi.placeholder.dash">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-dash_app_id"><i class="fa fa-tag"></i> <span data-i18n="multi.label.dash_app_id"></span></label>
+                <input type="text" id="node-input-dash_app_id" data-i18n="[placeholder]multi.placeholder.dash_app_id">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-smooth_stream"><i class="fa fa-globe"></i> <span data-i18n="multi.label.smooth_stream"></span></label>
+                <input type="text" id="node-input-smooth_stream" data-i18n="[placeholder]multi.placeholder.smooth_stream">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-smooth_stream_app_id"><i class="fa fa-tag"></i> <span data-i18n="multi.label.smooth_stream_app_id"></span></label>
+                <input type="text" id="node-input-smooth_stream_app_id" data-i18n="[placeholder]multi.placeholder.smooth_stream_app_id">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-progressive_mp4"><i class="fa fa-globe"></i> <span data-i18n="multi.label.progressive_mp4"></span></label>
+                <input type="text" id="node-input-progressive_mp4" data-i18n="[placeholder]multi.placeholder.progressive_mp4">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-progressive_mp4_app_id"><i class="fa fa-tag"></i> <span data-i18n="multi.label.progressive_mp4_app_id"></span></label>
+                <input type="text" id="node-input-progressive_mp4_app_id" data-i18n="[placeholder]multi.placeholder.progressive_mp4_app_id">
+            </div>
+        
+            <div class="form-row">
+                <label for="node-input-auth_token"><i class="fa fa-tag"></i> <span data-i18n="multi.label.auth_token"></span></label>
+                <input type="text" id="node-input-auth_token" data-i18n="[placeholder]multi.placeholder.auth_token">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Channel Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="channel" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_channel">
+            <b><label style="width:auto" for="node-input-trait_channel"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.channel"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_channel" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/channel"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_channel">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.channel"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/channel"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_channel">
+            <div class="form-row">
+                <label for="node-input-channel_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.channel_file"></span></label>
+                <input type="text" id="node-input-channel_file" data-i18n="[placeholder]multi.placeholder.channel_file">
+            </div>
+        </div>
+    </div>
+
+    <!-- ColorSetting Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="colorsetting" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_colorsetting">
+            <b><label style="width:auto" for="node-input-trait_colorsetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.colorsetting"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_colorsetting" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/colorsetting"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_colorsetting">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.colorsetting"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/colorsetting"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_colorsetting">
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_colorsetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_colorsetting"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_colorsetting" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-color_model"><i class="fa fa-tag"></i> <span data-i18n="multi.label.color_model"></span></label>
+                <select multiple id="node-input-color_model" >
+                    <option value="temp" data-i18n="multi.label.temperature_k"></option>
+                    <option value="rgb" data-i18n="multi.label.rgb"></option>
+                    <option value="hsv" data-i18n="multi.label.hsv"></option>
+                    <option value="rgb_temp" data-i18n="multi.label.rgb_temp"></option>
+                    <option value="hsv_temp" data-i18n="multi.label.hsv_temp"></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.color_temperature_range"></span></label></b>
+
+                <div class="form-row">
+                    <label for="node-input-temperature_min_k"><i class="fa fa-tag"></i> <span data-i18n="multi.label.temperature_min_k"></span></label>
+                    <input type="text" id="node-input-temperature_min_k" data-i18n="[placeholder]multi.placeholder.temperature_min_k">
+                </div>
+
+                <div class="form-row">
+                    <label for="node-input-temperature_max_k"><i class="fa fa-tag"></i> <span data-i18n="multi.label.temperature_max_k"></span></label>
+                    <input type="text" id="node-input-temperature_max_k" data-i18n="[placeholder]multi.placeholder.temperature_max_k">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cook Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="cook" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_cook">
+            <b><label style="width:auto" for="node-input-trait_cook"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.cook"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_cook" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/cook"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_cook">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.cook"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/cook"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_cook">
+            <div class="form-row">
+                <label for="node-input-supported_cooking_modes"><i class="fa fa-tag"></i> <span data-i18n="multi.label.supported_cooking_modes"></span></label>
+                <select multiple id="node-input-supported_cooking_modes" >
+                    <option value="UNKNOWN_COOKING_MODE" data-i18n="multi.label.UNKNOWN_COOKING_MODE"></option>
+                    <option value="BAKE" data-i18n="multi.label.BAKE"></option>
+                    <option value="BEAT" data-i18n="multi.label.BEAT"></option>
+                    <option value="BLEND" data-i18n="multi.label.BLEND"></option>
+                    <option value="BOIL" data-i18n="multi.label.BOIL"></option>
+                    <option value="BREW" data-i18n="multi.label.BREW"></option>
+                    <option value="BROIL" data-i18n="multi.label.BROIL"></option>
+                    <option value="CONVECTION_BAKE" data-i18n="multi.label.CONVECTION_BAKE"></option>
+                    <option value="COOK" data-i18n="multi.label.COOK"></option>
+                    <option value="DEFROST" data-i18n="multi.label.DEFROST"></option>
+                    <option value="DEHYDRATE" data-i18n="multi.label.DEHYDRATE"></option>
+                    <option value="FERMENT" data-i18n="multi.label.FERMENT"></option>
+                    <option value="FRY" data-i18n="multi.label.FRY"></option>
+                    <option value="GRILL" data-i18n="multi.label.GRILL"></option>
+                    <option value="KNEAD" data-i18n="multi.label.KNEAD"></option>
+                    <option value="MICROWAVE" data-i18n="multi.label.MICROWAVE"></option>
+                    <option value="MIX" data-i18n="multi.label.MIX"></option>
+                    <option value="PRESSURE_COOK" data-i18n="multi.label.PRESSURE_COOK"></option>
+                    <option value="PUREE" data-i18n="multi.label.PUREE"></option>
+                    <option value="ROAST" data-i18n="multi.label.ROAST"></option>
+                    <option value="SAUTE" data-i18n="multi.label.SAUTE"></option>
+                    <option value="SLOW_COOK" data-i18n="multi.label.SLOW_COOK"></option>
+                    <option value="SOUS_VIDE" data-i18n="multi.label.SOUS_VIDE"></option>
+                    <option value="STEAM" data-i18n="multi.label.STEAM"></option>
+                    <option value="STEW" data-i18n="multi.label.STEW"></option>
+                    <option value="STIR" data-i18n="multi.label.STIR"></option>
+                    <option value="WARM" data-i18n="multi.label.WARM"></option>
+                    <option value="WHIP" data-i18n="multi.label.WHIP"></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-food_presets_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.food_presets_file"></span></label>
+                <input type="text" id="node-input-food_presets_file" data-i18n="[placeholder]multi.placeholder.food_presets_file">
+            </div>
+        </div>
+    </div>
+
+    <!-- Dispense Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="dispense" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_dispense">
+            <b><label style="width:auto" for="node-input-trait_dispense"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.dispense"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_dispense" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/dispense"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_dispense">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.dispense"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/dispense"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_dispense">
+            <div class="form-row">
+                <label for="node-input-supported_dispense_items_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.supported_dispense_items_file"></span></label>
+                <input type="text" id="node-input-supported_dispense_items_file" data-i18n="[placeholder]multi.placeholder.supported_dispense_items_file">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-supported_dispense_presets_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.supported_dispense_presets_file"></span></label>
+                <input type="text" id="node-input-supported_dispense_presets_file" data-i18n="[placeholder]multi.placeholder.supported_dispense_presets_file">
+            </div>
+        </div>
+    </div>
+
+    <!-- Dock Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="dock" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_dock">
+            <b><label style="width:auto" for="node-input-trait_dock"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.dock"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_dock" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/dock"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_dock">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.dock"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/dock"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_dock">
+            <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
+        </div>
+    </div>
+
+    <!-- EnergyStorage Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="energystorage" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_energystorage">
+            <b><label style="width:auto" for="node-input-trait_energystorage"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.energystorage"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_energystorage" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/energystorage"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_energystorage">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.energystorage"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/energystorage"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_energystorage">
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-query_only_energy_storage"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_energy_storage"></span></label>
+                <input type="checkbox" checked id="node-input-query_only_energy_storage" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-energy_storage_distance_unit_for_ux"><i class="fa fa-tag"></i> <span data-i18n="multi.label.energy_storage_distance_unit_for_ux"></span></label>
+                <select id="node-input-energy_storage_distance_unit_for_ux" >
+                    <option value="KILOMETERS" data-i18n="multi.label.KILOMETERS"></option>
+                    <option value="MILES" data-i18n="multi.label.MILES"></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-is_rechargeable"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.is_rechargeable"></span></label>
+                <input type="checkbox" checked id="node-input-is_rechargeable" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <!-- FanSpeed Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="fanspeed" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_fanspeed">
+            <b><label style="width:auto" for="node-input-trait_fanspeed"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.fanspeed"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_fanspeed" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/fanspeed"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_fanspeed">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.fanspeed"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/fanspeed"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_fanspeed">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-reversible"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.reversible"></span></label>
+                <input type="checkbox" checked id="node-input-reversible" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_fan_speed_percent"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_fan_speed_percent"></span></label>
+                <input type="checkbox" checked id="node-input-supports_fan_speed_percent" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-available_fan_speeds_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.available_fan_speeds_file"></span></label>
+                <input type="text" id="node-input-available_fan_speeds_file" data-i18n="[placeholder]multi.placeholder.available_fan_speeds_file">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_fanspeed"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_fanspeed"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_fanspeed" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fill Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="fill" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_fill">
+            <b><label style="width:auto" for="node-input-trait_fill"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.fill"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_fill" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/fill"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_fill">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.fill"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/fill"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_fill">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-available_fill_levels_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.available_fill_levels_file"></span></label>
+                <input type="text" id="node-input-available_fill_levels_file" data-i18n="[placeholder]multi.placeholder.available_fill_levels_file">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_fill_percent"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_fill_percent"></span></label>
+                <input type="checkbox" checked id="node-input-supports_fill_percent" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <!-- HumiditySetting Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="humiditysetting" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_humiditysetting">
+            <b><label style="width:auto" for="node-input-trait_humiditysetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.humiditysetting"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_humiditysetting" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/humiditysetting"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_humiditysetting">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.humiditysetting"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/humiditysetting"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_humiditysetting">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-min_percent"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.min_percent"></span></label>
+                <input type="text" id="node-input-min_percent" data-i18n="[placeholder]multi.placeholder.min_percent">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-max_percent"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.max_percent"></span></label>
+                <input type="text" id="node-input-max_percent" data-i18n="[placeholder]multi.placeholder.max_percent">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_humiditysetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_humiditysetting"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_humiditysetting" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-query_only_humiditysetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_humiditysetting"></span></label>
+                <input type="checkbox" checked id="node-input-query_only_humiditysetting" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+    
+    <!-- InputSelector Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="inputselector" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_inputselector">
+            <b><label style="width:auto" for="node-input-trait_inputselector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.inputselector"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_inputselector" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/inputselector"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_inputselector">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.inputselector"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/inputselector"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_inputselector">
+            <div class="form-row">
+                <label for="node-input-inputselector_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.inputselector_file"></span></label>
+                <input type="text" id="node-input-inputselector_file" data-i18n="[placeholder]multi.placeholder.inputselector_file">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-ordered_inputs"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.ordered_inputs"></span></label>
+                <input type="checkbox" checked id="node-input-ordered_inputs" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_input_selector"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_input_selector"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_input_selector" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <!-- LightEffects Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="lighteffects" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_lighteffects">
+            <b><label style="width:auto" for="node-input-trait_lighteffects"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.lighteffects"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_lighteffects" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/lighteffects"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_lighteffects">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.lighteffects"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/lighteffects"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_lighteffects">
+            <div class="form-row">
+                <label for="node-input-default_sleep_duration"><i class="fa fa-tag"></i> <span data-i18n="multi.label.default_sleep_duration"></span></label>
+                <input type="text" id="node-input-default_sleep_duration" data-i18n="[placeholder]multi.placeholder.default_sleep_duration">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-default_wake_duration"><i class="fa fa-tag"></i> <span data-i18n="multi.label.default_wake_duration"></span></label>
+                <input type="text" id="node-input-default_wake_duration" data-i18n="[placeholder]multi.placeholder.default_wake_duration">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-supported_effects"><i class="fa fa-tag"></i> <span data-i18n="multi.label.supported_effects"></span></label>
+                <select multiple id="node-input-supported_effects" >
+                    <option value="colorLoop" data-i18n="multi.label.color_loop"></option>
+                    <option value="sleep" data-i18n="multi.label.sleep"></option>
+                    <option value="wake" data-i18n="multi.label.wake"></option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Locator Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="locator" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_locator">
+            <b><label style="width:auto" for="node-input-trait_locator"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.locator"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_locator" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/locator"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_locator">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.locator"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/locator"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_locator">
+            <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
+        </div>
+    </div>
+
+    <!-- LockUnlock Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="lockunlock" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_lockunlock">
+            <b><label style="width:auto" for="node-input-trait_lockunlock"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.lockunlock"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_lockunlock" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/lockunlock"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_lockunlock">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.lockunlock"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/lockunlock"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_lockunlock">
+            <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
+        </div>
+    </div>
+    
+    <!-- MediaState Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="mediastate" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_mediastate">
+            <b><label style="width:auto" for="node-input-trait_mediastate"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.mediastate"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_mediastate" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/mediastate"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_mediastate">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.mediastate"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/mediastate"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_mediastate">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-support_activity_state"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.support_activity_state"></span></label>
+                <input type="checkbox" checked id="node-input-support_activity_state" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-support_playback_state"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.support_playback_state"></span></label>
+                <input type="checkbox" checked id="node-input-support_playback_state" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modes Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="modes" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_modes">
+            <b><label style="width:auto" for="node-input-trait_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.modes"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_modes" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/modes"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_modes">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.modes"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/modes"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_modes">
+            <div class="form-row">
+                <label for="node-input-modes_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.modes_file"></span></label>
+                <input type="text" id="node-input-modes_file" data-i18n="[placeholder]multi.placeholder.modes_file">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_modes"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-query_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_modes"></span></label>
+                <input type="checkbox" checked id="node-input-query_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <!-- NetworkControl Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="networkcontrol" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_networkcontrol">
+            <b><label style="width:auto" for="node-input-trait_networkcontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.networkcontrol"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_networkcontrol" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/networkcontrol"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_networkcontrol">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.networkcontrol"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/networkcontrol"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_networkcontrol">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_enabling_guest_network"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_enabling_guest_network"></span></label>
+                <input type="checkbox" checked id="node-input-supports_enabling_guest_network" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_disabling_guest_network"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_disabling_guest_network"></span></label>
+                <input type="checkbox" checked id="node-input-supports_disabling_guest_network" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_getting_guest_network_password"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_getting_guest_network_password"></span></label>
+                <input type="checkbox" checked id="node-input-supports_getting_guest_network_password" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row" style="margin-bottom:0;">
+                <label><i class="fa fa-list"></i> <span data-i18n="multi.label.network_profiles"></span></label>
+            </div>
+            <div class="form-row node-input-multi-network-profiles-container-row">
+                <ol id="node-input-multi-network-profiles-container"></ol>
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_enabling_network_profile"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_enabling_network_profile"></span></label>
+                <input type="checkbox" checked id="node-input-supports_enabling_network_profile" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_disabling_network_profile"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_disabling_network_profile"></span></label>
+                <input type="checkbox" checked id="node-input-supports_disabling_network_profile" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_network_download_speedtest"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_network_download_speedtest"></span></label>
+                <input type="checkbox" checked id="node-input-supports_network_download_speedtest" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_network_upload_speedtest"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_network_upload_speedtest"></span></label>
+                <input type="checkbox" checked id="node-input-supports_network_upload_speedtest" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <!-- ObjectDetection Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="objectdetection" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_objectdetection">
+            <b><label style="width:auto" for="node-input-trait_objectdetection"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.objectdetection"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_objectdetection" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/objectdetection"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_objectdetection">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.objectdetection"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/objectdetection"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_objectdetection">
+            <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
+        </div>
+    </div>
+
+    <!-- OnOff Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="onoff" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_onoff">
+            <b><label style="width:auto" for="node-input-trait_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.onoff"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_onoff" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/onoff"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_onoff">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.onoff"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/onoff"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_onoff">
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_onoff"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-query_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_onoff"></span></label>
+                <input type="checkbox" checked id="node-input-query_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+    
+    <!-- OpenClose Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="openclose" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_openclose">
+            <b><label style="width:auto" for="node-input-trait_openclose"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.openclose"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_openclose" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/openclose"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_openclose">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.openclose"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/openclose"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_openclose">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-discrete_only_openclose"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.discrete_only_openclose"></span></label>
+                <input type="checkbox" checked id="node-input-discrete_only_openclose" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-open_direction"><i class="fa fa-tag"></i> <span data-i18n="multi.label.open_direction"></span></label>
+                <select multiple id="node-input-open_direction" >
+                    <option value="UP" data-i18n="multi.label.up"></option>
+                    <option value="DOWN" data-i18n="multi.label.down"></option>
+                    <option value="LEFT" data-i18n="multi.label.left"></option>
+                    <option value="RIGHT" data-i18n="multi.label.right"></option>
+                    <option value="IN" data-i18n="multi.label.in"></option>
+                    <option value="OUT" data-i18n="multi.label.out"></option>
+                </select>
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_openclose"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_openclose"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_openclose" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-query_only_openclose"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_openclose"></span></label>
+                <input type="checkbox" checked id="node-input-query_only_openclose" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Reboot Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="reboot" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_reboot">
+            <b><label style="width:auto" for="node-input-trait_reboot"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.reboot"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_reboot" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/reboot"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_reboot">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.reboot"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/reboot"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_reboot">
+            <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
+        </div>
+    </div>
+
+    <!-- Rotation Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="rotation" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_rotation">
+            <b><label style="width:auto" for="node-input-trait_rotation"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.rotation"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_rotation" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/rotation"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_rotation">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.rotation"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/rotation"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_rotation">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_degrees"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_degrees"></span></label>
+                <input type="checkbox" checked id="node-input-supports_degrees" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_percent"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_percent"></span></label>
+                <input type="checkbox" checked id="node-input-supports_percent" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-rotation_degrees_min"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.rotation_degrees_min"></span></label>
+                <input type="text" id="node-input-rotation_degrees_min" data-i18n="[placeholder]multi.placeholder.rotation_degrees_min">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-rotation_degrees_max"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.rotation_degrees_max"></span></label>
+                <input type="text" id="node-input-rotation_degrees_max" data-i18n="[placeholder]multi.placeholder.rotation_degrees_max">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-supports_continuous_rotation"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.supports_continuous_rotation"></span></label>
+                <input type="checkbox" checked id="node-input-supports_continuous_rotation" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_rotation"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_rotation"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_rotation" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+    
+    <!-- RunCycle Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="runcycle" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_runcycle">
+            <b><label style="width:auto" for="node-input-trait_runcycle"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.runcycle"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_runcycle" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/runcycle"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_runcycle">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.runcycle"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/runcycle"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_runcycle">
+            <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
+        </div>
+    </div>
+
+    <!-- Scene Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="scene" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_scene">
+            <b><label style="width:auto" for="node-input-trait_scene"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.scene"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_scene" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/scene"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_scene">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.scene"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/scene"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_scene">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-scene_reversible"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.scene_reversible"></span></label>
+                <input type="checkbox" checked id="node-input-scene_reversible" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <!-- SensorState Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="sensorstate" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_sensorstate">
+            <b><label style="width:auto" for="node-input-trait_sensorstate"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.sensorstate"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_sensorstate" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/sensorstate"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_sensorstate">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.sensorstate"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/sensorstate"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_sensorstate">
+            <div class="form-row">
+                <label for="node-input-sensor_state_supported_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.sensor_state_supported_file"></span></label>
+                <input type="text" id="node-input-sensor_state_supported_file" data-i18n="[placeholder]multi.placeholder.sensor_state_supported_file">
+            </div>
+        </div>
+    </div>
+
+    <!-- SoftwareUpdate Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="softwareupdate" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_softwareupdate">
+            <b><label style="width:auto" for="node-input-trait_softwareupdate"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.softwareupdate"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_softwareupdate" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/softwareupdate"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_softwareupdate">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.softwareupdate"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/softwareupdate"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_softwareupdate">
+            <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
+        </div>
+    </div>
+
+    <!-- StartStop Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="startstop" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_startstop">
+            <b><label style="width:auto" for="node-input-trait_startstop"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.startstop"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_startstop" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/startstop"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_startstop">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.startstop"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/startstop"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_startstop">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-pausable"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.pausable"></span></label>
+                <input type="checkbox" checked id="node-input-pausable" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row" style="margin-bottom:0;">
+                <label><i class="fa fa-list"></i> <span data-i18n="multi.label.available_zones"></span></label>
+            </div>
+            <div class="form-row node-input-multi-zone-container-row">
+                <ol id="node-input-multi-zone-container"></ol>
+            </div>
+        </div>
+    </div>
+    
+    <!-- StatusReport Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="statusreport" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_statusreport">
+            <b><label style="width:auto" for="node-input-trait_statusreport"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.statusreport"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_statusreport" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/statusreport"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_statusreport">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.statusreport"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/statusreport"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_statusreport">
+            <b><label style="width:auto"><span data-i18n="multi.label.no_config_for_trait"></span></label></b>
+        </div>
+    </div>
+
+    <!-- TemperatureControl Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="temperaturecontrol" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_temperaturecontrol">
+            <b><label style="width:auto" for="node-input-trait_temperaturecontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.temperaturecontrol"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_temperaturecontrol" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/temperaturecontrol"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_temperaturecontrol">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.temperaturecontrol"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/temperaturecontrol"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_temperaturecontrol">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-tc_min_threshold_celsius"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.tc_min_threshold_celsius"></span></label>
+                <input type="text" id="node-input-tc_min_threshold_celsius" data-i18n="[placeholder]multi.placeholder.tc_min_threshold_celsius">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-tc_max_threshold_celsius"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.tc_max_threshold_celsius"></span></label>
+                <input type="text" id="node-input-tc_max_threshold_celsius" data-i18n="[placeholder]multi.placeholder.tc_max_threshold_celsius">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-tc_temperature_step_celsius"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.tc_temperature_step_celsius"></span></label>
+                <input type="text" id="node-input-tc_temperature_step_celsius" data-i18n="[placeholder]multi.placeholder.tc_temperature_step_celsius">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-tc_temperature_unit_for_ux"><i class="fa fa-tag"></i> <span data-i18n="multi.label.tc_temperature_unit_for_ux"></span></label>
+                <select id="node-input-tc_temperature_unit_for_ux" >
+                    <option value="C" data-i18n="multi.label._c"></option>
+                    <option value="F" data-i18n="multi.label._f"></option>
+                </select>
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-tc_command_only_temperaturecontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.tc_command_only_temperaturecontrol"></span></label>
+                <input type="checkbox" checked id="node-input-tc_command_only_temperaturecontrol" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-tc_query_only_temperaturecontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.tc_query_only_temperaturecontrol"></span></label>
+                <input type="checkbox" checked id="node-input-tc_query_only_temperaturecontrol" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+    
+    <!-- TemperatureSetting Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="temperaturesetting" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_temperaturesetting">
+            <b><label style="width:auto" for="node-input-trait_temperaturesetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.temperaturesetting"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_temperaturesetting" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/temperaturesetting"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_temperaturesetting">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.temperaturesetting"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/temperaturesetting"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_temperaturesetting">
+            <div class="form-row">
+                <label for="node-input-available_thermostat_modes"><i class="fa fa-tag"></i> <span data-i18n="multi.label.available_thermostat_modes"></span></label>
+                <select multiple id="node-input-available_thermostat_modes" >
+                    <option value="off" data-i18n="multi.label.off"></option>
+                    <option value="heat" data-i18n="multi.label.heat"></option>
+                    <option value="cool" data-i18n="multi.label.cool"></option>
+                    <option value="on" data-i18n="multi.label.on"></option>
+                    <option value="heatcool" data-i18n="multi.label.heatcool"></option>
+                    <option value="auto" data-i18n="multi.label.auto"></option>
+                    <option value="fan-only" data-i18n="multi.label.fan_only"></option>
+                    <option value="purifier" data-i18n="multi.label.purifier"></option>
+                    <option value="eco" data-i18n="multi.label.eco"></option>
+                    <option value="dry" data-i18n="multi.label.dry"></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-min_threshold_celsius"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.min_threshold_celsius"></span></label>
+                <input type="text" id="node-input-min_threshold_celsius" data-i18n="[placeholder]multi.placeholder.min_threshold_celsius">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-max_threshold_celsius"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.max_threshold_celsius"></span></label>
+                <input type="text" id="node-input-max_threshold_celsius" data-i18n="[placeholder]multi.placeholder.max_threshold_celsius">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-thermostat_temperature_unit"><i class="fa fa-tag"></i> <span data-i18n="multi.label.thermostat_temperature_unit"></span></label>
+                <select id="node-input-thermostat_temperature_unit" >
+                    <option value="C" data-i18n="multi.label._c"></option>
+                    <option value="F" data-i18n="multi.label._f"></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-buffer_range_celsius"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.buffer_range_celsius"></span></label>
+                <input type="text" id="node-input-buffer_range_celsius" data-i18n="[placeholder]multi.placeholder.buffer_range_celsius">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_temperaturesetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_temperaturesetting"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_temperaturesetting" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-query_only_temperaturesetting"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_temperaturesetting"></span></label>
+                <input type="checkbox" checked id="node-input-query_only_temperaturesetting" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Timer Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="timer" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_timer">
+            <b><label style="width:auto" for="node-input-trait_timer"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.timer"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_timer" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/timer"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_timer">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.timer"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/timer"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_timer">
+            <div class="form-row">
+                <label style="width:auto" for="node-input-max_timer_limit_sec"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.max_timer_limit_sec"></span></label>
+                <input type="text" id="node-input-max_timer_limit_sec" data-i18n="[placeholder]multi.placeholder.max_timer_limit_sec">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_timer"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_timer"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_timer" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toggles Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="toggles" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_toggles">
+            <b><label style="width:auto" for="node-input-trait_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.toggles"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_toggles" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/toggles"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_toggles">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.toggles"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/toggles"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_toggles">
+            <div class="form-row">
+                <label for="node-input-toggles_file"><i class="fa fa-file"></i> <span data-i18n="multi.label.toggles_file"></span></label>
+                <input type="text" id="node-input-toggles_file" data-i18n="[placeholder]multi.placeholder.toggles_file">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_toggles"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-query_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.query_only_toggles"></span></label>
+                <input type="checkbox" checked id="node-input-query_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+
+    <!-- TransportControl Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="transportcontrol" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_transportcontrol">
+            <b><label style="width:auto" for="node-input-trait_transportcontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.transportcontrol"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_transportcontrol" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/transportcontrol"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_transportcontrol">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.transportcontrol"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/transportcontrol"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_transportcontrol">
+            <div class="form-row">
+                <label for="node-input-supported_commands"><i class="fa fa-tag"></i> <span data-i18n="multi.label.supported_commands"></span></label>
+                <select multiple id="node-input-supported_commands" >
+                    <option value="CAPTION_CONTROL" data-i18n="multi.label.caption_control"></option>
+                    <option value="NEXT" data-i18n="multi.label.next"></option>
+                    <option value="PAUSE" data-i18n="multi.label.pause"></option>
+                    <option value="PREVIOUS" data-i18n="multi.label.previous"></option>
+                    <option value="RESUME" data-i18n="multi.label.resume"></option>
+                    <option value="SEEK_RELATIVE" data-i18n="multi.label.seek_relative"></option>
+                    <option value="SEEK_TO_POSITION" data-i18n="multi.label.seek_to_position"></option>
+                    <option value="SET_REPEAT" data-i18n="multi.label.set_repeat"></option>
+                    <option value="SHUFFLE" data-i18n="multi.label.shuffle"></option>
+                    <option value="STOP" data-i18n="multi.label.stop"></option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Volume Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="volume" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_volume">
+            <b><label style="width:auto" for="node-input-trait_volume"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.volume"></span></label></b>
+            <input type="checkbox" checked id="node-input-trait_volume" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/volume"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_volume">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.trait.volume"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/volume"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_volume">
+            <div class="form-row">
+                <label for="node-input-volume_max_level"><i class="fa fa-tag"></i> <span data-i18n="multi.label.volume_max_level"></span></label>
+                <input type="text" id="node-input-volume_max_level" data-i18n="[placeholder]multi.placeholder.volume_max_level">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-can_mute_and_unmute"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.can_mute_and_unmute"></span></label>
+                <input type="checkbox" checked id="node-input-can_mute_and_unmute" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-volume_default_percentage"><i class="fa fa-tag"></i> <span data-i18n="multi.label.volume_default_percentage"></span></label>
+                <input type="text" id="node-input-volume_default_percentage" data-i18n="[placeholder]multi.placeholder.volume_default_percentage">
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-level_step_size"><i class="fa fa-tag"></i> <span data-i18n="multi.label.level_step_size"></span></label>
+                <input type="text" id="node-input-level_step_size" data-i18n="[placeholder]multi.placeholder.level_step_size">
+            </div>
+
+            <div class="form-row multi-advanced">
+                <label style="width:auto" for="node-input-command_only_volume"><i class="fa fa-arrow-right"></i> <span data-i18n="multi.label.command_only_volume"></span></label>
+                <input type="checkbox" checked id="node-input-command_only_volume" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        </div>
+    </div>
+    
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google-multi',{
+        category: 'Google_SmartHome-function',
+        paletteLabel: function() {
+            return this._("multi.label.node_name");
+        },
+        inputs: 1,
+        outputs: 1,
+        color:"#C0DEED",
+        icon: "google-smarthome.png",
+        label: function() {
+            return this._('multi.device_type.' + this.device_type) + " " + this.name;
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : ""
+        },
+        defaults: {
+            client: {
+                type: "googlesmarthome-client", 
+                required: true
+            },
+            name: {
+                value: "", required:true
+            },
+            topic: {
+                value: "", required:false
+            },
+            device_type: {
+                value: "UNKNOWN", required: true, validate: function(v) {
+                    return v !== "UNKNOWN";
+                }
+            },
+            trait_appselector: {
+                value: false, required:false
+            },
+            trait_channel: {
+                value: false, required:false
+                        },
+            trait_inputselector: {
+                value: false, required:false
+            },
+            trait_mediastate: {
+                value: false, required:false
+            },
+            trait_onoff: {
+                value: false, required:false
+            },
+            trait_transportcontrol: {
+                value: false, required:false
+            },
+            trait_modes: {
+                value: false, required:false
+            },
+            trait_volume: {
+                value: false, required:false
+            },
+            trait_toggles: {
+                value: false, required:false
+            },
+            trait_brightness: {
+                value: false, required:false
+            },
+            trait_colorsetting: {
+                value: false, required:false
+            },
+            appselector_file: {
+                value: "applications.json", required:false
+            },
+            channel_file: {
+                value: "channels.json", required:false
+            },
+            inputselector_file: {
+                value: "inputs.json", required:false
+            },
+            command_only_input_selector: {
+                value: false, required:false
+            },
+            ordered_inputs: {
+                value: false, required:false
+            },
+            support_activity_state: {
+                value: false, required:false
+            },
+            support_playback_state: {
+                value: false, required:false
+            },
+            command_only_onoff: {
+                value: false, required:false
+            },
+            query_only_onoff: {
+                value: false, required:false
+            },
+            supported_commands: {
+                value: ['CAPTION_CONTROL', 'NEXT', 'PAUSE', 'PREVIOUS', 'RESUME', 'SEEK_RELATIVE', 'SEEK_TO_POSITION', 'SET_REPEAT', 'SHUFFLE', 'STOP'], required:false
+            },
+            volume_max_level: {
+                value: 100, required:true, validate: function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            can_mute_and_unmute: {
+                value: true, required:false
+            },
+            volume_default_percentage: {
+                value: 40, required:false, validate: function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0 && n <= 100;
+                }
+            },
+            level_step_size: {
+                value: 1, required:false, validate: function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
+            },
+            command_only_volume: {
+                value: false, required:false
+            },
+            command_only_brightness: {
+                value: false, required:false
+            },
+            command_only_colorsetting: {
+                value: false, required:false
+            },
+            color_model: {
+                value: "temp", required:false
+            },
+            temperature_min_k: {
+                value: 2000, required:false
+            },
+            temperature_max_k: {
+                value: 9000, required:false
+            },
+            modes_file: {
+                value: "modes.json", required:false
+            },
+            command_only_modes: {
+                value: false, required:false
+            },
+            query_only_modes: {
+                value: false, required:false
+            },
+            toggles_file: {
+                value: "toggles.json", required:false
+            },
+            command_only_toggles: {
+                value: false, required:false
+            },
+            query_only_toggles: {
+                value: false, required:false
+            },
+            trait_camerastream: {
+                value: false, required:false
+            },
+            hls: {
+                value: "", required:false
+            },
+            hls_app_id: {
+                value: "", required:false
+            },
+            dash: {
+                value: "", required:false
+            },
+            dash_app_id: {
+                value: "", required:false
+            },
+            smooth_stream: {
+                value: "", required:false
+            },
+            smooth_stream_app_id: {
+                value: "", required:false
+            },
+            progressive_mp4: {
+                value: "", required:false
+            },
+            progressive_mp4_app_id: {
+                value: "", required:false
+            },
+            auth_token: {
+                value: "", required:false
+            },
+            passthru: {
+                value: false, required:false
+            },
+            trait_scene: {
+                value: false, required:false
+            },
+            scene_reversible: {
+                value: true, required:false
+            },
+            trait_timer: {
+                value: false, required:false
+            },
+            trait_temperaturesetting: {
+                value: false, required:false
+            },
+            max_timer_limit_sec:{
+                value: 86400, required:false
+            },
+            command_only_timer: {
+                value: false, required:false
+            },
+            trait_temperaturesetting: {
+                value: false, required:false
+            },
+            available_thermostat_modes: {
+                value: ["off", "heat", "cool", "on", "heatcool", "auto", "fan-only", "purifier", "eco", "dry"], required:false
+            },
+            min_threshold_celsius: {
+                value: 0, required:false
+            },
+            max_threshold_celsius: {
+                value: 40, required:false
+            },
+            thermostat_temperature_unit: {
+                value: "C", required:false
+            },
+            buffer_range_celsius: {
+                value: 2, required:false
+            },
+            command_only_temperaturesetting: {
+                value: false, required:false
+            },
+            query_only_temperaturesetting: {
+                value: false, required:false
+            },
+            trait_temperaturecontrol: {
+                value: false, required:false
+            },
+            tc_min_threshold_celsius: {
+                value: 0, required:false
+            },
+            tc_max_threshold_celsius: {
+                value: 40, required:false
+            },
+            tc_temperature_step_celsius: {
+                value: 1, required:false
+            },
+            tc_temperature_unit_for_ux: {
+                value: "C", required:false
+            },
+            tc_command_only_temperaturecontrol: {
+                value: false, required:false
+            },
+            tc_query_only_temperaturecontrol: {
+                value: false, required:false
+            },
+            trait_humiditysetting: {
+                value: false, required:false
+            },
+            min_percent: {
+                value: 0, required:false
+            },
+            max_percent: {
+                value: 100, required:false
+            },
+            command_only_humiditysetting: {
+                value: false, required:false
+            },
+            query_only_humiditysetting: {
+                value: false, required:false
+            },
+            trait_dock: {
+                value: false, required:false
+            },
+            trait_locator: {
+                value: false, required:false
+            },
+            trait_lockunlock: {
+                value: false, required:false
+            },
+            trait_reboot: {
+                value: false, required:false
+            },
+            trait_openclose: {
+                value: false, required:false
+            },
+            discrete_only_openclose: {
+                value: false, required:false
+            },
+            open_direction: {
+                value: [], required:false
+            },
+            command_only_openclose: {
+                value: false, required:false
+            },
+            query_only_openclose: {
+                value: false, required:false
+            },
+            trait_startstop: {
+                value: false, required:false
+            },
+            pausable: {
+                value: false, required:false
+            },
+            available_zones: {
+                value:[], required:false
+            },
+            lang: {
+                value:"en", required:false
+            },
+            trait_runcycle: {
+                value: false, required:false
+            },
+            trait_softwareupdate: {
+                value: false, required:false
+            },
+            trait_rotation: {
+                value: false, required:false
+            },
+            supports_degrees: {
+                value: true, required:false
+            },
+            supports_percent: {
+                value: true, required:false
+            },
+            rotation_degrees_min: {
+                value: 0, required:false
+            },
+            rotation_degrees_max: {
+                value: 360, required:false
+            },
+            supports_continuous_rotation: {
+                value: false, required:false
+            },
+            command_only_rotation: {
+                value: false, required:false
+            },
+            trait_lighteffects: {
+                value: false, required:false
+            },
+            default_sleep_duration: {
+                value: 1800, required:false
+            },
+            default_wake_duration: {
+                value: 1800, required:false
+            },
+            supported_effects: {
+                value: ["colorLoop", "sleep", "wake"], required:false
+            },
+            trait_statusreport: {
+                value: false, required:false
+            },
+            trait_cook: {
+                value: false, required:false
+            },
+            supported_cooking_modes: {
+                value: [], required:false
+            },
+            food_presets_file: {
+                value: 'foodPresets.json', required:false
+            },
+            trait_fanspeed: {
+                value: false, required:false
+            },
+            reversible: {
+                value: false, required:false
+            },
+            command_only_fanspeed: {
+                value: false, required:false
+            },
+            available_fan_speeds_file:  {
+                value: 'availableFanSpeeds.json', required:false
+            },
+            trait_sensorstate: {
+                value: false, required:false
+            },
+            sensor_state_supported_file:  {
+                value: 'sensorStatesSupported.json', required:false
+            },
+            trait_fill: {
+                value: false, required:false
+            },
+            available_fill_levels_file:  {
+                value: 'availableFillLevels.json', required:false
+            },
+            supports_fill_percent: {
+                value: false, required:false
+            },
+            trait_armdisarm: {
+                value: false, required:false
+            },
+            available_arm_levels_file: {
+                value: 'availableArmLevels.json', required:false
+            },
+            trait_energystorage: {
+                value: false, required:false
+            },
+            is_rechargeable: {
+                value: false, required:false
+            },
+            query_only_energy_storage: {
+                value: false, required:false
+            },
+            energy_storage_distance_unit_for_ux: {
+                value: "KILOMETERS", required:false
+            },
+            trait_dispense: {
+                value: false, required:false
+            },
+            supported_dispense_items_file: {
+                value: 'supportedDispenseItems.json', required:false
+            },
+            supported_dispense_presets_file: {
+                value: 'supportedDispensePresets.json', required:false
+            },
+            trait_networkcontrol: {
+                value: false, required:false
+            },
+            supports_enabling_guest_network: {
+                value: false, required:false
+            },
+            supports_disabling_guest_network: {
+                value: false, required:false
+            },
+            supports_getting_guest_network_password: {
+                value: false, required:false
+            },
+            network_profiles: {
+                value: [], required:false
+            },
+            supports_enabling_network_profile: {
+                value: false, required:false
+            },
+            supports_disabling_network_profile: {
+                value: false, required:false
+            },
+            supports_network_download_speedtest: {
+                value: false, required:false
+            },
+            supports_network_upload_speedtest: {
+                value: false, required:false
+            },
+            trait_objectdetection: {
+                value: false, required:false
+            },
+            show_trait: {
+                value: "selected", required:false
+            },
+            advanced_settings: {
+                value: false, required:false
+            }
+        },
+        oneditprepare: function() {
+            // Zones
+            $('#node-input-multi-zone-container').css('min-height','150px').css('min-width','450px').editableList({
+                addItem: function(container,i,opt) {
+                    var zone=opt;
+                    if (!zone.hasOwnProperty('name')) {
+                        zone={name:""};
+                    }
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    let fragment = document.createDocumentFragment();
+                    var row1 = $('<div/>',{style:"display:flex;"}).appendTo(fragment);
+                    var propertyName = $('<input/>',{class:"node-input-multi-zone-property-name",type:"text"})
+                        .appendTo(row1);
+                    propertyName.val(zone.name);
+
+                    container[0].appendChild(fragment);
+                },
+                removable: true,
+                sortable: true
+            });
+            if (!this.available_zones) {
+                this.available_zones = [];
+            }
+            for (var i=0; i<this.available_zones.length; i++) {
+                var zone = this.available_zones[i];
+                $("#node-input-multi-zone-container").editableList('addItem',{ name: zone});
+            }
+            // Network profiles
+            $('#node-input-multi-network-profiles-container').css('min-height','150px').css('min-width','450px').editableList({
+                addItem: function(container,i,opt) {
+                    var network_profiles=opt;
+                    if (!network_profiles.hasOwnProperty('name')) {
+                        network_profiles={name:""};
+                    }
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    let fragment = document.createDocumentFragment();
+                    var row1 = $('<div/>',{style:"display:flex;"}).appendTo(fragment);
+                    var propertyName = $('<input/>',{class:"node-input-multi-network-profiles-property-name",type:"text"})
+                        .appendTo(row1);
+                    propertyName.val(network_profiles.name);
+
+                    container[0].appendChild(fragment);
+                },
+                removable: true,
+                sortable: true
+            });
+            if (!this.network_profiles) {
+                this.network_profiles = [];
+            }
+            for (var i=0; i<this.network_profiles.length; i++) {
+                var network_profiles = this.network_profiles[i];
+                $("#node-input-multi-network-profiles-container").editableList('addItem',{ name: network_profiles});
+            }
+
+            $(".cb_trait").change(function() {
+                const checked = $( this ).prop('checked');
+                const cb_id =  $( this ).attr('id');
+                const div_id = cb_id.substring(11);
+                const div_aid = div_id.substring(6);
+                /*
+                if (checked) {
+                    $("#" + div_id).show();
+                    $("#" + div_aid).find(".oc_trait").removeClass('fa-caret-right').addClass('fa-caret-down');
+                } else {
+                    $("#" + div_id).hide();
+                    $("#" + div_aid).find(".oc_trait").removeClass('fa-caret-down').addClass('fa-caret-right');
+                }
+                */
+            });
+            $(".cb_trait").change();
+
+            /*$(".label_trait").click(function() {
+                const label_id =  $( this ).attr('id');
+                const div_id = label_id.substring(6);
+                $("#" + div_id).toggle();
+                const div_aid = div_id.substring(6);
+                if ($("#" + div_id).is(":visible")) {
+                    $("#" + div_aid).find(".oc_trait").removeClass('fa-caret-right').addClass('fa-caret-down');
+                } else {
+                    $("#" + div_aid).find(".oc_trait").removeClass('fa-caret-down').addClass('fa-caret-right');
+                }
+            });*/
+
+            $(".oc_trait").click(function() {
+                const parent_id =  $( this ).parent().parent().attr('id');
+                const div_id = parent_id.substring(parent_id.startsWith('cb_') ? 3 : 6);
+                $("#" + div_id).toggle();
+                const div_aid = div_id.substring(6);
+                if ($("#" + div_id).is(":visible")) {
+                    $("#" + div_aid).find(".oc_trait").removeClass('fa-caret-right').addClass('fa-caret-down');
+                } else {
+                    $("#" + div_aid).find(".oc_trait").removeClass('fa-caret-down').addClass('fa-caret-right');
+                }
+            });
+
+            $("#node-input-advanced_settings").change(function() {
+                const checked = $( this ).prop('checked');
+                if (checked) {
+                    $(".multi-advanced").show();
+                } else {
+                    $(".multi-advanced" ).hide();
+                }
+            });
+            $("#node-input-advanced_settings").change();
+
+            var setTraitRecomended = function(name, recommended, show_Trait) {
+                $("#node-input-trait_" + name).show();
+                $("#label_trait_" + name).hide();
+                $("#cb_trait_" + name).show();
+                /*if (typeof recommended === "boolean") {
+                    $("#node-input-trait_" + name).prop('checked', recommended);
+                }*/
+                let show_trait = show_Trait == "all";
+                if (show_Trait === "selected") {
+                    show_trait = $("#node-input-trait_" + name).prop('checked');
+                } else if (show_Trait === "recommended") {
+                    show_trait = recommended;
+                }
+                if (show_trait) {
+                    $("#" + name).show();
+                } else {
+                    $("#" + name).hide();
+                }
+                if (recommended === true) {
+                    $("#trait_" + name).show();
+                    $("#" + name).find(".oc_trait").removeClass('fa-caret-right').addClass('fa-caret-down');
+                } else {
+                    $("#trait_" + name).hide();
+                    $("#" + name).find(".oc_trait").removeClass('fa-caret-down').addClass('fa-caret-right');
+                }
+            };
+
+            var setTraitRequired = function(name) {
+                $("#node-input-trait_" + name).hide();
+                $("#node-input-trait_" + name).prop('checked', true);
+                $("#label_trait_" + name).show();
+                $("#cb_trait_" + name).hide();
+                $("#trait_" + name).show();
+                $("#" + name).show();
+            };
+
+            // Device Type
+            var deviceTypeChanged = function() {
+                var device_type = $("#node-input-device_type").val();
+                var show_trait = $("#node-input-show_trait").val();
+                var required_traits = [];
+                var recommended_traits = [];
+                switch (device_type) {
+                    case "AC_UNIT": // Air conditioning unit
+                        recommended_traits = ["fanspeed"];
+                        required_traits = ["temperaturesetting"];
+                        break;
+                    case "AIRCOOLER": // Air cooler
+                        recommended_traits = ["fanspeed", "humiditysetting"];
+                        required_traits = ["temperaturesetting"];
+                        break;
+                    case "AIRFRESHENER": // Air freshener
+                        recommended_traits = ["modes", "toggles"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "AIRPURIFIER": // Air purifier
+                        recommended_traits = ["fanspeed", "sensorstate"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "AUDIO_VIDEO_RECEIVER": // Audio-Video receiver
+                        recommended_traits = ["appselector", "mediastate", "transportcontrol"];
+                        required_traits = ["inputselector", "onoff", "volume"];
+                        break;
+                    case "AWNING": // Awning
+                        recommended_traits = [];
+                        required_traits = ["openclose"];
+                        break;
+                    case "BATHTUB": // Bathtub
+                        recommended_traits = [];
+                        required_traits = ["fill", "temperaturecontrol", "startstop"];
+                        break;
+                    case "BED": // Bed
+                        recommended_traits = ["scene"];
+                        required_traits = ["modes"];
+                        break;
+                    case "BLENDER": // Blender
+                        recommended_traits = ["cook", "startstop", "timer"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "BLINDS": // Blinds
+                        recommended_traits = ["rotation"];
+                        required_traits = ["openclose"];
+                        break;
+                    case "BOILER": // Boiler
+                        recommended_traits = ["temperaturecontrol"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "CAMERA": // Camera
+                        recommended_traits = [];
+                        required_traits = ["camerastream"];
+                        break;
+                    case "CARBON_MONOXIDE_DETECTOR": // Carbon monoxide detector
+                        recommended_traits = [];
+                        required_traits = ["sensorstate"];
+                        break;
+                    case "CHARGER": // Charger
+                        recommended_traits = [];
+                        required_traits = ["energystorage"];
+                        break;
+                    case "CLOSET": // Closet
+                        recommended_traits = [];
+                        required_traits = ["openclose"];
+                        break;
+                    case "COFFEE_MAKER": // Coffee Maker
+                        recommended_traits = ["cook", "temperaturecontrol"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "COOKTOP": // Cooktop
+                        recommended_traits = ["cook", "timer"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "CURTAIN": // Curtain
+                        recommended_traits = [];
+                        required_traits = ["openclose"];
+                        break;
+                    case "DEHUMIDIFIER": // Dehumidifier
+                        recommended_traits = ["fanspeed", "humiditysetting", "startstop"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "DEHYDRATOR": // Dehydrator
+                        recommended_traits = ["cook", "startstop", "timer"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "DISHWASHER": // Dishwasher
+                        recommended_traits = ["onoff", "runcycle"];
+                        required_traits = ["startstop"];
+                        break;
+                    case "DOOR": // Door
+                        recommended_traits = ["lockunlock"];
+                        required_traits = ["openclose"];
+                        break;
+                    case "DRAWER": // Drawer
+                        recommended_traits = [];
+                        required_traits = ["openclose"];
+                        break;
+                    case "DRYER": // Dryer
+                        recommended_traits = ["modes", "onoff", "runcycle", "toggles"];
+                        required_traits = ["startstop"];
+                        break;
+                    case "FAN": // Fan
+                        recommended_traits = ["fanspeed"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "FAUCET": // Faucet
+                        recommended_traits = ["dispense", "startstop", "temperaturecontrol"];
+                        required_traits = [];
+                        break;
+                    case "FIREPLACE": // Fireplace
+                        recommended_traits = ["modes", "toggles", "onoff"];
+                        required_traits = [];
+                        break;
+                    case "FREEZER": // Freezer
+                        recommended_traits = [];
+                        required_traits = ["temperaturecontrol"];
+                        break;
+                    case "FRYER": // Fryer
+                        recommended_traits = ["cook", "startstop", "timer"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "GARAGE": // Garage
+                        recommended_traits = [];
+                        required_traits = ["openclose"];
+                        break;
+                    case "GATE": // Gate
+                        recommended_traits = ["lockunlock"];
+                        required_traits = ["openclose"];
+                        break;
+                    case "GRILL": // Grill
+                        recommended_traits = ["cook", "onoff", "timer"];
+                        required_traits = ["startstop"];
+                        break;
+                    case "HEATER": // Heater
+                        recommended_traits = ["fanspeed"];
+                        required_traits = ["temperaturesetting"];
+                        break;
+                    case "HOOD": // Hood
+                        recommended_traits = ["brigthness", "fanspeed"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "HUMIDIFIER": // Humidifier
+                        recommended_traits = ["fanspeed", "humiditysetting", "startstop"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "KETTLE": // Kettle
+                        recommended_traits = ["temperaturecontrol"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "LIGHT": // Light
+                        recommended_traits = ["colorsetting", "brightness"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "LOCK": // Lock
+                        recommended_traits = [];
+                        required_traits = ["lockunlock"];
+                        break;
+                    case "MICROWAVE": // Microwave
+                        recommended_traits = ["cook", "timer"];
+                        required_traits = ["startstop"];
+                        break;
+                    case "MOP": // Mop
+                        recommended_traits = ["dock", "energystorage", "locator", "onoff", "runcycle"];
+                        required_traits = ["startstop"];
+                        break;
+                    case "MOWER": // Mower
+                        recommended_traits = ["dock", "energystorage", "locator", "onoff", "runcycle"];
+                        required_traits = ["startstop"];
+                        break;
+                    case "MULTICOOKER": // Multicooker
+                        recommended_traits = ["cook", "startstop", "timer"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "NETWORK": // Network
+                        recommended_traits = ["reboot", "softwareupdate"];
+                        required_traits = ["networkcontrol"];
+                        break;
+                    case "OUTLET": // Outlet
+                        recommended_traits = [];
+                        required_traits = ["onoff"];
+                        break;
+                    case "OVEN": // Oven
+                        recommended_traits = ["cook", "temperaturecontrol", "timer"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "PERGOLA": // Pergola
+                        recommended_traits = ["rotation"];
+                        required_traits = ["openclose"];
+                        break;
+                    case "PETFEEDER": // Pet feeder
+                        recommended_traits = ["onoff", "startstop"];
+                        required_traits = ["dispense"];
+                        break;
+                    case "PRESSURECOOKER": // Pressure cooker
+                        recommended_traits = ["cook", "timer"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "RADIATOR": // Radiator
+                        recommended_traits = ["modes", "toggles"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "REFRIGERATOR": // Refrigerator
+                        recommended_traits = [];
+                        required_traits = ["temperaturecontrol"];
+                        break;
+                    case "REMOTECONTROL": // Remote control
+                        recommended_traits = ["appselector", "channel"];
+                        required_traits = ["inputselector", "mediastate", "onoff", "transportcontrol", "volume"];
+                        break;
+                    case "ROUTER": // Router
+                        recommended_traits = ["reboot", "softwareupdate"];
+                        required_traits = ["networkcontrol"];
+                        break;
+                    case "SCENE": // Scene
+                        recommended_traits = [];
+                        required_traits = ["scene"];
+                        break;
+                    case "SECURITYSYSTEM": // Security system
+                        recommended_traits = ["statusreport"];
+                        required_traits = ["armdisarm"];
+                        break;
+                    case "SENSOR": // Sensor
+                        recommended_traits = ["energystorage"];
+                        required_traits = ["sensorstate"];
+                        break;
+                    case "SETTOP": // Settop
+                        recommended_traits = ["volume", "onoff"];
+                        required_traits = ["appselector", "mediastate", "channel", "transportcontrol"];
+                        break;
+                    case "SHOWER": // Shower
+                        recommended_traits = ["rotation"];
+                        required_traits = ["openclose"];
+                        break;
+                    case "SHUTTER": // Shutter
+                        recommended_traits = ["rotation"];
+                        required_traits = ["openclose"];
+                        break;
+                    case "SMOKE_DETECTOR": // Smoke detector
+                        recommended_traits = [];
+                        required_traits = ["sensorstate"];
+                        break;
+                    case "SOUNDBAR": // Soundbar
+                        recommended_traits = ["appselector", "inputselector", "mediastate", "onoff", "transportcontrol"];
+                        required_traits = ["volume"];
+                        break;
+                    case "SOUSVIDE": // Sousvide
+                        recommended_traits = ["cook", "startstop", "timer"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "SPEAKER": // Speaker
+                         recommended_traits = ["appselector", "inputselector", "mediastate", "onoff", "transportcontrol"];
+                         required_traits = ["volunme"];
+                        break;
+                    case "SPRINKLER": // Sprinkler
+                        recommended_traits = ["timer"];
+                        required_traits = ["startstop"];
+                        break;
+                    case "STANDMIXER": // Stand mixer
+                        recommended_traits = ["cook", "startstop"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "STREAMING_BOX": // Streaming box
+                        recommended_traits = ["inputselector", "onoff"];
+                        required_traits = ["appselector", "mediastate", "transportcontrol", "volume"];
+                        break;
+                    case "STREAMING_SOUNDBAR": // Streaming soundbar
+                        recommended_traits = ["inputselector", "onoff"];
+                        required_traits = ["appselector", "mediastate", "transportcontrol", "volume"];
+                        break;
+                    case "STREAMING_STICK": // Streaming stick
+                        recommended_traits = ["onoff"];
+                        required_traits = ["appselector", "mediastate", "transportcontrol", "volume"];
+                        break;
+                    case "SWITCH": // Switch
+                        recommended_traits = ["brightmmess"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "THERMOSTAT": // Thermostat
+                        recommended_traits = [];
+                        required_traits = ["temperaturesetting"];
+                        break;
+                    case "TV": // Television
+                        recommended_traits = ["channel", "inputselector"];
+                        required_traits = ["appselector", "mediastate", "onoff", "transportcontrol", "volume"];
+                        break;
+                    case "VACUUM": // Vacuum
+                        recommended_traits = ["dock", "energystorage", "locator", "onoff", "runcycle"];
+                        required_traits = ["startstop"];
+                        break;
+                    case "VALVE": // Valve
+                        recommended_traits = [];
+                        required_traits = ["openclose"];
+                        break;
+                    case "WASHER": // Washer
+                        recommended_traits = ["modes", "onoff", "runcycle", "toggles"];
+                        required_traits = ["startstop"];
+                        break;
+                    case "WATERHEATER": // Water heater
+                        recommended_traits = ["temperaturecontrol"];
+                        required_traits = ["onoff"];
+                        break;
+                    case "WATERPURIFIER": // Water purifier
+                        recommended_traits = ["onoff", "sensorstate"];
+                        required_traits = [];
+                        break;
+                    case "WATERSOFTENER": // Water softener
+                        recommended_traits = ["onoff", "sensorstate"];
+                        required_traits = [];
+                        break;
+                    case "WINDOW": // Window
+                        recommended_traits = ["lockunlock"];
+                        required_traits = ["openclose"];
+                        break;
+                    case "YOGURTMAKER": // Yogurt maker
+                        recommended_traits = ["cook", "startstop", "timer"];
+                        required_traits = ["onoff"];
+                        break;
+                }
+                $(".div_trait").each(function() {
+                    let div_id =  $( this ).attr('id');
+                    if (required_traits.includes(div_id)) {
+                        setTraitRequired(div_id);
+                    } else {
+                        setTraitRecomended(div_id, recommended_traits.includes(div_id), show_trait);
+                        //setTraitRecomended(div_id);
+                    }
+                });
+            }
+            deviceTypeChanged();
+            $("#node-input-device_type").change(deviceTypeChanged);
+            $("#node-input-show_trait").change(deviceTypeChanged);
+        },
+        oneditsave: function() {
+            // Zone
+            var available_zones = $("#node-input-multi-zone-container").editableList('items');
+            var node = this;
+            node.available_zones= [];
+            available_zones.each(function(i) {
+                var zone = $(this);
+                var name = zone.find(".node-input-multi-zone-property-name").val();
+                node.available_zones.push(name);
+            });
+            // Network profiles
+            var network_profiles = $("#node-input-multi-network-profiles-container").editableList('items');
+            var node = this;
+            node.network_profiles= [];
+            network_profiles.each(function(i) {
+                var network_profile = $(this);
+                var name = network_profile.find(".node-input-multi-network-profiles-property-name").val();
+                node.network_profiles.push(name);
+            });
+        },
+        oneditresize: function(size) {
+            // Zone
+            var rows = $("#dialog-form>div:not(.node-input-multi-zone-container-row)");
+            var height = size.height;
+            for (var i=0; i<rows.length; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            var editorRow = $("#dialog-form>div.node-input-multi-zone-container-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            height += 16;
+            $("#node-input-multi-zone-container").editableList('height',height);
+            // Network profiles
+            var rows = $("#dialog-form>div:not(.node-input-multi-network-profiles-container-row)");
+            var height = size.height;
+            for (var i=0; i<rows.length; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            var editorRow = $("#dialog-form>div.node-input-multi-network-profiles-container-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            height += 16;
+            $("#node-input-multi-network-profiles-container").editableList('height',height);
+        }
+    });
+</script>
