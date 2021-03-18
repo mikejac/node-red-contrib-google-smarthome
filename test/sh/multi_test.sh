@@ -72,10 +72,12 @@ execute() {
     echo
     CMD_=$2
     CMD="${CMD_%%_*}"
-    echo $CMD
+    echo ./execute "$@"
+    mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old" 
     echo "{}" > "$PAYLOAD_FILE" 
     ./execute "$@" > "$OUT_FILE"
     OUT=$(cat  "$OUT_FILE")
+    sleep 1
     PAYLOAD=$(cat "$PAYLOAD_FILE")
     test_out ".payload.commands[0].status" '"SUCCESS"'
     test_payload .online true
@@ -83,6 +85,9 @@ execute() {
 }
 
 execute_no_payload() {
+    CMD_EXEC="$@"
+    echo
+    echo ./execute "$@"
     echo "{}" > "$PAYLOAD_FILE" 
     ./execute "$@" > "$OUT_FILE"
     OUT=$(cat  "$OUT_FILE")
@@ -92,13 +97,16 @@ execute_no_payload() {
 }
 
 execute_error() {
+    CMD_EXEC="$@"
+    echo
+    echo ./execute "$@"
     echo "{}" > "$PAYLOAD_FILE" 
     OUT=$(./execute "$@")
     PAYLOAD=$(cat "$PAYLOAD_FILE")
     test_out ".payload.commands[0].status" '"ERROR"'
     test_no_payload
 }
-
+if [ 1 == 2 ] ; then
 # AppSelector 
 echo AppSelector
 execute $NODE_ID appInstall mia_application
@@ -144,15 +152,15 @@ test_out ".payload.commands[0].errorCode" '"noAvailableApp"'
 
 # ArmDisarm
 echo
-echo ArmDisarm TODO
+echo ArmDisarm The Arm/Disarm logic should be outside the node
 execute $NODE_ID ArmDisarm true 123
-# test_out ".payload.commands[0].states.online" 'true'
+# test_out ".payload.commands[0].states.online" true
 
 execute $NODE_ID ArmDisarm_level true 123 level3
-# test_out ".payload.commands[0].states.online" 'true'
+# test_out ".payload.commands[0].states.online" true
 
 execute $NODE_ID ArmDisarm_cancel true
-# test_out ".payload.commands[0].states.online" 'true'
+# test_out ".payload.commands[0].states.online" true
 
 # Brightness
 echo
@@ -185,7 +193,7 @@ execute_error $NODE_ID selectChannel 'NO channel' 'NO channel name'
 test_out ".payload.commands[0].errorCode" '"noAvailableChannel"'
 
 execute $NODE_ID selectChannel 'rai1' 'Rai 1'
-test_out ".payload.commands[0].states.online" 'true'
+test_out ".payload.commands[0].states.online" true
 test_payload ".currentChannel" '"rai1"'
 test_payload ".currentChannelNumber" '"1"'
 
@@ -193,7 +201,7 @@ execute_error $NODE_ID selectChannel_number 'No channel number'
 test_out ".payload.commands[0].errorCode" '"noAvailableChannel"'
 
 execute $NODE_ID selectChannel_number '501'
-test_out ".payload.commands[0].states.online" 'true'
+test_out ".payload.commands[0].states.online" true
 test_payload ".currentChannel" '"rai1_hd"'
 test_payload ".currentChannelNumber" '"501"'
 
@@ -202,15 +210,15 @@ echo
 echo ColorSetting 
 execute $NODE_ID ColorAbsolute 'Bianco Caldo' 3000
 test_payload ".color.temperatureK" 3000
-# test_out ".payload.commands[0].states.online" 'true'
+# test_out ".payload.commands[0].states.online" true
 
 execute $NODE_ID ColorAbsolute_rgb 'Magenta' 16711935
 test_payload ".color.spectrumRgb" 16711935
 test_payload ".color.temperatureK" null
-# test_out ".payload.commands[0].states.online" 'true'
+# test_out ".payload.commands[0].states.online" true
 
 execute $NODE_ID ColorAbsolute_hsv 'Magenta' 300 1 1
-# test_out ".payload.commands[0].states.online" 'true'
+# test_out ".payload.commands[0].states.online" true
 test_payload ".color.spectrumHsv.hue" 300
 test_payload ".color.spectrumHsv.saturation" 1
 test_payload ".color.spectrumHsv.value" 1
@@ -222,45 +230,56 @@ test_payload ".color.spectrumRgb" null
 test_payload ".color.spectrumHsv.hue" null
 test_payload ".color.spectrumHsv.saturation" null
 test_payload ".color.spectrumHsv.value" null
-# test_out ".payload.commands[0].states.online" 'true'
+# test_out ".payload.commands[0].states.online" true
 
 # Cook
 echo
-echo Cook TODO
-execute $NODE_ID Cook true 'BAKE'
-# test_out ".payload.commands[0].states.online" 'true'
+echo Cook
+execute $NODE_ID Cook true BAKE
+test_payload ".params.start" true
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.currentCookingMode" '"BAKE"'
 
-execute $NODE_ID Cook_preset true 'COOK' 'white_rice' 2 "CUPS"
-# test_out ".payload.commands[0].states.online" 'true'
+execute $NODE_ID Cook false BAKE
+test_payload ".params.start" false
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.currentCookingMode" '"BAKE"'
 
-execute $NODE_ID Cook true 'NO MODE'
-test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR
+execute $NODE_ID Cook_preset true COOK white_rice 2 CUPS
+test_payload ".params.start" true
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.currentCookingMode" '"COOK"'
+test_out ".payload.commands[0].states.currentFoodPreset" '"white_rice"'
+test_out ".payload.commands[0].states.currentFoodQuantity" 2
+test_out ".payload.commands[0].states.currentFoodUnit" '"CUPS"'
 
-execute $NODE_ID Cook_preset true 'COOK' 'no_preset' 2 "CUPS"
-test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset 
-# test_out ".payload.commands[0].states.online" 'true'
+execute_error $NODE_ID Cook true 'NO MODE'
+test_out ".payload.commands[0].errorCode" '"transientError"'
 
-execute $NODE_ID Cook_preset true 'COOK' 'white_rice' 2 "NO_UNIT"
-test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset?
+execute_error $NODE_ID Cook_preset true COOK no_preset 2 "CUPS"
+test_out ".payload.commands[0].errorCode" '"unknownFoodPreset"'
+
+execute_error $NODE_ID Cook_preset true 'COOK' 'white_rice' 2 "NO_UNIT"
+test_out ".payload.commands[0].errorCode" '"transientError"'
 
 # Dispense 
 echo
 echo Dispense TODO
 execute $NODE_ID Dispense 1 "CUP" 'water'
-test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset?
+test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR??
 
 execute $NODE_ID Dispense 1 'no_unit' "water"
-test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset 
-# test_out ".payload.commands[0].states.online" 'true'
+test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR?? 
+# test_out ".payload.commands[0].states.online" true
 
 execute $NODE_ID Dispense 1 'CUP' 'no_item'
-test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset?
+test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR??
 
 execute $NODE_ID Dispense_preset "cat_bowl"
 test_out ".payload.commands[0].status" '"SUCCESS"'
 
 execute $NODE_ID Dispense_preset "no_preset"
-test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR unknownFoodPreset?
+test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR??
 
 execute $NODE_ID Dispense_none 
 test_out ".payload.commands[0].status" '"SUCCESS"'
@@ -278,9 +297,9 @@ test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.isDocked" true
 test_payload ".isDocked" true
 
-# EnergyStorage TODO
+# EnergyStorage
 echo
-echo EnergyStorage 
+echo EnergyStorage The logic should be outside
 execute $NODE_ID Charge true 
 
 execute $NODE_ID Charge false 
@@ -421,28 +440,72 @@ echo
 echo OnOff
 execute $NODE_ID OnOff false
 test_out ".payload.commands[0].states.on" 'false'
-test_out ".payload.commands[0].states.online" 'true'
+test_out ".payload.commands[0].states.online" true
 
 execute $NODE_ID OnOff true
-test_out ".payload.commands[0].states.on" 'true'
-test_out ".payload.commands[0].states.online" 'true'
+test_out ".payload.commands[0].states.on" true
+test_out ".payload.commands[0].states.online" true
 
-# OpenClose TODO 1
+# OpenClose
 echo
 echo OpenClose 
 execute $NODE_ID OpenClose 70
 
+execute $NODE_ID OpenClose_dir 50 "UP"
+test_payload ".openState[0].openPercent" 50
+
 execute $NODE_ID OpenClose_dir 70 "DOWN"
+test_payload ".openState[1].openPercent" 70
+
+execute $NODE_ID OpenClose_dir 60 "LEFT"
+test_payload ".openState[2].openPercent" 60
+
+execute $NODE_ID OpenClose_dir 45 "RIGHT"
+test_payload ".openState[3].openPercent" 45
+
+execute $NODE_ID OpenClose_dir 20 "IN"
+test_payload ".openState[4].openPercent" 20
+
+execute $NODE_ID OpenClose_dir 10 "OUT"
+test_payload ".openState[5].openPercent" 10
 
 execute $NODE_ID OpenClose_dir 70 "NO_DIR"
-test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR
+test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR??
+test_payload ".openState[0].openPercent" 50
+test_payload ".openState[1].openPercent" 70
+test_payload ".openState[2].openPercent" 60
+test_payload ".openState[3].openPercent" 45
+test_payload ".openState[4].openPercent" 20
+test_payload ".openState[5].openPercent" 10
 
 execute $NODE_ID OpenCloseRelative 5
 
-execute $NODE_ID OpenCloseRelative_dir -7 "UP"
+execute $NODE_ID OpenCloseRelative_dir -1 "UP"
+test_payload ".openState[0].openPercent" 49
+
+execute $NODE_ID OpenCloseRelative_dir 3 "DOWN"
+test_payload ".openState[1].openPercent" 73
+
+execute $NODE_ID OpenCloseRelative_dir -5 "LEFT"
+test_payload ".openState[2].openPercent" 55
+
+execute $NODE_ID OpenCloseRelative_dir 11 "RIGHT"
+test_payload ".openState[3].openPercent" 56
+
+execute $NODE_ID OpenCloseRelative_dir -7 "IN"
+test_payload ".openState[4].openPercent" 13
+
+execute $NODE_ID OpenCloseRelative_dir 17 "OUT"
+test_payload ".openState[5].openPercent" 27
 
 execute $NODE_ID OpenCloseRelative_dir -9 "NO_DIR"
-test_out ".payload.commands[0].status" '"SUCCESS"' # TODO ERROR
+test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR??
+test_payload ".openState[0].openPercent" 49
+test_payload ".openState[1].openPercent" 73
+test_payload ".openState[2].openPercent" 55
+test_payload ".openState[3].openPercent" 56
+test_payload ".openState[4].openPercent" 13
+test_payload ".openState[5].openPercent" 27
 
 # Reboot 
 echo
@@ -525,7 +588,7 @@ test_payload ".temperatureSetpointCelsius" 28.5
 
 execute $NODE_ID SetTemperature 16.5
 test_payload ".temperatureSetpointCelsius" 16.5
-
+fi # fi
 # TemperatureSetting 
 echo
 echo TemperatureSetting 
@@ -535,14 +598,19 @@ test_payload ".thermostatTemperatureSetpointHigh" null
 test_payload ".thermostatTemperatureSetpointLow" null
 
 execute $NODE_ID ThermostatTemperatureSetRange 26.2 22.8
-# test_payload ".thermostatTemperatureSetpoint" null
+test_payload ".thermostatTemperatureSetpoint" null
 test_payload ".thermostatTemperatureSetpointHigh" 26.2
 test_payload ".thermostatTemperatureSetpointLow" 22.8
 
 execute $NODE_ID ThermostatTemperatureSetpoint 27.67
 test_payload ".thermostatTemperatureSetpoint" 27.67
-# test_payload ".thermostatTemperatureSetpointHigh" null
-# test_payload ".thermostatTemperatureSetpointLow" null
+test_payload ".thermostatTemperatureSetpointHigh" null
+test_payload ".thermostatTemperatureSetpointLow" null
+
+execute $NODE_ID ThermostatTemperatureSetRange 16.2 12.8
+test_payload ".thermostatTemperatureSetpoint" null
+test_payload ".thermostatTemperatureSetpointHigh" 16.2
+test_payload ".thermostatTemperatureSetpointLow" 12.8
 
 execute $NODE_ID ThermostatSetMode "heatcool"
 test_payload ".thermostatMode" '"heatcool"'
@@ -567,16 +635,32 @@ execute $NODE_ID TemperatureRelative_deg 10
 # Timer
 echo
 echo Timer
-execute $NODE_ID TimerStart "10"
-# test_payload ".timerTimeSec" 10
+execute_error $NODE_ID TimerPause
+test_out ".payload.commands[0].errorCode" '"noTimerExists"'
+
+execute_error $NODE_ID TimerResume
+test_out ".payload.commands[0].errorCode" '"noTimerExists"'
+
+execute_error $NODE_ID TimerAdjust -5
+test_out ".payload.commands[0].errorCode" '"noTimerExists"'
+
+execute_error $NODE_ID TimerCancel
+test_out ".payload.commands[0].errorCode" '"noTimerExists"'
+
+execute $NODE_ID TimerStart 1000
+test_payload ".timerRemainingSec" 1000
 test_payload ".timerPaused" false
 
-execute $NODE_ID TimerAdjust "-5"
+execute $NODE_ID TimerAdjust -5
+test_payload ".timerPaused" false
 
 execute $NODE_ID TimerPause
 test_payload ".timerPaused" true
 
 execute $NODE_ID TimerResume
+test_payload ".timerPaused" false
+
+execute $NODE_ID TimerAdjust -5
 test_payload ".timerPaused" false
 
 execute $NODE_ID TimerCancel
