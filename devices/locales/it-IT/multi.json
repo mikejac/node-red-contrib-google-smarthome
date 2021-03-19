@@ -1,8 +1,8 @@
 {
 	"multi": {
-		"node_name": "Multi Device",
+		"node_name": "Dispositivo Google",
 		"label": {
-			"node_name": "Multi Dispositivo",
+			"node_name": "Dispositivo Google",
 			"name": "Nome",
 			"topic": "Oggetto in uscita",
 			"device_type": "Tipo dispositivo",

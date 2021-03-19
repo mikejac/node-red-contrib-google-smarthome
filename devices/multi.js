@@ -30,11 +30,12 @@ module.exports = function(RED) {
     class MultiNode {
         constructor(config) {
             RED.nodes.createNode(this,config);
-            var node = this;
 
+            this.device = {};
+            this.guest_network_password         = '';
             this.client                         = config.client;
             this.clientConn                     = RED.nodes.getNode(this.client);
-            this.debug("MultiNode config " + JSON.stringify(config));
+            this.debug(".constructor config " + JSON.stringify(config));
             this.trait = {
                 appselector: config.trait_appselector || false,
                 armdisarm: config.trait_armdisarm || false,
@@ -549,6 +550,7 @@ module.exports = function(RED) {
                 this.debug(".constructor: Toggles disabled");
             }
 
+            // GoogleSmartHomeNode -> (client.registerDevice -> MultiNode.registerDevice), app.registerDevice
             this.states = this.clientConn.register(this, 'multi', config.name, this);
 
             if (error_msg.length == 0) {
@@ -579,12 +581,12 @@ module.exports = function(RED) {
 
             const default_name = me.getDefaultName(me.device_type);
             const default_name_type = default_name.replace(/[_ ()/]+/g, '-').toLowerCase();
-            me.states = {
+            let states = {
                 online: true
             };
             let device = {
                 id: client.id,
-                states: me.states,
+                states: states,
                 properties: {
                     type: 'action.devices.types.' + me.device_type,
                     traits: me.getTraits(me),
@@ -613,6 +615,7 @@ module.exports = function(RED) {
 
             me.debug(".registerDevice: device = " + JSON.stringify(device));
 
+            me.device = device;
             return device;
         }
 
@@ -649,6 +652,10 @@ module.exports = function(RED) {
             if (me.trait.cook) {
                 attributes['supportedCookingModes'] = me.supported_cooking_modes;
                 attributes['foodPresets'] = me.food_presets;
+            }
+            if (me.trait.dispense) {
+                attributes['supportedDispenseItems'] = me.supported_dispense_items;
+                attributes['supportedDispensePresets'] = me.supported_dispense_presets;
             }
             if (me.trait.energystorage) {
                 attributes['queryOnlyEnergyStorage'] = me.query_only_energy_storage;
@@ -721,7 +728,7 @@ module.exports = function(RED) {
                     rotationDegreesMax: me.rotation_degrees_max
                 }];
                 attributes['supportsContinuousRotation'] = me.supports_continuous_rotation;
-                attributes['supportsContinuousRotation'] = me.command_only_rotation;
+                attributes['commandOnlyRotation'] = me.command_only_rotation;
             }
             if (me.trait.scene) {
                 attributes['sceneReversible'] = me.scene_reversible;
@@ -808,6 +815,38 @@ module.exports = function(RED) {
                 states['currentFoodPreset'] = "NONE";
                 states['currentFoodQuantity'] = 0;
                 states['currentFoodUnit'] = "UNKNOWN_UNITS";
+            }
+            if (me.trait.dispense) {
+                let dispense = [];
+                me.supported_dispense_items.forEach(function(item) {
+                    dispense.push({
+                        "itemName": item.item_name,
+                        "amountRemaining": {
+                          "amount": 0,
+                          "unit": "NO_UNITS"
+                        },
+                        "amountLastDispensed": {
+                          "amount": 0,
+                          "unit": "NO_UNITS"
+                        },
+                        "isCurrentlyDispensing": false
+                    })
+                });
+                me.supported_dispense_presets.forEach(function(item) {
+                    dispense.push({
+                        "itemName": item.preset_name,
+                        "amountRemaining": {
+                          "amount": 0,
+                          "unit": "NO_UNITS"
+                        },
+                        "amountLastDispensed": {
+                          "amount": 0,
+                          "unit": "NO_UNITS"
+                        },
+                        "isCurrentlyDispensing": false
+                    })
+                });
+                states['dispenseItems'] = dispense;
             }
             if (me.trait.dock) {
                 states['isDocked'] = false;
@@ -921,9 +960,15 @@ module.exports = function(RED) {
             }
             if (me.trait.temperaturesetting) {
                 states['activeThermostatMode'] = "none";
+                states['targetTempReachedEstimateUnixTimestampSec'] = 360;
+                states['thermostatHumidityAmbient'] = 60;
                 states['thermostatMode'] = "none";
                 states['thermostatTemperatureAmbient'] = 10;
-                // states['thermostatTemperatureSetpoint'] = 10;
+                // 0
+                states['thermostatTemperatureSetpoint'] = 10;
+                // 1
+                // states['thermostatTemperatureSetpointHigh'] = 10;
+                // states['thermostatTemperatureSetpointLow'] = 10;
             }
             if (me.trait.timer) {
                 states['timerRemainingSec'] = -1;
@@ -955,8 +1000,8 @@ module.exports = function(RED) {
             let me=this;
             let states = device.states;
             let command = device.command.startsWith('action.devices.commands.') ? device.command.substr(24) : device.command;
-            this.debug(".updated: command = " + JSON.stringify(command));
-            this.debug(".updated: states = " + JSON.stringify(states));
+            this.debug(".updated: device.command = " + JSON.stringify(command));
+            this.debug(".updated: device.states = " + JSON.stringify(states));
             this.debug(".updated: params = " + JSON.stringify(params));
             this.debug(".updated: original_params = " + JSON.stringify(original_params));
 
@@ -982,7 +1027,7 @@ module.exports = function(RED) {
             // Copy the device state to the payload
             Object.keys(me.states).forEach(function (key) {
                 msg.payload[key] = me.states[key];
-             });
+            });
 
             // Copy the command state to the payload
             Object.keys(states).forEach(function (key) {
@@ -993,7 +1038,7 @@ module.exports = function(RED) {
 
             // Copy the command params to the payload
             Object.keys(params).forEach(function (key) {
-                 if (!msg.payload.hasOwnProperty(key)) {
+                 if (!msg.payload.hasOwnProperty(key) && params[key] !== original_params[key]) {
                     msg.payload[key] = params[key];
                  }
              });
@@ -1022,7 +1067,7 @@ module.exports = function(RED) {
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
 
             try {
-                if (topic.toUpperCase() === 'APPLICATIONS') {
+                if (topic.toUpperCase() === 'AVAILABLEAPPLICATIONS') {
                     if (this.trait.appselector) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_applications = this.loadJson('Applications', this.appselector_file, []);
@@ -1037,7 +1082,7 @@ module.exports = function(RED) {
                         this.available_applications = [];
                         RED.log.error("Applications disabled");
                     }
-                } else if (topic.toUpperCase() === 'ARMLEVELS') {
+                } else if (topic.toUpperCase() === 'AVAILABLEARMLEVELS') {
                     if (this.trait.armdisarm) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_arm_levels = this.loadJson('Arm levels', this.available_arm_levels_file, []);
@@ -1052,7 +1097,7 @@ module.exports = function(RED) {
                         this.available_arm_levels = [];
                         RED.log.error("Arm levels disabled");
                     }
-                } else if (topic.toUpperCase() === 'CHANNELS') {
+                } else if (topic.toUpperCase() === 'AVAILABLECHANNELS') {
                     if (this.trait.channel) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_channels = this.loadJson('Channels', this.channel_file, []);
@@ -1067,7 +1112,7 @@ module.exports = function(RED) {
                         this.available_channels = [];
                         RED.log.error("Channels disabled");
                     }
-                } else if (topic.toUpperCase() === 'DISPENSEITEMS') {
+                } else if (topic.toUpperCase() === 'SUPPORTEDDISPENSEITEMS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
                             this.supported_dispense_items = this.loadJson('Dispense items', this.supported_dispense_items_file, []);
@@ -1082,7 +1127,7 @@ module.exports = function(RED) {
                         this.supported_dispense_items = [];
                         RED.log.error("Dispense items disabled");
                     }
-                } else if (topic.toUpperCase() === 'DISPENSEPRESETS') {
+                } else if (topic.toUpperCase() === 'SUPPORTEDDISPENSEPRESETS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
                             this.supported_dispense_presets = this.loadJson('Dispense presets', this.supported_dispense_presets_file, []);
@@ -1097,7 +1142,7 @@ module.exports = function(RED) {
                         this.supported_dispense_presets = [];
                         RED.log.error("Dispense presets disabled");
                     }
-                } else if (topic.toUpperCase() === 'FANSPEEDS') {
+                } else if (topic.toUpperCase() === 'AVAILABLEFANSPEEDS') {
                     if (this.trait.fanspeed) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file, []);
@@ -1112,7 +1157,7 @@ module.exports = function(RED) {
                         this.available_fan_speeds = [];
                         RED.log.error("Fan speeds disabled");
                     }
-                } else if (topic.toUpperCase() === 'FILLLEVELS') {
+                } else if (topic.toUpperCase() === 'AVAILABLEFILLLEVELS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_fill_levels = this.loadJson(' Fill levels', this.available_fill_levels_file, []);
@@ -1127,7 +1172,7 @@ module.exports = function(RED) {
                         this.available_fill_levels = [];
                         RED.log.error("Fill levels disabled");
                     }
-                } else if (topic.toUpperCase() === 'FOODPRESETS') {
+                } else if (topic.toUpperCase() === 'AVAILABLEFOODPRESETS') {
                     if (this.trait.cook) {
                         if (typeof msg.payload === 'undefined') {
                             this.food_presets = this.loadJson('Food presets', this.food_presets_file, []);
@@ -1142,7 +1187,7 @@ module.exports = function(RED) {
                         this.food_presets = [];
                         RED.log.error("Food presets disabled");
                     }
-                } else if (topic.toUpperCase() === 'INPUTS') {
+                } else if (topic.toUpperCase() === 'AVAILABLEINPUTS') {
                     if (this.trait.inputselector) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_inputs = this.loadJson('Inputs', this.inputselector_file, []);
@@ -1157,7 +1202,7 @@ module.exports = function(RED) {
                         this.available_inputs = [];
                         RED.log.error("Inputs disabled");
                     }
-                } else if (topic.toUpperCase() === 'MODES') {
+                } else if (topic.toUpperCase() === 'AVAILABLEMODES') {
                     if (this.trait.modes) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_modes = this.loadJson('Modes', this.modes_file, []);
@@ -1174,7 +1219,7 @@ module.exports = function(RED) {
                         this.available_modes = [];
                         RED.log.error("Modes disabled");
                     }
-                } else if (topic.toUpperCase() === 'SENSORSTATES') {
+                } else if (topic.toUpperCase() === 'SUPPORTEDESENSORSTATES') {
                     if (this.trait.sensorstate) {
                         if (typeof msg.payload === 'undefined') {
                             this.sensor_state_supported = this.loadJson('Sensor states', this.sensor_state_supported_file, []);
@@ -1189,7 +1234,7 @@ module.exports = function(RED) {
                         this.sensor_state_supported = [];
                         RED.log.error("Sensor states disabled");
                     }
-                } else if (topic.toUpperCase() === 'TOGGLES') {
+                } else if (topic.toUpperCase() === 'AVAILABLETOGGLES') {
                     if (this.trait.toggles) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_toggles = this.loadJson('Toggles', this.toggles_file, []);
@@ -1206,9 +1251,13 @@ module.exports = function(RED) {
                         this.available_toggles = [];
                         RED.log.error("Toggles disabled");
                     }
+                } else if (topic.toUpperCase() === 'GUESTNETWORKPASSWORD') {
+                    me.guest_network_password = formats.FormatValue(formats.Formats.STRING, 'guestNetworkPassword', msg.payload);
+                } else if (topic.toUpperCase() === 'OBJECTDETECTION') {
+                    // TODO
                 } else {
                     let state_key = '';
-                    Object.keys(this.states).forEach(function (key) {
+                    Object.keys(me.states).forEach(function (key) {
                         if (topic.toUpperCase() == key.toUpperCase()) {
                             state_key = key;
                             me.debug(".input: found state " + key);
@@ -1216,13 +1265,13 @@ module.exports = function(RED) {
                     });
 
                     if (state_key !== '') {
-                        const differs = me.setState(state_key, msg.payload, this.states);
+                        const differs = me.setState(state_key, msg.payload, me.states);
                         if (differs) {
                             me.debug(".input: " + state_key + ' ' + msg.payload);
-                            this.clientConn.setState(this, this.states);  // tell Google ...
+                            this.clientConn.setState(this, me.states);  // tell Google ...
         
                             if (this.passthru) {
-                                msg.payload = this.states[state_key];
+                                msg.payload = me.states[state_key];
                                 this.send(msg);
                             }
 
@@ -1231,7 +1280,7 @@ module.exports = function(RED) {
                     } else {
                         me.debug(".input: some other topic");
                         let differs = false;
-                        Object.keys(this.states).forEach(function (key) {
+                        Object.keys(me.states).forEach(function (key) {
                             if (msg.payload.hasOwnProperty(key)) {
                                 me.debug(".input: set state " + key + ' to ' + msg.payload[key]);
                                 if (me.setState(key, msg.payload[key], me.states)) {
@@ -1241,10 +1290,10 @@ module.exports = function(RED) {
                         });
         
                         if (differs) {
-                            this.clientConn.setState(this, this.states);  // tell Google ...
+                            this.clientConn.setState(this, me.states);  // tell Google ...
 
                             if (this.passthru) {
-                                msg.payload = this.states;
+                                msg.payload = me.states;
                                 this.send(msg);
                             }
 
@@ -1526,7 +1575,7 @@ module.exports = function(RED) {
             }
         }
 
-        execCommand(device, command) {
+        execCommand(device, command, orig_device) {
             let me = this;
             let params = {};
             let executionStates = [ 'online' ];
@@ -1538,6 +1587,7 @@ module.exports = function(RED) {
             me.debug(".execCommand: command " +  JSON.stringify(command));
             me.debug(".execCommand: states " +  JSON.stringify(me.states));
             // me.debug(".execCommand: device " +  JSON.stringify(device));
+            // me.debug(".execCommand: me.device " +  JSON.stringify(me.device));
 
             // Applications
             if ((command.command == 'action.devices.commands.appInstall') ||
@@ -1670,6 +1720,47 @@ module.exports = function(RED) {
                     executionStates.push('currentFoodUnit');
                 }
             }
+            // Dispense
+            else if (command.command == 'action.devices.commands.Dispense') {
+                const item_name = command.params['item'] || '';
+                const amount = command.params['amount'] || '';
+                const unit = command.params['unit'] || '';
+                const preset_name = command.params['presetName'] || '';
+                if (preset_name) {
+                    let found = false;
+                    me.supported_dispense_presets.forEach(function(preset) {
+                        if (preset.preset_name == preset_name) {
+                            found = true;
+                        }
+                    });
+                    if (!found) {
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'transientError'
+                        };    
+                    }
+                } 
+                else if (item_name) {
+                    let item_found = undefined;
+                    me.supported_dispense_items.forEach(function(item) {
+                        if (item.item_name == item_name) {
+                            item_found = item;
+                        }
+                    });
+                    if (item_found === undefined) {
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'transientError'
+                        };    
+                    }
+                    if (unit && !item_found.supported_units.includes(unit)) {
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'transientError'
+                        };    
+                    }
+                }
+            }
             // Dock
             else if (command.command == 'action.devices.commands.Dock') {
                 params['isDocked'] = true;
@@ -1729,6 +1820,40 @@ module.exports = function(RED) {
                     params['humiditySetpointPercent'] = me.states['humiditySetpointPercent']  + humidityRelativeWeight;
                     executionStates.push('humiditySetpointPercent');
                 }
+            }
+            // NetworkControl 
+            else if (command.command == 'action.devices.commands.EnableDisableNetworkProfile') {
+                const profile = command.params['profile'].toLowerCase();
+                const enable = command.params['enable'] || false;
+                let found = false;
+                this.network_profiles.forEach(function(p) {
+                    if (profile === p.toLowerCase()) {
+                        found = true;
+                    }
+                });
+                if (!found) {
+                    return {
+                        status: 'ERROR',
+                        errorCode: 'networkProfileNotRecognized'
+                    };
+                }
+            }
+            else if (command.command == 'action.devices.commands.EnableDisableGuestNetwork') {
+                const enable = command.params['enable'] || false;
+                params['guestNetworkEnabled'] = enable;
+                executionStates.push('guestNetworkEnabled');
+            }
+            else if (command.command == 'action.devices.commands.GetGuestNetworkPassword') {
+                params['guestNetworkPassword'] = me.guest_network_password;
+                executionStates.push('guestNetworkPassword');
+                return {
+                    status: 'SUCCESS',
+                    states: {
+                        online: true,
+                        guestNetworkPassword:  me.guest_network_password
+                    },
+                    executionStates: executionStates,
+                };
             }
             // Inputs
             else if (command.command == 'action.devices.commands.SetInput') {
@@ -1917,11 +2042,11 @@ module.exports = function(RED) {
             else if (command.command == 'action.devices.commands.mediaClosedCaptioningOn') {
                 if (command.params.hasOwnProperty('closedCaptioningLanguage')) {
                     const closedCaptioningLanguage = command.params['closedCaptioningLanguage'];
-                    params['playbackState'] = this.states['playbackState'];
+                    params['playbackState'] = me.states['playbackState'];
                 }
                 if (command.params.hasOwnProperty('userQueryLanguage')) {
                     const userQueryLanguage = command.params['userQueryLanguage'];
-                    params['playbackState'] = this.states['playbackState'];
+                    params['playbackState'] = me.states['playbackState'];
                 }
                 executionStates.push('playbackState');
             }
@@ -1937,20 +2062,24 @@ module.exports = function(RED) {
             // TemperatureSetting 
             else if (command.command == 'action.devices.commands.ThermostatTemperatureSetpoint') {
                 let thermostatTemperatureSetpoint = command.params['thermostatTemperatureSetpoint'];
+                delete orig_device.states['thermostatTemperatureSetpointHigh'];
                 delete me.states['thermostatTemperatureSetpointHigh'];
+                delete orig_device.states['thermostatTemperatureSetpointLow'];
                 delete me.states['thermostatTemperatureSetpointLow'];
-                if (me.states.hasOwnProperty("thermostatTemperatureSetpoint")) {
+                if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpoint")) {
+                    orig_device.states['thermostatTemperatureSetpoint'] = -365;
                     me.states['thermostatTemperatureSetpoint'] = -365;
                 }
                 params['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint;
                 executionStates.push('thermostatTemperatureSetpoint');
             }
             else if (command.command == 'action.devices.commands.ThermostatTemperatureSetRange') {
-                me.debug(".CCHI thermostatTemperatureSetpoint " + me.states['thermostatTemperatureSetpoint']);
+                delete orig_device.states['thermostatTemperatureSetpoint'];
                 delete me.states['thermostatTemperatureSetpoint'];
-                me.debug(".CCHI thermostatTemperatureSetpoint " + me.states['thermostatTemperatureSetpoint']);
-                if (me.states.hasOwnProperty("thermostatTemperatureSetpointHigh")) {
+                if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpointHigh")) {
+                    orig_device.states['thermostatTemperatureSetpointHigh'] = -365;
                     me.states['thermostatTemperatureSetpointHigh'] = -365;
+                    orig_device.states['thermostatTemperatureSetpointLow'] = -365;
                     me.states['thermostatTemperatureSetpointLow'] = -365;
                 }
                 const thermostatTemperatureSetpointHigh = command.params['thermostatTemperatureSetpointHigh'];
@@ -2070,7 +2199,7 @@ module.exports = function(RED) {
             else if (command.command == 'action.devices.commands.volumeRelative') {
                 if (command.params.hasOwnProperty('relativeSteps')) {
                     const relativeSteps = command.params['relativeSteps'];
-                    let current_volume = this.states['currentVolume'];
+                    let current_volume = me.states['currentVolume'];
                     if (current_volume >= this.volumeMaxLevel && relativeSteps > 0) {
                         return {
                             status: 'ERROR',
@@ -2184,6 +2313,7 @@ module.exports = function(RED) {
             else if (command.command == 'action.devices.commands.SetModes') {
                 if (command.params.hasOwnProperty('updateModeSettings')) {
                     const updateModeSettings = command.params['updateModeSettings'];
+                    let current_modes = me.states['currentModeSettings'];
                     let new_modes = {};
                     this.available_modes.forEach(function (mode) {
                         if (typeof updateModeSettings[mode.name] === 'string') {
@@ -2193,6 +2323,9 @@ module.exports = function(RED) {
                                     new_modes[mode.name] = mode_value;
                                 }
                             });
+                        }
+                        if (typeof new_modes[mode.name] === 'undefined') {
+                            new_modes[mode.name] = current_modes[mode.name];
                         }
                     });
                     params['currentModeSettings'] = new_modes;
@@ -2216,10 +2349,13 @@ module.exports = function(RED) {
             else if (command.command == 'action.devices.commands.SetToggles') {
                 if (command.params.hasOwnProperty('updateToggleSettings')) {
                     const updateToggleSettings = command.params['updateToggleSettings'];
-                    let toggles = this.states['currentToggleSettings'];
+                    let current_toggle = me.states['currentToggleSettings'];
+                    let toggles = {};
                     this.available_toggles.forEach(function (toggle) {
                         if (typeof updateToggleSettings[toggle.name] === 'boolean') {
                             toggles[toggle.name] = updateToggleSettings[toggle.name];
+                        } else {
+                            toggles[toggle.name] = current_toggle[toggle.name] || false;
                         }
                     });
                     params['currentToggleSettings'] = toggles;
@@ -2233,7 +2369,7 @@ module.exports = function(RED) {
                 executionStates.push('brightness');
             }
             else if (command.command == 'action.devices.commands.BrightnessRelative') {
-                let brightness = this.states['brightness'];
+                let brightness = me.states['brightness'];
                 if (command.params.hasOwnProperty('brightnessRelativePercent')) {
                     const brightnessRelativePercent = command.params['brightnessRelativePercent'];
                     brightness = Math.round(brightness * (1 + parseInt(brightnessRelativePercent) / 100));
