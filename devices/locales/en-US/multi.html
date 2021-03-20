@@ -1,16 +1,86 @@
 <script type="text/x-red" data-help-name="google-multi">
-    <p>A Google Smart Home Multi Devices.</p>
+    <p>A Google Smart Home Devices.</p>
     <p>Supported devices:
         <ul>
-            <li><b>Audio Video Receiver</b>: Device that takes audio input (for example, HDMI, optical, and RCA) and outputs sound to one or more speakers.</li>
-            <li><b>Remote Control</b>: Media remotes are used to control media devices. Examples of this device type include hubs, universal remotes, and media controllers.</li>
-            <li><b>Set-Top Box</b>: Interactions with Multichannel Video Programming Distributor (MVPD) and set-top-box devices may include controlling media playback.</li>
-            <li><b>Sound Bar</b>: An all-in-one audio device that is often used in conjunction with a TV and has a bar form factor.</li>
+            <li><b>Air conditioning unit</b>: Air conditioning units are similar to thermostats, but do not support heating and may not support setting temperature targets.</li>
+            <li><b>Air cooler</b>: Air coolers are devices that allow temperature cooling and humidity control. These devices are typically more lightweight and portable than air conditioners, and have a water tank attached. Air coolers may not support heating or setting exact temperatures. Interactions with air coolers may include changing the fan speed and humidity setting.</li>
+            <li><b>Air freshener</b>: Air fresheners can be turned on and off and may allow adjusting various modes.</li>
+            <li><b>Air purifier</b>: Air purifiers are devices that may be turned on and off, report air filter cleanliness and air filter lifetime, and be adjusted to various mode settings.</li>
+            <li><b>Audio-Video receiver</b>: Device that takes audio input (for example, HDMI, optical, and RCA) and outputs sound to one or more speakers.</li>
+            <li><b>Awning</b>: Awnings are retractable and can opened and closed. They can be installed indoors or outdoors.</li>
+            <li><b>Bathtub</b>: Bathtubs can be filled and drained, possibly to particular levels if the bathtub supports it.</li>
+            <li><b>Bed</b>: Interactions with beds may include adjusting various modes and setting scenes.</li>
+            <li><b>Blender</b>: Interactions with blenders may include starting and stopping, setting a timer, setting cooking modes or food presets, or adjusting other various settings.</li>
+            <li><b>Blinds</b>: Blinds can be opened and closed, and various types of blinds are supported such as venetian (opens in one direction), panel or vertical (may open either left or right), and top-down bottom-up (may open either up or down). Some blinds may have slats that can be rotated.</li>
+            <li><b>Boiler</b>: Boilers can be turned on and off, and may support adjusting temperature.</li>
+            <li><b>Camera</b>: Cameras are complex and features will vary significantly between vendors. Over time, cameras will acquire many traits and attributes describing specific capabilities, many of which may interact with the video/audio stream in special ways, such as sending a stream to another device, identifying what's in the stream, replaying feeds, etc.</li>
+            <li><b>Carbon monoxide detector</b>: Carbon monoxide detectors may report whether carbon monoxide is currently detected, whether the carbon monoxide level is high, and the current carbon monoxide level in parts per million.</li>
+            <li><b>Charger</b>: Interactions with chargers may include starting and stopping charging, and checking the current charge level, capacity remaining, and capacity until full values.</li>
+            <li><b>Closet</b>: Closets can be opened and closed, potentially in more than one direction.</li>
+            <li><b>Coffee Maker</b>: Interactions with coffee makers may include turning them on and off, adjusting cooking modes and food presets, adjusting the target temperature, and adjusting various non-cooking mode settings.</li>
+            <li><b>Cooktop</b>: Interactions with cooktops may include turning them on and off, starting and stopping, setting a timer, adjusting cooking modes and food presets, and adjusting various non-cooking mode settings.</li>
+            <li><b>Curtain</b>: Curtains can be opened and closed, potentially in more than one direction. For example, curtains with two sections may open either to the left or to the right.</li>
+            <li><b>Dehumidifier</b>: Dehumidifiers are devices that remove moisture from the air. They can be turned on and off, report and adjust target humidity, and may have various adjustables modes or fan speed settings.</li>
+            <li><b>Dehydrator</b>: Interactions with dehydrators may include starting and stopping, setting a timer, adjusting cooking modes or food presets, or adjusting other various settings.</li>
+            <li><b>Dishwasher</b>: Dishwashers can have start and stop functionality independent from being on or off (some washers have separate power buttons, and some do not). Some can be paused and resumed while washing. Dishwashers also have various modes and each mode has its own related settings. These are specific to the dishwasher and are interpreted in a generalized form.</li>
+            <li><b>Door</b>: Door can be opened and closed, potentially in more than one direction.</li>
+            <li><b>Doorbell</b>: Doorbells can let people know someone is at the door. This device can send notifications and stream video if it has the corresponding capability.</li>
+            <li><b>Drawer</b>: Drawers can be opened and closed, potentially in more than one direction.</li>
+            <li><b>Dryer</b>: Dryers have start and stop functionality independent from being on or off. Some can be paused and resumed while drying. Dryers also have various modes and each mode has its own related settings. These are specific to the dryer and are interpreted in a generalized form.</li>
+            <li><b>Fan</b>: Fans can typically be turned on and off and have speed settings. Some fans may also have additional supported modes, such as fan direction/orientation (for example, a wall unit may have settings to adjust whether it blows up or down).</li>
+            <li><b>Faucet</b>: Faucets can dispense liquids in various quantities and presets. Faucets may have various modes and each mode has its own related settings. These are specific to the faucet and are interpreted in a generalized form.</li>
+            <li><b>Fireplace</b>: Fireplaces can be turned on and off, and may have adjustable modes.</li>
+            <li><b>Freezer</b>: Freezers are temperature-managing devices which may be adjusted to various mode settings, and may allow temperature monitoring.</li>
+            <li><b>Fryer</b>: Interactions with fryers may include starting and stopping, setting a timer, adjusting cooking modes or food presets, or adjusting other various settings.</li>
+            <li><b>Garage</b>: Garage doors can open, close, and detect an open state. They can also indicate if an object has obstructed the path of the door while closing or if the door is locked and therefore cannot be controlled.</li>
+            <li><b>Gate</b>: Gates can be opened and closed, potentially in more than on direction.</li>
+            <li><b>Grill</b>: Interactions with grills may include turning them on and off, starting and stopping, setting a timer, adjusting cooking modes and food presets, and adjusting various non-cooking mode settings.</li>
+            <li><b>Heater</b>: Heaters are similar to thermostats but do not support cooling and may not support setting temperature targets.</li>
+            <li><b>Hood</b>: Oven and range hoods can be turned on and off, may have adjustable modes, and may have adjustable fan speeds.</li>
+            <li><b>Humidifier</b>: Humidifiers are devices that add moisture to the air. They can be turned on and off, report and adjust target humidity, and may have various adjustable modes or fan speed settings.</li>
+            <li><b>Kettle</b>: Kettles are devices that boil water. Interactions with kettles may include turning them on and off, adjusting the target temperature, and perhaps adjusting various mode settings.</li>
+            <li><b>Light</b>: Light devices can be turned on and off. They may have additional features, such as dimming and the ability to change color.</li>
+            <li><b>Lock</b>: Locks can lock, unlock, and report a locked state.</li>
+            <li><b>Microwave</b>: Interactions with microwaves may include starting and stopping, setting a timer, adjusting cooking modes and food presets, and adjusting non-cooking modes.</li>
+            <li><b>Mop</b>: Interactions with mops may include starting, stopping, pausing cleaning, docking, checking the current cleaning cycle, locating the mop, or adjusting various modes. Some mops may support cleaning specific zones in the home.</li>
+            <li><b>Mower</b>: Interactions with mowers may include starting, stopping and pausing mowing, docking, checking the current cycle, locating the mower, and adjusting various modes.</li>
+            <li><b>Multicooker</b>: Interactions with multicookers may include starting and stopping, setting a timer, or and adjusting non-cooking modes.</li>
+            <li><b>Network</b>: Represents a group of router nodes or a mesh network controlled as one entity rather than as individual devices. The network device may reboot, update its software, and have modes to handle Quality of Service (QoS) controls and parental restrictions. The device can perform operations such as enabling the guest network, and reporting network-specific information such as the current internet throughput rates.</li>
+            <li><b>Outlet</b>: Outlet, a basic device in Smart Home, has binary modes on/off only.</li>
+            <li><b>Oven</b>: Interaction with ovens involves the ability to bake or broil at certain temperatures. The physical temperature inside the oven differs as the oven is heating, so this may also be monitored. The oven has a cook time that limits the duration of baking.</li>
+            <li><b>Pergola</b>: Pergolas (an outdoor garden structure) can be opened and closed, potentially in more than one direction. For example, some pergolas with a canvas may open either to the LEFT or RIGHT.</li>
+            <li><b>Pet feeder</b>: Interactions with pet feeders may include dispensing pet food or water in various quantities and presets.</li>
+            <li><b>Pressure cooker</b>: Interactions with pressure cookers may include starting and stopping, setting a timer, adjusting cooking modes or food presets, or adjusting other various settings.</li>
+            <li><b>Radiator</b>: Radiators can be turned on and off and may allow adjusting various modes.</li>
+            <li><b>Refrigerator</b>: Refrigerators are temperature-managing devices which may have various modes/settings.</li>
+            <li><b>Remote control</b>: Media remotes are used to control media devices. Examples of this device type include hubs, universal remotes, and media controllers.</li>
+            <li><b>Router</b>: Routers can reboot, update their software, have modes to handle Quality of Service (QoS) controls and parental restrictions, and perform network specific operations (such as enabling the guest network and reporting network specific information such as the current internet throughput rates).</li>
+            <li><b>Scene</b>: In the case of scenes, the type maps 1:1 to the trait, as scenes don't combine with other traits to form composite devices. Scenes should always have user-provided names. Each scene is its own virtual device, with its own name(s).</li>
+            <li><b>Security system</b>: Security systems can be armed and disarmed. They can be armed at multiple security levels (for example, home and away) and they can report information about certain sensors, such as a sensor that detects motion or an open window.</li>
+            <li><b>Sensor</b>: A single sensor can serve multiple functions, such as monitoring both temperature and humidity. Sensors may report either or both quantitative—for example, carbon monoxide and smoke level measured at parts per million—and qualitative measurements (such as whether air quality is healthy or unhealthy).</li>
+            <li><b>Settop</b>: Interactions with Multichannel Video Programming Distributor (MVPD) and set-top-box devices may include controlling media playback.</li>
+            <li><b>Shower</b>: Showers can be turned on and off and may support adjusting temperature.</li>
+            <li><b>Shutter</b>: Shutters can be opened and closed, potentially in more than one direction. Some shutters may have slats that can be rotated.</li>
+            <li><b>Smoke detector</b>: Smoke detectors can report whether smoke is currently detected, whether the smoke level is high, and the current smoke level in parts per million.</li>
+            <li><b>Soundbar</b>: An all-in-one audio device that is often used in conjunction with a TV and has a bar form factor.</li>
+            <li><b>Sousvide</b>: Interactions with sous vides may include starting and stopping, setting a timer, adjusting cooking modes or food presets, or adjusting other various settings.</li>
             <li><b>Speaker</b>: This device is a connected speaker that does not split audio into separate channels (for example, between two left and right devices).</li>
-            <li><b>Streaming Box</b>: This device enables streaming services for media and music, often used in conjunction with a display such as a TV. This devices is powered from a constant source, separate from the display device itself.</li>
-            <li><b>Streaming Sound Bar</b>: This device is a combination of speaker and streaming stick or box. This device provides a streaming experience in addition to soundbar capabilities.</li>
-            <li><b>Streaming Stick</b>: This device has a small stick-like form factor that is usually powered by a USB or HDMI cable connected to a display such as a TV.</li>
-            <li><b>Television</b>: Television devices combine a tuner, display, and loudspeakers for the purpose of viewing and hearing multi. Examples include smart TV devices.</li>
+            <li><b>Sprinkler</b>: Sprinklers can start and stop (or turn on and off). They may also support timers and/or schedules.</li>
+            <li><b>Stand mixer</b>: Interactions with stand mixers may include turning mixers on and off, starting and stopping the mixer, adjusting cooking modes or food presets, or adjusting various non-cooking mode settings.</li>
+            <li><b>Streaming box</b>: This device enables streaming services for media and music, often used in conjunction with a display such as a TV. This devices is powered from a constant source, separate from the display device itself.</li>
+            <li><b>Streaming soundbar</b>: This device is a combination of speaker and streaming stick or box. This device provides a streaming experience in addition to soundbar capabilities.</li>
+            <li><b>Streaming stick</b>: This device has a small stick-like form factor that is usually powered by a USB or HDMI cable connected to a display such as a TV.</li>
+            <li><b>Switch</b>: Switch, a basic device in Smart Home, can be turned on and off.</li>
+            <li><b>Thermostat</b>: Thermostats are temperature-managing devices, with set points and modes. This separates them from heaters and AC units which may only have modes and settings (for example, high/low) vs a temperature target.</li>
+            <li><b>Television</b>: Television devices combine a tuner, display, and loudspeakers for the purpose of viewing and hearing media. Examples include smart TV devices.</li>
+            <li><b>Vacuum</b>: Vacuums may have functions such as starting, stopping, and pausing cleaning, docking, checking the current cleaning cycle, locating the vacuum, or adjusting various modes. Some vacuums may support cleaning specific zones in the home.</li>
+            <li><b>Valve</b>: Valves can be opened and closed.</li>
+            <li><b>Washer</b>: Washers can have start and stop functionality independent from being on or off (some washers have separate power buttons, and some do not). Some can be paused and resumed while washing. Washers also have various modes and each mode has its own related settings. These are specific to the washer and are interpreted in a generalized form.</li>
+            <li><b>Water heater</b>: Water heaters are devices used to heat water. They may turn on and off and adjust water temperature.</li>
+            <li><b>Water purifier</b>: Water purifiers are devices that may be turned on and off, report water filter cleanliness and filter lifetime, and be adjusted to various mode settings.</li>
+            <li><b>Water softener</b>: Water softeners are devices that may be turned on and off, report water filter cleanliness and filter lifetime, and be adjusted to various mode settings.</li>
+            <li><b>Window</b>: Windows can be opened and closed, optionally with sections that open in different directions, and may also be locked and unlocked.</li>
+            <li><b>Yogurt maker</b>: Interactions with yogurt makers may include starting and stopping, setting a timer, adjusting cooking modes or food presets, or adjusting other various settings.</li>
         </ul>
     <p>
 

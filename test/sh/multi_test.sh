@@ -79,7 +79,7 @@ execute() {
     echo "{}" > "$PAYLOAD_FILE" 
     ./execute "$@" > "$OUT_FILE"
     OUT=$(cat  "$OUT_FILE")
-    sleep 1
+    #sleep 1
     PAYLOAD=$(cat "$PAYLOAD_FILE")
     test_out ".payload.commands[0].status" '"SUCCESS"'
     test_payload .online true

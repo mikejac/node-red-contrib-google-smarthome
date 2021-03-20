@@ -104,6 +104,7 @@
             <option value='DEHYDRATOR' data-i18n='multi.device_type.DEHYDRATOR'></option>
             <option value='DISHWASHER' data-i18n='multi.device_type.DISHWASHER'></option>
             <option value='DOOR' data-i18n='multi.device_type.DOOR'></option>
+            <option value='DOORBELL' data-i18n='multi.device_type.DOORBELL'></option>
             <option value='DRAWER' data-i18n='multi.device_type.DRAWER'></option>
             <option value='DRYER' data-i18n='multi.device_type.DRYER'></option>
             <option value='FAN' data-i18n='multi.device_type.FAN'></option>
@@ -2099,6 +2100,10 @@
                     case "DOOR": // Door
                         recommended_traits = ["lockunlock"];
                         required_traits = ["openclose"];
+                        break;
+                    case "DOORBELL": // Doorbell
+                        recommended_traits = ["camerastream", "objectdetection"];
+                        required_traits = [];
                         break;
                     case "DRAWER": // Drawer
                         recommended_traits = [];

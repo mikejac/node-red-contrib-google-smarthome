@@ -125,22 +125,28 @@ module.exports = function(RED) {
             this.scene_reversible                           = config.scene_reversible;
             this.command_only_timer                         = config.command_only_timer;
             this.max_timer_limit_sec                        = config.max_timer_limit_sec;
+            // TemperatureSetting
             this.trait_temperaturesetting                   = config.trait_temperaturesetting;
             this.available_thermostat_modes                 = config.available_thermostat_modes;
             this.min_threshold_celsius                      = parseInt(config.min_threshold_celsius) || 0;
             this.max_threshold_celsius                      = parseInt(config.max_threshold_celsius) || 40;
+            this.thermostat_temperature_setpoint            = this.min_threshold_celsius;
+            this.thermostat_temperature_setpoint_low        = this.min_threshold_celsius;
+            this.thermostat_temperature_setpoint_hight      = this.max_threshold_celsius;
             this.thermostat_temperature_unit                = config.thermostat_temperature_unit || "C";
             this.buffer_range_celsius                       = parseInt(config.buffer_range_celsius) || 2;
             this.command_only_temperaturesetting            = config.command_only_temperaturesetting;
             this.query_only_temperaturesetting              = config.query_only_temperaturesetting;
-            this.target_temp_reached_estimate_unix_timestamp_sec = undefined;
-            this.thermostat_humidity_ambient                = undefined;
+            this.target_temp_reached_estimate_unix_timestamp_sec = 360;
+            this.thermostat_humidity_ambient                = 60;
+            // TemperatireControl
             this.tc_min_threshold_celsius                   = config.tc_min_threshold_celsius;
             this.tc_max_threshold_celsius                   = config.tc_max_threshold_celsius;
             this.tc_temperature_step_celsius                = config.tc_temperature_step_celsius;
             this.tc_temperature_unit_for_ux                 = config.tc_temperature_unit_for_ux;
             this.tc_command_only_temperaturecontrol         = config.tc_command_only_temperaturecontrol;
             this.tc_query_only_temperaturecontrol           = config.tc_query_only_temperaturecontrol;
+            // 
             this.min_percent                                = parseInt(config.min_percent) || 0;
             this.max_percent                                = parseInt(config.max_percent) || 100;
             this.command_only_humiditysetting               = config.command_only_humiditysetting;
@@ -747,8 +753,8 @@ module.exports = function(RED) {
                 }
                 attributes['temperatureStepCelsius'] = me.tc_temperature_step_celsius;
                 attributes['temperatureUnitForUX'] = me.tc_temperature_unit_for_ux;
-                attributes['commandOnlyTemperatureSetting'] = me.command_only_temperaturesetting;
-                attributes['queryOnlyTemperatureSetting'] = me.query_only_temperaturesetting;
+                attributes['commandOnlyTemperatureControl'] = me.tc_command_only_temperaturecontrol;
+                attributes['queryOnlyTemperatureControl'] = me.tc_query_only_temperaturecontrol;
             }
             if (me.trait.temperaturesetting) {
                 attributes['availableThermostatModes'] = me.available_thermostat_modes;
@@ -935,8 +941,8 @@ module.exports = function(RED) {
                 states['currentStatusReport'] = [];
             }
             if (me.trait.humiditysetting) {
-                states['humiditySetpointPercent'] = 50;
-                states['humidityAmbientPercent'] = 50;
+                states['humiditySetpointPercent'] = 52;
+                states['humidityAmbientPercent'] = 52;
             }
             if (me.trait.inputs) {
                 states['currentInput'] = '';
@@ -955,20 +961,20 @@ module.exports = function(RED) {
                 states['on'] = false;
             }
             if (me.trait.temperaturecontrol) {
-                states['temperatureSetpointCelsius'] = 10;
-                states['temperatureAmbientCelsius'] = 10;
+                states['temperatureSetpointCelsius'] = me.tc_min_threshold_celsius;
+                states['temperatureAmbientCelsius'] = me.tc_min_threshold_celsius;
             }
             if (me.trait.temperaturesetting) {
-                states['activeThermostatMode'] = "none";
-                states['targetTempReachedEstimateUnixTimestampSec'] = 360;
-                states['thermostatHumidityAmbient'] = 60;
-                states['thermostatMode'] = "none";
-                states['thermostatTemperatureAmbient'] = 10;
+                states['activeThermostatMode'] = "off";
+                states['targetTempReachedEstimateUnixTimestampSec'] = me.target_temp_reached_estimate_unix_timestamp_sec;
+                states['thermostatHumidityAmbient'] = me.thermostat_humidity_ambient;
+                states['thermostatMode'] = "off";
+                states['thermostatTemperatureAmbient'] = me.thermostat_temperature_setpoint;
                 // 0
-                states['thermostatTemperatureSetpoint'] = 10;
+                states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
                 // 1
-                // states['thermostatTemperatureSetpointHigh'] = 10;
-                // states['thermostatTemperatureSetpointLow'] = 10;
+                // states['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
+                // states['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
             }
             if (me.trait.timer) {
                 states['timerRemainingSec'] = -1;
@@ -985,10 +991,23 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            if (this.states.on) {
-                this.status({fill: "green", shape: "dot", text: "ON"});
+            if (this.device_type === "THERMOSTAT") {
+                const thermostat_mode = this.states.thermostatMode;
+                if (thermostat_mode === "off") {
+                    this.status({fill: "red", shape: "dot", text: "OFF"});
+                } else if (thermostat_mode === "heat" || thermostat_mode === "cool") {
+                    this.status({fill: "green", shape: "dot", text: thermostat_mode + " T: " + this.states.thermostatTemperatureAmbient + " °C | S: " + this.states.thermostatTemperatureSetpoint + " °C"});
+                } else if (thermostat_mode === "heatcool") {
+                    this.status({fill: "green", shape: "dot", text: "T: " + this.states.thermostatTemperatureAmbient + " °C | S: [" + this.states.thermostatTemperatureSetpointLow + " - " + this.states.thermostatTemperatureSetpointHigh + "] °C"});
+                } else {
+                    this.status({fill: "green", shape: "dot", text: thermostat_mode});
+                }
             } else {
-                this.status({fill: "red", shape: "dot", text: "OFF"});
+                if (this.states.on) {
+                    this.status({fill: "green", shape: "dot", text: "ON"});
+                } else {
+                    this.status({fill: "red", shape: "dot", text: "OFF"});
+                }
             }
         }
 
@@ -1759,6 +1778,40 @@ module.exports = function(RED) {
                             errorCode: 'transientError'
                         };    
                     }
+                    item_found = undefined;
+                    this.states.dispenseItems.forEach(function(item) {
+                        if (item.itemName == item_name) {
+                            if (item_found === undefined || item_found.amountRemaining.unit !== unit) {
+                                item_found = item;
+                            }
+                        }
+                    });
+                    if (item_found === undefined) {
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'transientError'
+                        };    
+                    }
+                    /*
+                    if (unit) {
+                        if (item_found.amountRemaining.unit !== unit) {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'dispenseUnitNotSupported'
+                            };    
+                        }
+                        // Check quantity
+                        if (item_found.amountRemaining.amount < amount) {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'dispenseAmountRemainingExceeded'
+                            };    
+                        }
+                        item_found.amountRemaining.amount -= amount;
+                        params['dispenseItems'] = this.states.dispenseItems;
+                        executionStates.push('dispenseItems');
+                    }
+                    */
                 }
             }
             // Dock
@@ -2061,37 +2114,64 @@ module.exports = function(RED) {
             }
             // TemperatureSetting 
             else if (command.command == 'action.devices.commands.ThermostatTemperatureSetpoint') {
-                let thermostatTemperatureSetpoint = command.params['thermostatTemperatureSetpoint'];
+                const thermostatTemperatureSetpoint = command.params['thermostatTemperatureSetpoint'];
                 delete orig_device.states['thermostatTemperatureSetpointHigh'];
                 delete me.states['thermostatTemperatureSetpointHigh'];
                 delete orig_device.states['thermostatTemperatureSetpointLow'];
                 delete me.states['thermostatTemperatureSetpointLow'];
                 if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpoint")) {
-                    orig_device.states['thermostatTemperatureSetpoint'] = -365;
-                    me.states['thermostatTemperatureSetpoint'] = -365;
+                    orig_device.states['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint-1;
+                    me.states['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint-1;
                 }
                 params['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint;
+                me.thermostat_temperature_setpoint = thermostatTemperatureSetpoint;
                 executionStates.push('thermostatTemperatureSetpoint');
             }
             else if (command.command == 'action.devices.commands.ThermostatTemperatureSetRange') {
+                const thermostatTemperatureSetpointHigh = command.params['thermostatTemperatureSetpointHigh'];
+                const thermostatTemperatureSetpointLow = command.params['thermostatTemperatureSetpointLow'];
                 delete orig_device.states['thermostatTemperatureSetpoint'];
                 delete me.states['thermostatTemperatureSetpoint'];
                 if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpointHigh")) {
-                    orig_device.states['thermostatTemperatureSetpointHigh'] = -365;
-                    me.states['thermostatTemperatureSetpointHigh'] = -365;
-                    orig_device.states['thermostatTemperatureSetpointLow'] = -365;
-                    me.states['thermostatTemperatureSetpointLow'] = -365;
+                    orig_device.states['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh+1;
+                    me.states['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointLow+1;
+                    orig_device.states['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointHigh-1;
+                    me.states['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow-1;
                 }
-                const thermostatTemperatureSetpointHigh = command.params['thermostatTemperatureSetpointHigh'];
-                const thermostatTemperatureSetpointLow = command.params['thermostatTemperatureSetpointLow'];
                 params['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh;
                 params['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow;
+                me.thermostat_temperature_setpoint_hight = thermostatTemperatureSetpointHigh;
+                me.thermostat_temperature_setpoint_low = thermostatTemperatureSetpointLow;
                 executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
             }
             else if (command.command == 'action.devices.commands.ThermostatSetMode') {
                 const thermostatMode = command.params.thermostatMode;
                 params['thermostatMode'] = thermostatMode;
                 executionStates.push('thermostatMode');
+                if (thermostatMode === "heatcool") {
+                    delete orig_device.states['thermostatTemperatureSetpoint'];
+                    delete me.states['thermostatTemperatureSetpoint'];
+                    if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpointHigh")) {
+                        orig_device.states['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
+                        me.states['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
+                        orig_device.states['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
+                        me.states['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
+                    }
+                    params['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
+                    params['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
+                    executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');        
+                } else if (thermostatMode === "heat" || thermostatMode === "cool") {
+                    delete orig_device.states['thermostatTemperatureSetpointHigh'];
+                    delete me.states['thermostatTemperatureSetpointHigh'];
+                    delete orig_device.states['thermostatTemperatureSetpointLow'];
+                    delete me.states['thermostatTemperatureSetpointLow'];
+                    if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpoint")) {
+                        orig_device.states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
+                        me.states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
+                    }
+                    params['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
+                    executionStates.push('thermostatTemperatureSetpoint');
+                }
             }
             else if (command.command == 'action.devices.commands.TemperatureRelative') {
                 if (command.params.hasOwnProperty('thermostatTemperatureRelativeDegree')) {
