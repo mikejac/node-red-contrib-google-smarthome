@@ -415,25 +415,29 @@ test_payload ".isLocked" false
 # Modes 
 echo
 echo Modes 
-execute $NODE_ID SetModes_all '"load_mode":"","temp_mode":""'
-test_payload ".currentModeSettings.load_mode" '""'
-test_payload ".currentModeSettings.temp_mode" '""'
+execute $NODE_ID SetModes_all '"load_mode":"medium_load","temp_mode":"hot_temp"'
+test_payload ".currentModeSettings.load_mode" '"medium_load"'
+test_payload ".currentModeSettings.temp_mode" '"hot_temp"'
 
 execute $NODE_ID SetModes "load_mode" "small_load"
 test_payload ".currentModeSettings.load_mode" '"small_load"'
-test_payload ".currentModeSettings.temp_mode" '""'
+test_payload ".currentModeSettings.temp_mode" '"hot_temp"'
 
 execute $NODE_ID SetModes "load_mode" "no_mode_value"
 test_payload ".currentModeSettings.load_mode" '"small_load"'
-test_payload ".currentModeSettings.temp_mode" '""'
+test_payload ".currentModeSettings.temp_mode" '"hot_temp"'
 
 execute $NODE_ID SetModes "no_mode" "no_mode_value"
 test_payload ".currentModeSettings.load_mode" '"small_load"'
-test_payload ".currentModeSettings.temp_mode" '""'
-
-execute $NODE_ID SetModes_all '"load_mode":"small_load","temp_mode":"hot_temp"'
-test_payload ".currentModeSettings.load_mode" '"small_load"'
 test_payload ".currentModeSettings.temp_mode" '"hot_temp"'
+
+execute $NODE_ID SetModes_all '"load_mode":"large_load","temp_mode":"cold_temp"'
+test_payload ".currentModeSettings.load_mode" '"large_load"'
+test_payload ".currentModeSettings.temp_mode" '"cold_temp"'
+
+execute $NODE_ID SetModes_all '"load_mode":"large_load","temp_mode":"cold_temp"'
+test_payload ".currentModeSettings.load_mode" '"large_load"'
+test_payload ".currentModeSettings.temp_mode" '"cold_temp"'
 
 # NetworkControl
 echo

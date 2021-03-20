@@ -57,7 +57,7 @@ module.exports = function(RED) {
                 mediastate: config.trait_mediastate || false,
                 modes: config.trait_modes || false,
                 networkcontrol: config.trait_networkcontrol || false,
-                objectdetection: config.objectdetection || false,
+                objectdetection: config.trait_objectdetection || false,
                 onoff: config.trait_onoff || false,
                 openclose: config.trait_openclose || false,
                 reboot: config.trait_reboot || false,
@@ -128,8 +128,8 @@ module.exports = function(RED) {
             // TemperatureSetting
             this.trait_temperaturesetting                   = config.trait_temperaturesetting;
             this.available_thermostat_modes                 = config.available_thermostat_modes;
-            this.min_threshold_celsius                      = parseInt(config.min_threshold_celsius) || 0;
-            this.max_threshold_celsius                      = parseInt(config.max_threshold_celsius) || 40;
+            this.min_threshold_celsius                      = parseInt(config.min_threshold_celsius) || 10;
+            this.max_threshold_celsius                      = parseInt(config.max_threshold_celsius) || 32;
             this.thermostat_temperature_setpoint            = this.min_threshold_celsius;
             this.thermostat_temperature_setpoint_low        = this.min_threshold_celsius;
             this.thermostat_temperature_setpoint_hight      = this.max_threshold_celsius;
@@ -560,7 +560,7 @@ module.exports = function(RED) {
             this.states = this.clientConn.register(this, 'multi', config.name, this);
 
             if (error_msg.length == 0) {
-                this.status({fill: "yellow", shape: "dot", text: "Ready"});
+                this.updateStatusIcon();
             } else {
                 this.status({fill: "red", shape: "dot", text: error_msg});
             }
@@ -593,6 +593,7 @@ module.exports = function(RED) {
             let device = {
                 id: client.id,
                 states: states,
+                notificationSupportedByAgent: me.trait.objectdetection,
                 properties: {
                     type: 'action.devices.types.' + me.device_type,
                     traits: me.getTraits(me),
@@ -1273,7 +1274,30 @@ module.exports = function(RED) {
                 } else if (topic.toUpperCase() === 'GUESTNETWORKPASSWORD') {
                     me.guest_network_password = formats.FormatValue(formats.Formats.STRING, 'guestNetworkPassword', msg.payload);
                 } else if (topic.toUpperCase() === 'OBJECTDETECTION') {
-                    // TODO
+                    let object_detection = {};
+                    if (typeof msg.payload.familiar === 'number') {
+                        object_detection.familiar = msg.payload.familiar;
+                    }
+                    if (typeof msg.payload.unfamiliar === 'number') {
+                        object_detection.unfamiliar = msg.payload.unfamiliar;
+                    }
+                    if (typeof msg.payload.unclassified === 'number') {
+                        objectdetection.unclassified = msg.payload.unclassified;
+                    }
+                    if (typeof msg.payload.named === 'string') {
+                        object_detection.named = [msg.payload.named];
+                    } else if (Array.isArray(msg.payload.named)) {
+                        object_detection.named = msg.payload.named;
+                    }
+                    if (Object.keys(object_detection).length > 0) {
+                        this.clientConn.sendNotifications(this, {
+                            "ObjectDetected": {
+                              "objects": object_detection,
+                              "priority": 0,
+                              "detectionTimestamp": Date.now()
+                            }
+                        });  // tell Google ...
+                    }
                 } else {
                     let state_key = '';
                     Object.keys(me.states).forEach(function (key) {
