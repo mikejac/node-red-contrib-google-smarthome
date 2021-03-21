@@ -638,6 +638,10 @@ module.exports = function(RED) {
                         name: name
                     },
                     willReportState: true,
+                    otherDeviceIds: [{
+                        deviceId: "local-" + client.id,
+                        authToken: "123" // TODO
+                    }],
                     attributes: {
                     },
                     deviceInfo: {
@@ -1032,24 +1036,58 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            if (this.device_type === "THERMOSTAT") {
-                const thermostat_mode = this.states.thermostatMode;
-                if (thermostat_mode === "off") {
-                    this.status({fill: "red", shape: "dot", text: "OFF"});
-                } else if (thermostat_mode === "heat" || thermostat_mode === "cool") {
-                    this.status({fill: "green", shape: "dot", text: thermostat_mode + " T: " + this.states.thermostatTemperatureAmbient + " °C | S: " + this.states.thermostatTemperatureSetpoint + " °C"});
-                } else if (thermostat_mode === "heatcool") {
-                    this.status({fill: "green", shape: "dot", text: "T: " + this.states.thermostatTemperatureAmbient + " °C | S: [" + this.states.thermostatTemperatureSetpointLow + " - " + this.states.thermostatTemperatureSetpointHigh + "] °C"});
+            let text = 'Unknown';
+            let fill = 'red';
+            let shape = 'dot';
+            if (this.states.online) {
+                if (this.device_type === "LIGHT") {
+                    if (this.states.on) {
+                        text = 'ON';
+                        fill = 'green';
+                    } else {
+                        text = 'OFF';
+                    }
+                    if (this.is_dimmable && this.states.brightness != undefined) {
+                        text += " bri: " + this.states.brightness;
+                    }
+                    if (this.has_temp && this.states.color.temperatureK != undefined) {
+                        text += ' temp: ' + this.states.color.temperatureK;
+                    }
+                    if (this.is_rgb && this.states.color.spectrumRgb != undefined) {
+                        text += ' RGB: ' + this.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0');
+                    }
+                    if (this.is_hsv && this.states.color.spectrumHsv != undefined) {
+                        text += ' H: ' + this.states.color.spectrumHsv.hue + 
+                                ' S: ' + this.states.color.spectrumHsv.saturation + 
+                                ' V: ' + this.states.color.spectrumHsv.value;
+                    }
+                } else if (this.device_type === "THERMOSTAT") {
+                    const thermostat_mode = this.states.thermostatMode;
+                    if (thermostat_mode === "off") {
+                        text = "OFF";
+                    } else if (thermostat_mode === "heat" || thermostat_mode === "cool") {
+                        fill = "green";
+                        text = thermostat_mode + " T: " + this.states.thermostatTemperatureAmbient + " °C | S: " + this.states.thermostatTemperatureSetpoint + " °C";
+                    } else if (thermostat_mode === "heatcool") {
+                        fill = "green";
+                        text = "T: " + this.states.thermostatTemperatureAmbient + " °C | S: [" + this.states.thermostatTemperatureSetpointLow + " - " + this.states.thermostatTemperatureSetpointHigh + "] °C";
+                    } else {
+                        fill = "green";
+                        text = thermostat_mode;
+                    }
                 } else {
-                    this.status({fill: "green", shape: "dot", text: thermostat_mode});
+                    if (this.states.on) {
+                        fill = "green";
+                        test = "ON";
+                    } else {
+                        test = "OFF";
+                    }
                 }
             } else {
-                if (this.states.on) {
-                    this.status({fill: "green", shape: "dot", text: "ON"});
-                } else {
-                    this.status({fill: "red", shape: "dot", text: "OFF"});
-                }
+                shape = 'ring';
+                text = "offline";
             }
+            this.status({fill: fill, shape: shape, text: text});    
         }
 
         /******************************************************************************************************************
