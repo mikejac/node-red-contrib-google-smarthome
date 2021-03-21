@@ -5,6 +5,7 @@
             "name": "Name",
             "topic": "Out topic",
             "device_type": "Device Type",
+            "lang": "Language",
             "transport_control": "Transport control",
             "supported_commands": "Supported Commands",
             "caption_control": "Caption control",

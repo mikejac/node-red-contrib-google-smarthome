@@ -18,9 +18,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+. ./data
+. ./code
+
 NODE_ID="98599ced.c9cc6"
 PAYLOAD_FILE="$HOME/payload.json"
 OUT_FILE="$HOME/out.json"
+PAYLOAD_URL=$(dirname $BASE_URL)/payload
 
 ./refresh_token
 
@@ -69,6 +73,32 @@ test_no_payload() {
     fi
 }
 
+execute_payload() {
+    CMD_EXEC="$@"
+    echo "$@" > request.json
+    TOPIC="$1"
+    PAYLOAD="$2"
+    if [ -z "$PAYLOAD" ] ; then
+        PAYLOAD ="$1"
+        TOPIC=""
+    fi
+    REQUEST="{\"payload\": $PAYLOAD, \"topic\": \"$TOPIC\"}"
+    echo $REQUEST
+    echo "{}" > "$PAYLOAD_FILE" 
+    curl -s \
+        -H "Content-Type: application/json;charset=UTF-8" \
+        --data "$REQUEST" \
+        $PAYLOAD_URL  > "$OUT_FILE"
+    OUT=$(cat  "$OUT_FILE")
+    if [ "$OUT" != "OK" ] ; then
+        echo ERROR
+        echo "Result $OUT"
+        echo "Request: "
+        echo $REQUEST
+    fi
+    PAYLOAD=$(cat "$PAYLOAD_FILE")
+}
+
 execute() {
     CMD_EXEC="$@"
     echo
@@ -110,6 +140,7 @@ execute_error() {
 }
 # if [ 1 == 2 ] ; then
 # fi # fi
+
 # AppSelector 
 echo AppSelector
 execute $NODE_ID appInstall mia_application
@@ -187,14 +218,35 @@ test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://PROGRESSIVE_MP4"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"progressive_mp4"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
-test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_ID"'
+test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_APPID"'
 
 execute_no_payload $NODE_ID GetCameraStream true '"hls","dash","smooth_stream","progressive_mp4"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://PROGRESSIVE_MP4"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"progressive_mp4"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
-test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_ID"'
+test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_APPID"'
+
+execute_no_payload $NODE_ID GetCameraStream true '"hls"'
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://HLS"'
+test_out ".payload.commands[0].states.cameraStreamProtocol" '"hls"'
+test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
+test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"HLS_APPID"'
+
+execute_no_payload $NODE_ID GetCameraStream true '"dash"'
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://DASH"'
+test_out ".payload.commands[0].states.cameraStreamProtocol" '"dash"'
+test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
+test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"DASH_APPID"'
+
+execute_no_payload $NODE_ID GetCameraStream true '"smooth_stream"'
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://SMOOTH_STREAM"'
+test_out ".payload.commands[0].states.cameraStreamProtocol" '"smooth_stream"'
+test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
+test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"SMOOTH_STREAM_APPID"'
 
 # Channel 
 echo

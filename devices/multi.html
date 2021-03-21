@@ -1544,10 +1544,18 @@
                 value: "temp", required:false
             },
             temperature_min_k: {
-                value: 2000, required:false
+                value: 2000, required:false, validate:function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
             },
             temperature_max_k: {
-                value: 9000, required:false
+                value: 9000, required:false, function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
             },
             modes_file: {
                 value: "modes.json", required:false
@@ -1613,7 +1621,11 @@
                 value: false, required:false
             },
             max_timer_limit_sec:{
-                value: 86400, required:false
+                value: 86400, required:false, validate:function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
             },
             command_only_timer: {
                 value: false, required:false
@@ -1625,16 +1637,16 @@
                 value: ["off", "heat", "cool", "on", "heatcool", "auto", "fan-only", "purifier", "eco", "dry"], required:false
             },
             min_threshold_celsius: {
-                value: 0, required:false
+                value: 0, required:false, validate:RED.validators.number()
             },
             max_threshold_celsius: {
-                value: 40, required:false
+                value: 40, required:false, validate:RED.validators.number()
             },
             thermostat_temperature_unit: {
                 value: "C", required:false
             },
             buffer_range_celsius: {
-                value: 2, required:false
+                value: 2, required:false, validate:RED.validators.number()
             },
             command_only_temperaturesetting: {
                 value: false, required:false
@@ -1646,13 +1658,13 @@
                 value: false, required:false
             },
             tc_min_threshold_celsius: {
-                value: 0, required:false
+                value: 0, required:false, validate:RED.validators.number()
             },
             tc_max_threshold_celsius: {
-                value: 40, required:false
+                value: 40, required:false, validate:RED.validators.number()
             },
             tc_temperature_step_celsius: {
-                value: 1, required:false
+                value: 1, required:false, validate:RED.validators.number()
             },
             tc_temperature_unit_for_ux: {
                 value: "C", required:false
@@ -1667,10 +1679,18 @@
                 value: false, required:false
             },
             min_percent: {
-                value: 0, required:false
+                value: 0, required:false, function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
             },
             max_percent: {
-                value: 100, required:false
+                value: 100, required:false, function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
             },
             command_only_humiditysetting: {
                 value: false, required:false
@@ -1733,10 +1753,18 @@
                 value: true, required:false
             },
             rotation_degrees_min: {
-                value: 0, required:false
+                value: 0, required:false, function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
             },
             rotation_degrees_max: {
-                value: 360, required:false
+                value: 360, required:false, function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
             },
             supports_continuous_rotation: {
                 value: false, required:false
@@ -1748,10 +1776,18 @@
                 value: false, required:false
             },
             default_sleep_duration: {
-                value: 1800, required:false
+                value: 1800, required:false, function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
             },
             default_wake_duration: {
-                value: 1800, required:false
+                value: 1800, required:false, function(v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                }
             },
             supported_effects: {
                 value: ["colorLoop", "sleep", "wake"], required:false

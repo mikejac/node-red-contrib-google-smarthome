@@ -4,6 +4,7 @@
 		"label": {
 			"node_name": "Dispositivo Google",
 			"name": "Nome",
+            "lang": "Lingua",
 			"topic": "Oggetto in uscita",
 			"device_type": "Tipo dispositivo",
 			"light": "Luce",

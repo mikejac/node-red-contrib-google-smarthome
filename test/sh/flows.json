@@ -1,5 +1,12 @@
 [
     {
+        "id": "2ff30f68.b93d4",
+        "type": "tab",
+        "label": "Test Flow",
+        "disabled": false,
+        "info": ""
+    },
+    {
         "id": "358d3ccc.966434",
         "type": "google-mgmt",
         "z": "2ff30f68.b93d4",
@@ -287,13 +294,13 @@
         "hls": "http://HLS",
         "hls_app_id": "HLS_APPID",
         "dash": "http://DASH",
-        "dash_app_id": "DASH_ID",
-        "smooth_stream": "http://SMOOTH",
-        "smooth_stream_app_id": "SMOOTH_ID",
+        "dash_app_id": "DASH_APPID",
+        "smooth_stream": "http://SMOOTH_STREAM",
+        "smooth_stream_app_id": "SMOOTH_STREAM_APPID",
         "progressive_mp4": "http://PROGRESSIVE_MP4",
-        "progressive_mp4_app_id": "PROGRESSIVE_MP4_ID",
+        "progressive_mp4_app_id": "PROGRESSIVE_MP4_APPID",
         "auth_token": "Auth Token",
-        "passthru": false,
+        "passthru": true,
         "trait_scene": true,
         "scene_reversible": true,
         "trait_timer": true,
@@ -312,8 +319,8 @@
             "eco",
             "dry"
         ],
-        "min_threshold_celsius": 0,
-        "max_threshold_celsius": 40,
+        "min_threshold_celsius": "1",
+        "max_threshold_celsius": "50",
         "thermostat_temperature_unit": "C",
         "buffer_range_celsius": 2,
         "command_only_temperaturesetting": false,
@@ -697,6 +704,100 @@
         "wires": [
             [
                 "98599ced.c9cc6"
+            ]
+        ]
+    },
+    {
+        "id": "4e80a180.4b25c",
+        "type": "inject",
+        "z": "2ff30f68.b93d4",
+        "name": "Object Detection",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "10",
+        "topic": "ObjectDetection",
+        "payload": "{\"named\":\"Alice\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 520,
+        "wires": [
+            [
+                "98599ced.c9cc6"
+            ]
+        ]
+    },
+    {
+        "id": "bdc939a7.0b0c98",
+        "type": "http response",
+        "z": "2ff30f68.b93d4",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 790,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "f53528c2.ccc208",
+        "type": "http in",
+        "z": "2ff30f68.b93d4",
+        "name": "Payload",
+        "url": "/payload",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 480,
+        "y": 320,
+        "wires": [
+            [
+                "10c0088d.cf8de7",
+                "c4aac5a.2649d38"
+            ]
+        ]
+    },
+    {
+        "id": "10c0088d.cf8de7",
+        "type": "function",
+        "z": "2ff30f68.b93d4",
+        "name": "",
+        "func": "msg = msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 640,
+        "y": 260,
+        "wires": [
+            [
+                "98599ced.c9cc6"
+            ]
+        ]
+    },
+    {
+        "id": "c4aac5a.2649d38",
+        "type": "function",
+        "z": "2ff30f68.b93d4",
+        "name": "",
+        "func": "msg.payload = \"OK\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 640,
+        "y": 320,
+        "wires": [
+            [
+                "bdc939a7.0b0c98"
             ]
         ]
     },

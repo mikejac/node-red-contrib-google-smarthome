@@ -32,10 +32,20 @@ module.exports = function(RED) {
             RED.nodes.createNode(this,config);
 
             this.device = {};
-            this.guest_network_password         = '';
             this.client                         = config.client;
             this.clientConn                     = RED.nodes.getNode(this.client);
             this.debug(".constructor config " + JSON.stringify(config));
+ 
+            if (!this.clientConn) {
+                this.error(RED._("multi.errors.missing-config"));
+                this.status({fill: "red", shape: "dot", text: "Missing config"});
+                return;
+            } else if (typeof this.clientConn.register !== 'function') {
+                this.error(RED._("multi.errors.missing-bridge"));
+                this.status({fill: "red", shape: "dot", text: "Missing SmartHome"});
+                return;
+            }
+
             this.trait = {
                 appselector: config.trait_appselector || false,
                 armdisarm: config.trait_armdisarm || false,
@@ -75,58 +85,146 @@ module.exports = function(RED) {
                 transportcontrol: config.trait_transportcontrol || false,
                 volume: config.trait_volume || false,
             };
-            this.timer_end_timestamp                        = -1;
             this.topicOut                                   = config.topic;
             this.device_type					            = config.device_type;
             this.lang                                       = config.lang;
+
+            // AppSelector
             this.appselector_file                           = config.appselector_file;
             this.available_applications                     = [];
+            // ArmDisarm
+            this.available_arm_levels_file                  = config.available_arm_levels_file;
+            // Brightness
+            this.command_only_brightness                    = config.command_only_brightness;
+            // CameraStream
+            this.auth_token                                 = config.auth_token.trim();
+            this.hls                                        = config.hls.trim();
+            this.hls_app_id                                 = config.hls_app_id.trim();
+            this.dash                                       = config.dash.trim();
+            this.dash_app_id                                = config.dash_app_id.trim();
+            this.smooth_stream                              = config.smooth_stream.trim();
+            this.smooth_stream_app_id                       = config.smooth_stream_app_id.trim();
+            this.progressive_mp4                            = config.progressive_mp4.trim();
+            this.progressive_mp4_app_id                     = config.progressive_mp4_app_id.trim();
+            this.camera_stream_supported_protocols          = [];
+            if (this.hls) {
+                this.camera_stream_supported_protocols.push('hls');
+            }
+            if (this.dash) {
+                this.camera_stream_supported_protocols.push('dash');
+            }
+            if (this.smooth_stream) {
+                this.camera_stream_supported_protocols.push('smooth_stream');
+            }
+            if (this.progressive_mp4) {
+                this.camera_stream_supported_protocols.push('progressive_mp4');
+            }
+            // Channel 
             this.channel_file                               = config.channel_file;
             this.available_channels                         = [];
+            this.last_channel_index                         = -1;
+            this.current_channel_index                      = -1;
+            // ColorSetting 
+            this.command_only_colorsetting                  = config.command_only_colorsetting;
+            this.color_model                                = config.color_model || 'temp';
+            this.temperature_min_k                          = parseInt(config.temperature_min_k) || 2000;
+            this.temperature_max_k                          = parseInt(config.temperature_max_k) || 9000;
+            // Cook
+            this.supported_cooking_modes                    = config.supported_cooking_modes;
+            this.food_presets_file                          = config.food_presets_file;
+            this.food_presets                               = [];
+            // Dispense 
+            this.supported_dispense_items_file              = config.supported_dispense_items_file;
+            this.supported_dispense_items                   = [];
+            this.supported_dispense_presets_file            = config.supported_dispense_presets_file;
+            this.supported_dispense_presets                 = [];
+            // Dock
+            // EnergyStorage
+            this.energy_storage_distance_unit_for_ux        = config.energy_storage_distance_unit_for_ux;
+            this.query_only_energy_storage                  = config.query_only_energy_storage;
+            this.is_rechargeable                            = config.is_rechargeable;
+            // FanSpeed
+            this.reversible                                 = config.reversible;
+            this.command_only_fanspeed                      = config.command_only_fanspeed;
+            this.supports_fan_speed_percent                 = config.supports_fan_speed_percent;
+            this.available_fan_speeds_file                  = config.available_fan_speeds_file;
+            this.available_fan_speeds                       = [];
+            // Fill
+            this.available_fill_levels_file                 = config.available_fill_levels_file;
+            this.available_fill_levels                      = [];
+            this.ordered                                    = config.ordered;
+            this.supports_fill_percent                      = config.supports_fill_percent;
+            // HumiditySetting 
+            this.min_percent                                = parseInt(config.min_percent) || 0;
+            this.max_percent                                = parseInt(config.max_percent) || 100;
+            this.command_only_humiditysetting               = config.command_only_humiditysetting;
+            this.query_only_humiditysetting                 = config.query_only_humiditysetting;
+            // InputSelector 
             this.inputselector_file                         = config.inputselector_file;
             this.available_inputs                           = [];
             this.command_only_input_selector                = config.command_only_input_selector;
             this.ordered_inputs                             = config.ordered_inputs;
+            this.current_input_index                        = -1;
+            // LightEffects 
+            this.default_sleep_duration                     = config.default_sleep_duration;
+            this.default_wake_duration                      = config.default_wake_duration;
+            this.supported_effects                          = config.supported_effects;
+            // Locator 
+            // LockUnlock 
+            // MediaState
             this.support_activity_state                     = config.support_activity_state;
             this.support_playback_state                     = config.support_playback_state;
-            this.command_only_onoff                         = config.command_only_onoff;
-            this.query_only_onoff                           = config.query_only_onoff;
-            this.supported_commands                         = config.supported_commands;
-            this.volume_max_level                           = parseInt(config.volume_max_level) || 100;
-            this.can_mute_and_unmute                        = config.can_mute_and_unmute;
-            this.volume_default_percentage                  = parseInt(config.volume_default_percentage) || 40;
-            this.level_step_size                            = parseInt(config.level_step_size) || 1;
-            this.command_only_volume                        = config.command_only_volume;
+            // Modes 
             this.modes_file                                 = config.modes_file;
             this.available_modes                            = [];
             this.command_only_modes                         = config.command_only_modes;
             this.query_only_modes                           = config.query_only_modes;
-            this.toggles_file                               = config.toggles_file;
-            this.available_toggles                          = [];
-            this.command_only_toggles                       = config.command_only_toggles;
-            this.query_only_toggles                         = config.query_only_toggles;
-            this.last_channel_index                         = '';
-            this.current_channel_index                      = -1;
-            this.current_input_index                        = -1;
-            this.command_only_brightness                    = config.command_only_brightness;
-            this.command_only_colorsetting                  = config.command_only_colorsetting;
-            this.temperature_min_k                          = parseInt(config.temperature_min_k) || 2000;
-            this.temperature_max_k                          = parseInt(config.temperature_max_k) || 9000;
-            this.color_model                                = config.color_model || 'temp';
-            this.hlsUrl                                     = config.hls.trim();
-            this.hlsAppId                                   = config.hls_app_id.trim();
-            this.dashUrl                                    = config.dash.trim();
-            this.dashAppId                                  = config.dash_app_id.trim();
-            this.smoothStreamUrl                            = config.smooth_stream.trim();
-            this.smoothStreamAppId                          = config.smooth_stream_app_id.trim();
-            this.progressiveMp4Url                          = config.progressive_mp4.trim();
-            this.progressiveMp4AppId                        = config.progressive_mp4_app_id.trim();
-            this.authToken                                  = config.auth_token.trim();
+            // NetworkControl
+            this.supports_enabling_guest_network            = config.supports_enabling_guest_network;
+            this.supports_disabling_guest_network           = config.supports_disabling_guest_network;
+            this.supports_getting_guest_network_password    = config.supports_getting_guest_network_password;
+            this.network_profiles                           = config.network_profiles;
+            this.supports_enabling_network_profile          = config.supports_enabling_network_profile;
+            this.supports_disabling_network_profile         = config.supports_disabling_network_profile;
+            this.supports_network_download_speedtest        = config.supports_network_download_speedtest;
+            this.supports_network_upload_speedtest          = config.supports_network_upload_speedtest;
+            this.guest_network_password                     = '';
+            // ObjectDetection 
+            // OnOff 
+            this.command_only_onoff                         = config.command_only_onoff;
+            this.query_only_onoff                           = config.query_only_onoff;
+            // OpenClose
+            this.discrete_only_openclose                    = config.discrete_only_openclose;
+            this.open_direction                             = config.open_direction;
+            this.command_only_openclose                     = config.command_only_openclose;
+            this.query_only_openclose                       = config.query_only_openclose;
+            // Reboot 
+            // Rotation 
+            this.supports_degrees                           = config.supports_degrees;
+            this.supports_percent                           = config.supports_percent;
+            this.rotation_degrees_min                       = parseInt(config.rotation_degrees_min) || 0;
+            this.rotation_degrees_max                       = parseInt(config.rotation_degrees_max) || 360;
+            this.supports_continuous_rotation               = config.supports_continuous_rotation;
+            this.command_only_rotation                      = config.command_only_rotation;
+            // RunCycle
+            // Scene
             this.scene_reversible                           = config.scene_reversible;
-            this.command_only_timer                         = config.command_only_timer;
-            this.max_timer_limit_sec                        = config.max_timer_limit_sec;
+            // SensorState 
+            this.sensor_state_supported_file                = config.sensor_state_supported_file;
+            this.sensor_state_supported                     = [];
+            // SoftwareUpdate 
+            // StartStop
+            this.pausable                                   = config.pausable;
+            this.available_zones                            = config.available_zones;
+            // StatusReport 
+            // TemperatireControl
+            this.tc_min_threshold_celsius                   = config.tc_min_threshold_celsius;
+            this.tc_max_threshold_celsius                   = config.tc_max_threshold_celsius;
+            this.tc_temperature_step_celsius                = config.tc_temperature_step_celsius;
+            this.tc_temperature_unit_for_ux                 = config.tc_temperature_unit_for_ux;
+            this.tc_command_only_temperaturecontrol         = config.tc_command_only_temperaturecontrol;
+            this.tc_query_only_temperaturecontrol           = config.tc_query_only_temperaturecontrol;
             // TemperatureSetting
-            this.trait_temperaturesetting                   = config.trait_temperaturesetting;
             this.available_thermostat_modes                 = config.available_thermostat_modes;
             this.min_threshold_celsius                      = parseInt(config.min_threshold_celsius) || 10;
             this.max_threshold_celsius                      = parseInt(config.max_threshold_celsius) || 32;
@@ -139,85 +237,23 @@ module.exports = function(RED) {
             this.query_only_temperaturesetting              = config.query_only_temperaturesetting;
             this.target_temp_reached_estimate_unix_timestamp_sec = 360;
             this.thermostat_humidity_ambient                = 60;
-            // TemperatireControl
-            this.tc_min_threshold_celsius                   = config.tc_min_threshold_celsius;
-            this.tc_max_threshold_celsius                   = config.tc_max_threshold_celsius;
-            this.tc_temperature_step_celsius                = config.tc_temperature_step_celsius;
-            this.tc_temperature_unit_for_ux                 = config.tc_temperature_unit_for_ux;
-            this.tc_command_only_temperaturecontrol         = config.tc_command_only_temperaturecontrol;
-            this.tc_query_only_temperaturecontrol           = config.tc_query_only_temperaturecontrol;
-            // 
-            this.min_percent                                = parseInt(config.min_percent) || 0;
-            this.max_percent                                = parseInt(config.max_percent) || 100;
-            this.command_only_humiditysetting               = config.command_only_humiditysetting;
-            this.query_only_humiditysetting                 = config.query_only_humiditysetting;
-            this.discrete_only_openclose                    = config.discrete_only_openclose;
-            this.open_direction                             = config.open_direction;
-            this.command_only_openclose                     = config.command_only_openclose;
-            this.query_only_openclose                       = config.query_only_openclose;
-            this.pausable                                   = config.pausable;
-            this.available_zones                            = config.available_zones;
-            this.supports_degrees                           = config.supports_degrees;
-            this.supports_percent                           = config.supports_percent;
-            this.rotation_degrees_min                       = parseInt(config.rotation_degrees_min) || 0;
-            this.rotation_degrees_max                       = parseInt(config.rotation_degrees_max) || 360;
-            this.supports_continuous_rotation               = config.supports_continuous_rotation;
-            this.command_only_rotation                      = config.command_only_rotation;
-            this.default_sleep_duration                     = config.default_sleep_duration;
-            this.default_wake_duration                      = config.default_wake_duration;
-            this.supported_effects                          = config.supported_effects;
-            this.supported_cooking_modes                    = config.supported_cooking_modes;
-            this.food_presets_file                          = config.food_presets_file;
-            this.food_presets                               = [];
-            this.reversible                                 = config.reversible;
-            this.command_only_fanspeed                      = config.command_only_fanspeed;
-            this.supports_fan_speed_percent                 = config.supports_fan_speed_percent;
-            this.available_fan_speeds_file                  = config.available_fan_speeds_file;
-            this.sensor_state_supported_file                = config.sensor_state_supported_file;
-            this.available_fill_levels_file                 = config.available_fill_levels_file;
-            this.available_fill_levels                      = [];
-            this.ordered                                    = config.ordered;
-            this.supports_fill_percent                      = config.supports_fill_percent;
-            this.available_arm_levels_file                  = config.available_arm_levels_file;
-            this.energy_storage_distance_unit_for_ux        = config.energy_storage_distance_unit_for_ux;
-            this.query_only_energy_storage                  = config.query_only_energy_storage;
-            this.is_rechargeable                            = config.is_rechargeable;
-            this.supported_dispense_items_file              = config.supported_dispense_items_file;
-            this.supported_dispense_items                   = [];
-            this.supported_dispense_presets_file            = config.supported_dispense_presets_file;
-            this.supported_dispense_presets                 = [];
-            this.supports_enabling_guest_network            = config.supports_enabling_guest_network;
-            this.supports_disabling_guest_network           = config.supports_disabling_guest_network;
-            this.supports_getting_guest_network_password    = config.supports_getting_guest_network_password;
-            this.network_profiles                           = config.network_profiles;
-            this.supports_enabling_network_profile          = config.supports_enabling_network_profile;
-            this.supports_disabling_network_profile         = config.supports_disabling_network_profile;
-            this.supports_network_download_speedtest        = config.supports_network_download_speedtest;
-            this.supports_network_upload_speedtest          = config.supports_network_upload_speedtest;
-            
-            this.protocols = [];
-            if (this.hlsUrl) {
-                this.protocols.push('hls');
-            }
-            if (this.dashUrl) {
-                this.protocols.push('dash');
-            }
-            if (this.smoothStreamUrl) {
-                this.protocols.push('smooth_stream');
-            }
-            if (this.progressiveMp4Url) {
-                this.protocols.push('progressive_mp4');
-            }
-
-            if (!this.clientConn) {
-                this.error(RED._("multi.errors.missing-config"));
-                this.status({fill: "red", shape: "dot", text: "Missing config"});
-                return;
-            } else if (typeof this.clientConn.register !== 'function') {
-                this.error(RED._("multi.errors.missing-bridge"));
-                this.status({fill: "red", shape: "dot", text: "Missing SmartHome"});
-                return;
-            }
+            // Timer 
+            this.max_timer_limit_sec                        = config.max_timer_limit_sec;
+            this.command_only_timer                         = config.command_only_timer;
+            this.timer_end_timestamp                        = -1;
+            // Toggles
+            this.toggles_file                               = config.toggles_file;
+            this.available_toggles                          = [];
+            this.command_only_toggles                       = config.command_only_toggles;
+            this.query_only_toggles                         = config.query_only_toggles;
+            // TransportControl 
+            this.supported_commands                         = config.supported_commands;
+            // Volume 
+            this.volume_max_level                           = parseInt(config.volume_max_level) || 100;
+            this.can_mute_and_unmute                        = config.can_mute_and_unmute;
+            this.volume_default_percentage                  = parseInt(config.volume_default_percentage) || 40;
+            this.level_step_size                            = parseInt(config.level_step_size) || 1;
+            this.command_only_volume                        = config.command_only_volume;
 
             // Sets required traits
             switch (this.device_type) {
@@ -655,6 +691,10 @@ module.exports = function(RED) {
                         "temperatureMaxK": me.temperature_max_k
                     };
                 }
+            }
+            if (me.trait.camerastream) {
+                attributes['cameraStreamSupportedProtocols'] = me.camera_stream_supported_protocols;
+                attributes['cameraStreamNeedAuthToken'] = me.auth_token.length > 0;
             }
             if (me.trait.cook) {
                 attributes['supportedCookingModes'] = me.supported_cooking_modes;
@@ -2507,30 +2547,30 @@ module.exports = function(RED) {
                 if (command.params.hasOwnProperty('SupportedStreamProtocols')) {
                     const supported_protocols = command.params['SupportedStreamProtocols'];
                     let protocol = '';
-                    let stramUrl = '';
+                    let stream_url = '';
                     supported_protocols.forEach(function (supported_protocol) {
                         let url = me.getStreamUrl(supported_protocol);
                         if (url) {
                             protocol = supported_protocol;
-                            stramUrl = url;
+                            stream_url = url;
                         }
                     });
                     if (protocol.length > 0) {
                         executionStates.push('cameraStreamAccessUrl', 'cameraStreamProtocol');
-                        if (me.authToken.length > 0) {
+                        if (me.auth_token.length > 0) {
                             executionStates.push('cameraStreamAuthToken');
                         }
-                        const appId = this.getAppId(protocol);
-                        if (appId.length > 0) {
+                        const app_id = this.getAppId(protocol);
+                        if (app_id.length > 0) {
                             executionStates.push('cameraStreamReceiverAppId');
                         }
                         return {
                             status: 'SUCCESS',
                             states: {
                                 online: true,
-                                cameraStreamAccessUrl: stramUrl,
-                                cameraStreamReceiverAppId: appId,
-                                cameraStreamAuthToken: me.authToken,
+                                cameraStreamAccessUrl: stream_url,
+                                cameraStreamReceiverAppId: app_id,
+                                cameraStreamAuthToken: me.auth_token,
                                 cameraStreamProtocol: protocol
                             },
                             executionStates: executionStates,
@@ -2545,13 +2585,13 @@ module.exports = function(RED) {
         getStreamUrl(protocol_type) {
             switch(protocol_type) {
                 case 'hls':
-                    return this.hlsUrl;
+                    return this.hls;
                 case 'dash':
-                    return this.dashUrl;
+                    return this.dash;
                 case 'smooth_stream':
-                    return this.smoothStreamUrl;
+                    return this.smooth_stream;
                 case 'progressive_mp4':
-                    return this.progressiveMp4Url;
+                    return this.progressive_mp4;
             }
             return '';
         }
@@ -2559,13 +2599,13 @@ module.exports = function(RED) {
         getAppId(protocol_type) {
             switch(protocol_type) {
                 case 'hls':
-                    return this.hlsAppId;
+                    return this.hls_app_id;
                 case 'dash':
-                    return this.dashAppId;
+                    return this.dash_app_id;
                 case 'smooth_stream':
-                    return this.smoothStreamAppId;
+                    return this.smooth_stream_app_id;
                 case 'progressive_mp4':
-                    return this.progressiveMp4AppId;
+                    return this.progressive_mp4_app_id;
             }
             return '';
         }
