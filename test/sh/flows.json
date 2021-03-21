@@ -236,7 +236,7 @@
     },
     {
         "id": "98599ced.c9cc6",
-        "type": "google-multi",
+        "type": "google-device",
         "z": "2ff30f68.b93d4",
         "client": "85fa874.600d378",
         "name": "Cucina",

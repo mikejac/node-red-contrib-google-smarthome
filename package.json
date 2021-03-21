@@ -24,7 +24,7 @@
       "outlet": "devices/outlet.js",
       "camera": "devices/camera.js",
       "media": "devices/media.js",
-      "multi": "devices/multi.js",
+      "device": "devices/device.js",
       "scene": "devices/scene.js",
       "shutter": "devices/shutter.js",
       "thermostat": "devices/thermostat.js",

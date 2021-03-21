@@ -2611,5 +2611,5 @@ module.exports = function(RED) {
         }
     }
 
-    RED.nodes.registerType("google-multi", MultiNode);
+    RED.nodes.registerType("google-device", MultiNode);
 }
