@@ -1,5 +1,5 @@
 {
-    "multi": {
+    "device": {
         "label": {
             "node_name": "Google Device",
             "name": "Name",

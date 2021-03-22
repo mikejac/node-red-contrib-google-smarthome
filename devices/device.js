@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-module.exports = function(RED) {
+ module.exports = function(RED) {
     "use strict";
 
     const formats = require('../formatvalues.js');
@@ -27,7 +27,7 @@ module.exports = function(RED) {
      *
      *
      */
-    class MultiNode {
+    class DeviceNode {
         constructor(config) {
             RED.nodes.createNode(this,config);
 
@@ -37,11 +37,11 @@ module.exports = function(RED) {
             this.debug(".constructor config " + JSON.stringify(config));
  
             if (!this.clientConn) {
-                this.error(RED._("multi.errors.missing-config"));
+                this.error(RED._("device.errors.missing-config"));
                 this.status({fill: "red", shape: "dot", text: "Missing config"});
                 return;
             } else if (typeof this.clientConn.register !== 'function') {
-                this.error(RED._("multi.errors.missing-bridge"));
+                this.error(RED._("device.errors.missing-bridge"));
                 this.status({fill: "red", shape: "dot", text: "Missing SmartHome"});
                 return;
             }
@@ -592,8 +592,8 @@ module.exports = function(RED) {
                 this.debug(".constructor: Toggles disabled");
             }
 
-            // GoogleSmartHomeNode -> (client.registerDevice -> MultiNode.registerDevice), app.registerDevice
-            this.states = this.clientConn.register(this, 'multi', config.name, this);
+            // GoogleSmartHomeNode -> (client.registerDevice -> DeviceNode.registerDevice), app.registerDevice
+            this.states = this.clientConn.register(this, 'device', config.name, this);
 
             if (error_msg.length == 0) {
                 this.updateStatusIcon();
@@ -606,7 +606,7 @@ module.exports = function(RED) {
         }
 
         debug(msg) {
-            msg = 'google-smarthome:MultiNode' + msg;
+            msg = 'google-smarthome:DeviceNode' + msg;
             if (this.clientConn && typeof this.clientConn.debug === 'function') {
                 this.clientConn.debug(msg);
             } else {
@@ -646,13 +646,13 @@ module.exports = function(RED) {
                     },
                     deviceInfo: {
                         manufacturer: 'Node-RED',
-                        model: 'nr-multi-' + default_name_type + '-v1',
+                        model: 'nr-device-' + default_name_type + '-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
                     },
                     customData: {
                         "nodeid": client.id,
-                        "type": default_name_type
+                        "type": 'nr-device-' + default_name_type
                     }
                 }
             };
@@ -1047,40 +1047,41 @@ module.exports = function(RED) {
                     } else {
                         text = 'OFF';
                     }
-                    if (this.is_dimmable && this.states.brightness != undefined) {
+                    if (this.trait.brightness && this.states.brightness != undefined) {
                         text += " bri: " + this.states.brightness;
                     }
-                    if (this.has_temp && this.states.color.temperatureK != undefined) {
+                    if (this.trait.colorsetting && this.states.color.temperatureK != undefined) {
                         text += ' temp: ' + this.states.color.temperatureK;
                     }
-                    if (this.is_rgb && this.states.color.spectrumRgb != undefined) {
+                    if (this.trait.colorsetting && this.states.color.spectrumRgb != undefined) {
                         text += ' RGB: ' + this.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0');
                     }
-                    if (this.is_hsv && this.states.color.spectrumHsv != undefined) {
+                    if (this.trait.colorsetting && this.states.color.spectrumHsv != undefined) {
                         text += ' H: ' + this.states.color.spectrumHsv.hue + 
                                 ' S: ' + this.states.color.spectrumHsv.saturation + 
                                 ' V: ' + this.states.color.spectrumHsv.value;
                     }
                 } else if (this.device_type === "THERMOSTAT") {
                     const thermostat_mode = this.states.thermostatMode;
+                    const st = " T: " + this.states.thermostatTemperatureAmbient + " °C | S: " + this.thermostat_temperature_setpoint + " °C";
                     if (thermostat_mode === "off") {
-                        text = "OFF";
+                        text = "OFF " + st;
                     } else if (thermostat_mode === "heat" || thermostat_mode === "cool") {
                         fill = "green";
-                        text = thermostat_mode + " T: " + this.states.thermostatTemperatureAmbient + " °C | S: " + this.states.thermostatTemperatureSetpoint + " °C";
+                        text = thermostat_mode.substr(0, 1).toUpperCase() + st;
                     } else if (thermostat_mode === "heatcool") {
                         fill = "green";
-                        text = "T: " + this.states.thermostatTemperatureAmbient + " °C | S: [" + this.states.thermostatTemperatureSetpointLow + " - " + this.states.thermostatTemperatureSetpointHigh + "] °C";
+                        text = "H/C T: " + this.states.thermostatTemperatureAmbient + " °C | S: [" + this.thermostat_temperature_setpoint + " - " + this.states.thermostatTemperatureSetpointHigh + "] °C";
                     } else {
                         fill = "green";
-                        text = thermostat_mode;
+                        text = thermostat_mode.substr(0, 1).toUpperCase() + st;
                     }
                 } else {
                     if (this.states.on) {
                         fill = "green";
-                        test = "ON";
+                        text = "ON";
                     } else {
-                        test = "OFF";
+                        text = "OFF";
                     }
                 }
             } else {
@@ -1395,9 +1396,8 @@ module.exports = function(RED) {
                                 msg.payload = me.states[state_key];
                                 this.send(msg);
                             }
-
-                            this.updateStatusIcon();
                         }
+                        this.updateStatusIcon();
                     } else {
                         me.debug(".input: some other topic");
                         let differs = false;
@@ -1417,9 +1417,8 @@ module.exports = function(RED) {
                                 msg.payload = me.states;
                                 this.send(msg);
                             }
-
-                            this.updateStatusIcon();
                         }
+                        this.updateStatusIcon();
                     }
                 }
             } catch (err) {
@@ -1430,10 +1429,10 @@ module.exports = function(RED) {
         onClose(removed, done) {
             if (removed) {
                 // this node has been deleted
-                this.clientConn.remove(this, 'multi');
+                this.clientConn.remove(this, 'device');
             } else {
                 // this node is being restarted
-                this.clientConn.deregister(this, 'multi');
+                this.clientConn.deregister(this, 'device');
             }
 
             done();
@@ -1472,7 +1471,7 @@ module.exports = function(RED) {
         }
 
         getDefaultName(device_type) {
-            return RED._('multi.device_type.' + device_type);
+            return RED._('device.device_type.' + device_type);
         }
 
         getTraits(me) {
@@ -2047,32 +2046,6 @@ module.exports = function(RED) {
                 executionStates.push('currentInput');
                 params['currentInput'] = this.available_inputs[this.current_input_index].key;
             }
-            // Light
-            else if (command.command == 'action.devices.commands.ColorAbsolute') {
-                if (command.params.color.hasOwnProperty('temperature')) {
-                    command.params.color.temperatureK = command.params.color.temperature;
-                    delete command.params.color.temperature;
-                    if (!me.states.color.hasOwnProperty("temperatureK")) {
-                        me.states.color = { temperatureK: -1 };
-                    }
-                } else if (command.params.color.hasOwnProperty('spectrumRGB')) {
-                    command.params.color.spectrumRgb = command.params.color.spectrumRGB;
-                    delete command.params.color.spectrumRGB;
-                    if (!me.states.color.hasOwnProperty("spectrumRgb")) {
-                        me.states.color = { spectrumRgb: -1 };
-                    }
-                } else if (command.params.color.hasOwnProperty('spectrumHSV')) {
-                    command.params.color.spectrumHsv = command.params.color.spectrumHSV;
-                    delete command.params.color.spectrumHSV;
-                    if (!me.states.color.hasOwnProperty("spectrumHsv")) {
-                        me.states.color = { spectrumHsv: {
-                            hue: -1,
-                            saturation: -1,
-                            value: -1
-                        } };
-                    }
-                } 
-            }
             // On/Off
             else if (command.command == 'action.devices.commands.OnOff') {
                 if (command.params.hasOwnProperty('on')) {
@@ -2566,16 +2539,44 @@ module.exports = function(RED) {
             // ColorSetting
             else if (command.command == 'action.devices.commands.ColorAbsolute') {
                 if (command.params.hasOwnProperty('color')) {
-                    params['color'] = command.params.color;
-                    /*if (command.params.color.hasOwnProperty('name')) {
-                        params.color.name = command.params.color.name;
-                    }*/
-                    if (command.params.color.hasOwnProperty('temperature')) {
-                        params['color'] = { temperatureK: command.params.color.temperature};
-                    } else if (command.params.color.hasOwnProperty('spectrumRGB')) {
-                        params['color'] = { spectrumRgb: command.params.color.spectrumRGB };
-                    } else if (command.params.color.hasOwnProperty('spectrumHSV')) {
-                        params['color'] = { spectrumHsv: command.params.color.spectrumHSV};
+                    if (command.params.color.hasOwnProperty('temperature') || command.params.color.hasOwnProperty('temperatureK')) {
+                        const temperature = command.params.color.hasOwnProperty('temperature')  ? command.params.color.temperature : command.params.color.temperatureK;
+                        delete orig_device.states.color['spectrumRgb'];
+                        delete me.states.color['spectrumRgb'];
+                        delete orig_device.states.color['spectrumHsv'];
+                        delete me.states.color['spectrumHsv'];
+                        if (!me.states.color.hasOwnProperty("temperatureK")) {
+                            me.states.color = { temperatureK: temperature-1 };
+                        }
+                        params['color'] = { temperatureK: temperature };
+                    } else if (command.params.color.hasOwnProperty('spectrumRGB') || command.params.color.hasOwnProperty('spectrumRgb')) {
+                        const spectrum_RGB = command.params.color.hasOwnProperty('spectrumRGB') ? command.params.color.spectrumRGB : command.params.color.spectrumRgb;
+                        delete orig_device.states.color['temperatureK'];
+                        delete me.states.color['temperatureK'];
+                        delete orig_device.states.color['spectrumHsv'];
+                        delete me.states.color['spectrumHsv'];
+                        if (!me.states.color.hasOwnProperty("spectrumRgb")) {
+                            me.states.color = { spectrumRgb: spectrum_RGB-1 };
+                        }
+                        params['color'] = { spectrumRgb: spectrum_RGB };
+                    } else if (command.params.color.hasOwnProperty('spectrumHSV') || command.params.color.hasOwnProperty('spectrumHsv')) {
+                        const spectrum_HSV = command.params.color.hasOwnProperty('spectrumHSV') ? command.params.color.spectrumHSV : command.params.color.spectrumHsv;
+                        delete orig_device.states.color['temperatureK'];
+                        delete me.states.color['temperatureK'];
+                        delete orig_device.states.color['spectrumRgb'];
+                        delete me.states.color['spectrumRgb'];
+                        if (!me.states.color.hasOwnProperty("spectrumHsv")) {
+                            me.states.color = { spectrumHsv: {
+                                hue: spectrum_HSV.hue-1,
+                                saturation: spectrum_HSV.saturation-1,
+                                value: spectrum_HSV.value-1
+                            } };
+                        }
+                        params['color'] = { spectrumHsv: {
+                            hue: spectrum_HSV.hue,
+                            saturation: spectrum_HSV.saturation,
+                            value: spectrum_HSV.value
+                        } };
                     }
                     executionStates.push('color');
                 }
@@ -2649,5 +2650,5 @@ module.exports = function(RED) {
         }
     }
 
-    RED.nodes.registerType("google-device", MultiNode);
+    RED.nodes.registerType("google-device", DeviceNode);
 }
