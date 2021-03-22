@@ -410,10 +410,10 @@
                     this.trait.temperaturecontrol = true;
                     break;
                 case "REMOTECONTROL": // Remote control
-                    this.trait.inputselector	 = true;
-                    this.trait.mediastate	 = true;
-                    this.trait.onoff	 = true;
-                    this.trait.transportcontrol	 = true;
+                    this.trait.inputselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.onoff = true;
+                    this.trait.transportcontrol = true;
                     this.trait.volume = true;
                     break;
                 case "ROUTER": // Router
@@ -638,10 +638,6 @@
                         name: name
                     },
                     willReportState: true,
-                    otherDeviceIds: [{
-                        deviceId: "local-" + client.id,
-                        authToken: "123" // TODO
-                    }],
                     attributes: {
                     },
                     deviceInfo: {
@@ -1036,7 +1032,7 @@
         }
 
         updateStatusIcon() {
-            let text = 'Unknown';
+            let text = '';
             let fill = 'red';
             let shape = 'dot';
             if (this.states.online) {
@@ -1076,17 +1072,44 @@
                         fill = "green";
                         text = thermostat_mode.substr(0, 1).toUpperCase() + st;
                     }
+                } else if (this.device_type === "SENSOR") {
+                    if (this.trait.brightness) {
+                        text += ' bri ' + this.states.brightness;  
+                    }
+                    if (this.trait.temperaturecontrol) {
+                        text += ' ' + this.states.temperatureAmbientCelsius + "\xB0C";  
+                    }
+                    if (this.trait.humiditysetting) {
+                        text += ' ' + this.states.humidityAmbientPercent + "% ";
+                    }
+                    if (this.trait.openclose) {
+                        if (this.states.openPercent !== undedined) {
+                            text += ' ' + this.states.humidityAmbientPercent + "% ";
+                        }
+                    }
                 } else {
-                    if (this.states.on) {
+                    if (this.trait.onoff) {
+                        if (this.states.on) {
+                            fill = "green";
+                            text = "ON";
+                        } else {
+                            text = "OFF";
+                        }
+                    }
+                    if (!text ) {
                         fill = "green";
                         text = "ON";
-                    } else {
-                        text = "OFF";
                     }
                 }
             } else {
                 shape = 'ring';
                 text = "offline";
+            }
+            if (!text ){
+                text = 'Unknown';
+            }
+            if (this.trait.energystorage) {
+                text += ' ' + this.states.descriptiveCapacityRemaining;
             }
             this.status({fill: fill, shape: shape, text: text});    
         }

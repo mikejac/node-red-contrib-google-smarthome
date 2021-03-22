@@ -2272,8 +2272,8 @@
                         required_traits = ["armdisarm"];
                         break;
                     case "SENSOR": // Sensor
-                        recommended_traits = ["energystorage"];
-                        required_traits = ["sensorstate"];
+                        recommended_traits = ["sensorstate", "energystorage", 'humiditysetting', 'temperaturecontrol', 'openclose', 'brightness'];
+                        required_traits = [];
                         break;
                     case "SETTOP": // Settop
                         recommended_traits = ["volume", "onoff"];
