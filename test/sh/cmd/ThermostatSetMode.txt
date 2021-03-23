@@ -1,0 +1,3 @@
+{
+    "thermostatMode": "PARAM1"
+}

@@ -309,7 +309,8 @@
 
 <script type="text/x-red" data-help-name="google-media">
     <p>A Google Smart Home Media Devices.</p>
-    <p>Supported devices:
+
+    <h3>Supported devices</h3>
         <ul>
             <li><b>Audio Video Receiver</b>: Device that takes audio input (for example, HDMI, optical, and RCA) and outputs sound to one or more speakers.</li>
             <li><b>Remote Control</b>: Media remotes are used to control media devices. Examples of this device type include hubs, universal remotes, and media controllers.</li>
@@ -455,20 +456,20 @@
             <dd>Load the modes from the file.</dd>
         </dl>
 
-        <p>If <code>msg.topic</code> is <code>traits</code> and the <code>msg.payload</code> is a string or a json object, the available traits are saved to the file.</p>
+        <p>If <code>msg.topic</code> is <code>toggles</code> and the <code>msg.payload</code> is a string or a json object, the available toggles are saved to the file.</p>
         <dl class="message-properties">
             <dt>payload
                 <span class="property-type">string | json</span>
             </dt>
-            <dd>Save the traits to the file.</dd>
+            <dd>Save the toggles to the file.</dd>
         </dl>
 
-        <p>If <code>msg.topic</code> is <code>traits</code> and the <code>msg.payload</code> is not defined, the available traits are loaded from the file.</p>
+        <p>If <code>msg.topic</code> is <code>toggles</code> and the <code>msg.payload</code> is not defined, the available toggles are loaded from the file.</p>
         <dl class="message-properties">
             <dt>payload
                 <span class="property-type">undefined</span>
             </dt>
-            <dd>Load the traits from the file.</dd>
+            <dd>Load the toggles from the file.</dd>
         </dl>
 
         <p>If <code>msg.topic</code> is something other than the above topics then <code>msg.payload</code> must be an object and tells both the on state as well as the online state of the media.</p>

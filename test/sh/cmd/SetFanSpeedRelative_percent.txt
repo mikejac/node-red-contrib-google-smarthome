@@ -1,0 +1,3 @@
+{
+    "fanSpeedRelativePercent": PARAM1
+}

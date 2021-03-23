@@ -1,0 +1,3 @@
+{
+    "rotationDegrees": PARAM1
+}

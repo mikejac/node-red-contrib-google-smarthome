@@ -1,0 +1,4 @@
+{
+    "channelCode": "PARAM1",
+    "channelName": "PARAM2"
+}

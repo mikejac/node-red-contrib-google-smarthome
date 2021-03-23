@@ -1,0 +1,3 @@
+{
+    "humidityRelativeWeight": PARAM1
+}

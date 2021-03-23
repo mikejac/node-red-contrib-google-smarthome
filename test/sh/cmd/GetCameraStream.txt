@@ -1,0 +1,6 @@
+{
+	"StreamToChromecast": PARAM1,
+	"SupportedStreamProtocols": [
+		PARAM2
+	]
+}

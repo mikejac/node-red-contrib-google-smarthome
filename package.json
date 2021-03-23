@@ -3,7 +3,9 @@
   "version": "0.0.62",
   "description": "Lets you control Node-Red via Google Assistant or the Google Home App",
   "main": "google-smarthome.js",
-  "scripts": {},
+  "scripts": {
+    "test": "mocha \"test/**/*_spec.js\""
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mikejac/node-red-contrib-google-smarthome.git"
@@ -22,6 +24,7 @@
       "outlet": "devices/outlet.js",
       "camera": "devices/camera.js",
       "media": "devices/media.js",
+      "device": "devices/device.js",
       "scene": "devices/scene.js",
       "shutter": "devices/shutter.js",
       "thermostat": "devices/thermostat.js",
@@ -56,6 +59,11 @@
     "uuid-token-generator": "^1.0.x",
     "util": "^0.12.x",
     "path": "^0.12.x"
+  },
+  "devDependencies": {
+    "mocha": "^8.3.2",
+    "node-red": "^1.2.9",
+    "node-red-node-test-helper": "^0.2.7"
   },
   "maintainers": [
     {

@@ -1,0 +1,10 @@
+{
+    "color": {
+        "name": "PARAM1",
+        "spectrumHSV": {
+            "hue": PARAM2,
+            "saturation": PARAM3,
+            "value": PARAM4
+      }
+    }
+}

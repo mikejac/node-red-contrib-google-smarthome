@@ -1,0 +1,4 @@
+{
+    "openRelativePercent": PARAM1,
+    "openDirection": "PARAM2"
+}

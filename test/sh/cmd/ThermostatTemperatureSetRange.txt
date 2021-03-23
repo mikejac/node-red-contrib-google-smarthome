@@ -1,0 +1,4 @@
+{
+    "thermostatTemperatureSetpointHigh": PARAM1,
+    "thermostatTemperatureSetpointLow": PARAM2
+}
