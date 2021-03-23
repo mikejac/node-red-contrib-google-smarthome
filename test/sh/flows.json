@@ -41,7 +41,7 @@
         "type": "debug",
         "z": "2ff30f68.b93d4",
         "name": "",
-        "active": false,
+        "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -50,7 +50,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 750,
-        "y": 140,
+        "y": 100,
         "wires": []
     },
     {
@@ -64,7 +64,7 @@
         "initialize": "",
         "finalize": "",
         "x": 360,
-        "y": 80,
+        "y": 220,
         "wires": [
             [
                 "98599ced.c9cc6"
@@ -81,8 +81,8 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 360,
-        "y": 120,
+        "x": 380,
+        "y": 140,
         "wires": [
             [
                 "98599ced.c9cc6"
@@ -110,8 +110,8 @@
         "topic": "AvailableChannels",
         "payload": "[{\"key\":\"rai1\",\"names\":[\"Rai 1\"],\"number\":\"1\"},{\"key\":\"rai1_hd\",\"names\":[\"Rai 1 HD\"],\"number\":\"501\"},{\"key\":\"rai2\",\"names\":[\"Rai 2\"],\"number\":\"2\"},{\"key\":\"rai2_hd\",\"names\":[\"Rai 2 HD\"],\"number\":\"502\"},{\"key\":\"rai3\",\"names\":[\"Rai 3\"],\"number\":\"3\"},{\"key\":\"rai3_hd\",\"names\":[\"Rai 3 HD\"],\"number\":\"503\"},{\"key\":\"realtime\",\"names\":[\"Realtime\"],\"number\":\"31\"}]",
         "payloadType": "json",
-        "x": 150,
-        "y": 160,
+        "x": 130,
+        "y": 80,
         "wires": [
             [
                 "98599ced.c9cc6"
@@ -139,8 +139,8 @@
         "topic": "AvailableModes",
         "payload": "[{\"name\":\"load_mode\",\"name_values\":[{\"name_synonym\":[\"load\",\"size\",\"load size\"],\"lang\":\"en\"}],\"settings\":[{\"setting_name\":\"small_load\",\"setting_values\":[{\"setting_synonym\":[\"small\",\"half\"],\"lang\":\"en\"}]},{\"setting_name\":\"medium_load\",\"setting_values\":[{\"setting_synonym\":[\"medium\",\"normal\"],\"lang\":\"en\"}]},{\"setting_name\":\"large_load\",\"setting_values\":[{\"setting_synonym\":[\"large\",\"full\"],\"lang\":\"en\"}]}],\"ordered\":true},{\"name\":\"temp_mode\",\"name_values\":[{\"name_synonym\":[\"temperature\",\"temp\"],\"lang\":\"en\"}],\"settings\":[{\"setting_name\":\"hot_temp\",\"setting_values\":[{\"setting_synonym\":[\"hot\",\"white\"],\"lang\":\"en\"}]},{\"setting_name\":\"warm_temp\",\"setting_values\":[{\"setting_synonym\":[\"warm\",\"color\"],\"lang\":\"en\"}]},{\"setting_name\":\"cold_temp\",\"setting_values\":[{\"setting_synonym\":[\"cold\",\"delicate\"],\"lang\":\"en\"}]}],\"ordered\":false}]",
         "payloadType": "json",
-        "x": 140,
-        "y": 200,
+        "x": 120,
+        "y": 360,
         "wires": [
             [
                 "98599ced.c9cc6"
@@ -168,8 +168,8 @@
         "topic": "AvailableToggles",
         "payload": "[\"quiet\",{\"key\":\"extra_bass\",\"names\":[\"Extra bass\",\"Loud bass\",\"Powerful bass\"]},{\"names\":[\"Energy Saving\",\"Low Energy\"]}]",
         "payloadType": "json",
-        "x": 150,
-        "y": 40,
+        "x": 130,
+        "y": 400,
         "wires": [
             [
                 "4d3983f6.6f373c"
@@ -197,8 +197,8 @@
         "topic": "AvailableInputs",
         "payload": "[\"hdmi 1\",{\"key\":\"hdmi_2\",\"names\":[\"hdmi 2\",\"Second HDMI\",\"DVD Reader\",\"DVD\"]},{\"names\":[\"hdmi 3\",\"Third HDMI\",\"Playstation 5\",\"PS5\"]}]",
         "payloadType": "json",
-        "x": 140,
-        "y": 80,
+        "x": 120,
+        "y": 320,
         "wires": [
             [
                 "2cfd736e.156d5c"
@@ -226,8 +226,8 @@
         "topic": "AvailableApplications",
         "payload": "[\"YouTube\",{\"key\":\"video\",\"names\":[\"Google Vide\",\"Video\"]},{\"names\":[\"Amazon Prime Video\",\"Prime Video\"]}]",
         "payloadType": "json",
-        "x": 160,
-        "y": 120,
+        "x": 140,
+        "y": 40,
         "wires": [
             [
                 "2cfd736e.156d5c"
@@ -416,7 +416,22 @@
         "command_only_fanspeed": false,
         "available_fan_speeds_file": "availableFanSpeeds.json",
         "trait_sensorstate": true,
-        "sensor_state_supported_file": "sensorStatesSupported.json",
+        "sensor_states_supported": [
+            "AirQuality",
+            "CarbonMonoxideLevel",
+            "SmokeLevel",
+            "FilterCleanliness",
+            "WaterLeak",
+            "RainDetection",
+            "FilterLifeTime",
+            "PreFilterLifeTime",
+            "HEPAFilterLifeTime",
+            "Max2FilterLifeTime",
+            "CarbonDioxideLevel",
+            "PM2.5",
+            "PM10",
+            "VolatileOrganicCompounds"
+        ],
         "trait_fill": true,
         "available_fill_levels_file": "availableFillLevels.json",
         "supports_fill_percent": false,
@@ -442,7 +457,7 @@
         "supports_network_upload_speedtest": false,
         "trait_objectdetection": true,
         "show_trait": "all",
-        "advanced_settings": false,
+        "advanced_settings": true,
         "x": 570,
         "y": 140,
         "wires": [
@@ -463,7 +478,7 @@
         "overwriteFile": "true",
         "encoding": "none",
         "x": 930,
-        "y": 180,
+        "y": 140,
         "wires": [
             [
                 "89f69645.1a45b8"
@@ -491,8 +506,8 @@
         "topic": "AvailableFanSpeeds",
         "payload": "[{\"speed_name\":\"speed_low\",\"speed_values\":[{\"speed_synonym\":[\"low\",\"slow\"],\"lang\":\"en\"}]},{\"speed_name\":\"speed_high\",\"speed_values\":[{\"speed_synonym\":[\"high\",\"fast\"],\"lang\":\"en\"}]}]",
         "payloadType": "json",
-        "x": 160,
-        "y": 240,
+        "x": 140,
+        "y": 200,
         "wires": [
             [
                 "98599ced.c9cc6"
@@ -520,8 +535,8 @@
         "topic": "AvailableFillLevels",
         "payload": "{\"levels\":[{\"level_name\":\"half_level\",\"level_values\":[{\"level_synonym\":[\"half\",\"half way\",\"one half\"],\"lang\":\"en\"}]},{\"level_name\":\"full_level\",\"level_values\":[{\"level_synonym\":[\"full\",\"all the way\",\"complete\"],\"lang\":\"en\"}]}],\"ordered\":true}",
         "payloadType": "json",
-        "x": 150,
-        "y": 280,
+        "x": 130,
+        "y": 240,
         "wires": [
             [
                 "98599ced.c9cc6"
@@ -539,7 +554,7 @@
         "initialize": "",
         "finalize": "",
         "x": 760,
-        "y": 180,
+        "y": 140,
         "wires": [
             [
                 "d9cab54c.ddfd38"
@@ -559,7 +574,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 1110,
-        "y": 180,
+        "y": 140,
         "wires": []
     },
     {
@@ -583,8 +598,8 @@
         "topic": "AvailableFoodPresets",
         "payload": "[{\"food_preset_name\":\"white_rice\",\"supported_units\":[\"CUPS\"],\"food_synonyms\":[{\"synonym\":[\"White Rice\",\"Rice\"],\"lang\":\"en\"}]},{\"food_preset_name\":\"brown_rice\",\"supported_units\":[\"CUPS\"],\"food_synonyms\":[{\"synonym\":[\"Brown Rice\"],\"lang\":\"en\"}]}]",
         "payloadType": "json",
-        "x": 160,
-        "y": 320,
+        "x": 140,
+        "y": 280,
         "wires": [
             [
                 "98599ced.c9cc6"
@@ -595,7 +610,7 @@
         "id": "e672653f.82e6b8",
         "type": "inject",
         "z": "2ff30f68.b93d4",
-        "name": "guestNetworkPassword",
+        "name": "GuestNetworkPassword",
         "props": [
             {
                 "p": "payload"
@@ -609,11 +624,11 @@
         "crontab": "",
         "once": true,
         "onceDelay": "10",
-        "topic": "guestNetworkPassword",
+        "topic": "GuestNetworkPassword",
         "payload": "1234567890",
         "payloadType": "str",
-        "x": 170,
-        "y": 360,
+        "x": 150,
+        "y": 480,
         "wires": [
             [
                 "98599ced.c9cc6"
@@ -641,8 +656,8 @@
         "topic": "SupportedDispenseItems",
         "payload": "[{\"item_name\":\"water\",\"item_name_synonyms\":[{\"lang\":\"en\",\"synonyms\":[\"water\"]}],\"supported_units\":[\"TEASPOONS\",\"TABLESPOONS\",\"FLUID_OUNCES\",\"CUPS\",\"PINTS\",\"QUARTS\",\"GALLONS\",\"MILLILITERS\",\"LITERS\",\"DECILITERS\"],\"default_portion\":{\"amount\":2,\"unit\":\"CUPS\"}}]",
         "payloadType": "json",
-        "x": 170,
-        "y": 400,
+        "x": 150,
+        "y": 120,
         "wires": [
             [
                 "98599ced.c9cc6"
@@ -670,8 +685,8 @@
         "topic": "SupportedDispensePresets",
         "payload": "[{\"preset_name\":\"cat_bowl\",\"preset_name_synonyms\":[{\"lang\":\"en\",\"synonyms\":[\"cat water bowl\",\"cat water dish\",\"cat water cup\"]}]},{\"preset_name\":\"glass_1\",\"preset_name_synonyms\":[{\"lang\":\"en\",\"synonyms\":[\"glass of water\",\"glass\"]}]}]",
         "payloadType": "json",
-        "x": 180,
-        "y": 440,
+        "x": 160,
+        "y": 160,
         "wires": [
             [
                 "98599ced.c9cc6"
@@ -699,8 +714,8 @@
         "topic": "DispenseItems",
         "payload": "[{\"itemName\":\"water\",\"amountRemaining\":{\"amount\":0,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":0,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"cat_bowl\",\"amountRemaining\":{\"amount\":0,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":0,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"glass_1\",\"amountRemaining\":{\"amount\":0,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":0,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false}]",
         "payloadType": "json",
-        "x": 140,
-        "y": 480,
+        "x": 120,
+        "y": 520,
         "wires": [
             [
                 "98599ced.c9cc6"
@@ -728,8 +743,8 @@
         "topic": "ObjectDetection",
         "payload": "{\"named\":\"Alice\"}",
         "payloadType": "json",
-        "x": 150,
-        "y": 520,
+        "x": 130,
+        "y": 560,
         "wires": [
             [
                 "98599ced.c9cc6"
@@ -743,7 +758,7 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 790,
+        "x": 670,
         "y": 320,
         "wires": []
     },
@@ -756,7 +771,7 @@
         "method": "post",
         "upload": false,
         "swaggerDoc": "",
-        "x": 480,
+        "x": 360,
         "y": 320,
         "wires": [
             [
@@ -775,7 +790,7 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 640,
+        "x": 480,
         "y": 260,
         "wires": [
             [
@@ -793,7 +808,7 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 640,
+        "x": 520,
         "y": 320,
         "wires": [
             [

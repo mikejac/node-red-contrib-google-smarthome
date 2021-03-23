@@ -1078,8 +1078,23 @@
 
         <div id="trait_sensorstate">
             <div class="form-row">
-                <label for="node-input-sensor_state_supported_file"><i class="fa fa-file"></i> <span data-i18n="device.label.sensor_state_supported_file"></span></label>
-                <input type="text" id="node-input-sensor_state_supported_file" data-i18n="[placeholder]device.placeholder.sensor_state_supported_file">
+                <label for="node-input-sensor_states_supported"><i class="fa fa-tag"></i> <span data-i18n="device.label.sensor_states_supported"></span></label>
+                <select multiple id="node-input-sensor_states_supported" >
+                    <option value="AirQuality" data-i18n="device.label.air_quality"></option>
+                    <option value="CarbonMonoxideLevel" data-i18n="device.label.carbon_monoxide_level"></option>
+                    <option value="SmokeLevel" data-i18n="device.label.smoke_level"></option>
+                    <option value="FilterCleanliness" data-i18n="device.label.filter_cleanliness"></option>
+                    <option value="WaterLeak" data-i18n="device.label.water_leak"></option>
+                    <option value="RainDetection" data-i18n="device.label.rain_detection"></option>
+                    <option value="FilterLifeTime" data-i18n="device.label.filter_life_time"></option>
+                    <option value="PreFilterLifeTime" data-i18n="device.label.pre_filter_life_time"></option>
+                    <option value="HEPAFilterLifeTime" data-i18n="device.label.hepa_filter_life_time"></option>
+                    <option value="Max2FilterLifeTime" data-i18n="device.label.max2_filter_life_time"></option>
+                    <option value="CarbonDioxideLevel" data-i18n="device.label.carbon_dioxide_level"></option>
+                    <option value="PM2.5" data-i18n="device.label.PM2_5"></option>
+                    <option value="PM10" data-i18n="device.label.PM10"></option>
+                    <option value="VolatileOrganicCompounds" data-i18n="device.label.volatile_organic_compounds"></option>
+                </select>
             </div>
         </div>
     </div>
@@ -1819,8 +1834,8 @@
             trait_sensorstate: {
                 value: false, required:false
             },
-            sensor_state_supported_file:  {
-                value: 'sensorStatesSupported.json', required:false
+            sensor_states_supported: {
+                value: [], required:false
             },
             trait_fill: {
                 value: false, required:false

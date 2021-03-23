@@ -210,8 +210,7 @@
             // Scene
             this.scene_reversible                           = config.scene_reversible;
             // SensorState 
-            this.sensor_state_supported_file                = config.sensor_state_supported_file;
-            this.sensor_state_supported                     = [];
+            this.sensor_states_supported                    = config.sensor_states_supported;
             // SoftwareUpdate 
             // StartStop
             this.pausable                                   = config.pausable;
@@ -578,13 +577,6 @@
                 this.debug(".constructor: Modes disabled");
             }
 
-            if (this.trait.sensorstate) {
-                this.sensor_state_supported = this.loadJson('SensorState', this.sensor_state_supported_file, []);
-            } else {
-                this.available_toggles = [];
-                this.debug(".constructor: SensorState disabled");
-            }
-
             if (this.trait.toggles) {
                 this.available_toggles = this.loadJson('Toggles', this.toggles_file, []);
             } else {
@@ -781,7 +773,108 @@
                 attributes['sceneReversible'] = me.scene_reversible;
             }
             if (me.trait.sensorstate) {
-                attributes['sensorStatesSupported'] = me.sensor_state_supported;
+                let sensor_states_supported = [];
+                me.sensor_states_supported.forEach(function(sensor_state_name) {
+                    let sensor_state_supported = { name: sensor_state_name };
+                    let available_states = undefined;
+                    let raw_value_uUnit = undefined;
+                    switch (sensor_state_name) {
+                        case "AirQuality":
+                            available_states = [
+                                "healthy", 
+                                "moderate", 
+                                "unhealthy", 
+                                "unhealthy for sensitive groups", 
+                                "very unhealthy", 
+                                "hazardous", 
+                                "good", 
+                                "fair", 
+                                "poor", 
+                                "very poor", 
+                                "severe", 
+                                "unknown"
+                            ];
+                            raw_value_uUnit ='AQI';
+                            break;
+                        case "CarbonMonoxideLevel":
+                            available_states = [
+                                "carbon monoxide detected", 
+                                "high", 
+                                "no carbon monoxide detected", 
+                                "unknown"
+                            ];
+                            raw_value_uUnit ='PARTS_PER_MILLION';
+                            break;
+                        case "SmokeLevel":
+                            available_states = [
+                                "smoke detected", 
+                                "high", 
+                                "no smoke detected", 
+                                "unknown"
+                            ];
+                            raw_value_uUnit ='PARTS_PER_MILLION';
+                            break;
+                        case "FilterCleanliness":
+                            available_states = [
+                                "clean", 
+                                "dirty", 
+                                "needs replacement", 
+                                "unknown"
+                            ];
+                            break;
+                        case "WaterLeak":
+                            available_states = [
+                                "leak", 
+                                "no leak", 
+                                "unknown"
+                            ];
+                            break;
+                        case "RainDetection":
+                            available_states = [
+                                "rain detected", 
+                                "no rain detected", 
+                                "unknown"
+                            ];
+                            break;
+                        case "FilterLifeTime":
+                            available_states = [
+                                "new", 
+                                "good", 
+                                "replace soon", 
+                                "replace now", 
+                                "unknown"
+                            ];
+                            raw_value_uUnit ='PERCENTAGE';
+                            break;
+                        case "PreFilterLifeTime":
+                        case "HEPAFilterLifeTime":
+                        case "Max2FilterLifeTime":
+                            raw_value_uUnit ='PERCENTAGE';
+                            break;
+                        case "CarbonDioxideLevel":
+                            raw_value_uUnit ='PARTS_PER_MILLION';
+                            break;
+                        case "PM2.5":
+                        case "PM10":
+                            raw_value_uUnit ='MICROGRAMS_PER_CUBIC_METER';
+                            break;
+                        case "VolatileOrganicCompounds":
+                            raw_value_uUnit ='PARTS_PER_MILLION';
+                            break;
+                    }
+                    if (available_states !== undefined) {
+                        sensor_state_supported['descriptiveCapabilities'] = {
+                            availableStates: available_states
+                        };
+                    }
+                    if (raw_value_uUnit !== undefined) {
+                        sensor_state_supported['numericCapabilities'] = {
+                            rawValueUnit: raw_value_uUnit
+                        };
+                    }
+                    sensor_states_supported.push(sensor_state_supported);
+                });
+                attributes['sensorStatesSupported'] = sensor_states_supported;
             }
             if (me.trait.startstop) {
                 attributes['pausable'] = me.pausable;
@@ -968,7 +1061,62 @@
                 states['currentCycleRemainingTime'] = 0;
             }
             if (me.trait.sensorstate) {
-                states['currentSensorStateData'] = [];
+                let current_sensor_state_data = [];
+                me.sensor_states_supported.forEach(function(sensor_state_name) {
+                    let current_sensor = { name: sensor_state_name };
+                    let current_sensor_state = undefined;
+                    let raw_value = undefined;
+                    switch (sensor_state_name) {
+                        case "AirQuality":
+                            current_sensor_state = "unknown";
+                            raw_value = 0;
+                            break;
+                        case "CarbonMonoxideLevel":
+                            current_sensor_state = "unknown";
+                            raw_value = 0;
+                            break;
+                        case "SmokeLevel":
+                            current_sensor_state = "unknown";
+                            raw_value = 0;
+                            break;
+                        case "FilterCleanliness":
+                            current_sensor_state = "unknown";
+                            break;
+                        case "WaterLeak":
+                            current_sensor_state = "unknown";
+                            break;
+                        case "RainDetection":
+                            current_sensor_state = "unknown";
+                            break;
+                        case "FilterLifeTime":
+                            current_sensor_state = "unknown";
+                            raw_value = 0;
+                            break;
+                        case "PreFilterLifeTime":
+                        case "HEPAFilterLifeTime":
+                        case "Max2FilterLifeTime":
+                            raw_value = 0;
+                            break;
+                        case "CarbonDioxideLevel":
+                            raw_value = 0;
+                            break;
+                        case "PM2.5":
+                        case "PM10":
+                            raw_value = 0;
+                            break;
+                        case "VolatileOrganicCompounds":
+                            raw_value = 0;
+                            break;
+                    }
+                    if (current_sensor_state !== undefined) {
+                        current_sensor['currentSensorState'] = current_sensor_state;
+                    }
+                    if (raw_value !== undefined) {
+                        current_sensor['rawValue'] = raw_value;
+                    }
+                    current_sensor_state_data.push(current_sensor);
+                });
+                states['currentSensorStateData'] = current_sensor_state_data;
             }
             if (me.trait.softwareupdate) {
                 states['lastSoftwareUpdateUnixTimestampSec'] = 0;
@@ -1340,21 +1488,6 @@
                     } else {
                         this.available_modes = [];
                         RED.log.error("Modes disabled");
-                    }
-                } else if (topic.toUpperCase() === 'SUPPORTEDESENSORSTATES') {
-                    if (this.trait.sensorstate) {
-                        if (typeof msg.payload === 'undefined') {
-                            this.sensor_state_supported = this.loadJson('Sensor states', this.sensor_state_supported_file, []);
-                        } else {
-                            if (!this.writeJson('Sensor states', this.sensor_state_supported_file, msg.payload)) {
-                                RED.log.error("Error saving Sensor states to file " + this.sensor_state_supported_file);
-                            } else {
-                                this.sensor_state_supported = msg.payload;
-                            }
-                        }
-                    } else {
-                        this.sensor_state_supported = [];
-                        RED.log.error("Sensor states disabled");
                     }
                 } else if (topic.toUpperCase() === 'AVAILABLETOGGLES') {
                     if (this.trait.toggles) {
