@@ -254,6 +254,10 @@
             this.level_step_size                            = parseInt(config.level_step_size) || 1;
             this.command_only_volume                        = config.command_only_volume;
 
+            if (this.device_type != 'SCENE') {
+                this.trait.scene = false;
+            }
+
             // Sets required traits
             switch (this.device_type) {
                 case "AC_UNIT": // Air conditioning unit
@@ -420,6 +424,9 @@
                     break;
                 case "SCENE": // Scene
                     this.trait.scene = true;
+                    this.trait = {
+                        scene: config.trait_scene || false
+                    };
                     break;
                 case "SECURITYSYSTEM": // Security system
                     this.trait.armdisarm = true;
