@@ -18,23 +18,28 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+. ./data
+. ./code
+
 NODE_ID="98599ced.c9cc6"
 PAYLOAD_FILE="$HOME/payload.json"
 OUT_FILE="$HOME/out.json"
+PAYLOAD_URL=$(dirname $BASE_URL)/payload
 
 ./refresh_token
 
 dos2unix cmd/* 2>/dev/null
 
 test_json() {
-    STR=$1
-    JPATH=$2
-    VAL=$3
+    TYPE=$1
+    STR=$2
+    JPATH=$3
+    VAL=$4
     V=$(echo $STR | jq $JPATH)
     if [ "$V" != "$VAL" ] ; then
         echo
         echo "CMD: ./execute $CMD_EXEC"
-        echo "Response: $STR"
+        echo "$TYPE: $STR"
         echo "JSON tag: $JPATH"
         echo "Value expected: $VAL"
         echo "Value found: $V"
@@ -47,17 +52,18 @@ test_json() {
 }
 
 test_out() {
-    test_json "$OUT" "$@"
+    test_json Response "$OUT" "$@"
 }
 
 test_payload() {
-    test_json "$PAYLOAD" "$@"
+    test_json Payload "$PAYLOAD" "$@"
 }
 
 test_no_payload() {
     if [ "$PAYLOAD" != "{}" ] ; then
         echo
-        echo "CMD: ./exec $CMD_EXEC"
+        echo test no payload failed
+        echo "CMD: ./execute $CMD_EXEC"
         echo "Value expected: {}"
         echo "Value found: $PAYLOAD"
         echo ERROR
@@ -65,6 +71,32 @@ test_no_payload() {
         cat request.json
         exit 2
     fi
+}
+
+execute_payload() {
+    CMD_EXEC="$@"
+    echo "$@" > request.json
+    TOPIC="$1"
+    PAYLOAD="$2"
+    if [ -z "$PAYLOAD" ] ; then
+        PAYLOAD ="$1"
+        TOPIC=""
+    fi
+    REQUEST="{\"payload\": $PAYLOAD, \"topic\": \"$TOPIC\"}"
+    echo $REQUEST
+    echo "{}" > "$PAYLOAD_FILE" 
+    curl -s \
+        -H "Content-Type: application/json;charset=UTF-8" \
+        --data "$REQUEST" \
+        $PAYLOAD_URL  > "$OUT_FILE"
+    OUT=$(cat  "$OUT_FILE")
+    if [ "$OUT" != "OK" ] ; then
+        echo ERROR
+        echo "Result $OUT"
+        echo "Request: "
+        echo $REQUEST
+    fi
+    PAYLOAD=$(cat "$PAYLOAD_FILE")
 }
 
 execute() {
@@ -77,7 +109,7 @@ execute() {
     echo "{}" > "$PAYLOAD_FILE" 
     ./execute "$@" > "$OUT_FILE"
     OUT=$(cat  "$OUT_FILE")
-    sleep 1
+    #sleep 1
     PAYLOAD=$(cat "$PAYLOAD_FILE")
     test_out ".payload.commands[0].status" '"SUCCESS"'
     test_payload .online true
@@ -106,7 +138,9 @@ execute_error() {
     test_out ".payload.commands[0].status" '"ERROR"'
     test_no_payload
 }
-if [ 1 == 2 ] ; then
+# if [ 1 == 2 ] ; then
+# fi # fi
+
 # AppSelector 
 echo AppSelector
 execute $NODE_ID appInstall mia_application
@@ -184,7 +218,35 @@ test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://PROGRESSIVE_MP4"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"progressive_mp4"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
-test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_ID"'
+test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_APPID"'
+
+execute_no_payload $NODE_ID GetCameraStream true '"hls","dash","smooth_stream","progressive_mp4"'
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://PROGRESSIVE_MP4"'
+test_out ".payload.commands[0].states.cameraStreamProtocol" '"progressive_mp4"'
+test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
+test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_APPID"'
+
+execute_no_payload $NODE_ID GetCameraStream true '"hls"'
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://HLS"'
+test_out ".payload.commands[0].states.cameraStreamProtocol" '"hls"'
+test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
+test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"HLS_APPID"'
+
+execute_no_payload $NODE_ID GetCameraStream true '"dash"'
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://DASH"'
+test_out ".payload.commands[0].states.cameraStreamProtocol" '"dash"'
+test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
+test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"DASH_APPID"'
+
+execute_no_payload $NODE_ID GetCameraStream true '"smooth_stream"'
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://SMOOTH_STREAM"'
+test_out ".payload.commands[0].states.cameraStreamProtocol" '"smooth_stream"'
+test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
+test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"SMOOTH_STREAM_APPID"'
 
 # Channel 
 echo
@@ -264,22 +326,24 @@ test_out ".payload.commands[0].errorCode" '"transientError"'
 
 # Dispense 
 echo
-echo Dispense TODO
-execute $NODE_ID Dispense 1 "CUP" 'water'
-test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR??
+echo Dispense
+execute $NODE_ID Dispense 1 "CUPS" 'water'
+test_out ".payload.commands[0].status" '"SUCCESS"'
 
-execute $NODE_ID Dispense 1 'no_unit' "water"
-test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR?? 
-# test_out ".payload.commands[0].states.online" true
+execute_error $NODE_ID Dispense 1 'no_unit' "water"
+test_out ".payload.commands[0].errorCode" '"transientError"'
 
-execute $NODE_ID Dispense 1 'CUP' 'no_item'
-test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR??
+execute_error $NODE_ID Dispense 1 'CUPS' 'no_item'
+test_out ".payload.commands[0].errorCode" '"transientError"'
+
+execute_error $NODE_ID Dispense 1 'no_unit' 'no_item'
+test_out ".payload.commands[0].errorCode" '"transientError"'
 
 execute $NODE_ID Dispense_preset "cat_bowl"
 test_out ".payload.commands[0].status" '"SUCCESS"'
 
-execute $NODE_ID Dispense_preset "no_preset"
-test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR??
+execute_error $NODE_ID Dispense_preset "no_preset"
+test_out ".payload.commands[0].errorCode" '"transientError"'
 
 execute $NODE_ID Dispense_none 
 test_out ".payload.commands[0].status" '"SUCCESS"'
@@ -403,35 +467,48 @@ test_payload ".isLocked" false
 # Modes 
 echo
 echo Modes 
-execute $NODE_ID SetModes_all '"load_mode":"","temp_mode":""'
-test_payload ".currentModeSettings.load_mode" '""'
-test_payload ".currentModeSettings.temp_mode" '""'
+execute $NODE_ID SetModes_all '"load_mode":"medium_load","temp_mode":"hot_temp"'
+test_payload ".currentModeSettings.load_mode" '"medium_load"'
+test_payload ".currentModeSettings.temp_mode" '"hot_temp"'
 
 execute $NODE_ID SetModes "load_mode" "small_load"
 test_payload ".currentModeSettings.load_mode" '"small_load"'
-test_payload ".currentModeSettings.temp_mode" '""'
+test_payload ".currentModeSettings.temp_mode" '"hot_temp"'
 
 execute $NODE_ID SetModes "load_mode" "no_mode_value"
 test_payload ".currentModeSettings.load_mode" '"small_load"'
-test_payload ".currentModeSettings.temp_mode" '""'
+test_payload ".currentModeSettings.temp_mode" '"hot_temp"'
 
 execute $NODE_ID SetModes "no_mode" "no_mode_value"
 test_payload ".currentModeSettings.load_mode" '"small_load"'
-test_payload ".currentModeSettings.temp_mode" '""'
-
-execute $NODE_ID SetModes_all '"load_mode":"small_load","temp_mode":"hot_temp"'
-test_payload ".currentModeSettings.load_mode" '"small_load"'
 test_payload ".currentModeSettings.temp_mode" '"hot_temp"'
 
-# NetworkControl TODO
+execute $NODE_ID SetModes_all '"load_mode":"large_load","temp_mode":"cold_temp"'
+test_payload ".currentModeSettings.load_mode" '"large_load"'
+test_payload ".currentModeSettings.temp_mode" '"cold_temp"'
+
+execute $NODE_ID SetModes_all '"load_mode":"large_load","temp_mode":"cold_temp"'
+test_payload ".currentModeSettings.load_mode" '"large_load"'
+test_payload ".currentModeSettings.temp_mode" '"cold_temp"'
+
+# NetworkControl
 echo
 echo NetworkControl 
 execute $NODE_ID EnableDisableGuestNetwork true
+test_out ".payload.commands[0].states.guestNetworkEnabled" true
 
-execute $NODE_ID EnableDisableNetworkProfile "kids" true
+execute $NODE_ID EnableDisableGuestNetwork false
+test_out ".payload.commands[0].states.guestNetworkEnabled" false
 
-execute $NODE_ID GetGuestNetworkPassword
-# test_out ".payload.commands[0].guestNetworkPassword" '"PASSWORD"' TODO
+execute $NODE_ID EnableDisableNetworkProfile Kids true
+
+execute_error $NODE_ID EnableDisableNetworkProfile "NO PROFILE" true
+test_out ".payload.commands[0].errorCode" '"networkProfileNotRecognized"'
+
+execute $NODE_ID EnableDisableNetworkProfile Kids false
+
+execute_no_payload $NODE_ID GetGuestNetworkPassword
+test_out ".payload.commands[0].states.guestNetworkPassword" '"1234567890"'
 
 execute $NODE_ID TestNetworkSpeed true true
 
@@ -588,7 +665,7 @@ test_payload ".temperatureSetpointCelsius" 28.5
 
 execute $NODE_ID SetTemperature 16.5
 test_payload ".temperatureSetpointCelsius" 16.5
-fi # fi
+
 # TemperatureSetting 
 echo
 echo TemperatureSetting 
@@ -597,13 +674,23 @@ test_payload ".thermostatTemperatureSetpoint" 17.67
 test_payload ".thermostatTemperatureSetpointHigh" null
 test_payload ".thermostatTemperatureSetpointLow" null
 
+execute $NODE_ID ThermostatTemperatureSetpoint 17.55
+test_payload ".thermostatTemperatureSetpoint" 17.55
+test_payload ".thermostatTemperatureSetpointHigh" null
+test_payload ".thermostatTemperatureSetpointLow" null
+
 execute $NODE_ID ThermostatTemperatureSetRange 26.2 22.8
 test_payload ".thermostatTemperatureSetpoint" null
 test_payload ".thermostatTemperatureSetpointHigh" 26.2
 test_payload ".thermostatTemperatureSetpointLow" 22.8
 
-execute $NODE_ID ThermostatTemperatureSetpoint 27.67
-test_payload ".thermostatTemperatureSetpoint" 27.67
+execute $NODE_ID ThermostatTemperatureSetRange 27.2 21.8
+test_payload ".thermostatTemperatureSetpoint" null
+test_payload ".thermostatTemperatureSetpointHigh" 27.2
+test_payload ".thermostatTemperatureSetpointLow" 21.8
+
+execute $NODE_ID ThermostatTemperatureSetpoint 27.88
+test_payload ".thermostatTemperatureSetpoint" 27.88
 test_payload ".thermostatTemperatureSetpointHigh" null
 test_payload ".thermostatTemperatureSetpointLow" null
 

@@ -111,6 +111,11 @@ module.exports = function(RED) {
             }
         };
 
+        this.sendNotifications = function(client, notifications) {
+            RED.log.debug("GoogleSmartHomeNode:sendNotifications(): notifications = " + JSON.stringify(notifications));
+            node.app.SendNotifications(client.id, notifications);
+        };
+
         this.setState = function(client, state) {
             RED.log.debug("GoogleSmartHomeNode:setState(): state = " + JSON.stringify(state));
             node.app.SetState(client.id, state);
