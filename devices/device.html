@@ -2388,7 +2388,9 @@
                     if (required_traits.includes(div_id)) {
                         setTraitRequired(div_id);
                     } else {
-                        setTraitRecomended(div_id, recommended_traits.includes(div_id), show_trait);
+                        setTraitRecomended(div_id, 
+                            device_type === 'SCENE' ? false : recommended_traits.includes(div_id), 
+                            device_type === 'SCENE' ? 'none' : (div_id === 'scene' ? false : show_trait));
                         //setTraitRecomended(div_id);
                     }
                 });
