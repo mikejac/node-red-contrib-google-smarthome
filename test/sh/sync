@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+#
+# NodeRED Google SmartHome
+# Copyright (C) 2021 Claudio Chimera.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+. ./data
+. ./code
+
+RID=$(date +%s%N)
+
+SH_REQUEST="{\"inputs\":[{\"context\":{\"locale_country\":\"US\",\"locale_language\":\"en\"},\"intent\":\"action.devices.SYNC\"}],\"requestId\":\"$RID\"}"
+
+echo "$SH_REQUEST" > request.json
+
+curl -s \
+        -H "authorization: Bearer $ACCESS_TOKEN" \
+        -H "Content-Type: application/json;charset=UTF-8" \
+        --data "$SH_REQUEST" \
+        $BASE_URL/smarthome
+echo ""
