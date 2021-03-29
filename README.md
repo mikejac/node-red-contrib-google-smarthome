@@ -69,9 +69,9 @@ See the developer guide and release notes at https://developers.google.com/assis
 1. Choose type *Smart Home*, then click *Start Building*.
 1. From the top menu under *Develop*, click on *Invocation*.
 1. Enter your App's name. Click *Save*.
-1. On the *Develop* tab, choose *Actions* on the left menu. Enter the URL for fulfillment, e.g. https://example.com:3001/smarthome. Leave all other fields empty. Click *Save*.
+1. On the *Develop* tab, choose *Actions* on the left menu. Enter the URL for fulfilment, e.g. https://example.com:3001/smarthome. Leave all other fields empty. Click *Save*.
 1. Still on the *Develop* tab, choose *Account linking* on the left menu. Fill out the fields as following:
-    * Client ID and secret: Credentials, with wich Google will authenticate against your app. Use a password generator tool
+    * Client ID and secret: Credentials, with which Google will authenticate against your app. Use a password generator tool
       to generate two strings of reasonable length and complexity. Copy both strings, you'll need them later.
     * Authorization URL: is the hosted URL of your app with '/oauth' as the path, e.g. https://example.com:3001/oauth.
     * Token URL: is the hosted URL of your app with '/token' as the path, e.g. https://example.com:3001/token.
@@ -96,11 +96,11 @@ The HomeGraph API is used to report the state of your devices to Google and to r
 1. You don't need to add roles or user in the next steps.
 1. Your new service account is listed on the Credentials page. Click on it.
 1. Click on *Add Key* to create a new key of type JSON.
-1. Download the JSON file and copy it to your Node-RED server, in a location where the Node-RED service can read it.
+1. Download the JSON Web Token keyfile (jwt Key) and copy it to your Node-RED server, in a location where the Node-RED service can read it.
 
 #### Integrating Google Sign-In
 
-The Google Sign-In feature allows to login using your Google credentials. See [Integrating Google Sign-In into your web app](https://developers.google.com/identity/sign-in/web/sign-in) for more datails.
+The Google Sign-In feature allows to login using your Google credentials. See [Integrating Google Sign-In into your web app](https://developers.google.com/identity/sign-in/web/sign-in) for more details.
 If you want to use login with username/password instead, skip this section.
 
 1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
@@ -123,7 +123,7 @@ If you want to use login with username/password instead, skip this section.
     * Name: A name for your config node.
     * Use Google Login: Check, if you want to use authentication via Google Sign-In.
     * Login Client ID: If Google Login is enabled, the client id you gained from the *Google Sign-In* integration.
-    * Authorized emails: If Google Login is enabled, the email adresses, semicolon-separated, authorized to log in.  
+    * Authorized emails: If Google Login is enabled, the email addresses, semicolon-separated, authorized to log in.  
     * Username/Password: If Google Login is disabled, the credentials you want to use when linking your account in the Google Home App later. These are not the credentials to your Google account!
     * Client ID and Secret: The same strings you generated and entered on Google Search Console earlier.
     * Jwt Key: The JSON file you downloaded earlier. Can be an absolute path or a path relative to Node-REDs user dir.
@@ -839,7 +839,7 @@ Example flow:
 
   `Use http Node-RED root path`: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.
 
-  `Path`: Prefix for URLs provided by this module. Default fulfillment URL is https://example.com:3001/smarthome. With a
+  `Path`: Prefix for URLs provided by this module. Default fulfilment URL is https://example.com:3001/smarthome. With a
           path of "foo" this changes to https://example.com:3001/foo/smarthome. Same for URLs `/oauth` and `/token`.
 
   `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the *Google on Actions* project.
