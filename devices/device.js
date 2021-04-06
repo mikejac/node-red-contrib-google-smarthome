@@ -1238,7 +1238,7 @@
                         text += ' ' + this.states.humidityAmbientPercent + "% ";
                     }
                     if (this.trait.openclose) {
-                        if (this.states.openPercent !== undedined) {
+                        if (this.states.openPercent !== undefined) {
                             text += ' ' + this.states.humidityAmbientPercent + "% ";
                         }
                     }
