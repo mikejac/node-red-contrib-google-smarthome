@@ -69,7 +69,7 @@ See the developer guide and release notes at https://developers.google.com/assis
 1. Choose type *Smart Home*, then click *Start Building*.
 1. From the top menu under *Develop*, click on *Invocation*.
 1. Enter your App's name. Click *Save*.
-1. On the *Develop* tab, choose *Actions* on the left menu. Enter the URL for fulfilment, e.g. https://example.com:3001/smarthome. Leave all other fields empty. Click *Save*.
+1. On the *Develop* tab, choose *Actions* on the left menu. Enter the URL for fulfillment, e.g. https://example.com:3001/smarthome. Leave all other fields empty. Click *Save*.
 1. Still on the *Develop* tab, choose *Account linking* on the left menu. Fill out the fields as following:
     * Client ID and secret: Credentials, with which Google will authenticate against your app. Use a password generator tool
       to generate two strings of reasonable length and complexity. Copy both strings, you'll need them later.
@@ -839,7 +839,7 @@ Example flow:
 
   `Use http Node-RED root path`: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.
 
-  `Path`: Prefix for URLs provided by this module. Default fulfilment URL is https://example.com:3001/smarthome. With a
+  `Path`: Prefix for URLs provided by this module. Default fulfillment URL is https://example.com:3001/smarthome. With a
           path of "foo" this changes to https://example.com:3001/foo/smarthome. Same for URLs `/oauth` and `/token`.
 
   `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the *Google on Actions* project.
