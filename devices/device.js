@@ -1783,7 +1783,9 @@ module.exports = function (RED) {
                             }
                         });
                     } else {
-                        differs = JSON.stringify(states[key]) != JSON.stringify(value);
+                        if (JSON.stringify(states[key]) != JSON.stringify(value)) {
+                            differs = true;
+                        }
                         states[key] = value;
                     }
                 }
