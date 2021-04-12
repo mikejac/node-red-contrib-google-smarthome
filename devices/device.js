@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
- module.exports = function(RED) {
+module.exports = function (RED) {
     "use strict";
 
     const formats = require('../formatvalues.js');
-    const fs      = require('fs');
-    const path    = require('path');
+    const fs = require('fs');
+    const path = require('path');
 
     /******************************************************************************************************************
      *
@@ -29,20 +29,20 @@
      */
     class DeviceNode {
         constructor(config) {
-            RED.nodes.createNode(this,config);
+            RED.nodes.createNode(this, config);
 
             this.device = {};
-            this.client                         = config.client;
-            this.clientConn                     = RED.nodes.getNode(this.client);
+            this.client = config.client;
+            this.clientConn = RED.nodes.getNode(this.client);
             this.debug(".constructor config " + JSON.stringify(config));
- 
+
             if (!this.clientConn) {
                 this.error(RED._("device.errors.missing-config"));
-                this.status({fill: "red", shape: "dot", text: "Missing config"});
+                this.status({ fill: "red", shape: "dot", text: "Missing config" });
                 return;
             } else if (typeof this.clientConn.register !== 'function') {
                 this.error(RED._("device.errors.missing-bridge"));
-                this.status({fill: "red", shape: "dot", text: "Missing SmartHome"});
+                this.status({ fill: "red", shape: "dot", text: "Missing SmartHome" });
                 return;
             }
 
@@ -85,28 +85,28 @@
                 transportcontrol: config.trait_transportcontrol || false,
                 volume: config.trait_volume || false,
             };
-            this.topicOut                                   = config.topic;
-            this.device_type					            = config.device_type;
-            this.lang                                       = config.lang;
+            this.topicOut = config.topic;
+            this.device_type = config.device_type;
+            this.lang = config.lang;
 
             // AppSelector
-            this.appselector_file                           = config.appselector_file;
-            this.available_applications                     = [];
+            this.appselector_file = config.appselector_file;
+            this.available_applications = [];
             // ArmDisarm
-            this.available_arm_levels_file                  = config.available_arm_levels_file;
+            this.available_arm_levels_file = config.available_arm_levels_file;
             // Brightness
-            this.command_only_brightness                    = config.command_only_brightness;
+            this.command_only_brightness = config.command_only_brightness;
             // CameraStream
-            this.auth_token                                 = config.auth_token.trim();
-            this.hls                                        = config.hls.trim();
-            this.hls_app_id                                 = config.hls_app_id.trim();
-            this.dash                                       = config.dash.trim();
-            this.dash_app_id                                = config.dash_app_id.trim();
-            this.smooth_stream                              = config.smooth_stream.trim();
-            this.smooth_stream_app_id                       = config.smooth_stream_app_id.trim();
-            this.progressive_mp4                            = config.progressive_mp4.trim();
-            this.progressive_mp4_app_id                     = config.progressive_mp4_app_id.trim();
-            this.camera_stream_supported_protocols          = [];
+            this.auth_token = config.auth_token.trim();
+            this.hls = config.hls.trim();
+            this.hls_app_id = config.hls_app_id.trim();
+            this.dash = config.dash.trim();
+            this.dash_app_id = config.dash_app_id.trim();
+            this.smooth_stream = config.smooth_stream.trim();
+            this.smooth_stream_app_id = config.smooth_stream_app_id.trim();
+            this.progressive_mp4 = config.progressive_mp4.trim();
+            this.progressive_mp4_app_id = config.progressive_mp4_app_id.trim();
+            this.camera_stream_supported_protocols = [];
             if (this.hls) {
                 this.camera_stream_supported_protocols.push('hls');
             }
@@ -120,139 +120,139 @@
                 this.camera_stream_supported_protocols.push('progressive_mp4');
             }
             // Channel 
-            this.channel_file                               = config.channel_file;
-            this.available_channels                         = [];
-            this.last_channel_index                         = -1;
-            this.current_channel_index                      = -1;
+            this.channel_file = config.channel_file;
+            this.available_channels = [];
+            this.last_channel_index = -1;
+            this.current_channel_index = -1;
             // ColorSetting 
-            this.command_only_colorsetting                  = config.command_only_colorsetting;
-            this.color_model                                = config.color_model || 'temp';
-            this.temperature_min_k                          = parseInt(config.temperature_min_k) || 2000;
-            this.temperature_max_k                          = parseInt(config.temperature_max_k) || 9000;
+            this.command_only_colorsetting = config.command_only_colorsetting;
+            this.color_model = config.color_model || 'temp';
+            this.temperature_min_k = parseInt(config.temperature_min_k) || 2000;
+            this.temperature_max_k = parseInt(config.temperature_max_k) || 9000;
             // Cook
-            this.supported_cooking_modes                    = config.supported_cooking_modes;
-            this.food_presets_file                          = config.food_presets_file;
-            this.food_presets                               = [];
+            this.supported_cooking_modes = config.supported_cooking_modes;
+            this.food_presets_file = config.food_presets_file;
+            this.food_presets = [];
             // Dispense 
-            this.supported_dispense_items_file              = config.supported_dispense_items_file;
-            this.supported_dispense_items                   = [];
-            this.supported_dispense_presets_file            = config.supported_dispense_presets_file;
-            this.supported_dispense_presets                 = [];
+            this.supported_dispense_items_file = config.supported_dispense_items_file;
+            this.supported_dispense_items = [];
+            this.supported_dispense_presets_file = config.supported_dispense_presets_file;
+            this.supported_dispense_presets = [];
             // Dock
             // EnergyStorage
-            this.energy_storage_distance_unit_for_ux        = config.energy_storage_distance_unit_for_ux;
-            this.query_only_energy_storage                  = config.query_only_energy_storage;
-            this.is_rechargeable                            = config.is_rechargeable;
+            this.energy_storage_distance_unit_for_ux = config.energy_storage_distance_unit_for_ux;
+            this.query_only_energy_storage = config.query_only_energy_storage;
+            this.is_rechargeable = config.is_rechargeable;
             // FanSpeed
-            this.reversible                                 = config.reversible;
-            this.command_only_fanspeed                      = config.command_only_fanspeed;
-            this.supports_fan_speed_percent                 = config.supports_fan_speed_percent;
-            this.available_fan_speeds_file                  = config.available_fan_speeds_file;
-            this.available_fan_speeds                       = [];
+            this.reversible = config.reversible;
+            this.command_only_fanspeed = config.command_only_fanspeed;
+            this.supports_fan_speed_percent = config.supports_fan_speed_percent;
+            this.available_fan_speeds_file = config.available_fan_speeds_file;
+            this.available_fan_speeds = [];
             // Fill
-            this.available_fill_levels_file                 = config.available_fill_levels_file;
-            this.available_fill_levels                      = [];
-            this.ordered                                    = config.ordered;
-            this.supports_fill_percent                      = config.supports_fill_percent;
+            this.available_fill_levels_file = config.available_fill_levels_file;
+            this.available_fill_levels = [];
+            this.ordered = config.ordered;
+            this.supports_fill_percent = config.supports_fill_percent;
             // HumiditySetting 
-            this.min_percent                                = parseInt(config.min_percent) || 0;
-            this.max_percent                                = parseInt(config.max_percent) || 100;
-            this.command_only_humiditysetting               = config.command_only_humiditysetting;
-            this.query_only_humiditysetting                 = config.query_only_humiditysetting;
+            this.min_percent = parseInt(config.min_percent) || 0;
+            this.max_percent = parseInt(config.max_percent) || 100;
+            this.command_only_humiditysetting = config.command_only_humiditysetting;
+            this.query_only_humiditysetting = config.query_only_humiditysetting;
             // InputSelector 
-            this.inputselector_file                         = config.inputselector_file;
-            this.available_inputs                           = [];
-            this.command_only_input_selector                = config.command_only_input_selector;
-            this.ordered_inputs                             = config.ordered_inputs;
-            this.current_input_index                        = -1;
+            this.inputselector_file = config.inputselector_file;
+            this.available_inputs = [];
+            this.command_only_input_selector = config.command_only_input_selector;
+            this.ordered_inputs = config.ordered_inputs;
+            this.current_input_index = -1;
             // LightEffects 
-            this.default_sleep_duration                     = config.default_sleep_duration;
-            this.default_wake_duration                      = config.default_wake_duration;
-            this.supported_effects                          = config.supported_effects;
+            this.default_sleep_duration = config.default_sleep_duration;
+            this.default_wake_duration = config.default_wake_duration;
+            this.supported_effects = config.supported_effects;
             // Locator 
             // LockUnlock 
             // MediaState
-            this.support_activity_state                     = config.support_activity_state;
-            this.support_playback_state                     = config.support_playback_state;
+            this.support_activity_state = config.support_activity_state;
+            this.support_playback_state = config.support_playback_state;
             // Modes 
-            this.modes_file                                 = config.modes_file;
-            this.available_modes                            = [];
-            this.command_only_modes                         = config.command_only_modes;
-            this.query_only_modes                           = config.query_only_modes;
+            this.modes_file = config.modes_file;
+            this.available_modes = [];
+            this.command_only_modes = config.command_only_modes;
+            this.query_only_modes = config.query_only_modes;
             // NetworkControl
-            this.supports_enabling_guest_network            = config.supports_enabling_guest_network;
-            this.supports_disabling_guest_network           = config.supports_disabling_guest_network;
-            this.supports_getting_guest_network_password    = config.supports_getting_guest_network_password;
-            this.network_profiles                           = config.network_profiles;
-            this.supports_enabling_network_profile          = config.supports_enabling_network_profile;
-            this.supports_disabling_network_profile         = config.supports_disabling_network_profile;
-            this.supports_network_download_speedtest        = config.supports_network_download_speedtest;
-            this.supports_network_upload_speedtest          = config.supports_network_upload_speedtest;
-            this.guest_network_password                     = '';
+            this.supports_enabling_guest_network = config.supports_enabling_guest_network;
+            this.supports_disabling_guest_network = config.supports_disabling_guest_network;
+            this.supports_getting_guest_network_password = config.supports_getting_guest_network_password;
+            this.network_profiles = config.network_profiles;
+            this.supports_enabling_network_profile = config.supports_enabling_network_profile;
+            this.supports_disabling_network_profile = config.supports_disabling_network_profile;
+            this.supports_network_download_speedtest = config.supports_network_download_speedtest;
+            this.supports_network_upload_speedtest = config.supports_network_upload_speedtest;
+            this.guest_network_password = '';
             // ObjectDetection 
             // OnOff 
-            this.command_only_onoff                         = config.command_only_onoff;
-            this.query_only_onoff                           = config.query_only_onoff;
+            this.command_only_onoff = config.command_only_onoff;
+            this.query_only_onoff = config.query_only_onoff;
             // OpenClose
-            this.discrete_only_openclose                    = config.discrete_only_openclose;
-            this.open_direction                             = config.open_direction;
-            this.command_only_openclose                     = config.command_only_openclose;
-            this.query_only_openclose                       = config.query_only_openclose;
+            this.discrete_only_openclose = config.discrete_only_openclose;
+            this.open_direction = config.open_direction;
+            this.command_only_openclose = config.command_only_openclose;
+            this.query_only_openclose = config.query_only_openclose;
             // Reboot 
             // Rotation 
-            this.supports_degrees                           = config.supports_degrees;
-            this.supports_percent                           = config.supports_percent;
-            this.rotation_degrees_min                       = parseInt(config.rotation_degrees_min) || 0;
-            this.rotation_degrees_max                       = parseInt(config.rotation_degrees_max) || 360;
-            this.supports_continuous_rotation               = config.supports_continuous_rotation;
-            this.command_only_rotation                      = config.command_only_rotation;
+            this.supports_degrees = config.supports_degrees;
+            this.supports_percent = config.supports_percent;
+            this.rotation_degrees_min = parseInt(config.rotation_degrees_min) || 0;
+            this.rotation_degrees_max = parseInt(config.rotation_degrees_max) || 360;
+            this.supports_continuous_rotation = config.supports_continuous_rotation;
+            this.command_only_rotation = config.command_only_rotation;
             // RunCycle
             // Scene
-            this.scene_reversible                           = config.scene_reversible;
+            this.scene_reversible = config.scene_reversible;
             // SensorState 
-            this.sensor_states_supported                    = config.sensor_states_supported;
+            this.sensor_states_supported = config.sensor_states_supported;
             // SoftwareUpdate 
             // StartStop
-            this.pausable                                   = config.pausable;
-            this.available_zones                            = config.available_zones;
+            this.pausable = config.pausable;
+            this.available_zones = config.available_zones;
             // StatusReport 
             // TemperatireControl
-            this.tc_min_threshold_celsius                   = config.tc_min_threshold_celsius;
-            this.tc_max_threshold_celsius                   = config.tc_max_threshold_celsius;
-            this.tc_temperature_step_celsius                = config.tc_temperature_step_celsius;
-            this.tc_temperature_unit_for_ux                 = config.tc_temperature_unit_for_ux;
-            this.tc_command_only_temperaturecontrol         = config.tc_command_only_temperaturecontrol;
-            this.tc_query_only_temperaturecontrol           = config.tc_query_only_temperaturecontrol;
+            this.tc_min_threshold_celsius = config.tc_min_threshold_celsius;
+            this.tc_max_threshold_celsius = config.tc_max_threshold_celsius;
+            this.tc_temperature_step_celsius = config.tc_temperature_step_celsius;
+            this.tc_temperature_unit_for_ux = config.tc_temperature_unit_for_ux;
+            this.tc_command_only_temperaturecontrol = config.tc_command_only_temperaturecontrol;
+            this.tc_query_only_temperaturecontrol = config.tc_query_only_temperaturecontrol;
             // TemperatureSetting
-            this.available_thermostat_modes                 = config.available_thermostat_modes;
-            this.min_threshold_celsius                      = parseInt(config.min_threshold_celsius) || 10;
-            this.max_threshold_celsius                      = parseInt(config.max_threshold_celsius) || 32;
-            this.thermostat_temperature_setpoint            = this.min_threshold_celsius;
-            this.thermostat_temperature_setpoint_low        = this.min_threshold_celsius;
-            this.thermostat_temperature_setpoint_hight      = this.max_threshold_celsius;
-            this.thermostat_temperature_unit                = config.thermostat_temperature_unit || "C";
-            this.buffer_range_celsius                       = parseInt(config.buffer_range_celsius) || 2;
-            this.command_only_temperaturesetting            = config.command_only_temperaturesetting;
-            this.query_only_temperaturesetting              = config.query_only_temperaturesetting;
+            this.available_thermostat_modes = config.available_thermostat_modes;
+            this.min_threshold_celsius = parseInt(config.min_threshold_celsius) || 10;
+            this.max_threshold_celsius = parseInt(config.max_threshold_celsius) || 32;
+            this.thermostat_temperature_setpoint = this.min_threshold_celsius;
+            this.thermostat_temperature_setpoint_low = this.min_threshold_celsius;
+            this.thermostat_temperature_setpoint_hight = this.max_threshold_celsius;
+            this.thermostat_temperature_unit = config.thermostat_temperature_unit || "C";
+            this.buffer_range_celsius = parseInt(config.buffer_range_celsius) || 2;
+            this.command_only_temperaturesetting = config.command_only_temperaturesetting;
+            this.query_only_temperaturesetting = config.query_only_temperaturesetting;
             this.target_temp_reached_estimate_unix_timestamp_sec = 360;
-            this.thermostat_humidity_ambient                = 60;
+            this.thermostat_humidity_ambient = 60;
             // Timer 
-            this.max_timer_limit_sec                        = config.max_timer_limit_sec;
-            this.command_only_timer                         = config.command_only_timer;
-            this.timer_end_timestamp                        = -1;
+            this.max_timer_limit_sec = config.max_timer_limit_sec;
+            this.command_only_timer = config.command_only_timer;
+            this.timer_end_timestamp = -1;
             // Toggles
-            this.toggles_file                               = config.toggles_file;
-            this.available_toggles                          = [];
-            this.command_only_toggles                       = config.command_only_toggles;
-            this.query_only_toggles                         = config.query_only_toggles;
+            this.toggles_file = config.toggles_file;
+            this.available_toggles = [];
+            this.command_only_toggles = config.command_only_toggles;
+            this.query_only_toggles = config.query_only_toggles;
             // TransportControl 
-            this.supported_commands                         = config.supported_commands;
+            this.supported_commands = config.supported_commands;
             // Volume 
-            this.volume_max_level                           = parseInt(config.volume_max_level) || 100;
-            this.can_mute_and_unmute                        = config.can_mute_and_unmute;
-            this.volume_default_percentage                  = parseInt(config.volume_default_percentage) || 40;
-            this.level_step_size                            = parseInt(config.level_step_size) || 1;
-            this.command_only_volume                        = config.command_only_volume;
+            this.volume_max_level = parseInt(config.volume_max_level) || 100;
+            this.can_mute_and_unmute = config.can_mute_and_unmute;
+            this.volume_default_percentage = parseInt(config.volume_default_percentage) || 40;
+            this.level_step_size = parseInt(config.level_step_size) || 1;
+            this.command_only_volume = config.command_only_volume;
 
             if (this.device_type != 'SCENE') {
                 this.trait.scene = false;
@@ -274,7 +274,7 @@
                     break;
                 case "AUDIO_VIDEO_RECEIVER": // Audio-Video receiver
                     this.trait.inputselector = true;
-                    this.trait.onoff	 = true;
+                    this.trait.onoff = true;
                     this.trait.volume = true;
                     break;
                 case "AWNING": // Awning
@@ -466,7 +466,7 @@
                 case "STREAMING_BOX": // Streaming box
                     this.trait.appselector = true;
                     this.trait.mediastate = true;
-                    this.trait.transportcontrol	 = true;
+                    this.trait.transportcontrol = true;
                     this.trait.volume = true;
                     break;
                 case "STREAMING_SOUNDBAR": // Streaming soundbar
@@ -517,7 +517,7 @@
                     this.trait.onoff = true;
                     break;
             }
-            
+
             let error_msg = '';
             if (this.trait.appselector) {
                 this.available_applications = this.loadJson('Applications', this.appselector_file, []);
@@ -597,7 +597,7 @@
             if (error_msg.length == 0) {
                 this.updateStatusIcon();
             } else {
-                this.status({fill: "red", shape: "dot", text: error_msg});
+                this.status({ fill: "red", shape: "dot", text: error_msg });
             }
 
             this.on('input', this.onInput);
@@ -679,13 +679,13 @@
             if (me.trait.colorsetting) {
                 attributes["commandOnlyColorSetting"] = me.command_only_colorsetting;
                 if (me.color_model !== "rgb" && me.color_model !== "rgb_temp") {
-                    attributes['colorModel'] =  "rgb";
+                    attributes['colorModel'] = "rgb";
                 }
                 else if (me.color_model !== "hsv" && me.color_model !== "hsv_temp") {
-                    attributes['colorModel'] =  "hsv";
+                    attributes['colorModel'] = "hsv";
                 }
                 if (me.color_model !== "rgb" && me.color_model !== "hsv") {
-                    attributes['colorTemperatureRange'] =  {
+                    attributes['colorTemperatureRange'] = {
                         "temperatureMinK": me.temperature_min_k,
                         "temperatureMaxK": me.temperature_max_k
                     };
@@ -781,92 +781,92 @@
             }
             if (me.trait.sensorstate) {
                 let sensor_states_supported = [];
-                me.sensor_states_supported.forEach(function(sensor_state_name) {
+                me.sensor_states_supported.forEach(function (sensor_state_name) {
                     let sensor_state_supported = { name: sensor_state_name };
                     let available_states = undefined;
                     let raw_value_uUnit = undefined;
                     switch (sensor_state_name) {
                         case "AirQuality":
                             available_states = [
-                                "healthy", 
-                                "moderate", 
-                                "unhealthy", 
-                                "unhealthy for sensitive groups", 
-                                "very unhealthy", 
-                                "hazardous", 
-                                "good", 
-                                "fair", 
-                                "poor", 
-                                "very poor", 
-                                "severe", 
+                                "healthy",
+                                "moderate",
+                                "unhealthy",
+                                "unhealthy for sensitive groups",
+                                "very unhealthy",
+                                "hazardous",
+                                "good",
+                                "fair",
+                                "poor",
+                                "very poor",
+                                "severe",
                                 "unknown"
                             ];
-                            raw_value_uUnit ='AQI';
+                            raw_value_uUnit = 'AQI';
                             break;
                         case "CarbonMonoxideLevel":
                             available_states = [
-                                "carbon monoxide detected", 
-                                "high", 
-                                "no carbon monoxide detected", 
+                                "carbon monoxide detected",
+                                "high",
+                                "no carbon monoxide detected",
                                 "unknown"
                             ];
-                            raw_value_uUnit ='PARTS_PER_MILLION';
+                            raw_value_uUnit = 'PARTS_PER_MILLION';
                             break;
                         case "SmokeLevel":
                             available_states = [
-                                "smoke detected", 
-                                "high", 
-                                "no smoke detected", 
+                                "smoke detected",
+                                "high",
+                                "no smoke detected",
                                 "unknown"
                             ];
-                            raw_value_uUnit ='PARTS_PER_MILLION';
+                            raw_value_uUnit = 'PARTS_PER_MILLION';
                             break;
                         case "FilterCleanliness":
                             available_states = [
-                                "clean", 
-                                "dirty", 
-                                "needs replacement", 
+                                "clean",
+                                "dirty",
+                                "needs replacement",
                                 "unknown"
                             ];
                             break;
                         case "WaterLeak":
                             available_states = [
-                                "leak", 
-                                "no leak", 
+                                "leak",
+                                "no leak",
                                 "unknown"
                             ];
                             break;
                         case "RainDetection":
                             available_states = [
-                                "rain detected", 
-                                "no rain detected", 
+                                "rain detected",
+                                "no rain detected",
                                 "unknown"
                             ];
                             break;
                         case "FilterLifeTime":
                             available_states = [
-                                "new", 
-                                "good", 
-                                "replace soon", 
-                                "replace now", 
+                                "new",
+                                "good",
+                                "replace soon",
+                                "replace now",
                                 "unknown"
                             ];
-                            raw_value_uUnit ='PERCENTAGE';
+                            raw_value_uUnit = 'PERCENTAGE';
                             break;
                         case "PreFilterLifeTime":
                         case "HEPAFilterLifeTime":
                         case "Max2FilterLifeTime":
-                            raw_value_uUnit ='PERCENTAGE';
+                            raw_value_uUnit = 'PERCENTAGE';
                             break;
                         case "CarbonDioxideLevel":
-                            raw_value_uUnit ='PARTS_PER_MILLION';
+                            raw_value_uUnit = 'PARTS_PER_MILLION';
                             break;
                         case "PM2.5":
                         case "PM10":
-                            raw_value_uUnit ='MICROGRAMS_PER_CUBIC_METER';
+                            raw_value_uUnit = 'MICROGRAMS_PER_CUBIC_METER';
                             break;
                         case "VolatileOrganicCompounds":
-                            raw_value_uUnit ='PARTS_PER_MILLION';
+                            raw_value_uUnit = 'PARTS_PER_MILLION';
                             break;
                     }
                     if (available_states !== undefined) {
@@ -945,16 +945,17 @@
             }
             if (me.trait.colorsetting) {
                 if (me.color_model === "rgb") {
-                    states['color'] = { spectrumRgb : 16777215 };
+                    states['color'] = { spectrumRgb: 16777215 };
                 } else if (me.color_model === "hsv") {
-                    states['color'] = { spectrumHsv : {
-                        hue: 0.0,           // float, representing hue as positive degrees in the range of [0.0, 360.0)
-                        saturation: 0.0,    // float, representing saturation as a percentage in the range [0.0, 1.0]
-                        value: 1            // float, representing value as a percentage in the range [0.0, 1.0]
+                    states['color'] = {
+                        spectrumHsv: {
+                            hue: 0.0,           // float, representing hue as positive degrees in the range of [0.0, 360.0)
+                            saturation: 0.0,    // float, representing saturation as a percentage in the range [0.0, 1.0]
+                            value: 1            // float, representing value as a percentage in the range [0.0, 1.0]
                         }
                     };
                 } else {
-                    states['color'] = { temperatureK : me.temperature_max_k || 6000 };
+                    states['color'] = { temperatureK: me.temperature_max_k || 6000 };
                 }
             }
             if (me.trait.cook) {
@@ -965,30 +966,30 @@
             }
             if (me.trait.dispense) {
                 let dispense = [];
-                me.supported_dispense_items.forEach(function(item) {
+                me.supported_dispense_items.forEach(function (item) {
                     dispense.push({
                         "itemName": item.item_name,
                         "amountRemaining": {
-                          "amount": 0,
-                          "unit": "NO_UNITS"
+                            "amount": 0,
+                            "unit": "NO_UNITS"
                         },
                         "amountLastDispensed": {
-                          "amount": 0,
-                          "unit": "NO_UNITS"
+                            "amount": 0,
+                            "unit": "NO_UNITS"
                         },
                         "isCurrentlyDispensing": false
                     })
                 });
-                me.supported_dispense_presets.forEach(function(item) {
+                me.supported_dispense_presets.forEach(function (item) {
                     dispense.push({
                         "itemName": item.preset_name,
                         "amountRemaining": {
-                          "amount": 0,
-                          "unit": "NO_UNITS"
+                            "amount": 0,
+                            "unit": "NO_UNITS"
                         },
                         "amountLastDispensed": {
-                          "amount": 0,
-                          "unit": "NO_UNITS"
+                            "amount": 0,
+                            "unit": "NO_UNITS"
                         },
                         "isCurrentlyDispensing": false
                     })
@@ -1069,7 +1070,7 @@
             }
             if (me.trait.sensorstate) {
                 let current_sensor_state_data = [];
-                me.sensor_states_supported.forEach(function(sensor_state_name) {
+                me.sensor_states_supported.forEach(function (sensor_state_name) {
                     let current_sensor = { name: sensor_state_name };
                     let current_sensor_state = undefined;
                     let raw_value = undefined;
@@ -1208,9 +1209,9 @@
                         text += ' RGB: ' + this.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0');
                     }
                     if (this.trait.colorsetting && this.states.color.spectrumHsv != undefined) {
-                        text += ' H: ' + this.states.color.spectrumHsv.hue + 
-                                ' S: ' + this.states.color.spectrumHsv.saturation + 
-                                ' V: ' + this.states.color.spectrumHsv.value;
+                        text += ' H: ' + this.states.color.spectrumHsv.hue +
+                            ' S: ' + this.states.color.spectrumHsv.saturation +
+                            ' V: ' + this.states.color.spectrumHsv.value;
                     }
                 } else if (this.device_type === "THERMOSTAT") {
                     const thermostat_mode = this.states.thermostatMode;
@@ -1229,10 +1230,10 @@
                     }
                 } else if (this.device_type === "SENSOR") {
                     if (this.trait.brightness) {
-                        text += ' bri ' + this.states.brightness;  
+                        text += ' bri ' + this.states.brightness;
                     }
                     if (this.trait.temperaturecontrol) {
-                        text += ' ' + this.states.temperatureAmbientCelsius + "\xB0C";  
+                        text += ' ' + this.states.temperatureAmbientCelsius + "\xB0C";
                     }
                     if (this.trait.humiditysetting) {
                         text += ' ' + this.states.humidityAmbientPercent + "% ";
@@ -1251,7 +1252,7 @@
                             text = "OFF";
                         }
                     }
-                    if (!text ) {
+                    if (!text) {
                         fill = "green";
                         text = "ON";
                     }
@@ -1260,13 +1261,13 @@
                 shape = 'ring';
                 text = "offline";
             }
-            if (!text ){
+            if (!text) {
                 text = 'Unknown';
             }
             if (this.trait.energystorage) {
                 text += ' ' + this.states.descriptiveCapacityRemaining;
             }
-            this.status({fill: fill, shape: shape, text: text});    
+            this.status({ fill: fill, shape: shape, text: text });
         }
 
         /******************************************************************************************************************
@@ -1274,7 +1275,7 @@
          *
          */
         updated(device, params, original_params) {
-            let me=this;
+            let me = this;
             let states = device.states;
             let command = device.command.startsWith('action.devices.commands.') ? device.command.substr(24) : device.command;
             this.debug(".updated: device.command = " + JSON.stringify(command));
@@ -1283,7 +1284,7 @@
             this.debug(".updated: original_params = " + JSON.stringify(original_params));
 
             // Object.assign(this.states, states);
-            Object.keys(me.states).forEach(function(key) {
+            Object.keys(me.states).forEach(function (key) {
                 if (states.hasOwnProperty(key)) {
                     me.setState(key, states[key], me.states);
                 }
@@ -1311,14 +1312,14 @@
                 if (!msg.payload.hasOwnProperty(key)) {
                     msg.payload[key] = states[key];
                 }
-             });
+            });
 
             // Copy the command params to the payload
             Object.keys(params).forEach(function (key) {
-                 if (!msg.payload.hasOwnProperty(key) && params[key] !== original_params[key]) {
+                if (!msg.payload.hasOwnProperty(key) && params[key] !== original_params[key]) {
                     msg.payload[key] = params[key];
-                 }
-             });
+                }
+            });
 
             // Copy the command original params to the payload
             /*Object.keys(original_params).forEach(function (key) {
@@ -1341,7 +1342,7 @@
             me.debug(".input: topic = " + msg.topic);
 
             let topicArr = String(msg.topic).split(this.topicDelim);
-            let topic    = topicArr[topicArr.length - 1];   // get last part of topic
+            let topic = topicArr[topicArr.length - 1];   // get last part of topic
 
             try {
                 if (topic.toUpperCase() === 'AVAILABLEAPPLICATIONS') {
@@ -1534,9 +1535,9 @@
                     if (Object.keys(object_detection).length > 0) {
                         this.clientConn.sendNotifications(this, {
                             "ObjectDetected": {
-                              "objects": object_detection,
-                              "priority": 0,
-                              "detectionTimestamp": Date.now()
+                                "objects": object_detection,
+                                "priority": 0,
+                                "detectionTimestamp": Date.now()
                             }
                         });  // tell Google ...
                     }
@@ -1552,9 +1553,9 @@
                     if (state_key !== '') {
                         const differs = me.setState(state_key, msg.payload, me.states);
                         if (differs) {
-                            me.debug(".input: " + state_key + ' ' + msg.payload);
+                            me.debug(".input: " + state_key + ' ' + JSON.stringify(msg.payload));
                             this.clientConn.setState(this, me.states);  // tell Google ...
-        
+
                             if (this.passthru) {
                                 msg.payload = me.states[state_key];
                                 this.send(msg);
@@ -1566,13 +1567,13 @@
                         let differs = false;
                         Object.keys(me.states).forEach(function (key) {
                             if (msg.payload.hasOwnProperty(key)) {
-                                me.debug(".input: set state " + key + ' to ' + msg.payload[key]);
+                                me.debug(".input: set state " + key + ' to ' + JSON.stringify(msg.payload[key]));
                                 if (me.setState(key, msg.payload[key], me.states)) {
                                     differs = true;
                                 }
                             }
                         });
-        
+
                         if (differs) {
                             this.clientConn.setState(this, me.states);  // tell Google ...
 
@@ -1638,8 +1639,8 @@
         }
 
         getTraits(me) {
-            const trait =me.trait;
-            let traits=[];
+            const trait = me.trait;
+            let traits = [];
 
             if (trait.appselector) {
                 traits.push("action.devices.traits.AppSelector");
@@ -1782,6 +1783,9 @@
                             }
                         });
                     } else {
+                        if (JSON.stringify(states[key]) != JSON.stringify(value)) {
+                            differs = true;
+                        }
                         states[key] = value;
                     }
                 }
@@ -1805,7 +1809,7 @@
                 full_filename = filename;
             }
             this.debug('.loadJson: filename ' + full_filename);
-        
+
             try {
                 let jsonFile = fs.readFileSync(
                     full_filename,
@@ -1813,7 +1817,7 @@
                         'encoding': 'utf8',
                         'flag': fs.constants.R_OK | fs.constants.W_OK | fs.constants.O_CREAT
                     });
-    
+
                 if (jsonFile === '') {
                     this.debug('.loadJson: file ' + filename + ' is empty');
                     return defaultValue;
@@ -1840,7 +1844,7 @@
             if (typeof value === 'object') {
                 value = JSON.stringify(value);
             }
-            try {    
+            try {
                 fs.writeFileSync(
                     filename,
                     value,
@@ -1848,7 +1852,7 @@
                         'encoding': 'utf8',
                         'flag': fs.constants.W_OK | fs.constants.O_CREAT | fs.constants.O_TRUNC
                     });
-    
+
                 this.debug('writeJson: ' + text + ' saved');
                 return true;
             }
@@ -1861,14 +1865,14 @@
         execCommand(device, command, orig_device) {
             let me = this;
             let params = {};
-            let executionStates = [ 'online' ];
+            let executionStates = ['online'];
             const ok_result = {
-                'params' : params,
+                'params': params,
                 'executionStates': executionStates
             };
 
-            me.debug(".execCommand: command " +  JSON.stringify(command));
-            me.debug(".execCommand: states " +  JSON.stringify(me.states));
+            me.debug(".execCommand: command " + JSON.stringify(command));
+            me.debug(".execCommand: states " + JSON.stringify(me.states));
             // me.debug(".execCommand: device " +  JSON.stringify(device));
             // me.debug(".execCommand: me.device " +  JSON.stringify(me.device));
 
@@ -1879,7 +1883,7 @@
                 if (command.params.hasOwnProperty('newApplication')) {
                     const newApplication = command.params['newApplication'];
                     let application_index = -1;
-                    this.available_applications.forEach(function(application, index) {
+                    this.available_applications.forEach(function (application, index) {
                         if (application.key === newApplication) {
                             application_index = index;
                         }
@@ -1905,8 +1909,8 @@
                 if (command.params.hasOwnProperty('newApplicationName')) {
                     const newApplicationName = command.params['newApplicationName'];
                     let application_key = '';
-                    me.available_applications.forEach(function(application, index) {
-                        application.names.forEach(function(name) {
+                    me.available_applications.forEach(function (application, index) {
+                        application.names.forEach(function (name) {
                             if (name.name_synonym.includes(newApplicationName)) {
                                 application_key = application.key;
                             }
@@ -1996,7 +2000,7 @@
                             return {
                                 status: 'ERROR',
                                 errorCode: 'transientError'
-                            };    
+                            };
                         }
                     }
                     params['currentFoodUnit'] = unit;
@@ -2011,7 +2015,7 @@
                 const preset_name = command.params['presetName'] || '';
                 if (preset_name) {
                     let found = false;
-                    me.supported_dispense_presets.forEach(function(preset) {
+                    me.supported_dispense_presets.forEach(function (preset) {
                         if (preset.preset_name == preset_name) {
                             found = true;
                         }
@@ -2020,12 +2024,12 @@
                         return {
                             status: 'ERROR',
                             errorCode: 'transientError'
-                        };    
+                        };
                     }
-                } 
+                }
                 else if (item_name) {
                     let item_found = undefined;
-                    me.supported_dispense_items.forEach(function(item) {
+                    me.supported_dispense_items.forEach(function (item) {
                         if (item.item_name == item_name) {
                             item_found = item;
                         }
@@ -2034,16 +2038,16 @@
                         return {
                             status: 'ERROR',
                             errorCode: 'transientError'
-                        };    
+                        };
                     }
                     if (unit && !item_found.supported_units.includes(unit)) {
                         return {
                             status: 'ERROR',
                             errorCode: 'transientError'
-                        };    
+                        };
                     }
                     item_found = undefined;
-                    this.states.dispenseItems.forEach(function(item) {
+                    this.states.dispenseItems.forEach(function (item) {
                         if (item.itemName == item_name) {
                             if (item_found === undefined || item_found.amountRemaining.unit !== unit) {
                                 item_found = item;
@@ -2054,7 +2058,7 @@
                         return {
                             status: 'ERROR',
                             errorCode: 'transientError'
-                        };    
+                        };
                     }
                     /*
                     if (unit) {
@@ -2088,7 +2092,7 @@
                 if (command.params.hasOwnProperty('fanSpeed')) {
                     const fanSpeed = command.params['fanSpeed'];
                     let new_fanspeed = '';
-                    this.available_fan_speeds.forEach(function(fanspeed) {
+                    this.available_fan_speeds.forEach(function (fanspeed) {
                         if (fanspeed.speed_name === fanSpeed) {
                             new_fanspeed = fanspeed.speed_name;
                         }
@@ -2116,7 +2120,7 @@
                 }
                 if (command.params.hasOwnProperty('fanSpeedRelativePercent')) {
                     const fanSpeedRelativePercent = command.params['fanSpeedRelativePercent'];
-                    params['currentFanSpeedPercent'] =  Math.round(me.states['currentFanSpeedPercent'] * ( 1 + fanSpeedRelativePercent / 100));
+                    params['currentFanSpeedPercent'] = Math.round(me.states['currentFanSpeedPercent'] * (1 + fanSpeedRelativePercent / 100));
                     executionStates.push('currentFanSpeedPercent');
                 }
             }
@@ -2129,12 +2133,12 @@
             else if (command.command == 'action.devices.commands.HumidityRelative') {
                 if (command.params.hasOwnProperty('humidityRelativePercent')) {
                     const humidityRelativePercent = command.params['humidityRelativePercent'];
-                    params['humiditySetpointPercent'] = Math.round(me.states['humiditySetpointPercent']  * (1 + humidityRelativePercent / 100));
+                    params['humiditySetpointPercent'] = Math.round(me.states['humiditySetpointPercent'] * (1 + humidityRelativePercent / 100));
                     executionStates.push('humiditySetpointPercent');
                 }
                 if (command.params.hasOwnProperty('humidityRelativeWeight')) {
                     const humidityRelativeWeight = command.params['humidityRelativeWeight'];
-                    params['humiditySetpointPercent'] = me.states['humiditySetpointPercent']  + humidityRelativeWeight;
+                    params['humiditySetpointPercent'] = me.states['humiditySetpointPercent'] + humidityRelativeWeight;
                     executionStates.push('humiditySetpointPercent');
                 }
             }
@@ -2143,7 +2147,7 @@
                 const profile = command.params['profile'].toLowerCase();
                 const enable = command.params['enable'] || false;
                 let found = false;
-                this.network_profiles.forEach(function(p) {
+                this.network_profiles.forEach(function (p) {
                     if (profile === p.toLowerCase()) {
                         found = true;
                     }
@@ -2167,7 +2171,7 @@
                     status: 'SUCCESS',
                     states: {
                         online: true,
-                        guestNetworkPassword:  me.guest_network_password
+                        guestNetworkPassword: me.guest_network_password
                     },
                     executionStates: executionStates,
                 };
@@ -2177,7 +2181,7 @@
                 if (command.params.hasOwnProperty('newInput')) {
                     const newInput = command.params['newInput'];
                     let current_input_index = -1;
-                    this.available_inputs.forEach(function(input_element, index) {
+                    this.available_inputs.forEach(function (input_element, index) {
                         if (input_element.key === newInput) {
                             current_input_index = index;
                         }
@@ -2205,7 +2209,7 @@
                 if (this.current_input_index <= 0) {
                     this.current_input_index = this.available_inputs.length;
                 }
-                this.current_input_index --;
+                this.current_input_index--;
                 executionStates.push('currentInput');
                 params['currentInput'] = this.available_inputs[this.current_input_index].key;
             }
@@ -2228,7 +2232,7 @@
                     let new_open_directions = [];
                     me.states.openState.forEach(element => {
                         new_open_directions.push({
-                            "openPercent": element.openDirection == open_direction ? open_percent: element.openPercent,
+                            "openPercent": element.openDirection == open_direction ? open_percent : element.openPercent,
                             "openDirection": element.openDirection
                         });
                     });
@@ -2269,8 +2273,8 @@
                     params['isPaused'] = false;
                     executionStates.push('isPaused');
                     if (zones !== undefined) {
-                        let active_zones=[];
-                        zones.forEach(function(zone) {
+                        let active_zones = [];
+                        zones.forEach(function (zone) {
                             if (me.available_zones.includes(zone)) {
                                 active_zones.push(zone);
                             }
@@ -2358,8 +2362,8 @@
                 delete orig_device.states['thermostatTemperatureSetpointLow'];
                 delete me.states['thermostatTemperatureSetpointLow'];
                 if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpoint")) {
-                    orig_device.states['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint-1;
-                    me.states['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint-1;
+                    orig_device.states['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint - 1;
+                    me.states['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint - 1;
                 }
                 params['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint;
                 me.thermostat_temperature_setpoint = thermostatTemperatureSetpoint;
@@ -2371,10 +2375,10 @@
                 delete orig_device.states['thermostatTemperatureSetpoint'];
                 delete me.states['thermostatTemperatureSetpoint'];
                 if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpointHigh")) {
-                    orig_device.states['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh+1;
-                    me.states['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointLow+1;
-                    orig_device.states['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointHigh-1;
-                    me.states['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow-1;
+                    orig_device.states['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh + 1;
+                    me.states['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointLow + 1;
+                    orig_device.states['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointHigh - 1;
+                    me.states['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow - 1;
                 }
                 params['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh;
                 params['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow;
@@ -2397,7 +2401,7 @@
                     }
                     params['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
                     params['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
-                    executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');        
+                    executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
                 } else if (thermostatMode === "heat" || thermostatMode === "cool") {
                     delete orig_device.states['thermostatTemperatureSetpointHigh'];
                     delete me.states['thermostatTemperatureSetpointHigh'];
@@ -2423,7 +2427,7 @@
                     me.debug("C CHI thermostatTemperatureSetpoint " + me.states['thermostatTemperatureSetpoint']);
                     params['thermostatTemperatureSetpoint'] = me.states['thermostatTemperatureSetpoint'] + thermostatTemperatureRelativeWeight;
                     executionStates.push('thermostatTemperatureSetpoint');
-                }                    
+                }
             }
             // Timer
             else if (command.command == 'action.devices.commands.TimerStart') {
@@ -2546,7 +2550,7 @@
                     let new_channel_index = -1;
                     let new_channel_key = '';
                     let new_channel_number = '';
-                    this.available_channels.forEach(function(channel, index) {
+                    this.available_channels.forEach(function (channel, index) {
                         if (channel.key === channelCode) {
                             new_channel_index = index;
                             new_channel_key = channel.key;
@@ -2572,7 +2576,7 @@
                     let new_channel_index = -1;
                     let new_channel_key = '';
                     let new_channel_number = '';
-                    this.available_channels.forEach(function(channel, index) {
+                    this.available_channels.forEach(function (channel, index) {
                         if (channel.number === channelNumber) {
                             new_channel_index = index;
                             new_channel_key = channel.key;
@@ -2636,7 +2640,7 @@
                     this.available_modes.forEach(function (mode) {
                         if (typeof updateModeSettings[mode.name] === 'string') {
                             let mode_value = updateModeSettings[mode.name];
-                            mode.settings.forEach(function(setting) {
+                            mode.settings.forEach(function (setting) {
                                 if (setting.setting_name === mode_value) {
                                     new_modes[mode.name] = mode_value;
                                 }
@@ -2703,13 +2707,13 @@
             else if (command.command == 'action.devices.commands.ColorAbsolute') {
                 if (command.params.hasOwnProperty('color')) {
                     if (command.params.color.hasOwnProperty('temperature') || command.params.color.hasOwnProperty('temperatureK')) {
-                        const temperature = command.params.color.hasOwnProperty('temperature')  ? command.params.color.temperature : command.params.color.temperatureK;
+                        const temperature = command.params.color.hasOwnProperty('temperature') ? command.params.color.temperature : command.params.color.temperatureK;
                         delete orig_device.states.color['spectrumRgb'];
                         delete me.states.color['spectrumRgb'];
                         delete orig_device.states.color['spectrumHsv'];
                         delete me.states.color['spectrumHsv'];
                         if (!me.states.color.hasOwnProperty("temperatureK")) {
-                            me.states.color = { temperatureK: temperature-1 };
+                            me.states.color = { temperatureK: temperature - 1 };
                         }
                         params['color'] = { temperatureK: temperature };
                     } else if (command.params.color.hasOwnProperty('spectrumRGB') || command.params.color.hasOwnProperty('spectrumRgb')) {
@@ -2719,7 +2723,7 @@
                         delete orig_device.states.color['spectrumHsv'];
                         delete me.states.color['spectrumHsv'];
                         if (!me.states.color.hasOwnProperty("spectrumRgb")) {
-                            me.states.color = { spectrumRgb: spectrum_RGB-1 };
+                            me.states.color = { spectrumRgb: spectrum_RGB - 1 };
                         }
                         params['color'] = { spectrumRgb: spectrum_RGB };
                     } else if (command.params.color.hasOwnProperty('spectrumHSV') || command.params.color.hasOwnProperty('spectrumHsv')) {
@@ -2729,17 +2733,21 @@
                         delete orig_device.states.color['spectrumRgb'];
                         delete me.states.color['spectrumRgb'];
                         if (!me.states.color.hasOwnProperty("spectrumHsv")) {
-                            me.states.color = { spectrumHsv: {
-                                hue: spectrum_HSV.hue-1,
-                                saturation: spectrum_HSV.saturation-1,
-                                value: spectrum_HSV.value-1
-                            } };
+                            me.states.color = {
+                                spectrumHsv: {
+                                    hue: spectrum_HSV.hue - 1,
+                                    saturation: spectrum_HSV.saturation - 1,
+                                    value: spectrum_HSV.value - 1
+                                }
+                            };
                         }
-                        params['color'] = { spectrumHsv: {
-                            hue: spectrum_HSV.hue,
-                            saturation: spectrum_HSV.saturation,
-                            value: spectrum_HSV.value
-                        } };
+                        params['color'] = {
+                            spectrumHsv: {
+                                hue: spectrum_HSV.hue,
+                                saturation: spectrum_HSV.saturation,
+                                value: spectrum_HSV.value
+                            }
+                        };
                     }
                     executionStates.push('color');
                 }
@@ -2785,7 +2793,7 @@
         }
 
         getStreamUrl(protocol_type) {
-            switch(protocol_type) {
+            switch (protocol_type) {
                 case 'hls':
                     return this.hls;
                 case 'dash':
@@ -2799,7 +2807,7 @@
         }
 
         getAppId(protocol_type) {
-            switch(protocol_type) {
+            switch (protocol_type) {
                 case 'hls':
                     return this.hls_app_id;
                 case 'dash':
