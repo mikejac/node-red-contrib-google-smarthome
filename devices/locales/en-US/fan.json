@@ -2,11 +2,13 @@
     "fan": {
         "label": {
             "name": "Name",
-            "topic": "Out topic"
+            "topic": "Out topic",
+            "room_hint": "Room hint"
         },
         "placeholder": {
             "name": "Name",
-            "topic": "Outgoing topic"
+            "topic": "Outgoing topic",
+            "room_hint": "Room hint"
         },
         "errors": {
             "missing-config": "Missing SmartHome configuration",

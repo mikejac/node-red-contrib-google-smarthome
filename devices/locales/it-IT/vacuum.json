@@ -2,11 +2,13 @@
     "vacuum": {
         "label": {
             "name": "Nome",
-            "topic": "Oggetto in uscita"
+            "topic": "Oggetto in uscita",
+			"room_hint": "Stanza"
         },
         "placeholder": {
             "name": "Nome",
-            "topic": "Oggetto corrente"
+            "topic": "Oggetto corrente",
+			"room_hint": "Stanza"
         },
         "errors": {
             "missing-config": "La configurazione di SmartHome non è disponibile",

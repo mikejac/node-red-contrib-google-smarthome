@@ -32,6 +32,7 @@ module.exports = function(RED) {
             this.client              = config.client;
             this.clientConn          = RED.nodes.getNode(this.client);
             this.topicOut            = config.topic;
+            this.room_hint           = config.room_hint;
             this.hlsUrl              = config.hls.trim();
             this.hlsAppId            = config.hls_app_id.trim();
             this.dashUrl             = config.dash.trim();
@@ -93,6 +94,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED Camera"],
                         name: name
                     },
+                    roomHint: me.room_hint,
                     willReportState: true,
                     attributes: {
                         cameraStreamSupportedProtocols: me.protocols,

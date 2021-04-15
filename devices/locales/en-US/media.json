@@ -52,7 +52,8 @@
             "toggles": "Toggles",
             "available_toggles_file": "Available toggles file",
             "command_only_toggles": "Command only toggles",
-            "query_only_toggles": "Query only toggles"
+            "query_only_toggles": "Query only toggles",
+            "room_hint": "Room hint"
         },
         "placeholder": {
             "name": "Name",
@@ -68,7 +69,8 @@
             "available_inputs_file": "Available inputs file",
             "available_applications_file": "Available applications file",
             "available_modes_file": "Available modes file",
-            "available_toggles_file": "Available toggles file"
+            "available_toggles_file": "Available toggles file",
+            "room_hint": "Room hint"
         },
         "errors": {
             "missing-config": "Missing SmartHome configuration",

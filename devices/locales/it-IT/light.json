@@ -10,11 +10,13 @@
             "hsv": "Luce con colore (HSV)",
             "hsv_temp": "Luce con colore (HSV) e temperatura",
             "rgb": "Luce con colore (RGB)",
-            "rgb_temp": "Luce con colore (RGB) e temperatura"
+            "rgb_temp": "Luce con colore (RGB) e temperatura",
+			"room_hint": "Stanza"
         },
         "placeholder": {
             "name": "Nome",
-            "topic": "Oggetto corrente"
+            "topic": "Oggetto corrente",
+			"room_hint": "Stanza"
         },
         "errors": {
             "missing-config": "La configurazione di SmartHome non è disponibile",

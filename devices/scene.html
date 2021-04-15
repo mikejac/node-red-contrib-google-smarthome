@@ -48,6 +48,11 @@
         <input type="text" id="node-input-topic" data-i18n="[placeholder]scene.placeholder.topic">
     </div>
 
+    <div class="form-row">
+        <label for="node-input-room_hint"><i class="fa fa-tag"></i> <span data-i18n="device.label.room_hint"></span></label>
+        <input type="text" id="node-input-room_hint" data-i18n="[placeholder]device.placeholder.room_hint">
+    </div>
+
     <div class="form-tips">
         <b>Input</b><br/>
         <code>[...]/on</code><br>
@@ -139,6 +144,9 @@
             },
             topic: {
                 value: "", required:true
+            },
+            room_hint: {
+                value: "", required: false
             }
         },
         inputs: 1,
