@@ -11,7 +11,8 @@
             "smooth_stream_app_id": "Smooth stream App Id",
             "progressive_mp4": "Progressive mp4 url",
             "progressive_mp4_app_id": "Progressive mp4 App Id",
-            "auth_token": "Token di autorizzazione"
+            "auth_token": "Token di autorizzazione",
+			"room_hint": "Stanza"
         },
         "placeholder": {
             "name": "Nome",
@@ -24,7 +25,8 @@
             "smooth_stream_app_id": "Smooth stream App Id",
             "progressive_mp4": "Progressive mp4 url",
             "progressive_mp4_app_id": "Progressive mp4 App Id",
-            "auth_token": "Token di autorizzazione"
+            "auth_token": "Token di autorizzazione",
+			"room_hint": "Stanza"
         },
         "errors": {
             "missing-config": "La configurazione di SmartHome non è disponibile",

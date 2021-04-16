@@ -86,6 +86,7 @@ module.exports = function (RED) {
                 volume: config.trait_volume || false,
             };
             this.topicOut = config.topic;
+            this.room_hint = config.room_hint;
             this.device_type = config.device_type;
             this.lang = config.lang;
 
@@ -636,6 +637,7 @@ module.exports = function (RED) {
                         defaultNames: ["Node-RED " + default_name],
                         name: name
                     },
+                    roomHint: me.room_hint,
                     willReportState: true,
                     attributes: {
                     },

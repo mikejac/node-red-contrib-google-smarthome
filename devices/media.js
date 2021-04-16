@@ -34,8 +34,9 @@ module.exports = function(RED) {
             this.client                         = config.client;
             this.clientConn                     = RED.nodes.getNode(this.client);
             this.topicOut                       = config.topic;
+            this.room_hint                      = config.room_hint;
             this.device_type					= config.device_type;
-            this.has_apps               = config.has_apps;
+            this.has_apps                       = config.has_apps;
             this.available_applications_file    = config.available_applications_file;
             this.available_applications         = [];
             this.has_channels                   = config.has_channels;
@@ -254,6 +255,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED " + default_name],
                         name: name
                     },
+                    roomHint: me.room_hint,
                     willReportState: true,
                     attributes: {
                     },

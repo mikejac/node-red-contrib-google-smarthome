@@ -44,6 +44,11 @@
     </div>
 
     <div class="form-row">
+        <label for="node-input-room_hint"><i class="fa fa-tag"></i> <span data-i18n="camera.label.room_hint"></span></label>
+        <input type="text" id="node-input-room_hint" data-i18n="[placeholder]camera.placeholder.room_hint">
+    </div>
+
+    <div class="form-row">
         <label for="node-input-hls"><i class="fa fa-tasks"></i> <span data-i18n="camera.label.hls"></span></label>
         <input type="text" id="node-input-hls" data-i18n="[placeholder]camera.placeholder.hls">
     </div>
@@ -178,6 +183,9 @@
             },
             topic: {
                 value: "", required:true
+            },
+            room_hint: {
+                value: "", required: false
             },
             hls: {
                 value: "", required:false

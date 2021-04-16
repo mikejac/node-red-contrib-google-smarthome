@@ -230,7 +230,8 @@
 			"selected": "Selezionati",
 			"recommended": "Raccomandati",
 			"all": "Tutti",
-			"advanced_settings": "Impostazionii avanzate"
+			"advanced_settings": "Impostazionii avanzate",
+			"room_hint": "Stanza"
 		},
 		"placeholder": {
 			"name": "Nome",
@@ -280,7 +281,8 @@
 			"available_arm_levels_file": "File dei livelli di sicurezza",
 			"energy_storage_distance_unit_for_ux": "Unità di misura della distanza",
 			"supported_dispense_items_file": "File delle provviste supportate",
-			"supported_dispense_presets_file": "File delle provviste predefinite supportate"
+			"supported_dispense_presets_file": "File delle provviste predefinite supportate",
+			"room_hint": "Stanza"
 		},
 		"errors": {
 			"missing-config": "La configurazione di SmartHome non è disponibile",

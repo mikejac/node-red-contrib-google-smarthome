@@ -1,4 +1,4 @@
-    <!--
+<!--
  NodeRED Google SmartHome
  Copyright (C) 2021 Claudio Chimera.
 
@@ -50,6 +50,11 @@
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tag"></i> <span data-i18n="device.label.topic"></span></label>
         <input type="text" id="node-input-topic" data-i18n="[placeholder]device.placeholder.topic">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-room_hint"><i class="fa fa-tag"></i> <span data-i18n="device.label.room_hint"></span></label>
+        <input type="text" id="node-input-room_hint" data-i18n="[placeholder]device.placeholder.room_hint">
     </div>
 
     <!-- Passthru-->
@@ -1428,505 +1433,508 @@
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('google-device',{
+    RED.nodes.registerType('google-device', {
         category: 'Google_SmartHome-function',
-        paletteLabel: function() {
+        paletteLabel: function () {
             return this._("device.label.node_name");
         },
         inputs: 1,
         outputs: 1,
-        color:"#C0DEED",
+        color: "#C0DEED",
         icon: "google-smarthome.png",
-        label: function() {
+        label: function () {
             return this._('device.device_type.' + this.device_type) + " " + this.name;
         },
-        labelStyle: function() {
+        labelStyle: function () {
             return this.name ? "node_label_italic" : ""
         },
         defaults: {
             client: {
-                type: "googlesmarthome-client", 
+                type: "googlesmarthome-client",
                 required: true
             },
             name: {
-                value: "", required:true
+                value: "", required: true
             },
             topic: {
-                value: "", required:false
+                value: "", required: false
+            },
+            room_hint: {
+                value: "", required: false
             },
             device_type: {
-                value: "UNKNOWN", required: true, validate: function(v) {
+                value: "UNKNOWN", required: true, validate: function (v) {
                     return v !== "UNKNOWN";
                 }
             },
             trait_appselector: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_channel: {
-                value: false, required:false
-                        },
+                value: false, required: false
+            },
             trait_inputselector: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_mediastate: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_onoff: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_transportcontrol: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_modes: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_volume: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_toggles: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_brightness: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_colorsetting: {
-                value: false, required:false
+                value: false, required: false
             },
             appselector_file: {
-                value: "applications.json", required:false
+                value: "applications.json", required: false
             },
             channel_file: {
-                value: "channels.json", required:false
+                value: "channels.json", required: false
             },
             inputselector_file: {
-                value: "inputs.json", required:false
+                value: "inputs.json", required: false
             },
             command_only_input_selector: {
-                value: false, required:false
+                value: false, required: false
             },
             ordered_inputs: {
-                value: false, required:false
+                value: false, required: false
             },
             support_activity_state: {
-                value: false, required:false
+                value: false, required: false
             },
             support_playback_state: {
-                value: false, required:false
+                value: false, required: false
             },
             command_only_onoff: {
-                value: false, required:false
+                value: false, required: false
             },
             query_only_onoff: {
-                value: false, required:false
+                value: false, required: false
             },
             supported_commands: {
-                value: ['CAPTION_CONTROL', 'NEXT', 'PAUSE', 'PREVIOUS', 'RESUME', 'SEEK_RELATIVE', 'SEEK_TO_POSITION', 'SET_REPEAT', 'SHUFFLE', 'STOP'], required:false
+                value: ['CAPTION_CONTROL', 'NEXT', 'PAUSE', 'PREVIOUS', 'RESUME', 'SEEK_RELATIVE', 'SEEK_TO_POSITION', 'SET_REPEAT', 'SHUFFLE', 'STOP'], required: false
             },
             volume_max_level: {
-                value: 100, required:true, validate: function(v) {
+                value: 100, required: true, validate: function (v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n >= 0;
                 }
             },
             can_mute_and_unmute: {
-                value: true, required:false
+                value: true, required: false
             },
             volume_default_percentage: {
-                value: 40, required:false, validate: function(v) {
+                value: 40, required: false, validate: function (v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n >= 0 && n <= 100;
                 }
             },
             level_step_size: {
-                value: 1, required:false, validate: function(v) {
+                value: 1, required: false, validate: function (v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n > 0;
                 }
             },
             command_only_volume: {
-                value: false, required:false
+                value: false, required: false
             },
             command_only_brightness: {
-                value: false, required:false
+                value: false, required: false
             },
             command_only_colorsetting: {
-                value: false, required:false
+                value: false, required: false
             },
             color_model: {
-                value: "temp", required:false
+                value: "temp", required: false
             },
             temperature_min_k: {
-                value: 2000, required:false, validate:function(v) {
+                value: 2000, required: false, validate: function (v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n > 0;
                 }
             },
             temperature_max_k: {
-                value: 9000, required:false, function(v) {
+                value: 9000, required: false, function(v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n > 0;
                 }
             },
             modes_file: {
-                value: "modes.json", required:false
+                value: "modes.json", required: false
             },
             command_only_modes: {
-                value: false, required:false
+                value: false, required: false
             },
             query_only_modes: {
-                value: false, required:false
+                value: false, required: false
             },
             toggles_file: {
-                value: "toggles.json", required:false
+                value: "toggles.json", required: false
             },
             command_only_toggles: {
-                value: false, required:false
+                value: false, required: false
             },
             query_only_toggles: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_camerastream: {
-                value: false, required:false
+                value: false, required: false
             },
             hls: {
-                value: "", required:false
+                value: "", required: false
             },
             hls_app_id: {
-                value: "", required:false
+                value: "", required: false
             },
             dash: {
-                value: "", required:false
+                value: "", required: false
             },
             dash_app_id: {
-                value: "", required:false
+                value: "", required: false
             },
             smooth_stream: {
-                value: "", required:false
+                value: "", required: false
             },
             smooth_stream_app_id: {
-                value: "", required:false
+                value: "", required: false
             },
             progressive_mp4: {
-                value: "", required:false
+                value: "", required: false
             },
             progressive_mp4_app_id: {
-                value: "", required:false
+                value: "", required: false
             },
             auth_token: {
-                value: "", required:false
+                value: "", required: false
             },
             passthru: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_scene: {
-                value: false, required:false
+                value: false, required: false
             },
             scene_reversible: {
-                value: true, required:false
+                value: true, required: false
             },
             trait_timer: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_temperaturesetting: {
-                value: false, required:false
+                value: false, required: false
             },
-            max_timer_limit_sec:{
-                value: 86400, required:false, validate:function(v) {
+            max_timer_limit_sec: {
+                value: 86400, required: false, validate: function (v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n > 0;
                 }
             },
             command_only_timer: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_temperaturesetting: {
-                value: false, required:false
+                value: false, required: false
             },
             available_thermostat_modes: {
-                value: ["off", "heat", "cool", "on", "heatcool", "auto", "fan-only", "purifier", "eco", "dry"], required:false
+                value: ["off", "heat", "cool", "on", "heatcool", "auto", "fan-only", "purifier", "eco", "dry"], required: false
             },
             min_threshold_celsius: {
-                value: 0, required:false, validate:RED.validators.number()
+                value: 0, required: false, validate: RED.validators.number()
             },
             max_threshold_celsius: {
-                value: 40, required:false, validate:RED.validators.number()
+                value: 40, required: false, validate: RED.validators.number()
             },
             thermostat_temperature_unit: {
-                value: "C", required:false
+                value: "C", required: false
             },
             buffer_range_celsius: {
-                value: 2, required:false, validate:RED.validators.number()
+                value: 2, required: false, validate: RED.validators.number()
             },
             command_only_temperaturesetting: {
-                value: false, required:false
+                value: false, required: false
             },
             query_only_temperaturesetting: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_temperaturecontrol: {
-                value: false, required:false
+                value: false, required: false
             },
             tc_min_threshold_celsius: {
-                value: 0, required:false, validate:RED.validators.number()
+                value: 0, required: false, validate: RED.validators.number()
             },
             tc_max_threshold_celsius: {
-                value: 40, required:false, validate:RED.validators.number()
+                value: 40, required: false, validate: RED.validators.number()
             },
             tc_temperature_step_celsius: {
-                value: 1, required:false, validate:RED.validators.number()
+                value: 1, required: false, validate: RED.validators.number()
             },
             tc_temperature_unit_for_ux: {
-                value: "C", required:false
+                value: "C", required: false
             },
             tc_command_only_temperaturecontrol: {
-                value: false, required:false
+                value: false, required: false
             },
             tc_query_only_temperaturecontrol: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_humiditysetting: {
-                value: false, required:false
+                value: false, required: false
             },
             min_percent: {
-                value: 0, required:false, function(v) {
+                value: 0, required: false, function(v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n > 0;
                 }
             },
             max_percent: {
-                value: 100, required:false, function(v) {
+                value: 100, required: false, function(v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n > 0;
                 }
             },
             command_only_humiditysetting: {
-                value: false, required:false
+                value: false, required: false
             },
             query_only_humiditysetting: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_dock: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_locator: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_lockunlock: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_reboot: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_openclose: {
-                value: false, required:false
+                value: false, required: false
             },
             discrete_only_openclose: {
-                value: false, required:false
+                value: false, required: false
             },
             open_direction: {
-                value: [], required:false
+                value: [], required: false
             },
             command_only_openclose: {
-                value: false, required:false
+                value: false, required: false
             },
             query_only_openclose: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_startstop: {
-                value: false, required:false
+                value: false, required: false
             },
             pausable: {
-                value: false, required:false
+                value: false, required: false
             },
             available_zones: {
-                value:[], required:false
+                value: [], required: false
             },
             lang: {
-                value:"en", required:false
+                value: "en", required: false
             },
             trait_runcycle: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_softwareupdate: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_rotation: {
-                value: false, required:false
+                value: false, required: false
             },
             supports_degrees: {
-                value: true, required:false
+                value: true, required: false
             },
             supports_percent: {
-                value: true, required:false
+                value: true, required: false
             },
             rotation_degrees_min: {
-                value: 0, required:false, function(v) {
+                value: 0, required: false, function(v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n > 0;
                 }
             },
             rotation_degrees_max: {
-                value: 360, required:false, function(v) {
+                value: 360, required: false, function(v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n > 0;
                 }
             },
             supports_continuous_rotation: {
-                value: false, required:false
+                value: false, required: false
             },
             command_only_rotation: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_lighteffects: {
-                value: false, required:false
+                value: false, required: false
             },
             default_sleep_duration: {
-                value: 1800, required:false, function(v) {
+                value: 1800, required: false, function(v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n > 0;
                 }
             },
             default_wake_duration: {
-                value: 1800, required:false, function(v) {
+                value: 1800, required: false, function(v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n > 0;
                 }
             },
             supported_effects: {
-                value: ["colorLoop", "sleep", "wake"], required:false
+                value: ["colorLoop", "sleep", "wake"], required: false
             },
             trait_statusreport: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_cook: {
-                value: false, required:false
+                value: false, required: false
             },
             supported_cooking_modes: {
-                value: [], required:false
+                value: [], required: false
             },
             food_presets_file: {
-                value: 'foodPresets.json', required:false
+                value: 'foodPresets.json', required: false
             },
             trait_fanspeed: {
-                value: false, required:false
+                value: false, required: false
             },
             reversible: {
-                value: false, required:false
+                value: false, required: false
             },
             command_only_fanspeed: {
-                value: false, required:false
+                value: false, required: false
             },
-            available_fan_speeds_file:  {
-                value: 'availableFanSpeeds.json', required:false
+            available_fan_speeds_file: {
+                value: 'availableFanSpeeds.json', required: false
             },
             trait_sensorstate: {
-                value: false, required:false
+                value: false, required: false
             },
             sensor_states_supported: {
-                value: [], required:false
+                value: [], required: false
             },
             trait_fill: {
-                value: false, required:false
+                value: false, required: false
             },
-            available_fill_levels_file:  {
-                value: 'availableFillLevels.json', required:false
+            available_fill_levels_file: {
+                value: 'availableFillLevels.json', required: false
             },
             supports_fill_percent: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_armdisarm: {
-                value: false, required:false
+                value: false, required: false
             },
             available_arm_levels_file: {
-                value: 'availableArmLevels.json', required:false
+                value: 'availableArmLevels.json', required: false
             },
             trait_energystorage: {
-                value: false, required:false
+                value: false, required: false
             },
             is_rechargeable: {
-                value: false, required:false
+                value: false, required: false
             },
             query_only_energy_storage: {
-                value: false, required:false
+                value: false, required: false
             },
             energy_storage_distance_unit_for_ux: {
-                value: "KILOMETERS", required:false
+                value: "KILOMETERS", required: false
             },
             trait_dispense: {
-                value: false, required:false
+                value: false, required: false
             },
             supported_dispense_items_file: {
-                value: 'supportedDispenseItems.json', required:false
+                value: 'supportedDispenseItems.json', required: false
             },
             supported_dispense_presets_file: {
-                value: 'supportedDispensePresets.json', required:false
+                value: 'supportedDispensePresets.json', required: false
             },
             trait_networkcontrol: {
-                value: false, required:false
+                value: false, required: false
             },
             supports_enabling_guest_network: {
-                value: false, required:false
+                value: false, required: false
             },
             supports_disabling_guest_network: {
-                value: false, required:false
+                value: false, required: false
             },
             supports_getting_guest_network_password: {
-                value: false, required:false
+                value: false, required: false
             },
             network_profiles: {
-                value: [], required:false
+                value: [], required: false
             },
             supports_enabling_network_profile: {
-                value: false, required:false
+                value: false, required: false
             },
             supports_disabling_network_profile: {
-                value: false, required:false
+                value: false, required: false
             },
             supports_network_download_speedtest: {
-                value: false, required:false
+                value: false, required: false
             },
             supports_network_upload_speedtest: {
-                value: false, required:false
+                value: false, required: false
             },
             trait_objectdetection: {
-                value: false, required:false
+                value: false, required: false
             },
             show_trait: {
-                value: "selected", required:false
+                value: "selected", required: false
             },
             advanced_settings: {
-                value: false, required:false
+                value: false, required: false
             }
         },
-        oneditprepare: function() {
+        oneditprepare: function () {
             $('#node-input-device-advanced_settings').prop('checked', false);
             $('#node-input-device-show_trait').val('selected');
             // Zones
-            $('#node-input-device-zone-container').css('min-height','150px').css('min-width','450px').editableList({
-                addItem: function(container,i,opt) {
-                    var zone=opt;
+            $('#node-input-device-zone-container').css('min-height', '150px').css('min-width', '450px').editableList({
+                addItem: function (container, i, opt) {
+                    var zone = opt;
                     if (!zone.hasOwnProperty('name')) {
-                        zone={name:""};
+                        zone = { name: "" };
                     }
                     container.css({
                         overflow: 'hidden',
                         whiteSpace: 'nowrap'
                     });
                     let fragment = document.createDocumentFragment();
-                    var row1 = $('<div/>',{style:"display:flex;"}).appendTo(fragment);
-                    var propertyName = $('<input/>',{class:"node-input-device-zone-property-name",type:"text"})
+                    var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
+                    var propertyName = $('<input/>', { class: "node-input-device-zone-property-name", type: "text" })
                         .appendTo(row1);
                     propertyName.val(zone.name);
 
@@ -1938,24 +1946,24 @@
             if (!this.available_zones) {
                 this.available_zones = [];
             }
-            for (var i=0; i<this.available_zones.length; i++) {
+            for (var i = 0; i < this.available_zones.length; i++) {
                 var zone = this.available_zones[i];
-                $("#node-input-device-zone-container").editableList('addItem',{ name: zone});
+                $("#node-input-device-zone-container").editableList('addItem', { name: zone });
             }
             // Network profiles
-            $('#node-input-device-network-profiles-container').css('min-height','150px').css('min-width','450px').editableList({
-                addItem: function(container,i,opt) {
-                    var network_profiles=opt;
+            $('#node-input-device-network-profiles-container').css('min-height', '150px').css('min-width', '450px').editableList({
+                addItem: function (container, i, opt) {
+                    var network_profiles = opt;
                     if (!network_profiles.hasOwnProperty('name')) {
-                        network_profiles={name:""};
+                        network_profiles = { name: "" };
                     }
                     container.css({
                         overflow: 'hidden',
                         whiteSpace: 'nowrap'
                     });
                     let fragment = document.createDocumentFragment();
-                    var row1 = $('<div/>',{style:"display:flex;"}).appendTo(fragment);
-                    var propertyName = $('<input/>',{class:"node-input-device-network-profiles-property-name",type:"text"})
+                    var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
+                    var propertyName = $('<input/>', { class: "node-input-device-network-profiles-property-name", type: "text" })
                         .appendTo(row1);
                     propertyName.val(network_profiles.name);
 
@@ -1967,14 +1975,14 @@
             if (!this.network_profiles) {
                 this.network_profiles = [];
             }
-            for (var i=0; i<this.network_profiles.length; i++) {
+            for (var i = 0; i < this.network_profiles.length; i++) {
                 var network_profiles = this.network_profiles[i];
-                $("#node-input-device-network-profiles-container").editableList('addItem',{ name: network_profiles});
+                $("#node-input-device-network-profiles-container").editableList('addItem', { name: network_profiles });
             }
 
-            $(".cb_trait").change(function() {
-                const checked = $( this ).prop('checked');
-                const cb_id =  $( this ).attr('id');
+            $(".cb_trait").change(function () {
+                const checked = $(this).prop('checked');
+                const cb_id = $(this).attr('id');
                 const div_id = cb_id.substring(11);
                 const div_aid = div_id.substring(6);
                 /*
@@ -2001,8 +2009,8 @@
                 }
             });*/
 
-            $(".oc_trait").click(function() {
-                const parent_id =  $( this ).parent().parent().attr('id');
+            $(".oc_trait").click(function () {
+                const parent_id = $(this).parent().parent().attr('id');
                 const div_id = parent_id.substring(parent_id.startsWith('cb_') ? 3 : 6);
                 $("#" + div_id).toggle();
                 const div_aid = div_id.substring(6);
@@ -2013,17 +2021,17 @@
                 }
             });
 
-            $("#node-input-advanced_settings").change(function() {
-                const checked = $( this ).prop('checked');
+            $("#node-input-advanced_settings").change(function () {
+                const checked = $(this).prop('checked');
                 if (checked) {
                     $(".device-advanced").show();
                 } else {
-                    $(".device-advanced" ).hide();
+                    $(".device-advanced").hide();
                 }
             });
             $("#node-input-advanced_settings").change();
 
-            var setTraitRecomended = function(name, recommended, show_Trait) {
+            var setTraitRecomended = function (name, recommended, show_Trait) {
                 $("#node-input-trait_" + name).show();
                 $("#label_trait_" + name).hide();
                 $("#cb_trait_" + name).show();
@@ -2050,7 +2058,7 @@
                 }
             };
 
-            var setTraitRequired = function(name) {
+            var setTraitRequired = function (name) {
                 $("#node-input-trait_" + name).hide();
                 $("#node-input-trait_" + name).prop('checked', true);
                 $("#label_trait_" + name).show();
@@ -2060,7 +2068,7 @@
             };
 
             // Device Type
-            var deviceTypeChanged = function() {
+            var deviceTypeChanged = function () {
                 var device_type = $("#node-input-device_type").val();
                 var show_trait = $("#node-input-show_trait").val();
                 var required_traits = [];
@@ -2315,8 +2323,8 @@
                         required_traits = ["onoff"];
                         break;
                     case "SPEAKER": // Speaker
-                         recommended_traits = ["appselector", "inputselector", "mediastate", "onoff", "transportcontrol"];
-                         required_traits = ["volunme"];
+                        recommended_traits = ["appselector", "inputselector", "mediastate", "onoff", "transportcontrol"];
+                        required_traits = ["volunme"];
                         break;
                     case "SPRINKLER": // Sprinkler
                         recommended_traits = ["timer"];
@@ -2383,13 +2391,13 @@
                         required_traits = ["onoff"];
                         break;
                 }
-                $(".div_trait").each(function() {
-                    let div_id =  $( this ).attr('id');
+                $(".div_trait").each(function () {
+                    let div_id = $(this).attr('id');
                     if (required_traits.includes(div_id)) {
                         setTraitRequired(div_id);
                     } else {
-                        setTraitRecomended(div_id, 
-                            device_type === 'SCENE' ? false : recommended_traits.includes(div_id), 
+                        setTraitRecomended(div_id,
+                            device_type === 'SCENE' ? false : recommended_traits.includes(div_id),
                             device_type === 'SCENE' ? 'none' : (div_id === 'scene' ? false : show_trait));
                         //setTraitRecomended(div_id);
                     }
@@ -2399,14 +2407,14 @@
             $("#node-input-device_type").change(deviceTypeChanged);
             $("#node-input-show_trait").change(deviceTypeChanged);
         },
-        oneditsave: function() {
+        oneditsave: function () {
             var node = this;
             node.advanced_settings = false;
             node.show_trait = 'selected';
             // Zone
             var available_zones = $("#node-input-device-zone-container").editableList('items');
-            node.available_zones= [];
-            available_zones.each(function(i) {
+            node.available_zones = [];
+            available_zones.each(function (i) {
                 var zone = $(this);
                 var name = zone.find(".node-input-device-zone-property-name").val();
                 node.available_zones.push(name);
@@ -2414,34 +2422,34 @@
             // Network profiles
             var network_profiles = $("#node-input-device-network-profiles-container").editableList('items');
             var node = this;
-            node.network_profiles= [];
-            network_profiles.each(function(i) {
+            node.network_profiles = [];
+            network_profiles.each(function (i) {
                 var network_profile = $(this);
                 var name = network_profile.find(".node-input-device-network-profiles-property-name").val();
                 node.network_profiles.push(name);
             });
         },
-        oneditresize: function(size) {
+        oneditresize: function (size) {
             // Zone
             var rows = $("#dialog-form>div:not(.node-input-device-zone-container-row)");
             var height = size.height;
-            for (var i=0; i<rows.length; i++) {
+            for (var i = 0; i < rows.length; i++) {
                 height -= $(rows[i]).outerHeight(true);
             }
             var editorRow = $("#dialog-form>div.node-input-device-zone-container-row");
-            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
             height += 16;
-            $("#node-input-device-zone-container").editableList('height',height);
+            $("#node-input-device-zone-container").editableList('height', height);
             // Network profiles
             var rows = $("#dialog-form>div:not(.node-input-device-network-profiles-container-row)");
             var height = size.height;
-            for (var i=0; i<rows.length; i++) {
+            for (var i = 0; i < rows.length; i++) {
                 height -= $(rows[i]).outerHeight(true);
             }
             var editorRow = $("#dialog-form>div.node-input-device-network-profiles-container-row");
-            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
             height += 16;
-            $("#node-input-device-network-profiles-container").editableList('height',height);
+            $("#node-input-device-network-profiles-container").editableList('height', height);
         }
     });
 </script>

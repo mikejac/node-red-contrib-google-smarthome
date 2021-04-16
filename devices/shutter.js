@@ -33,6 +33,7 @@ module.exports = function(RED) {
             this.client     = config.client;
             this.clientConn = RED.nodes.getNode(this.client);
             this.topicOut   = config.topic;
+            this.room_hint  = config.room_hint;
             this.passthru   = config.passthru;
             this.topicDelim = '/';
 
@@ -73,6 +74,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED Shutter"],
                         name: name
                     },
+                    roomHint: me.room_hint,
                     willReportState: true,
                     attributes: {
                     },
