@@ -893,7 +893,7 @@ module.exports = function (RED) {
                 attributes['temperatureRange'] = {
                     minThresholdCelsius: me.tc_min_threshold_celsius,
                     maxThresholdCelsius: me.tc_max_threshold_celsius
-                }
+                };
                 attributes['temperatureStepCelsius'] = me.tc_temperature_step_celsius;
                 attributes['temperatureUnitForUX'] = me.tc_temperature_unit_for_ux;
                 attributes['commandOnlyTemperatureControl'] = me.tc_command_only_temperaturecontrol;
@@ -904,7 +904,7 @@ module.exports = function (RED) {
                 attributes['thermostatTemperatureRange'] = {
                     minThresholdCelsius: me.min_threshold_celsius,
                     maxThresholdCelsius: me.max_threshold_celsius
-                }
+                };
                 attributes['thermostatTemperatureUnit'] = me.thermostat_temperature_unit;
                 attributes['bufferRangeCelsius'] = me.buffer_range_celsius;
                 attributes['commandOnlyTemperatureSetting'] = me.command_only_temperaturesetting;

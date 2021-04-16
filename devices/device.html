@@ -1653,9 +1653,6 @@
             command_only_timer: {
                 value: false, required: false
             },
-            trait_temperaturesetting: {
-                value: false, required: false
-            },
             available_thermostat_modes: {
                 value: ["off", "heat", "cool", "on", "heatcool", "auto", "fan-only", "purifier", "eco", "dry"], required: false
             },
@@ -2402,7 +2399,7 @@
                         //setTraitRecomended(div_id);
                     }
                 });
-            }
+            };
             deviceTypeChanged();
             $("#node-input-device_type").change(deviceTypeChanged);
             $("#node-input-show_trait").change(deviceTypeChanged);
