@@ -32,6 +32,7 @@ module.exports = function(RED) {
             this.topicOut   = config.topic;
             this.room_hint  = config.room_hint;
             this.topicDelim = '/';
+            this.sceneReversible = config.scenereversible;
 
             if (!this.clientConn) {
                 this.error(RED._("scene.errors.missing-config"));
@@ -43,7 +44,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.clientConn.register(this, 'scene', config.name, config.scenereversible);
+            this.clientConn.register(this, 'scene', config.name, this);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -55,7 +56,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name, sceneReversible) {
+        registerDevice(client, name, me) {
             let states = {
                 online: true
             };
@@ -72,7 +73,7 @@ module.exports = function(RED) {
                     roomHint: me.room_hint,
                     willReportState: false,
                     attributes: {
-                        sceneReversible: sceneReversible
+                        sceneReversible: me.sceneReversible
                     },
                     deviceInfo: {
                         manufacturer: 'Node-RED',

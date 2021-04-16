@@ -45,7 +45,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light-onoff', config.name);
+            this.states = this.clientConn.register(this, 'light-onoff', config.name, this);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -57,7 +57,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name) {
+        registerDevice(client, name, me) {
             let states = {
                 online: true,
                 on: false
@@ -255,7 +255,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light-dimmable', config.name);
+            this.states = this.clientConn.register(this, 'light-dimmable', config.name, this);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -267,7 +267,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name) {
+        registerDevice(client, name, me) {
             let states = {
                 online: true,
                 on: false,
@@ -492,7 +492,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light-temperature', config.name);
+            this.states = this.clientConn.register(this, 'light-temperature', config.name, this);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -504,7 +504,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name) {
+        registerDevice(client, name, me) {
             let states = {
                 online: true,
                 on: false,
@@ -762,7 +762,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light-hsv', config.name);
+            this.states = this.clientConn.register(this, 'light-hsv', config.name, this);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -774,7 +774,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name) {
+        registerDevice(client, name, me) {
             let states = {
                 online: true,
                 on: false,
@@ -1080,7 +1080,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light-rgb', config.name);
+            this.states = this.clientConn.register(this, 'light-rgb', config.name, this);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -1360,7 +1360,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name) {
+        registerDevice(client, name, me) {
             // according to Googles own doc.'s, 'color.spectrumRGB' should actually be 'color.spectrumRgb'
             let states = {
                 online: true,
