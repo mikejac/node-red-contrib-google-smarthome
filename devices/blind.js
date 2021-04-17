@@ -47,7 +47,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'blind', config.name);
+            this.states = this.clientConn.register(this, 'blind', config.name, me);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -59,7 +59,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name) {
+        registerDevice(client, name, me) {
             let states = {
                 online: true,
                 openPercent: 0

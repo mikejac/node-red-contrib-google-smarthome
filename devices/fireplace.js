@@ -46,7 +46,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'fireplace-onoff', config.name);
+            this.states = this.clientConn.register(this, 'fireplace-onoff', config.name, this);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -58,7 +58,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name) {
+        registerDevice(client, name, me) {
             let states = {
                 online: true,
                 on: false
