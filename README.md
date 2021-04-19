@@ -6,6 +6,7 @@
 - [Setup Instructions](#setup-instructions)
 - [Nodes in this package](#nodes-in-this-package)
   - [General Information](#general-information)
+  - [Google device](#google-device-a-general-nodes-supporting-all-Google-device-types-and-all-Google-device-traits)
   - [Light On/Off](#--light-onoff-a-light-that-can-be-switched-on-and-off-only)
   - [Dimmable Light](#--dimmable-light)
   - [Color Temperature Light](#--color-temperature-light)
@@ -150,6 +151,130 @@ If you want to use login with username/password instead, skip this section.
 1. If `online` is set to `false` for a node, Google SmartHome is not going to be able to control the node. It will also show as `offline` in the Google Home app.
 2. The nodes will do their best to convert incoming payload data to the required type. You can send a string of e.g. `ON` and it will be converted to `true`.
 3. Topics must be either as stated below or prepended with one or more `/`. E.g. `my/topic/on`. The nodes only looks for the part after the last `/`, if any.
+
+#### - Google device (a general nodes supporting all Google device types and all Google device traits)
+This is a generic node, supporting the following Google [devices](https://developers.google.com/assistant/smarthome/guides):
+
+* Air conditioning unit
+* Air cooler
+* Air freshener
+* Air purifier
+* Audio-Video receiver
+* Awning
+* Bathtub
+* Bed
+* Blender
+* Blinds
+* Boiler
+* Camera
+* Carbon monoxide detector
+* Charger
+* Closet
+* Coffee Maker
+* Cooktop
+* Curtain
+* Dehumidifier
+* Dehydrator
+* Dishwasher
+* Door
+* Doorbell
+* Drawer
+* Dryer
+* Fan
+* Faucet
+* Fireplace
+* Freezer
+* Fryer
+* Garage
+* Gate
+* Grill
+* Heater
+* Hood
+* Humidifier
+* Kettle
+* Light
+* Lock
+* Microwave
+* Mop
+* Mower
+* Multicooker
+* Network
+* Outlet
+* Oven
+* Pergola
+* Pet feeder
+* Pressure cooker
+* Radiator
+* Refrigerator
+* Remote control
+* Router
+* Scene
+* Security system
+* Sensor
+* Settop
+* Shower
+* Shutter
+* Smoke detector
+* Soundbar
+* Sousvide
+* Speaker
+* Sprinkler
+* Stand mixer
+* Streaming box
+* Streaming soundbar
+* Streaming stick
+* Switch
+* Thermostat
+* Television
+* Vacuum
+* Valve
+* Washer
+* Water heater
+* Water purifier
+* Water softener
+* Window
+* Yogurt maker
+
+and the following Google [traits](https://developers.google.com/assistant/smarthome/traits):
+
+* App selector
+* Arm/Disarm
+* Brightness
+* Camera stream
+* Channel
+* Color setting
+* Color remperature
+* Cook
+* Dispense
+* Dock
+* Energy storage
+* Fan speed
+* Fill
+* Humidity setting
+* Input selector
+* Light effects
+* Locator
+* Lock/Unlock
+* Media state
+* Modes
+* Network control
+* Object detection
+* On/Off
+* Open/Close
+* Reboot
+* Rotation
+* Run cycle
+* Scene
+* Sensor state
+* Software update
+* Start stop
+* Status report
+* Temperature control
+* Temperature Setting
+* Timer
+* Toggles
+* Transport control
+* Volume
 
 #### - Light On/Off (a light that can be switched on and off only)
 `topic` can be `on`, `online` or something else.
