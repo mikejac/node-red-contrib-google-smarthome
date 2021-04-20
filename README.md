@@ -6,7 +6,7 @@
 - [Setup Instructions](#setup-instructions)
 - [Nodes in this package](#nodes-in-this-package)
   - [General Information](#general-information)
-  - [Google device](#google-device-a-general-nodes-supporting-all-Google-device-types-and-all-Google-device-traits)
+  - [Google Device node](#--Google-device-node-a-general-node-supporting-all-Google-device-types-and-all-Google-device-traits)
   - [Light On/Off](#--light-onoff-a-light-that-can-be-switched-on-and-off-only)
   - [Dimmable Light](#--dimmable-light)
   - [Color Temperature Light](#--color-temperature-light)
@@ -152,7 +152,7 @@ If you want to use login with username/password instead, skip this section.
 2. The nodes will do their best to convert incoming payload data to the required type. You can send a string of e.g. `ON` and it will be converted to `true`.
 3. Topics must be either as stated below or prepended with one or more `/`. E.g. `my/topic/on`. The nodes only looks for the part after the last `/`, if any.
 
-#### - Google device (a general nodes supporting all Google device types and all Google device traits)
+#### - Google device node (a general node supporting all Google device types and all Google device traits)
 This is a generic node, supporting the following Google [devices](https://developers.google.com/assistant/smarthome/guides):
 
 * Air conditioning unit
