@@ -6,7 +6,7 @@
 - [Setup Instructions](#setup-instructions)
 - [Nodes in this package](#nodes-in-this-package)
   - [General Information](#general-information)
-  - [Google device](#google-device-a-general-nodes-supporting-all-Google-device-types-and-all-Google-device-traits)
+  - [Google Device](#--google-device-a-general-nodes-supporting-all-Google-device-types-and-all-Google-device-traits)
   - [Light On/Off](#--light-onoff-a-light-that-can-be-switched-on-and-off-only)
   - [Dimmable Light](#--dimmable-light)
   - [Color Temperature Light](#--color-temperature-light)
