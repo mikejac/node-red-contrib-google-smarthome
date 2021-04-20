@@ -1348,7 +1348,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light-rgb-temp', config.name);
+            this.states = this.clientConn.register(this, 'light-rgb-temp', config.name, this);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
