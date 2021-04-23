@@ -553,7 +553,12 @@
                 <input type="checkbox" checked id="node-input-supports_fan_speed_percent" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
 
-            <div class="form-row">
+            <div class="form-row no_fan_speed_percent">
+                <label style="width:auto" for="node-input-fan_speeds_ordered"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.fan_speeds_ordered"></span></label>
+                <input type="checkbox" checked id="node-input-fan_speeds_ordered" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row no_fan_speed_percent">
                 <label style="width:auto" for="node-input-available_fan_speeds_file"><i class="fa fa-file"></i> <span data-i18n="device.label.available_fan_speeds_file"></span></label>
                 <input type="text" id="node-input-available_fan_speeds_file" data-i18n="[placeholder]device.placeholder.available_fan_speeds_file">
             </div>
@@ -1830,6 +1835,12 @@
             reversible: {
                 value: false, required: false
             },
+            supports_fan_speed_percent: {
+                value: false, required: false
+            },
+            fan_speeds_ordered: {
+                value: false, required: false
+            },
             command_only_fanspeed: {
                 value: false, required: false
             },
@@ -2027,6 +2038,16 @@
                 }
             });
             $("#node-input-advanced_settings").change();
+
+            $("#node-input-supports_fan_speed_percent").change(function () {
+                const checked = $(this).prop('checked');
+                if (checked) {
+                    $(".no_fan_speed_percent").hide();
+                } else {
+                    $(".no_fan_speed_percent").show();
+                }
+            });
+            $("#node-input-supports_fan_speed_percent").change();
 
             var setTraitRecomended = function (name, recommended, show_Trait) {
                 $("#node-input-trait_" + name).show();
