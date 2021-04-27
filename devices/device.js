@@ -149,6 +149,7 @@ module.exports = function (RED) {
             this.command_only_fanspeed = config.command_only_fanspeed;
             this.supports_fan_speed_percent = config.supports_fan_speed_percent;
             this.available_fan_speeds_file = config.available_fan_speeds_file;
+            this.fan_speeds_ordered = config.fan_speeds_ordered || false;
             this.available_fan_speeds = [];
             // Fill
             this.available_fill_levels_file = config.available_fill_levels_file;
@@ -713,8 +714,14 @@ module.exports = function (RED) {
             if (me.trait.fanspeed) {
                 attributes['reversible'] = me.reversible;
                 attributes['commandOnlyFanSpeed'] = me.command_only_fanspeed;
-                attributes['availableFanSpeeds'] = me.available_fan_speeds;
-                attributes['supportsFanSpeedPercent'] = me.supports_fan_speed_percent;
+                if (me.supports_fan_speed_percent) {
+                    attributes['supportsFanSpeedPercent'] = me.supports_fan_speed_percent;
+                } else {
+                    attributes['availableFanSpeeds'] = {
+                        speeds: me.available_fan_speeds,
+                        ordered: me.fan_speeds_ordered
+                    };
+                }
             }
             if (me.trait.fill) {
                 attributes['availableFillLevels'] = me.available_fill_levels;

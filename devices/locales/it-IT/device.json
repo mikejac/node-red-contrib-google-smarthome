@@ -192,6 +192,7 @@
 			"reversible": "Invertibile",
 			"command_only_fanspeed": "Comanda soltanto la ventola",
 			"supports_fan_speed_percent": "Supporta la percentuale della velocità",
+			"fan_speeds_ordered": "Velocità ordinate",
 			"available_fan_speeds_file": "File delle velocità della ventola",
 			"sensor_states_supported": "Sensori supportati",
             "air_quality" : "Qualità dell'aria",

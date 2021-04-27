@@ -173,6 +173,7 @@
             "reversible": "Reversible",
             "command_only_fanspeed": "Command only fan speed",
             "supports_fan_speed_percent": "Supports fan speed percent",
+			"fan_speeds_ordered": "Ordered fan speeds",
             "available_fan_speeds_file": "Available fan speeds file",
             "sensor_states_supported": "Sensor states supported",
             "air_quality" : "Air Quality",

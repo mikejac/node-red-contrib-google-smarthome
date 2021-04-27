@@ -21,7 +21,7 @@
 . ./data
 . ./code
 
-NODE_ID="98599ced.c9cc6"
+NODE_ID=$1 || "98599ced.c9cc6"
 PAYLOAD_FILE="$HOME/payload.json"
 OUT_FILE="$HOME/out.json"
 PAYLOAD_URL=$(dirname $BASE_URL)/payload
