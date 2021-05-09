@@ -889,7 +889,7 @@ module.exports = function(RED) {
             }
             else if (command.command == 'action.devices.commands.mediaSeekRelative') {
                 if (command.params.hasOwnProperty('relativePositionMs')) {
-                    const relative_position_ms = command.params['relativePositionMs'];
+                    //const relative_position_ms = command.params['relativePositionMs'];
                     params['playbackState'] = 'PLAYING';
                     executionStates.push('online', 'playbackState');
                     return ok_result;
@@ -897,7 +897,7 @@ module.exports = function(RED) {
             }
             else if (command.command == 'action.devices.commands.mediaSeekToPosition') {
                 if (command.params.hasOwnProperty('absPositionMs')) {
-                    const abs_position_ms = command.params['absPositionMs'];
+                    //const abs_position_ms = command.params['absPositionMs'];
                     params['playbackState'] = 'PLAYING';
                     executionStates.push('online', 'playbackState');
                     return ok_result;
@@ -906,11 +906,11 @@ module.exports = function(RED) {
             else if (command.command == 'action.devices.commands.mediaRepeatMode') {
                 // TODO
                 if (command.params.hasOwnProperty('isOn')) {
-                    const is_on = command.params['isOn'];
+                    //const is_on = command.params['isOn'];
                     return ok_result;
                 }
                 if (command.params.hasOwnProperty('isSingle')) {
-                    const is_single = command.params['isSingle'];
+                    //const is_single = command.params['isSingle'];
                     return ok_result;
                 }
             }
@@ -920,11 +920,11 @@ module.exports = function(RED) {
             }
             else if (command.command == 'action.devices.commands.mediaClosedCaptioningOn') {
                 if (command.params.hasOwnProperty('closedCaptioningLanguage')) {
-                    const closedCaptioningLanguage = command.params['closedCaptioningLanguage'];
+                    //const closedCaptioningLanguage = command.params['closedCaptioningLanguage'];
                     params['playbackState'] = this.states['playbackState'];
                 }
                 if (command.params.hasOwnProperty('userQueryLanguage')) {
-                    const userQueryLanguage = command.params['userQueryLanguage'];
+                    //const userQueryLanguage = command.params['userQueryLanguage'];
                     params['playbackState'] = this.states['playbackState'];
                 }
                 executionStates.push('online', 'playbackState');

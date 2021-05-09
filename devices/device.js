@@ -1963,7 +1963,7 @@ module.exports = function (RED) {
             }
             // Cook
             else if (command.command == 'action.devices.commands.Cook') {
-                const start = command.params['start'];
+                //const start = command.params['start'];
                 if (command.params.hasOwnProperty('cookingMode')) {
                     const cooking_mode = command.params['cookingMode'];
                     if (me.supported_cooking_modes.includes(cooking_mode)) {
@@ -2019,7 +2019,7 @@ module.exports = function (RED) {
             // Dispense
             else if (command.command == 'action.devices.commands.Dispense') {
                 const item_name = command.params['item'] || '';
-                const amount = command.params['amount'] || '';
+                //const amount = command.params['amount'] || '';
                 const unit = command.params['unit'] || '';
                 const preset_name = command.params['presetName'] || '';
                 if (preset_name) {
@@ -2154,7 +2154,7 @@ module.exports = function (RED) {
             // NetworkControl 
             else if (command.command == 'action.devices.commands.EnableDisableNetworkProfile') {
                 const profile = command.params['profile'].toLowerCase();
-                const enable = command.params['enable'] || false;
+                //const enable = command.params['enable'] || false;
                 let found = false;
                 this.network_profiles.forEach(function (p) {
                     if (profile === p.toLowerCase()) {
@@ -2321,35 +2321,35 @@ module.exports = function (RED) {
             }
             else if (command.command == 'action.devices.commands.mediaSeekRelative') {
                 if (command.params.hasOwnProperty('relativePositionMs')) {
-                    const relative_position_ms = command.params['relativePositionMs'];
+                    //const relative_position_ms = command.params['relativePositionMs'];
                     params['playbackState'] = 'PLAYING';
                     executionStates.push('playbackState');
                 }
             }
             else if (command.command == 'action.devices.commands.mediaSeekToPosition') {
                 if (command.params.hasOwnProperty('absPositionMs')) {
-                    const abs_position_ms = command.params['absPositionMs'];
+                    //const abs_position_ms = command.params['absPositionMs'];
                     params['playbackState'] = 'PLAYING';
                     executionStates.push('playbackState');
                 }
             }
             else if (command.command == 'action.devices.commands.mediaRepeatMode') {
                 if (command.params.hasOwnProperty('isOn')) {
-                    const is_on = command.params['isOn'];
+                    //const is_on = command.params['isOn'];
                 }
                 if (command.params.hasOwnProperty('isSingle')) {
-                    const is_single = command.params['isSingle'];
+                    //const is_single = command.params['isSingle'];
                 }
             }
             else if (command.command == 'action.devices.commands.mediaShuffle') {
             }
             else if (command.command == 'action.devices.commands.mediaClosedCaptioningOn') {
                 if (command.params.hasOwnProperty('closedCaptioningLanguage')) {
-                    const closedCaptioningLanguage = command.params['closedCaptioningLanguage'];
+                    //const closedCaptioningLanguage = command.params['closedCaptioningLanguage'];
                     params['playbackState'] = me.states['playbackState'];
                 }
                 if (command.params.hasOwnProperty('userQueryLanguage')) {
-                    const userQueryLanguage = command.params['userQueryLanguage'];
+                    //const userQueryLanguage = command.params['userQueryLanguage'];
                     params['playbackState'] = me.states['playbackState'];
                 }
                 executionStates.push('playbackState');
@@ -2706,7 +2706,7 @@ module.exports = function (RED) {
                     brightness = Math.round(brightness * (1 + parseInt(brightnessRelativePercent) / 100));
                 }
                 if (command.params.hasOwnProperty('brightnessRelativeWeight')) {
-                    const brightnessRelativeWeight = command.params['brightnessRelativeWeight'];
+                    //const brightnessRelativeWeight = command.params['brightnessRelativeWeight'];
                     brightness = brightness + parseInt(brightnessRelativePercent);
                 }
                 params['brightness'] = brightness;

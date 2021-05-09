@@ -1718,7 +1718,7 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            let text = 'Unknown';
+            let text;
             let fill = 'red';
             let shape = 'dot';
             if (this.states.online) {
