@@ -32,6 +32,7 @@ module.exports = function(RED) {
             this.client     = config.client;
             this.clientConn = RED.nodes.getNode(this.client);
             this.topicOut   = config.topic;
+            this.room_hint  = config.room_hint;
             this.passthru   = config.passthru;
             this.topicDelim = '/';
 
@@ -72,6 +73,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED On/Off Light"],
                         name: name
                     },
+                    roomHint: this.room_hint,
                     willReportState: true,
                     attributes: {
                     },
@@ -479,6 +481,7 @@ module.exports = function(RED) {
             this.client     = config.client;
             this.clientConn = RED.nodes.getNode(this.client);
             this.topicOut   = config.topic;
+            this.room_hint  = config.room_hint;
             this.passthru   = config.passthru;
             this.topicDelim = '/';
 
@@ -528,6 +531,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED ColorTemp Light"],
                         name: name
                     },
+                    roomHint: this.room_hint,
                     willReportState: true,
                     attributes: {
                         // this is the default range used by Googles color presets in the Home App
@@ -749,6 +753,7 @@ module.exports = function(RED) {
             this.client     = config.client;
             this.clientConn = RED.nodes.getNode(this.client);
             this.topicOut   = config.topic;
+            this.room_hint  = config.room_hint;
             this.passthru   = config.passthru;
             this.topicDelim = '/';
 
@@ -802,6 +807,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED HSV Light"],
                         name: name
                     },
+                    roomHint: this.room_hint,
                     willReportState: true,
                     attributes: {
                         colorModel: "hsv",
@@ -1067,6 +1073,7 @@ module.exports = function(RED) {
             this.client     = config.client;
             this.clientConn = RED.nodes.getNode(this.client);
             this.topicOut   = config.topic;
+            this.room_hint  = config.room_hint;
             this.passthru   = config.passthru;
             this.topicDelim = '/';
 
@@ -1117,6 +1124,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED RGB Light"],
                         name: name
                     },
+                    roomHint: this.room_hint,
                     willReportState: true,
                     attributes: {
                         colorModel: "rgb",
@@ -1335,6 +1343,7 @@ module.exports = function(RED) {
             this.client     = config.client;
             this.clientConn = RED.nodes.getNode(this.client);
             this.topicOut   = config.topic;
+            this.room_hint  = config.room_hint;
             this.passthru   = config.passthru;
             this.topicDelim = '/';
 
@@ -1386,6 +1395,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED RGB/Temp Light"],
                         name: name
                     },
+                    roomHint: this.room_hint,
                     willReportState: true,
                     attributes: {
                         colorModel: "rgb",
@@ -1631,6 +1641,7 @@ module.exports = function(RED) {
             this.client      = config.client;
             this.clientConn  = RED.nodes.getNode(this.client);
             this.topicOut    = config.topic;
+            this.room_hint   = config.room_hint;
             this.passthru    = config.passthru;
             this.topicDelim  = '/';
             this.device_type = config.device_type;
@@ -1692,6 +1703,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED " + default_name],
                         name: name
                     },
+                    roomHint: this.room_hint,
                     willReportState: true,
                     attributes: {
                         commandOnlyOnOff: false,
