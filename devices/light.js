@@ -45,7 +45,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light-onoff', config.name, this);
+            this.states = this.clientConn.register(this, 'light-onoff', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -57,7 +57,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name, me) {
+        registerDevice(client, name) {
             let states = {
                 online: true,
                 on: false
@@ -255,7 +255,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light-dimmable', config.name, this);
+            this.states = this.clientConn.register(this, 'light-dimmable', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -267,7 +267,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name, me) {
+        registerDevice(client, name) {
             let states = {
                 online: true,
                 on: false,
@@ -286,7 +286,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED Dimmable Light"],
                         name: name
                     },
-                    roomHint: me.room_hint,
+                    roomHint: this.room_hint,
                     willReportState: true,
                     attributes: {
                     },
@@ -492,7 +492,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light-temperature', config.name, this);
+            this.states = this.clientConn.register(this, 'light-temperature', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -504,7 +504,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name, me) {
+        registerDevice(client, name) {
             let states = {
                 online: true,
                 on: false,
@@ -762,7 +762,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light-hsv', config.name, this);
+            this.states = this.clientConn.register(this, 'light-hsv', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -774,7 +774,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name, me) {
+        registerDevice(client, name) {
             let states = {
                 online: true,
                 on: false,
@@ -1080,7 +1080,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light-rgb', config.name, this);
+            this.states = this.clientConn.register(this, 'light-rgb', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -1348,7 +1348,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light-rgb-temp', config.name, this);
+            this.states = this.clientConn.register(this, 'light-rgb-temp', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -1360,7 +1360,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name, me) {
+        registerDevice(client, name) {
             // according to Googles own doc.'s, 'color.spectrumRGB' should actually be 'color.spectrumRgb'
             let states = {
                 online: true,
@@ -1649,7 +1649,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'light', config.name, this);
+            this.states = this.clientConn.register(this, 'light', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -1673,9 +1673,9 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name, me) {
-            me.debug("LightNode(registerDevice) device_type " + me.device_type);
-            const default_name = me.getDefaultName(me.device_type);
+        registerDevice(client, name) {
+            this.debug("LightNode(registerDevice) device_type " + this.device_type);
+            const default_name = this.getDefaultName(this.device_type);
             const default_name_type = default_name.replace(/[_ ()/]+/g, '-').toLowerCase();
 
             let states = {
@@ -1687,7 +1687,7 @@ module.exports = function(RED) {
                 id: client.id,
                 properties: {
                     type: 'action.devices.types.LIGHT',
-                    traits: me.getTraits(me.device_type),
+                    traits: this.getTraits(this.device_type),
                     name: {
                         defaultNames: ["Node-RED " + default_name],
                         name: name
@@ -1711,8 +1711,8 @@ module.exports = function(RED) {
             };
 
             device.states = states;
-            this.updateAttributesForTraits(me, device);
-            this.updateStatesForTraits(me, device);
+            this.updateAttributesForTraits(device);
+            this.updateStatesForTraits(device);
 
             return device;
         }
@@ -2180,7 +2180,8 @@ module.exports = function(RED) {
             return traits;
         }
 
-        updateAttributesForTraits(me, device) {
+        updateAttributesForTraits(device) {
+            let me = this;
             let attributes = device.properties.attributes;
             if (me.is_dimmable) {
                 attributes['commandOnlyBrightness'] = false;
@@ -2202,7 +2203,8 @@ module.exports = function(RED) {
             }
         }
 
-        updateStatesForTraits(me, device) {
+        updateStatesForTraits(device) {
+            let me = this;
             let states = device.states;
             if (me.is_dimmable) {
                 states['brightness'] = 50;

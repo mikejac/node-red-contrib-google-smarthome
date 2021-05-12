@@ -47,7 +47,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'window', config.name, this);
+            this.states = this.clientConn.register(this, 'window', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -59,7 +59,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name, me) {
+        registerDevice(client, name) {
             let states = {
                 online: true,
                 openPercent: 0
@@ -74,7 +74,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED Window"],
                         name: name
                     },
-                    roomHint: me.room_hint,
+                    roomHint: this.room_hint,
                     willReportState: true,
                     attributes: {
                     },

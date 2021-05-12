@@ -67,7 +67,7 @@ module.exports = function(RED) {
                 this.protocols.push('progressive_mp4');
             }
 
-            this.states = this.clientConn.register(this, 'camera', config.name, this);
+            this.states = this.clientConn.register(this, 'camera', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -79,8 +79,8 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name, me) {
-            const needAuthToken = me.authToken.length > 0;
+        registerDevice(client, name) {
+            const needAuthToken = this.authToken.length > 0;
             let states = {
                 online: true
             };
@@ -94,7 +94,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED Camera"],
                         name: name
                     },
-                    roomHint: me.room_hint,
+                    roomHint: this.room_hint,
                     willReportState: true,
                     attributes: {
                         cameraStreamSupportedProtocols: me.protocols,

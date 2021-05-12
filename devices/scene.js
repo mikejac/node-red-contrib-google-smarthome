@@ -44,7 +44,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.clientConn.register(this, 'scene', config.name, this);
+            this.clientConn.register(this, 'scene', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -56,7 +56,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name, me) {
+        registerDevice(client, name) {
             let states = {
                 online: true
             };
@@ -70,10 +70,10 @@ module.exports = function(RED) {
                         defaultNames: [],
                         name: name
                     },
-                    roomHint: me.room_hint,
+                    roomHint: this.room_hint,
                     willReportState: false,
                     attributes: {
-                        sceneReversible: me.sceneReversible
+                        sceneReversible: this.sceneReversible
                     },
                     deviceInfo: {
                         manufacturer: 'Node-RED',

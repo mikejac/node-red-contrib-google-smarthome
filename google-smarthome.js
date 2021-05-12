@@ -73,7 +73,7 @@ module.exports = function(RED) {
          * functions called by our 'clients'
          *
          */
-        this.register = function(client, type, name, param1) {
+        this.register = function(client, type, name) {
             RED.log.debug("GoogleSmartHomeNode(): register; type = " + type);
 
             if(type === 'mgmt') {
@@ -81,7 +81,7 @@ module.exports = function(RED) {
                 return {};
             }
 
-            let device = client.registerDevice(client, name, param1);
+            let device = client.registerDevice(client, name);
             let states = device.states;
 
             if (this.app.registerDevice(client, device)) {

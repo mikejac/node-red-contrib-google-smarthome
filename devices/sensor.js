@@ -46,7 +46,7 @@ module.exports = function(RED) {
                 return;
             }
 
-            this.states = this.clientConn.register(this, 'sensor', config.name, this);
+            this.states = this.clientConn.register(this, 'sensor', config.name);
 
             this.status({fill: "yellow", shape: "dot", text: "Ready"});
 
@@ -58,7 +58,7 @@ module.exports = function(RED) {
          * called to register device
          *
          */
-        registerDevice(client, name, me) {
+        registerDevice(client, name) {
             let states = {
                 temperatureAmbientCelsius: undefined,
                 temperatureSetpointCelsius: undefined,
@@ -74,7 +74,7 @@ module.exports = function(RED) {
                         defaultNames: ["Node-RED Sensor"],
                         name: name
                     },
-                    roomHint: me.room_hint,
+                    roomHint: this.room_hint,
                     willReportState: true,
                     attributes: {
                         temperatureUnitForUX: 'C',
