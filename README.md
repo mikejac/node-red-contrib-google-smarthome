@@ -6,7 +6,7 @@
 - [Setup Instructions](#setup-instructions)
 - [Nodes in this package](#nodes-in-this-package)
   - [General Information](#general-information)
-  - [Google Device node](#--Google-device-node-a-general-node-supporting-all-Google-device-types-and-all-Google-device-traits)
+  - [Google Device node](#--google-device-node-a-general-node-supporting-all-google-device-types-and-all-google-device-traits)
   - [Light On/Off](#--light-onoff-a-light-that-can-be-switched-on-and-off-only)
   - [Dimmable Light](#--dimmable-light)
   - [Color Temperature Light](#--color-temperature-light)
@@ -45,8 +45,11 @@
 
 A collection of Node-RED nodes to control your smart home devices via Google Assistant or the Google Home App.
 
+This is done by implementing a smart home provider that runs on your own host. So you don't have to depend on any
+third-party services (except Google) that may go offline, become chargeable or may leak your data.
+
 What this module does NOT:
-It does not directly interface with devices made by Google, for example Nest thermostats 
+It does not directly interface with devices made by Google, for example Nest thermostats.
 
 ---
 ## Prerequisites
@@ -55,8 +58,7 @@ It does not directly interface with devices made by Google, for example Nest the
 2. You also need to be able to forward TCP traffic coming in from the Internet to your Node-RED server on a port you
 specify. This is not your full Node-RED server but a service started by `node-red-contrib-google-smarthome`, providing
 only the functions needed by Google.
-3. This package requires NodeJS version 7.6.0 at a minimum. If, during start of Node-RED, you get this warning, your version on NodeJS is too old:
-`[warn] [node-red-contrib-google-smarthome/google-smarthome] SyntaxError: Unexpected token ( (line:30)`
+3. This package requires NodeJS version 8.0.0 at a minimum.
 
 ---
 ## Setup Instructions
@@ -130,7 +132,7 @@ If you want to use login with username/password instead, skip this section.
     * Jwt Key: The JSON file you downloaded earlier. Can be an absolute path or a path relative to Node-REDs user dir.
     * Port: The port on which the service should run. If left empty, it will run on the same port as Node-RED.
     * Path: URL path on which the service will run. If left empty, https://example.com:3001/smarthome will be used. If set, it will be https://example.com:3001/<yourpath>/smarthome.
-    * Use external SSL offload: Check, if you want do SSL decryption on an external load balancer.
+    * Use external SSL offload: Check, if you want to do SSL decryption on an external load balancer.
     * Public and Private Key: Path to public and private key of your SSL certificate (if you do not use external SSL decryption).
 1. Deploy the flow.
 1. Check if your service is reachable from the internet. Use a tool like https://reqbin.com to send a GET request to https://example.com:3001/check (using your domain name and port). It must answer with status 200 and the message "SUCCESS".
@@ -610,7 +612,7 @@ If `msg.topic` is `isCharging` then `msg.payload` must be boolean and tells if t
         msg.topic = 'isCharging'
         msg.payload = true
 
-If `topic` is `on` then `payload` must be boolean and and tells the state of the vacuum.
+If `topic` is `on` then `payload` must be boolean and tells the state of the vacuum.
 
         msg.topic = 'on'
         msg.payload = true
@@ -635,7 +637,7 @@ If `topic` is something else then `payload` must be an object and tells both the
 #### - Fan
 `topic` can be `on`, `online` or something else.
 
-If `topic` is `on` then `payload` must be boolean and and tells the state of the fan.
+If `topic` is `on` then `payload` must be boolean and tells the state of the fan.
 
         msg.topic = 'on'
         msg.payload = true
@@ -656,7 +658,7 @@ If `topic` is something else then `payload` must be an object and tells both the
 #### - Kitchen Hood
 `topic` can be `on`, `online` or something else.
 
-If `topic` is `on` then `payload` must be boolean and and tells the state of the kitchen hood.
+If `topic` is `on` then `payload` must be boolean and tells the state of the kitchen hood.
 
         msg.topic = 'on'
         msg.payload = true
@@ -677,7 +679,7 @@ If `topic` is something else then `payload` must be an object and tells both the
 #### - Fireplace
 `topic` can be `on`, `online` or something else.
 
-If `topic` is `on` then `payload` must be boolean and and tells the state of the fireplace.
+If `topic` is `on` then `payload` must be boolean and tells the state of the fireplace.
 
         msg.topic = 'on'
         msg.payload = true
@@ -984,7 +986,7 @@ Example flow:
 - Some errors and possible solutions are listed at
   [Possible errors](https://github.com/mikejac/node-red-contrib-google-smarthome/wiki/Possible-errors).
 - Look at Node-Red's debug panel for error messages.
-- Unlink and relink your account in the Google Home app. Meanwhile look for errors in the debug panel.
+- Unlink and relink your account in the Google Home app. Meanwhile, look for errors in the debug panel.
 - Restart your flows (using the `Restart Flows` option in the dropdown menu of the deploy button) while the debug panel
   is open to see error messages during initialization.
 - Go to [Actions on Google Console](https://console.actions.google.com), in tab *Test* choose *View logs in Google Cloud Platform*.
