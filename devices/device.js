@@ -95,6 +95,7 @@ module.exports = function (RED) {
             this.available_applications = [];
             // ArmDisarm
             this.available_arm_levels_file = config.available_arm_levels_file;
+            this.arm_levels_ordered = config.arm_levels_ordered || false;
             // Brightness
             this.command_only_brightness = config.command_only_brightness;
             // CameraStream
@@ -672,7 +673,10 @@ module.exports = function (RED) {
                 attributes['availableApplications'] = me.available_applications;
             }
             if (me.trait.armdisarm) {
-                attributes['availableArmLevels'] = me.available_arm_levels;
+                attributes['availableArmLevels'] = {
+                    levels: me.available_arm_levels,
+                    ordered: me.arm_levels_ordered
+                };
             }
             if (me.trait.brightness) {
                 attributes['commandOnlyBrightness'] = me.command_only_brightness;
@@ -948,7 +952,7 @@ module.exports = function (RED) {
             }
             if (me.trait.armdisarm) {
                 states['isArmed'] = false;
-                states['currentArmLevel'] = [];
+                states['currentArmLevel'] = '';
                 states['exitAllowance'] = 60;
             }
             if (me.trait.brightness) {
@@ -2098,6 +2102,32 @@ module.exports = function (RED) {
                 params['isDocked'] = true;
                 executionStates.push('isDocked');
             }
+            
+            // ArmLevel
+            else if (command.command == 'action.devices.commands.ArmDisarm') {
+                if (command.params.hasOwnProperty('armLevel')) {
+                    const armLevel = command.params['armLevel'];
+
+                    let new_armLevel = "";
+                    this.available_arm_levels.forEach(function (al) {
+
+                        if (al.level_name === armLevel) {
+                            new_armLevel = al.level_name;
+                        }
+                    });
+                    if (new_armLevel === '') {
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'transientError'
+                        };
+
+                    }
+                    params['currentArmLevel'] = new_armLevel;
+                    params['isArmed'] = command.params['arm'];
+                    executionStates.push('isArmed');
+                }
+            }
+
             // FanSpeed 
             else if (command.command == 'action.devices.commands.SetFanSpeed') {
                 if (command.params.hasOwnProperty('fanSpeed')) {

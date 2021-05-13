@@ -226,6 +226,11 @@
                 <label style="width:auto" for="node-input-available_arm_levels_file"><i class="fa fa-file"></i> <span data-i18n="device.label.available_arm_levels_file"></span></label>
                 <input type="text" id="node-input-available_arm_levels_file" data-i18n="[placeholder]device.placeholder.available_arm_levels_file">
             </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-arm_levels_ordered"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.arm_levels_ordered"></span></label>
+                <input type="checkbox" checked id="node-input-arm_levels_ordered" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
         </div>
     </div>
 
@@ -1853,6 +1858,9 @@
             sensor_states_supported: {
                 value: [], required: false
             },
+            arm_levels_ordered: {
+                value: false, required: false
+            },            
             trait_fill: {
                 value: false, required: false
             },
