@@ -1258,6 +1258,15 @@ module.exports = function (RED) {
                             text += ' ' + this.states.humidityAmbientPercent + "% ";
                         }
                     }
+                } else if (this.device_type === "WINDOW") {
+                    if (this.trait.openclose) {
+                        if (this.states.openPercent === 0) {
+                            text += 'CLOSED';
+                            fill = 'green';
+                        } else {
+                            text += this.discrete_only_openclose ? 'OPEN' : util.format("OPEN %d%%", this.states.openPercent);
+                        }
+                    }
                 } else {
                     if (this.trait.onoff) {
                         if (this.states.on) {
