@@ -190,8 +190,10 @@ echo ArmDisarm The Arm/Disarm logic should be outside the node
 execute $NODE_ID ArmDisarm true 123
 # test_out ".payload.commands[0].states.online" true
 
-execute $NODE_ID ArmDisarm_level true 123 level3
+execute $NODE_ID ArmDisarm_level true L2 123
 # test_out ".payload.commands[0].states.online" true
+
+execute_error $NODE_ID ArmDisarm_level true NO_LEVEL 456
 
 execute $NODE_ID ArmDisarm_cancel true
 # test_out ".payload.commands[0].states.online" true
