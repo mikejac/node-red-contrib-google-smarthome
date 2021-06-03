@@ -82,10 +82,6 @@ module.exports = function(RED) {
                         model: 'nr-switch-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
-                    },
-                    customData: {
-                        "nodeid": client.id,
-                        "type": 'switch'
                     }
                 }
             };

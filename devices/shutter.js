@@ -83,10 +83,6 @@ module.exports = function(RED) {
                         model: 'nr-shutter-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
-                    },
-                    customData: {
-                        "nodeid": client.id,
-                        "type": 'shutter'
                     }
                 }
             };

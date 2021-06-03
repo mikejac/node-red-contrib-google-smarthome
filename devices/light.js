@@ -82,10 +82,6 @@ module.exports = function(RED) {
                         model: 'nr-light-onoff-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
-                    },
-                    customData: {
-                        "nodeid": client.id,
-                        "type": 'light-onoff'
                     }
                 }
             };
@@ -297,10 +293,6 @@ module.exports = function(RED) {
                         model: 'nr-light-dimmable-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
-                    },
-                    customData: {
-                        "nodeid": client.id,
-                        "type": 'light-dimmable'
                     }
                 }
             };
@@ -546,10 +538,6 @@ module.exports = function(RED) {
                         model: 'nr-light-temperature-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
-                    },
-                    customData: {
-                        "nodeid": client.id,
-                        "type": 'light-temperature'
                     }
                 }
             };
@@ -818,10 +806,6 @@ module.exports = function(RED) {
                         model: 'nr-light-hsv-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
-                    },
-                    customData: {
-                        "nodeid": client.id,
-                        "type": 'light-hsv'
                     }
                 }
             };
@@ -1135,10 +1119,6 @@ module.exports = function(RED) {
                         model: 'nr-light-rgb-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
-                    },
-                    customData: {
-                        "nodeid": client.id,
-                        "type": 'light-rgb'
                     }
                 }
             };
@@ -1410,10 +1390,6 @@ module.exports = function(RED) {
                         model: 'nr-light-rgb-temp-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
-                    },
-                    customData: {
-                        "nodeid": client.id,
-                        "type": 'light-rgb-temp'
                     }
                 }
             };
@@ -1714,10 +1690,6 @@ module.exports = function(RED) {
                         model: 'nr-' + default_name_type + '-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
-                    },
-                    customData: {
-                        "nodeid": client.id,
-                        "type": 'nr-' + default_name_type
                     }
                 }
             };

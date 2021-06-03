@@ -649,10 +649,6 @@ module.exports = function (RED) {
                         model: 'nr-device-' + default_name_type + '-v1',
                         swVersion: '1.0',
                         hwVersion: '1.0'
-                    },
-                    customData: {
-                        "nodeid": client.id,
-                        "type": 'nr-device-' + default_name_type
                     }
                 }
             };
