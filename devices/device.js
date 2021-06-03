@@ -22,6 +22,7 @@ module.exports = function (RED) {
     const formats = require('../formatvalues.js');
     const fs = require('fs');
     const path = require('path');
+    const util = require('util');
 
     /******************************************************************************************************************
      *
