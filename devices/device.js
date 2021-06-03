@@ -631,7 +631,8 @@ module.exports = function (RED) {
             let device = {
                 id: client.id,
                 states: states,
-                notificationSupportedByAgent: this.trait.objectdetection,
+                notificationSupportedByAgent: this.trait.objectdetection || this.trait.runcycle || this.trait.sensorstate
+                    || this.trait.lockunlock || this.trait.networkcontrol || this.trait.openclose,
                 properties: {
                     type: 'action.devices.types.' + this.device_type,
                     traits: this.getTraits(this),
@@ -1378,6 +1379,7 @@ module.exports = function (RED) {
                                 RED.log.error("Error saving Applications to file " + this.appselector_file);
                             } else {
                                 this.available_applications = msg.payload;
+                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
@@ -1393,6 +1395,7 @@ module.exports = function (RED) {
                                 RED.log.error("Error saving Arm levels to file " + this.available_arm_levels_file);
                             } else {
                                 this.available_arm_levels = msg.payload;
+                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
@@ -1408,6 +1411,7 @@ module.exports = function (RED) {
                                 RED.log.error("Error saving Channels to file " + this.channel_file);
                             } else {
                                 this.available_channels = msg.payload;
+                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
@@ -1423,6 +1427,7 @@ module.exports = function (RED) {
                                 RED.log.error("Error saving Dispense items to file " + this.supported_dispense_items_file);
                             } else {
                                 this.supported_dispense_items = msg.payload;
+                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
@@ -1438,6 +1443,7 @@ module.exports = function (RED) {
                                 RED.log.error("Error saving Dispense presets to file " + this.supported_dispense_presets_file);
                             } else {
                                 this.supported_dispense_presets = msg.payload;
+                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
@@ -1453,6 +1459,7 @@ module.exports = function (RED) {
                                 RED.log.error("Error saving Fan speeds to file " + this.available_fan_speeds_file);
                             } else {
                                 this.available_fan_speeds = msg.payload;
+                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
@@ -1468,6 +1475,7 @@ module.exports = function (RED) {
                                 RED.log.error("Error saving Fill levels to file " + this.available_fill_levels_file);
                             } else {
                                 this.available_fill_levels = msg.payload;
+                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
@@ -1483,6 +1491,7 @@ module.exports = function (RED) {
                                 RED.log.error("Error saving Food presets to file " + this.food_presets_file);
                             } else {
                                 this.food_presets = msg.payload;
+                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
@@ -1498,6 +1507,7 @@ module.exports = function (RED) {
                                 RED.log.error("Error saving Inputs to file " + this.inputselector_file);
                             } else {
                                 this.available_inputs = msg.payload;
+                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
@@ -1515,6 +1525,7 @@ module.exports = function (RED) {
                             } else {
                                 this.available_modes = msg.payload;
                                 this.updateModesState(me, me);
+                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
@@ -1532,6 +1543,7 @@ module.exports = function (RED) {
                             } else {
                                 this.available_toggles = msg.payload;
                                 this.updateTogglesState(me, me);
+                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
@@ -1541,30 +1553,100 @@ module.exports = function (RED) {
                 } else if (topic.toUpperCase() === 'GUESTNETWORKPASSWORD') {
                     me.guest_network_password = formats.FormatValue(formats.Formats.STRING, 'guestNetworkPassword', msg.payload);
                 } else if (topic.toUpperCase() === 'OBJECTDETECTION') {
-                    let object_detection = {};
+                    let payload = {};
                     if (typeof msg.payload.familiar === 'number') {
-                        object_detection.familiar = msg.payload.familiar;
+                        payload.familiar = msg.payload.familiar;
                     }
                     if (typeof msg.payload.unfamiliar === 'number') {
-                        object_detection.unfamiliar = msg.payload.unfamiliar;
+                        payload.unfamiliar = msg.payload.unfamiliar;
                     }
                     if (typeof msg.payload.unclassified === 'number') {
-                        objectdetection.unclassified = msg.payload.unclassified;
+                        payload.unclassified = msg.payload.unclassified;
                     }
                     if (typeof msg.payload.named === 'string') {
-                        object_detection.named = [msg.payload.named];
+                        payload.named = [msg.payload.named];
                     } else if (Array.isArray(msg.payload.named)) {
-                        object_detection.named = msg.payload.named;
+                        payload.named = msg.payload.named;
                     }
-                    if (Object.keys(object_detection).length > 0) {
-                        this.clientConn.sendNotifications(this, {
-                            "ObjectDetected": {
-                                "objects": object_detection,
-                                "priority": 0,
-                                "detectionTimestamp": Date.now()
-                            }
-                        });  // tell Google ...
+                    this.clientConn.sendNotifications(this, {
+                        ObjectDetection: {
+                            objects: payload,
+                            priority: 0,
+                            detectionTimestamp: Date.now()
+                        }
+                    });  // tell Google ...
+                } else if (topic.toUpperCase() === 'RUNCYCLE') {
+                    let payload = { priority: 0 };
+                    if (typeof msg.payload.status === 'string') {
+                        payload.status = msg.payload.status;
                     }
+                    if (typeof msg.payload.currentCycleRemainingTime === 'number') {
+                        payload.currentCycleRemainingTime = msg.payload.currentCycleRemainingTime;
+                    }
+                    if (typeof msg.payload.errorCode === 'string') {
+                        payload.errorCode = msg.payload.errorCode;
+                    }
+                    this.clientConn.sendNotifications(this, {
+                        RunCycle: payload
+                    });  // tell Google ...
+                } else if (topic.toUpperCase() === 'SENSORSTATE') {
+                    let payload = { priority: 0 };
+                    if (typeof msg.payload.name === 'string') {
+                        payload.name = msg.payload.name;
+                    }
+                    if (typeof msg.payload.currentSensorState === 'string') {
+                        payload.currentSensorState = msg.payload.currentSensorState;
+                    }
+                    this.clientConn.sendNotifications(this, {
+                        SensorState: payload
+                    });  // tell Google ...
+                } else if (topic.toUpperCase() === 'LOCKUNLOCK') {
+                    let payload = { };
+                    if (typeof msg.payload.followUpToken === 'string') {
+                        payload.followUpToken = msg.payload.followUpToken;
+                    }
+                    if (typeof msg.payload.status === 'string') {
+                        payload.status = msg.payload.status;
+                    }
+                    if (typeof msg.payload.isLocked === 'boolean') {
+                        payload.isLocked = msg.payload.isLocked;
+                    }
+                    if (typeof msg.payload.errorCode === 'string') {
+                        payload.errorCode = msg.payload.errorCode;
+                    }
+                    this.clientConn.sendNotifications(this, {
+                        LockUnlock: {
+                            priority: 0,
+                            followUpResponse: payload
+                        }
+                    });  // tell Google ...
+                } else if (topic.toUpperCase() === 'NETWORKCONTROL') {
+                    this.clientConn.sendNotifications(this, {
+                        NetworkControl: {
+                            priority: 0,
+                            followUpResponse: msg.payload
+                        }
+                    });  // tell Google ...
+                } else if (topic.toUpperCase() === 'OPENCLOSE') {
+                    let payload = { };
+                    if (typeof msg.payload.followUpToken === 'string') {
+                        payload.followUpToken = msg.payload.followUpToken;
+                    }
+                    if (typeof msg.payload.status === 'string') {
+                        payload.status = msg.payload.status;
+                    }
+                    if (typeof msg.payload.openPercent === 'number') {
+                        payload.openPercent = msg.payload.openPercent;
+                    }
+                    if (typeof msg.payload.errorCode === 'string') {
+                        payload.errorCode = msg.payload.errorCode;
+                    }
+                    this.clientConn.sendNotifications(this, {
+                        OpenClose: {
+                            priority: 0,
+                            followUpResponse: payload
+                        }
+                    });  // tell Google ...
                 } else {
                     let state_key = '';
                     Object.keys(me.states).forEach(function (key) {
@@ -1787,7 +1869,7 @@ module.exports = function (RED) {
             let val_type = typeof old_state;
             let new_state = undefined;
             if (val_type === 'number') {
-                if (value % 1 === 0) {
+                if (old_state % 1 === 0) {
                     new_state = formats.FormatValue(formats.Formats.INT, key, value);
                 } else {
                     new_state = formats.FormatValue(formats.Formats.FLOAT, key, value);
@@ -1798,7 +1880,19 @@ module.exports = function (RED) {
                 new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
             } else if (val_type === 'object') {
                 if (typeof value === "object") {
-                    if (!Array.isArray(old_state)) {
+                    if (Array.isArray(old_state)) {
+                        if (Array.isArray(value)) {
+                            if (JSON.stringify(states[key]) != JSON.stringify(value)) {
+                                differs = true;
+                            }
+                            states[key] = value;
+                        } else {
+                            throw new Error('key "' + key + '" must be an array.');
+                        }
+                    } else {
+                        if (Array.isArray(value)) {
+                            throw new Error('key "' + key + '" must be an object.');
+                        }
                         Object.keys(old_state).forEach(function (key) {
                             if (typeof value[key] !== 'undefined') {
                                 if (me.setState(key, value[key], old_state)) {
@@ -1806,11 +1900,12 @@ module.exports = function (RED) {
                                 }
                             }
                         });
+                    }
+                } else {
+                    if (Array.isArray(old_state)) {
+                        throw new Error('key "' + key + '" must be an array.');
                     } else {
-                        if (JSON.stringify(states[key]) != JSON.stringify(value)) {
-                            differs = true;
-                        }
-                        states[key] = value;
+                        throw new Error('key "' + key + '" must be an object.');
                     }
                 }
             }
@@ -2111,29 +2206,33 @@ module.exports = function (RED) {
                 params['isDocked'] = true;
                 executionStates.push('isDocked');
             }
-            
+
             // ArmLevel
             else if (command.command == 'action.devices.commands.ArmDisarm') {
-                if (command.params.hasOwnProperty('armLevel')) {
-                    const armLevel = command.params['armLevel'];
-
+                if (command.params.hasOwnProperty('arm')) {
                     let new_armLevel = "";
-                    this.available_arm_levels.forEach(function (al) {
-
-                        if (al.level_name === armLevel) {
-                            new_armLevel = al.level_name;
+                    if (command.params.hasOwnProperty('armLevel')) {
+                        const armLevel = command.params['armLevel'];
+                        this.available_arm_levels.forEach(function (al) {
+                            if (al.level_name === armLevel) {
+                                new_armLevel = al.level_name;
+                            }
+                        });
+                    } else {
+                        if (this.available_arm_levels.length > 0) {
+                            new_armLevel = this.available_arm_levels[0].level_name;
                         }
-                    });
+                    }
+
                     if (new_armLevel === '') {
                         return {
                             status: 'ERROR',
                             errorCode: 'transientError'
                         };
-
                     }
                     params['currentArmLevel'] = new_armLevel;
                     params['isArmed'] = command.params['arm'];
-                    executionStates.push('isArmed');
+                    executionStates.push('isArmed', 'currentArmLevel');
                 }
             }
 

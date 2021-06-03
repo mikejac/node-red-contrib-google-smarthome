@@ -1,29 +1,29 @@
 [
     {
-        "id": "2ff30f68.b93d4",
+        "id": "c0151475.218f98",
         "type": "tab",
         "label": "Test Flow",
         "disabled": false,
         "info": ""
     },
     {
-        "id": "358d3ccc.966434",
+        "id": "239c652d.105f6a",
         "type": "google-mgmt",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "client": "85fa874.600d378",
         "name": "",
         "x": 510,
         "y": 60,
         "wires": [
             [
-                "c316494d.196f68"
+                "b4f1c6af.3c9aa8"
             ]
         ]
     },
     {
-        "id": "c316494d.196f68",
+        "id": "b4f1c6af.3c9aa8",
         "type": "debug",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "",
         "active": true,
         "tosidebar": true,
@@ -37,9 +37,9 @@
         "wires": []
     },
     {
-        "id": "300d4f92.2643e",
+        "id": "3b5fad59.292ad2",
         "type": "debug",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "",
         "active": true,
         "tosidebar": true,
@@ -54,9 +54,9 @@
         "wires": []
     },
     {
-        "id": "4d3983f6.6f373c",
+        "id": "1a88512b.3271af",
         "type": "function",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "",
         "func": "let msg1={\"topic\": msg.topic};\nlet lang=msg.lang || 'en';\nlet toggles = [];\nmsg1.payload = toggles;\nmsg.payload.forEach(toggle => {\n    if (typeof toggle == \"string\") {\n        let new_toggle = {};\n        let key = toggle.replace(/ /g, '_');\n        if (!key.toLowerCase().endsWith(\"toggle\")) {\n            key = key + \"_toggle\";\n        }\n        new_toggle['name'] = key.toLowerCase();\n        new_toggle['name_values'] = [{\n            \"lang\": lang,\n            \"name_synonym\": [ toggle ]\n        }];\n        toggles.push(new_toggle);\n    } else if (typeof toggle == \"object\") {\n        let key = toggle['key'];\n        let names = toggle['names'];\n        if (key == undefined) {\n            key = names[0].replace(/ /g, '_');\n        }\n        if (!key.toLowerCase().endsWith(\"toggle\")) {\n            key = key + \"_toggle\";\n        }\n        let new_toggle = {};\n        new_toggle['name'] = key.toLowerCase();\n        new_toggle['name_values'] = [{\n            \"lang\": lang,\n            \"name_synonym\": names\n        }];\n        toggles.push(new_toggle);\n    }\n});\n\nreturn msg1;",
         "outputs": 1,
@@ -67,14 +67,14 @@
         "y": 220,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "2cfd736e.156d5c",
+        "id": "b1733921.983838",
         "type": "function",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "",
         "func": "const topic = msg.topic.toLowerCase().slice(0, -1);\nlet msg1={\"topic\": msg.topic};\nlet key_suffix = topic.startsWith(\"available\") ? topic.substring(9) : topic;\nlet lang=msg.lang || 'en';\nlet objs = [];\nmsg1.payload = objs;\nmsg.payload.forEach(obj => {\n    if (typeof obj == \"string\") {\n        let new_obj = {};\n        let key = obj.replace(/ /g, '_').toLowerCase();\n        if (!key.endsWith(topic)) {\n            key = key + \"_\" + key_suffix;\n        }\n        new_obj['key'] = key;\n        new_obj['names'] = [{\n            \"lang\": lang,\n            \"name_synonym\": [ obj ]\n        }];\n        objs.push(new_obj);\n    } else if (typeof obj == \"object\") {\n        let new_obj = {};\n        let key = obj['key'];\n        let names = obj['names'];\n        if (key == undefined) {\n            key = names[0];\n        }\n        key = key.replace(/ /g, '_').toLowerCase();\n        if (!key.endsWith(topic)) {\n            key = key + \"_\" + key_suffix;\n        }\n        new_obj['key'] = key;\n        let new_objt = {};\n        new_obj['key'] = key;\n        new_obj['names'] = [{\n            \"lang\": lang,\n            \"name_synonym\": names\n        }];\n        objs.push(new_obj);\n    }\n});\n\nreturn msg1;",
         "outputs": 1,
@@ -85,14 +85,14 @@
         "y": 140,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "387845e5.5e2f5a",
+        "id": "d1f484f4.4d7dc8",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "AvailableChannels",
         "props": [
             {
@@ -114,14 +114,14 @@
         "y": 80,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "3b17441c.9a3f0c",
+        "id": "eb631917.ddc648",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "AvailableModes",
         "props": [
             {
@@ -143,14 +143,14 @@
         "y": 360,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "8a2472a.979da9",
+        "id": "76a8ea99.082b24",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "AvailableToggles",
         "props": [
             {
@@ -172,14 +172,14 @@
         "y": 400,
         "wires": [
             [
-                "4d3983f6.6f373c"
+                "1a88512b.3271af"
             ]
         ]
     },
     {
-        "id": "ce4d650b.8098a8",
+        "id": "2808436c.5ff3ec",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "AvailableInputs",
         "props": [
             {
@@ -201,14 +201,14 @@
         "y": 320,
         "wires": [
             [
-                "2cfd736e.156d5c"
+                "b1733921.983838"
             ]
         ]
     },
     {
-        "id": "7fa56940.bf6298",
+        "id": "b330bd.26b8ef4",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "AvailableApplications",
         "props": [
             {
@@ -230,17 +230,18 @@
         "y": 40,
         "wires": [
             [
-                "2cfd736e.156d5c"
+                "b1733921.983838"
             ]
         ]
     },
     {
-        "id": "98599ced.c9cc6",
+        "id": "a5782b1b.e120f8",
         "type": "google-device",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "client": "85fa874.600d378",
         "name": "Cucina",
         "topic": "",
+        "room_hint": "",
         "device_type": "TV",
         "trait_appselector": true,
         "trait_channel": true,
@@ -413,6 +414,8 @@
         "food_presets_file": "foodPresets.json",
         "trait_fanspeed": true,
         "reversible": false,
+        "supports_fan_speed_percent": true,
+        "fan_speeds_ordered": true,
         "command_only_fanspeed": false,
         "available_fan_speeds_file": "availableFanSpeeds.json",
         "trait_sensorstate": true,
@@ -462,15 +465,15 @@
         "y": 140,
         "wires": [
             [
-                "300d4f92.2643e",
-                "bd29dfa2.bceb4"
+                "3b5fad59.292ad2",
+                "8464b1.e8eaab5"
             ]
         ]
     },
     {
-        "id": "d9cab54c.ddfd38",
+        "id": "88a4ec5b.56a57",
         "type": "file",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "",
         "filename": "payload.json",
         "appendNewline": true,
@@ -481,14 +484,14 @@
         "y": 140,
         "wires": [
             [
-                "89f69645.1a45b8"
+                "91772b2a.3a72b8"
             ]
         ]
     },
     {
-        "id": "16b3e701.cd71a9",
+        "id": "5de646e1.174888",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "AvailableFanSpeeds",
         "props": [
             {
@@ -510,14 +513,14 @@
         "y": 200,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "21f45a00.38bd06",
+        "id": "516b9a1.a3dc964",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "AvailableFillLevels",
         "props": [
             {
@@ -539,14 +542,14 @@
         "y": 240,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "bd29dfa2.bceb4",
+        "id": "8464b1.e8eaab5",
         "type": "function",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "",
         "func": "msg.payload.params = msg.params;\nmsg.payload.command = msg.command;\nreturn msg;",
         "outputs": 1,
@@ -557,14 +560,14 @@
         "y": 140,
         "wires": [
             [
-                "d9cab54c.ddfd38"
+                "88a4ec5b.56a57"
             ]
         ]
     },
     {
-        "id": "89f69645.1a45b8",
+        "id": "91772b2a.3a72b8",
         "type": "debug",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "",
         "active": true,
         "tosidebar": true,
@@ -578,9 +581,9 @@
         "wires": []
     },
     {
-        "id": "2e712e99.a1a6b2",
+        "id": "a2623067.800c1",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "AvailableFoodPresets",
         "props": [
             {
@@ -602,14 +605,14 @@
         "y": 280,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "e672653f.82e6b8",
+        "id": "349dbc0f.dce004",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "GuestNetworkPassword",
         "props": [
             {
@@ -631,14 +634,14 @@
         "y": 480,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "59769724.70b698",
+        "id": "6594ffe7.70dcf",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "SupportedDispenseItems",
         "props": [
             {
@@ -660,14 +663,14 @@
         "y": 120,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "81949a93.6f11a8",
+        "id": "987eaf93.570b1",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "SupportedDispensePresets",
         "props": [
             {
@@ -689,14 +692,14 @@
         "y": 160,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "9bd6f24b.02dcc",
+        "id": "bc10ae84.38ef9",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "DispenseItems",
         "props": [
             {
@@ -712,20 +715,20 @@
         "once": true,
         "onceDelay": "10",
         "topic": "DispenseItems",
-        "payload": "[{\"itemName\":\"water\",\"amountRemaining\":{\"amount\":0,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":0,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"cat_bowl\",\"amountRemaining\":{\"amount\":0,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":0,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"glass_1\",\"amountRemaining\":{\"amount\":0,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":0,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false}]",
+        "payload": "[{\"itemName\":\"water\",\"amountRemaining\":{\"amount\":10,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":11,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"cat_bowl\",\"amountRemaining\":{\"amount\":12,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":13,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"glass_1\",\"amountRemaining\":{\"amount\":14,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":15,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false}]",
         "payloadType": "json",
         "x": 120,
         "y": 520,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "4e80a180.4b25c",
+        "id": "b20005f.91069f8",
         "type": "inject",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "Object Detection",
         "props": [
             {
@@ -747,14 +750,14 @@
         "y": 560,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "bdc939a7.0b0c98",
+        "id": "53e3f7ca.522118",
         "type": "http response",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "",
         "statusCode": "",
         "headers": {},
@@ -763,9 +766,9 @@
         "wires": []
     },
     {
-        "id": "f53528c2.ccc208",
+        "id": "7c508c49.aa5ec4",
         "type": "http in",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "Payload",
         "url": "/payload",
         "method": "post",
@@ -775,15 +778,15 @@
         "y": 320,
         "wires": [
             [
-                "10c0088d.cf8de7",
-                "c4aac5a.2649d38"
+                "9edf3963.39cb08",
+                "63f3b303.94fadc"
             ]
         ]
     },
     {
-        "id": "10c0088d.cf8de7",
+        "id": "9edf3963.39cb08",
         "type": "function",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "",
         "func": "msg = msg.payload;\nreturn msg;",
         "outputs": 1,
@@ -794,14 +797,14 @@
         "y": 260,
         "wires": [
             [
-                "98599ced.c9cc6"
+                "a5782b1b.e120f8"
             ]
         ]
     },
     {
-        "id": "c4aac5a.2649d38",
+        "id": "63f3b303.94fadc",
         "type": "function",
-        "z": "2ff30f68.b93d4",
+        "z": "c0151475.218f98",
         "name": "",
         "func": "msg.payload = \"OK\";\nreturn msg;",
         "outputs": 1,
@@ -812,7 +815,36 @@
         "y": 320,
         "wires": [
             [
-                "bdc939a7.0b0c98"
+                "53e3f7ca.522118"
+            ]
+        ]
+    },
+    {
+        "id": "4f63cf92.6ddc",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "AvailableArmLevels",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "10",
+        "topic": "AvailableArmLevels",
+        "payload": "[{\"level_name\":\"L1\",\"level_values\":[{\"level_synonym\":[\"home and guarding\",\"SL1\"],\"lang\":\"en\"},{\"level_synonym\":[\"Allarme in casa\",\"SL1\"],\"lang\":\"it\"}]},{\"level_name\":\"L2\",\"level_values\":[{\"level_synonym\":[\"away and guarding\",\"SL2\"],\"lang\":\"en\"},{\"level_synonym\":[\"Allarme fuori casa\",\"SL2\"],\"lang\":\"it\"}]}]",
+        "payloadType": "json",
+        "x": 140,
+        "y": 440,
+        "wires": [
+            [
+                "a5782b1b.e120f8"
             ]
         ]
     },
@@ -834,7 +866,7 @@
         "privatekey": "7",
         "jwtkey": "google-home.json",
         "accesstokenduration": "60",
-        "reportinterval": "60",
+        "reportinterval": "0",
         "clientid": "client_id",
         "clientsecret": "client_secred"
     }
