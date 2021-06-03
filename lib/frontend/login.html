@@ -215,33 +215,15 @@
         googleUser.disconnect();
     }
 
-    function getUrlParameters() {
-        // Get each parameter
-        let query = window.location.search.substr(1);
-        // Split each parameter into a key-value pair
-        let keyValues = query.split('&');
-        let parameterMap = new Map();
-        for (let i in keyValues) {
-            // Split into <key>=<value>
-            let param = keyValues[i];
-            let splitParam = param.split('=');
-            parameterMap.set(splitParam[0], splitParam[1]);
-        }
-        return parameterMap;
-    }
-
     document.addEventListener("DOMContentLoaded", function(event) {
         let url = window.location.href.split('?')[0];
         document.getElementById("loginform").action = url;
 
-        // Get URL parameters
-        let params = getUrlParameters();
-
         // Set each hidden input from a value obtained from the URL
+        let params = new URLSearchParams(window.location.search);
         document.querySelector('[name="client_id"]').value = params.get('client_id');
         document.querySelector('[name="redirect_uri"]').value = decodeURIComponent(params.get('redirect_uri'));
         document.querySelector('[name="state"]').value = params.get('state');
-        document.querySelector('[name="response_type"]').value = params.get('response_type');
 
         if (USE_GOOGLE_LOGIN) {
             document.getElementById('login-google').style.display = 'block';
