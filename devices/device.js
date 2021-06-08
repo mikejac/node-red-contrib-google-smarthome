@@ -632,8 +632,6 @@ module.exports = function (RED) {
             let device = {
                 id: client.id,
                 states: states,
-                notificationSupportedByAgent: this.trait.objectdetection || this.trait.runcycle || this.trait.sensorstate
-                    || this.trait.lockunlock || this.trait.networkcontrol || this.trait.openclose,
                 properties: {
                     type: 'action.devices.types.' + this.device_type,
                     traits: this.getTraits(this),
@@ -643,6 +641,8 @@ module.exports = function (RED) {
                     },
                     roomHint: this.room_hint,
                     willReportState: true,
+                    notificationSupportedByAgent: this.trait.objectdetection || this.trait.runcycle || this.trait.sensorstate
+                        || this.trait.lockunlock || this.trait.networkcontrol || this.trait.openclose,
                     attributes: {
                     },
                     deviceInfo: {
