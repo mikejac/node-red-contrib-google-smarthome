@@ -39,6 +39,16 @@ module.exports = function(RED) {
         this.mgmtNodes = {};
 
         var node = this;
+        /*console.log("credentials " + JSON.stringify(node.credentials));
+        console.log("config.loginclientid " + JSON.stringify(config.loginclientid));
+        console.log("config.emails " + JSON.stringify(config.emails));
+        console.log("config.username " + JSON.stringify(config.username));
+        console.log("config.password " + JSON.stringify(config.password));
+        console.log("config.publickey " + JSON.stringify(config.publickey));
+        console.log("config.privatekey " + JSON.stringify(config.privatekey));
+        console.log("config.jwtkey " + JSON.stringify(config.jwtkey));
+        console.log("config.clientid " + JSON.stringify(config.clientid));
+        console.log("config.clientsecret " + JSON.stringify(config.clientsecret));*/
 
         this.app = new GoogleSmartHome(
             this,
@@ -46,20 +56,20 @@ module.exports = function(RED) {
             RED.settings.userDir,
             RED.settings.httpNodeRoot,
             config.usegooglelogin,
-            config.loginclientid,
-            config.emails,
-            config.username,
-            config.password,
-            parseInt(config.accesstokenduration), // minutes
+            node.credentials.loginclientid || config.loginclientid,
+            node.credentials.emails || config.emails,
+            node.credentials.username || config.username,
+            node.credentials.password || config.password,
+            parseInt(config.accesstokenduration || '30'), // minutes
             config.usehttpnoderoot,
             config.httppath,
             parseInt(config.port || '0'),
             config.ssloffload,
-            config.publickey, 
-            config.privatekey,
-            config.jwtkey,
-            config.clientid, 
-            config.clientsecret,
+            node.credentials.publickey || config.publickey, 
+            node.credentials.privatekey || config.privatekey,
+            node.credentials.jwtkey || config.jwtkey,
+            node.credentials.clientid || config.clientid, 
+            node.credentials.clientsecret || config.clientsecret,
             config.reportinterval,     // minutes
             config.enabledebug);
 
@@ -196,7 +206,19 @@ module.exports = function(RED) {
         };
     }
 
-    RED.nodes.registerType("googlesmarthome-client", GoogleSmartHomeNode);
+    RED.nodes.registerType("googlesmarthome-client", GoogleSmartHomeNode, {
+        credentials: {
+            loginclientid: { type: "text" },
+            emails: { type: "text" },
+            username: { type: "text" },
+            password: { type: "password" },
+            publickey: { type: "text" },
+            privatekey: { type: "text" },
+            jwtkey: { type: "text" },
+            clientid: { type: "text" },
+            clientsecret: { type: "password" },
+        }
+    });
 
     /******************************************************************************************************************
      *
