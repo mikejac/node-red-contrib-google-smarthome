@@ -17,6 +17,12 @@
 -->
 
 <script type="text/x-red" data-template-name="googlesmarthome-client">
+    <style>
+        ol#node-config-input-googlesmarthome-emails-container .red-ui-typedInput-container {
+            flex:1;
+        }
+    </style>
+
     <div class="form-row">
         <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="googlesmarthome.label.name"></span></label>
         <input type="text" id="node-config-input-name" data-i18n="[placeholder]googlesmarthome.placeholder.name">
@@ -43,8 +49,12 @@
         </div>
 
         <div class="form-row">
-            <label for="node-config-input-emails"><i class="fa fa-user"></i> <span data-i18n="googlesmarthome.label.emails"></span></label>
-            <input type="text" id="node-config-input-emails" data-i18n="[placeholder]googlesmarthome.placeholder.emails">
+            <div class="form-row" style="margin-bottom:0;">
+                <label><i class="fa fa-list"></i> <span data-i18n="googlesmarthome.label.emails"></span></label>
+            </div>
+            <div class="form-row node-config-input-googlesmarthome-emails-container-row">
+                <ol id="node-config-input-googlesmarthome-emails-container"></ol>
+            </div>
         </div>
     </div>
 
@@ -268,6 +278,38 @@
             return this.name ? "node_label_italic" : "";
         },
         oneditprepare: function() {
+            // emails
+            $('#node-config-input-googlesmarthome-emails-container').css('min-height', '150px').css('min-width', '250px').editableList({
+                addItem: function (container, i, opt) {
+                    var emails = opt;
+                    if (!emails.hasOwnProperty('name')) {
+                        emails = { name: "" };
+                    }
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    let fragment = document.createDocumentFragment();
+                    var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
+                    var propertyName = $('<input/>', { class: "node-config-input-googlesmarthome-emails-property-name", type: "text", style: "width: 100%" })
+                        .appendTo(row1);
+                    propertyName.val(emails.name);
+
+                    container[0].appendChild(fragment);
+                },
+                removable: true,
+                sortable: true
+            });
+            if (typeof this.emails === 'string') {
+                this.emails = this.emails.split(";");
+            }
+            if (!this.emails) {
+                this.emails = [];
+            }
+            for (var i = 0; i < this.emails.length; i++) {
+                var email = this.emails[i];
+                $("#node-config-input-googlesmarthome-emails-container").editableList('addItem', { name: email });
+            }
             // Use Google login on / off
             let useGoogleLogin = function() {
                 let usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
@@ -306,7 +348,17 @@
             };
             useNODERedPort();
             $('#node-config-input-port').change(useNODERedPort);
- 
+        },
+        oneditsave: function () {
+            var node = this;
+             // emails
+             var emails = $("#node-config-input-googlesmarthome-emails-container").editableList('items');
+            node.emails = [];
+            emails.each(function (i) {
+                var email = $(this);
+                var name = email.find(".node-config-input-googlesmarthome-emails-property-name").val();
+                node.emails.push(name);
+            });
         }
     });
 </script>
