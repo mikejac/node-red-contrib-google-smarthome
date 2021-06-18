@@ -1950,7 +1950,7 @@
                     });
                     let fragment = document.createDocumentFragment();
                     var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
-                    var propertyName = $('<input/>', { class: "node-input-device-zone-property-name", type: "text" })
+                    var propertyName = $('<input/>', { class: "node-input-device-zone-property-name", type: "text", style: "width: 100%" })
                         .appendTo(row1);
                     propertyName.val(zone.name);
 
@@ -1979,7 +1979,7 @@
                     });
                     let fragment = document.createDocumentFragment();
                     var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
-                    var propertyName = $('<input/>', { class: "node-input-device-network-profiles-property-name", type: "text" })
+                    var propertyName = $('<input/>', { class: "node-input-device-network-profiles-property-name", type: "text", style: "width: 100%" })
                         .appendTo(row1);
                     propertyName.val(network_profiles.name);
 
