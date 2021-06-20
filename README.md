@@ -279,7 +279,7 @@ and the following Google [traits](https://developers.google.com/assistant/smarth
 * Volume
 
 Example flow:
-        See the flow used for the automatic tests [here](test/sh/flow.json)
+        See the flow used for the automatic tests [here](test/sh/flows.json)
 
 #### - Light On/Off (a light that can be switched on and off only)
 `topic` can be `on`, `online` or something else.
