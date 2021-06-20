@@ -1547,6 +1547,18 @@ module.exports = function (RED) {
                         this.available_toggles = [];
                         RED.log.error("Toggles disabled");
                     }
+                } else if (topic.toUpperCase() === 'CAMERASTREAMAUTHTOKEN') {
+                    const auth_token = formats.FormatValue(formats.Formats.STRING, 'cameraStreamAuthToken', msg.payload) || "";
+                    if (auth_token != me.auth_token) {
+                        me.auth_token = auth_token;
+                        if (this.device.properties.attributes.hasOwnProperty("cameraStreamNeedAuthToken")) {
+                            let cameraStreamNeedAuthToken = this.device.properties.attributes.cameraStreamNeedAuthToken;
+                            if (cameraStreamNeedAuthToken != (auth_token.length > 0)) {
+                                this.device.properties.attributes['cameraStreamNeedAuthToken'] = auth_token.length > 0;
+                                this.clientConn.app.RequestSync();
+                            }
+                        }
+                    }
                 } else if (topic.toUpperCase() === 'GUESTNETWORKPASSWORD') {
                     me.guest_network_password = formats.FormatValue(formats.Formats.STRING, 'guestNetworkPassword', msg.payload);
                 } else if (topic.toUpperCase() === 'OBJECTDETECTION') {
@@ -1978,6 +1990,9 @@ module.exports = function (RED) {
             }
         }
 
+        // Called by Device.execCommand
+        //
+        //
         execCommand(device, command, orig_device) {
             let me = this;
             let params = {};
@@ -2921,7 +2936,7 @@ module.exports = function (RED) {
                             executionStates.push('cameraStreamReceiverAppId');
                         }
                         return {
-                            status: 'SUCCESS',
+                            reportState: false,
                             states: {
                                 online: true,
                                 cameraStreamAccessUrl: stream_url,

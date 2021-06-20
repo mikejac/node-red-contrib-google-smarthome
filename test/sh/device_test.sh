@@ -215,35 +215,35 @@ test_payload ".brightness" 208
 # CameraStream
 echo
 echo CameraStream
-execute_no_payload $NODE_ID GetCameraStream true '"progressive_mp4"'
+execute $NODE_ID GetCameraStream true '"progressive_mp4"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://PROGRESSIVE_MP4"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"progressive_mp4"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_APPID"'
 
-execute_no_payload $NODE_ID GetCameraStream true '"hls","dash","smooth_stream","progressive_mp4"'
+execute $NODE_ID GetCameraStream true '"hls","dash","smooth_stream","progressive_mp4"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://PROGRESSIVE_MP4"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"progressive_mp4"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_APPID"'
 
-execute_no_payload $NODE_ID GetCameraStream true '"hls"'
+execute $NODE_ID GetCameraStream true '"hls"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://HLS"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"hls"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"HLS_APPID"'
 
-execute_no_payload $NODE_ID GetCameraStream true '"dash"'
+execute $NODE_ID GetCameraStream true '"dash"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://DASH"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"dash"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"DASH_APPID"'
 
-execute_no_payload $NODE_ID GetCameraStream true '"smooth_stream"'
+execute $NODE_ID GetCameraStream true '"smooth_stream"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://SMOOTH_STREAM"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"smooth_stream"'

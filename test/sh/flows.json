@@ -300,7 +300,7 @@
         "smooth_stream_app_id": "SMOOTH_STREAM_APPID",
         "progressive_mp4": "http://PROGRESSIVE_MP4",
         "progressive_mp4_app_id": "PROGRESSIVE_MP4_APPID",
-        "auth_token": "Auth Token",
+        "auth_token": "Auth Token GUI",
         "passthru": true,
         "trait_scene": true,
         "scene_reversible": true,
@@ -435,6 +435,7 @@
             "PM10",
             "VolatileOrganicCompounds"
         ],
+        "arm_levels_ordered": true,
         "trait_fill": true,
         "available_fill_levels_file": "availableFillLevels.json",
         "supports_fill_percent": false,
@@ -842,6 +843,64 @@
         "payloadType": "json",
         "x": 140,
         "y": 440,
+        "wires": [
+            [
+                "a5782b1b.e120f8"
+            ]
+        ]
+    },
+    {
+        "id": "39c0b7dd.7494c8",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "CameraStreamAuthToken",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "10",
+        "topic": "CameraStreamAuthToken",
+        "payload": "Auth Token",
+        "payloadType": "str",
+        "x": 150,
+        "y": 600,
+        "wires": [
+            [
+                "a5782b1b.e120f8"
+            ]
+        ]
+    },
+    {
+        "id": "e0237e8.572fe8",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "No CameraStreamAuthToken",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "10",
+        "topic": "CameraStreamAuthToken",
+        "payload": "",
+        "payloadType": "str",
+        "x": 160,
+        "y": 640,
         "wires": [
             [
                 "a5782b1b.e120f8"
