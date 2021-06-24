@@ -66,7 +66,7 @@
 
         <div class="form-row">
             <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="googlesmarthome.label.password"></span></label>
-            <input type="text" id="node-config-input-password">
+            <input type="password" id="node-config-input-password">
         </div>
     </div>
 
@@ -86,7 +86,7 @@
 
     <div class="form-row">
         <label for="node-config-input-clientsecret"><i class="fa fa-lock"></i> <span data-i18n="googlesmarthome.label.clientsecret"></span></label>
-        <input type="text" id="node-config-input-clientsecret">
+        <input type="password" id="node-config-input-clientsecret">
     </div>
 
     <div class="form-row">
@@ -187,6 +187,7 @@
             usegooglelogin : {
                 value: false
             },
+            /*
             loginclientid: {
                 value:"", required:false,
                 validate: function(v) {
@@ -196,7 +197,7 @@
                 }
             },
             emails: {
-                value:"", required:false, 
+                value:[], required:false, 
                 validate: function(v) {
                     let usegoogleloginField = $("#node-config-input-usegooglelogin");
                     let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
@@ -219,6 +220,7 @@
                     return !usegooglelogin ? v.trim().length > 0 : true;
                 }
             },
+            */
             usehttpnoderoot : {
                 value: false
             },
@@ -231,6 +233,7 @@
             ssloffload: {
                 value: false
             },
+            /*
             publickey: {
                 value:"", required:false,
                 validate: function(v) {
@@ -256,18 +259,33 @@
             jwtkey: {
                 value:"", required:true
             },
+            */
             accesstokenduration: {
                 value:60, required:true, validate:RED.validators.number(true)
             },
             reportinterval: {
                 value:60, required:true, validate:RED.validators.number(true)
             },
+            /*
             clientid: {
                 value:"", required:true
             },
             clientsecret: {
                 value:"", required:true
             }
+            */
+        },
+
+        credentials: {
+            loginclientid: { type: "text" },
+            emails: { type: "text" },
+            username: { type: "text" },
+            password: { type: "password" },
+            publickey: { type: "text" },
+            privatekey: { type: "text" },
+            jwtkey: { type: "text" },
+            clientid: { type: "text" },
+            clientsecret: { type: "password" },
         },
         color:"#3FADB5",
         icon: "google-smarthome.png",
@@ -300,14 +318,15 @@
                 removable: true,
                 sortable: true
             });
-            if (typeof this.emails === 'string') {
-                this.emails = this.emails.split(";");
+            let emails = this.emails || this.credentials.emails;
+            if (typeof emails === 'string') {
+                emails = emails.split(";");
             }
-            if (!this.emails) {
-                this.emails = [];
+            if (!emails) {
+                emails = [];
             }
-            for (var i = 0; i < this.emails.length; i++) {
-                var email = this.emails[i];
+            for (var i = 0; i < emails.length; i++) {
+                var email = emails[i];
                 $("#node-config-input-googlesmarthome-emails-container").editableList('addItem', { name: email });
             }
             // Use Google login on / off
@@ -353,11 +372,11 @@
             var node = this;
              // emails
              var emails = $("#node-config-input-googlesmarthome-emails-container").editableList('items');
-            node.emails = [];
+            node.credentials.emails = [];
             emails.each(function (i) {
                 var email = $(this);
                 var name = email.find(".node-config-input-googlesmarthome-emails-property-name").val();
-                node.emails.push(name);
+                node.credentials.emails.push(name);
             });
         }
     });
