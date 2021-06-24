@@ -126,7 +126,7 @@ If you want to use login with username/password instead, skip this section.
     * Name: A name for your config node.
     * Use Google Login: Check, if you want to use authentication via Google Sign-In.
     * Login Client ID: If Google Login is enabled, the client id you gained from the *Google Sign-In* integration.
-    * Authorized emails: If Google Login is enabled, the email addresses, semicolon-separated, authorized to log in.  
+    * Authorized emails: If Google Login is enabled, the email addresses authorized to log in.  
     * Username/Password: If Google Login is disabled, the credentials you want to use when linking your account in the Google Home App later. These are not the credentials to your Google account!
     * Client ID and Secret: The same strings you generated and entered on Google Search Console earlier.
     * Jwt Key: The JSON file you downloaded earlier. Can be an absolute path or a path relative to Node-REDs user dir.
@@ -947,7 +947,7 @@ Example flow:
 
   `Login Client ID`: If Google Login is enabled, The client id you gained from the *Google Sign-In* integration.
 
-  `Authorized emails`: If Google Login is enabled, The email adresses, semicolon-separated, authorized to log in.
+  `Authorized emails`: If Google Login is enabled, The email adresses authorized to log in.
 
   `Username` and `Password`: If Google Login is disabled, a username and password used when you link Google SmartHome to this node.
   
