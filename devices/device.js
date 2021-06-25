@@ -739,7 +739,7 @@ module.exports = function (RED) {
                 attributes['commandOnlyHumiditySetting'] = me.command_only_humiditysetting;
                 attributes['queryOnlyHumiditySetting'] = me.query_only_humiditysetting;
             }
-            if (me.trait.inputs) {
+            if (me.trait.inputselector) {
                 attributes['availableInputs'] = me.available_inputs;
                 attributes['commandOnlyInputSelector'] = me.command_only_input_selector;
                 attributes['orderedInputs'] = me.ordered_inputs;
@@ -1154,7 +1154,7 @@ module.exports = function (RED) {
                 states['humiditySetpointPercent'] = 52;
                 states['humidityAmbientPercent'] = 52;
             }
-            if (me.trait.inputs) {
+            if (me.trait.inputselector) {
                 states['currentInput'] = '';
             }
             if (me.trait.mediastate) {
