@@ -24,6 +24,14 @@ module.exports = function (RED) {
     const path = require('path');
     const util = require('util');
 
+    const Formats = {
+        BOOL: 1,
+        INT: 2,
+        FLOAT: 4,
+        STRING: 8,
+        MANDATORY: 128
+    };
+    
     /******************************************************************************************************************
      *
      *
@@ -47,6 +55,7 @@ module.exports = function (RED) {
                 return;
             }
 
+            this.state_types = {};
             this.trait = {
                 appselector: config.trait_appselector || false,
                 armdisarm: config.trait_armdisarm || false,
@@ -595,6 +604,8 @@ module.exports = function (RED) {
                 this.debug(".constructor: Toggles disabled");
             }
 
+            this.updateStateTypesForTraits();
+
             // GoogleSmartHomeNode -> (client.registerDevice -> DeviceNode.registerDevice), app.registerDevice
             this.states = this.clientConn.register(this, 'device', config.name);
 
@@ -661,6 +672,279 @@ module.exports = function (RED) {
 
             this.device = device;
             return device;
+        }
+
+        updateStateTypesForTraits() {
+            let me = this;
+            let state_types = me.state_types;
+            state_types['online'] = Formats.BOOL + Formats.MANDATORY;
+        
+            if (me.trait.apps) {
+                state_types['currentApplication'] = Formats.STRING + Formats.MANDATORY;
+            }
+            if (me.trait.armdisarm) {
+                state_types['isArmed'] = Formats.BOOL + Formats.MANDATORY;
+                state_types['currentArmLevel'] = Formats.STRING + Formats.MANDATORY;
+                state_types['exitAllowance'] = Formats.INT;
+            }
+            if (me.trait.brightness) {
+                state_types['brightness'] = Formats.INT;
+            }
+            if (me.trait.colorsetting) {
+                if (me.color_model === "rgb") {
+                    state_types['color'] = {
+                        spectrumRgb: Formats.INT + Formats.MANDATORY
+                    };
+                } else if (me.color_model === "rgb_temp") {
+                    state_types['color'] = {
+                        spectrumRgb: Formats.INT,
+                        temperatureK: Formats.INT
+                    };
+                } else if (me.color_model === "hsv") {
+                    state_types['color'] = {
+                        spectrumHsv: {
+                            hue: Formats.FOAT + Formats.MANDATORY,           // float, representing hue as positive degrees in the range of [0.0, 360.0)
+                            saturation: Formats.FOAT + Formats.MANDATORY,    // float, representing saturation as a percentage in the range [0.0, 1.0]
+                            value: Formats.FOAT + Formats.MANDATORY          // float, representing value as a percentage in the range [0.0, 1.0]
+                        }
+                    };
+                } else if (me.color_model === "hsv_temp") {
+                    state_types['color'] = {
+                        spectrumHsv: {
+                            hue: Formats.FOAT,           // float, representing hue as positive degrees in the range of [0.0, 360.0)
+                            saturation: Formats.FOAT,    // float, representing saturation as a percentage in the range [0.0, 1.0]
+                            value: Formats.FOAT,         // float, representing value as a percentage in the range [0.0, 1.0]
+                            temperatureK: Formats.INT
+                        }
+                    };
+                } else {
+                    state_types['color'] = {
+                        temperatureK: Formats.INT + Formats.MANDATORY
+                    };
+                }
+            }
+            if (me.trait.cook) {
+                state_types['currentCookingMode'] = Formats.STRING + Formats.MANDATORY;
+                state_types['currentFoodPreset'] = Formats.STRING;
+                state_types['currentFoodQuantity'] = Formats.FLOAT;
+                state_types['currentFoodUnit'] = Formats.STRING;
+            }
+            if (me.trait.dispense) {
+                let dispense = [];
+                me.supported_dispense_items.forEach(function (item) {
+                    dispense.push({
+                        "itemName": item.item_name,
+                        "amountRemaining": {
+                            "amount": 0,
+                            "unit": "NO_UNITS"
+                        },
+                        "amountLastDispensed": {
+                            "amount": 0,
+                            "unit": "NO_UNITS"
+                        },
+                        "isCurrentlyDispensing": false
+                    })
+                });
+                me.supported_dispense_presets.forEach(function (item) {
+                    dispense.push({
+                        "itemName": item.preset_name,
+                        "amountRemaining": {
+                            "amount": 0,
+                            "unit": "NO_UNITS"
+                        },
+                        "amountLastDispensed": {
+                            "amount": 0,
+                            "unit": "NO_UNITS"
+                        },
+                        "isCurrentlyDispensing": false
+                    })
+                });
+                state_types['dispenseItems'] = [
+                    {
+                        itemName: Formats.STRING,
+                        amountRemaining: {
+                            amount: Formats.FLOAT,
+                            unit: Formats.STRING,
+                        },
+                        amountLastDispensed: {
+                            amount: Formats.FLOAT,
+                            unit: Formats.STRING,
+                        },
+                        isCurrentlyDispensing: Formats.BOOL,
+                    }
+                ];
+            }
+            if (me.trait.dock) {
+                state_types['isDocked'] = Formats.BOOL;
+            }
+            if (me.trait.energystorage) {
+                state_types['descriptiveCapacityRemaining'] = Formats.STRING + Formats.MANDATORY;
+                state_types['capacityRemaining'] = [
+                    {
+                        rawValue: Formats.INT + Formats.MANDATORY,
+                        unit: Formats.STRING + Formats.MANDATORY,
+                    }
+                ];
+                state_types['capacityUntilFull'] = [
+                    {
+                        rawValue: Formats.INT + Formats.MANDATORY,
+                        unit: Formats.STRING + Formats.MANDATORY,
+                    }
+                ];
+                state_types['isCharging'] = Formats.BOOL;
+                state_types['isPluggedIn'] = Formats.BOOL;
+            }
+            if (me.trait.fanspeed) {
+                state_types['currentFanSpeedSetting'] = Formats.STRING;
+                state_types['currentFanSpeedPercent'] = Formats.INT;
+            }
+            if (me.trait.fill) {
+                state_types['isFilled'] = Formats.BOOL + Formats.MANDATORY;
+                state_types['currentFillLevel'] = Formats.STRING;
+                state_types['currentFillPercent'] = Formats.FLOAT;
+            }
+            if (me.trait.humiditysetting) {
+                state_types['humiditySetpointPercent'] = Formats.INT;
+                state_types['humidityAmbientPercent'] = Formats.INT;
+            }
+            if (me.trait.inputselector) {
+                state_types['currentInput'] = Formats.STRING + Formats.MANDATORY;
+            }
+            if (me.trait.lighteffects) {
+                state_types['activeLightEffect'] = Formats.STRING + Formats.MANDATORY;
+                state_types['lightEffectEndUnixTimestampSec'] = Formats.INT;
+            }
+            // Locator
+            if (me.trait.lockunlock) {
+                state_types['isLocked'] = Formats.BOOL;
+                state_types['isJammed'] = Formats.BOOL;
+            }
+            if (me.trait.mediastate) {
+                // INACTIVE STANDBY ACTIVE
+                state_types['activityState'] = Formats.STRING;
+                // PAUSED PLAYING FAST_FORWARDING REWINDING BUFFERING STOPPED
+                state_types['playbackState'] = Formats.STRING;
+            }
+            if (me.trait.modes) {
+                state_types['currentModeSettings'] = {}; // TODO see the docs
+            }
+            if (me.trait.networkcontrol) {
+                state_types['networkEnabled'] = Formats.BOOL;
+                state_types['networkSettings'] = {
+                    ssid: Formats.STRING + Formats.MANDATORY
+                };
+                state_types['guestNetworkEnabled'] = Formats.BOOL;
+                state_types['guestNetworkSettings'] = {
+                    ssid: Formats.STRING + Formats.MANDATORY
+                };
+                state_types['numConnectedDevices'] = Formats.INT;
+                state_types['networkUsageMB'] = Formats.FLOAT;
+                state_types['networkUsageLimitMB'] = Formats.FLOAT;
+                state_types['networkUsageUnlimited'] = Formats.BOOL;
+                state_types['lastNetworkDownloadSpeedTest'] = {
+                    downloadSpeedMbps: Formats.FLOAT,
+                    unixTimestampSec: Formats.INT,
+                    status: Formats.STRING
+                };
+                state_types['lastNetworkUploadSpeedTest'] = {
+                    uploadSpeedMbps: Formats.FLOAT,
+                    unixTimestampSec: Formats.INT,
+                    status: Formats.STRING
+                };
+                state_types['networkSpeedTestInProgress'] = Formats.BOOL;
+            }
+            // ObjectDetection 
+            if (me.trait.onoff) {
+                state_types['on'] = Formats.BOOL;
+            }
+            if (me.trait.openclose) {
+                if (me.open_direction.length < 2) {
+                    state_types['openPercent'] = Formats.FLOAT + Formats.MANDATORY;
+                } else {
+                    state_types['openState'] = [
+                        {
+                            openPercent: Formats.FLOAT + Formats.MANDATORY,
+                            openDirection: Formats.STRING + Formats.MANDATORY
+                        }
+                    ];
+                }
+            }
+            // Reboot 
+            if (me.trait.rotation) {
+                if (me.supports_degrees) {
+                    state_types['rotationDegrees'] = Formats.FLOAT;
+                }
+                if (me.supports_percent) {
+                    state_types['rotationPercent'] = Formats.FLOAT;
+                }
+            }
+            if (me.trait.runcycle) {
+                state_types['currentRunCycle'] = [
+                    {
+                        currentCycle: Formats.STRING + Formats.MANDATORY,
+                        nextCycle: Formats.STRING,
+                        lang: Formats.STRING + Formats.MANDATORY
+                    }
+                ];
+                state_types['currentTotalRemainingTime'] = Formats.INT + Formats.MANDATORY;
+                state_types['currentCycleRemainingTime'] = Formats.INT + Formats.MANDATORY;
+            }
+            // Scene 
+            if (me.trait.sensorstate) {
+                state_types['currentSensorStateData'] = [
+                    {
+                        name: Formats.STRING + Formats.MANDATORY,
+                        currentSensorState: Formats.STRING,
+                        rawValue: Formats.FLOAT
+                    }
+                ];
+            }
+            if (me.trait.softwareupdate) {
+                state_types['lastSoftwareUpdateUnixTimestampSec'] = Formats.INT + Formats.MANDATORY;
+            }
+            if (me.trait.startstop) {
+                state_types['isRunning'] = Formats.BOOL + Formats.MANDATORY;
+                state_types['isPaused'] = Formats.BOOL;
+                state_types['activeZones'] = [
+                    Formats.STRING
+                ];
+            }
+            if (me.trait.statusreport) {
+                state_types['currentStatusReport'] = [
+                    {
+                        blocking: Formats.BOOL,
+                        deviceTarget: Formats.STRING,
+                        priority: Formats.INT,
+                        statusCode: Formats.STRING
+                    }
+                ];
+            }
+            if (me.trait.temperaturecontrol) {
+                state_types['temperatureSetpointCelsius'] = Formats.FLOAT;
+                state_types['temperatureAmbientCelsius'] = Formats.FLOAT;
+            }
+            if (me.trait.temperaturesetting) {
+                state_types['activeThermostatMode'] = Formats.STRING;
+                state_types['targetTempReachedEstimateUnixTimestampSec'] = Formats.INT;
+                state_types['thermostatHumidityAmbient'] = Formats.FLOAT;
+                state_types['thermostatMode'] = Formats.STRING + Formats.MANDATORY;
+                state_types['thermostatTemperatureAmbient'] = Formats.FLOAT + Formats.MANDATORY;
+                state_types['thermostatTemperatureSetpoint'] = Formats.FLOAT + Formats.MANDATORY;       // 0 TODO optional
+                state_types['thermostatTemperatureSetpointHigh'] = Formats.FLOAT + Formats.MANDATORY;  // 1 TODO optional
+                state_types['thermostatTemperatureSetpointLow'] = Formats.FLOAT + Formats.MANDATORY;   // 1 TODO optional
+            }
+            if (me.trait.timer) {
+                state_types['timerRemainingSec'] = Formats.INT + Formats.MANDATORY;
+                state_types['timerPaused'] = Formats.BOOL;
+            }
+            if (me.trait.toggles) {
+                state_types['currentToggleSettings'] = {}; // TODO see the docs
+            }
+            // TransportControl 
+            if (me.trait.volume) {
+                state_types['currentVolume'] = Formats.INT + Formats.MANDATORY;
+                state_types['isMuted'] = Formats.BOOL;
+            }
         }
 
         updateAttributesForTraits(device) {
