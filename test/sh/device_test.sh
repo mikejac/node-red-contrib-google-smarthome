@@ -25,6 +25,7 @@ NODE_ID=$1 || "98599ced.c9cc6"
 PAYLOAD_FILE="$HOME/payload.json"
 OUT_FILE="$HOME/out.json"
 PAYLOAD_URL=$(dirname $BASE_URL)/payload
+TEST_TYPE=$2 || '1'
 
 ./refresh_token
 
@@ -276,18 +277,22 @@ execute $NODE_ID ColorAbsolute 'Bianco Caldo' 3000
 test_payload ".color.temperatureK" 3000
 # test_out ".payload.commands[0].states.online" true
 
-execute $NODE_ID ColorAbsolute_rgb 'Magenta' 16711935
-test_payload ".color.spectrumRgb" 16711935
-test_payload ".color.temperatureK" null
-# test_out ".payload.commands[0].states.online" true
+if [ "$TEST_TYPE" == '1' ] ; then
+    execute $NODE_ID ColorAbsolute_rgb 'Magenta' 16711935
+    test_payload ".color.spectrumRgb" 16711935
+    test_payload ".color.temperatureK" null
+    # test_out ".payload.commands[0].states.online" true
+fi
 
-execute $NODE_ID ColorAbsolute_hsv 'Magenta' 300 1 1
-# test_out ".payload.commands[0].states.online" true
-test_payload ".color.spectrumHsv.hue" 300
-test_payload ".color.spectrumHsv.saturation" 1
-test_payload ".color.spectrumHsv.value" 1
-test_payload ".color.temperatureK" null
-test_payload ".color.spectrumRgb" null
+if [ "$TEST_TYPE" == '2' ] ; then
+    execute $NODE_ID ColorAbsolute_hsv 'Magenta' 300 1 1
+    # test_out ".payload.commands[0].states.online" true
+    test_payload ".color.spectrumHsv.hue" 300
+    test_payload ".color.spectrumHsv.saturation" 1
+    test_payload ".color.spectrumHsv.value" 1
+    test_payload ".color.temperatureK" null
+    test_payload ".color.spectrumRgb" null
+fi
 
 execute $NODE_ID ColorAbsolute 'Bianco Freddo' 7000
 test_payload ".color.spectrumRgb" null

@@ -29,7 +29,8 @@ module.exports = function (RED) {
         INT: 2,
         FLOAT: 4,
         STRING: 8,
-        MANDATORY: 128
+        MANDATORY: 128,
+        COPY_OBJECT: 256,
     };
 
     /******************************************************************************************************************
@@ -691,36 +692,23 @@ module.exports = function (RED) {
                 state_types['brightness'] = Formats.INT;
             }
             if (me.trait.colorsetting) {
-                if (me.color_model === "rgb") {
+                if ((me.color_model === "rgb") || (me.color_model === 'rgb_temp')) {
                     state_types['color'] = {
                         spectrumRgb: Formats.INT + Formats.MANDATORY
                     };
-                } else if (me.color_model === "rgb_temp") {
-                    state_types['color'] = {
-                        spectrumRgb: Formats.INT,
-                        temperatureK: Formats.INT
-                    };
-                } else if (me.color_model === "hsv") {
+                } else if ((me.color_model === "hsv") || (me.color_model === "hsv_temp")) {
                     state_types['color'] = {
                         spectrumHsv: {
-                            hue: Formats.FOAT + Formats.MANDATORY,           // float, representing hue as positive degrees in the range of [0.0, 360.0)
-                            saturation: Formats.FOAT + Formats.MANDATORY,    // float, representing saturation as a percentage in the range [0.0, 1.0]
-                            value: Formats.FOAT + Formats.MANDATORY          // float, representing value as a percentage in the range [0.0, 1.0]
-                        }
-                    };
-                } else if (me.color_model === "hsv_temp") {
-                    state_types['color'] = {
-                        spectrumHsv: {
-                            hue: Formats.FOAT,           // float, representing hue as positive degrees in the range of [0.0, 360.0)
-                            saturation: Formats.FOAT,    // float, representing saturation as a percentage in the range [0.0, 1.0]
-                            value: Formats.FOAT,         // float, representing value as a percentage in the range [0.0, 1.0]
-                            temperatureK: Formats.INT
+                            hue: Formats.FLOAT + Formats.MANDATORY,           // float, representing hue as positive degrees in the range of [0.0, 360.0)
+                            saturation: Formats.FLOAT + Formats.MANDATORY,    // float, representing saturation as a percentage in the range [0.0, 1.0]
+                            value: Formats.FLOAT + Formats.MANDATORY          // float, representing value as a percentage in the range [0.0, 1.0]
                         }
                     };
                 } else {
-                    state_types['color'] = {
-                        temperatureK: Formats.INT + Formats.MANDATORY
-                    };
+                    state_types['color'] = {};
+                }
+                if (me.color_model !== "rgb" && me.color_model !== "hsv") {
+                    state_types.color.temperatureK = Formats.INT + Formats.MANDATORY;
                 }
             }
             if (me.trait.cook) {
@@ -826,7 +814,7 @@ module.exports = function (RED) {
                 state_types['playbackState'] = Formats.STRING;
             }
             if (me.trait.modes) {
-                state_types['currentModeSettings'] = {}; // TODO see the docs
+                state_types['currentModeSettings'] = Formats.COPY_OBJECT + Formats.STRING; // See the docs
             }
             if (me.trait.networkcontrol) {
                 state_types['networkEnabled'] = Formats.BOOL;
@@ -938,7 +926,7 @@ module.exports = function (RED) {
                 state_types['timerPaused'] = Formats.BOOL;
             }
             if (me.trait.toggles) {
-                state_types['currentToggleSettings'] = {}; // TODO see the docs
+                state_types['currentToggleSettings'] = Formats.COPY_OBJECT + Formats.BOOL; // See the docs
             }
             // TransportControl 
             if (me.trait.volume) {
@@ -968,10 +956,10 @@ module.exports = function (RED) {
             }
             if (me.trait.colorsetting) {
                 attributes["commandOnlyColorSetting"] = me.command_only_colorsetting;
-                if (me.color_model !== "rgb" && me.color_model !== "rgb_temp") {
+                if (me.color_model === "rgb" || me.color_model === "rgb_temp") {
                     attributes['colorModel'] = "rgb";
                 }
-                else if (me.color_model !== "hsv" && me.color_model !== "hsv_temp") {
+                else if (me.color_model === "hsv" || me.color_model === "hsv_temp") {
                     attributes['colorModel'] = "hsv";
                 }
                 if (me.color_model !== "rgb" && me.color_model !== "hsv") {
@@ -2161,54 +2149,96 @@ module.exports = function (RED) {
                     }
                 }
             });
-            me.debug('updateState: new State ' + modified + ' ' + JSON.stringify(me.states));
+            me.debug('.updateState: new State ' + modified + ' ' + JSON.stringify(me.states));
             return modified;
         }
 
-        setState(key, value, states) {
+        setState(key, value, states, state_values) {
             const me = this;
             let differs = false;
             const old_state = states[key];
             let val_type = typeof old_state;
             let new_state = undefined;
-            if (val_type === 'number') {
-                if (old_state % 1 === 0) {
-                    new_state = formats.FormatValue(formats.Formats.INT, key, value);
+            if (state_values === Formats.FLOAT || state_values === Formats.FLOAT + Formats.MANDATORY) {
+                if (value == null && state_values < Formats.MANDATORY) {
+                    if (states.hasOwnProperty(key)) {
+                        delete states[key];
+                        differs = true;
+                    }
                 } else {
                     new_state = formats.FormatValue(formats.Formats.FLOAT, key, value);
                 }
-            } else if (val_type === 'string') {
-                new_state = formats.FormatValue(formats.Formats.STRING, key, value);
-            } else if (val_type === 'boolean') {
-                new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
-            } else if (val_type === 'object') {
+            } else if (state_values === Formats.INT || state_values === Formats.INT + Formats.MANDATORY) {
+                if (value == null && state_values < Formats.MANDATORY) {
+                    if (states.hasOwnProperty(key)) {
+                        delete states[key];
+                        differs = true;
+                    }
+                } else {
+                    new_state = formats.FormatValue(formats.Formats.INT, key, value);
+                }
+            } else if (state_values === Formats.STRING || state_values === Formats.STRING + Formats.MANDATORY) {
+                if (value == null && state_values < Formats.MANDATORY) {
+                    if (states.hasOwnProperty(key)) {
+                        delete states[key];
+                        differs = true;
+                    }
+                } else {
+                    new_state = formats.FormatValue(formats.Formats.STRING, key, value);
+                }
+            } else if (state_values === Formats.BOOL || state_values === Formats.BOOL + Formats.MANDATORY) {
+                if (value == null && state_values < Formats.MANDATORY) {
+                    if (states.hasOwnProperty(key)) {
+                        delete states[key];
+                        differs = true;
+                    }
+                } else {
+                    new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
+                }
+            } else if (state_values & Formats.COPY_OBJECT) {
+                if (val_type !== 'object' || Array.isArray(value)) {
+                    RED.log.error('key "' + key + '" must be an object.');
+                } else {
+                    Object.keys(old_state).forEach(function (key) {
+                        if (typeof value[key] !== 'undefined') {
+                            if (me.setState(key, value[key], old_state, state_values - Formats.COPY_OBJECT)) {
+                                differs = true;
+                            }
+                        }
+                    });
+                }
+            } else if (typeof state_values === 'object') {
                 if (typeof value === "object") {
                     if (Array.isArray(old_state)) {
                         if (Array.isArray(value)) {
+                            // TODO checks array
                             if (JSON.stringify(states[key]) != JSON.stringify(value)) {
                                 differs = true;
                             }
                             states[key] = value;
                         } else {
-                            throw new Error('key "' + key + '" must be an array.');
+                            RED.log.error('key "' + key + '" must be an array.');
                         }
                     } else {
                         if (Array.isArray(value)) {
-                            throw new Error('key "' + key + '" must be an object.');
-                        }
-                        Object.keys(old_state).forEach(function (key) {
-                            if (typeof value[key] !== 'undefined') {
-                                if (me.setState(key, value[key], old_state)) {
-                                    differs = true;
+                            RED.log.error('key "' + key + '" must be an object.');
+                        } else {
+                            Object.keys(state_values).forEach(function (key) {
+                                if (typeof value[key] !== 'undefined') {
+                                    if (me.setState(key, value[key], old_state, state_values[key] || {})) {
+                                        differs = true;
+                                    }
+                                } else if (typeof state_values[key] === 'number' && state_values[key] >= formats.MANDATORY) {
+                                    delete value[key];
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
                 } else {
                     if (Array.isArray(old_state)) {
-                        throw new Error('key "' + key + '" must be an array.');
+                        RED.log.error('key "' + key + '" must be an array.');
                     } else {
-                        throw new Error('key "' + key + '" must be an object.');
+                        RED.log.error('key "' + key + '" must be an object.');
                     }
                 }
             }
