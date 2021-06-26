@@ -31,7 +31,7 @@ module.exports = function (RED) {
         STRING: 8,
         MANDATORY: 128
     };
-    
+
     /******************************************************************************************************************
      *
      *
@@ -678,7 +678,7 @@ module.exports = function (RED) {
             let me = this;
             let state_types = me.state_types;
             state_types['online'] = Formats.BOOL + Formats.MANDATORY;
-        
+
             if (me.trait.apps) {
                 state_types['currentApplication'] = Formats.STRING + Formats.MANDATORY;
             }
@@ -1594,12 +1594,7 @@ module.exports = function (RED) {
             this.debug(".updated: params = " + JSON.stringify(params));
             this.debug(".updated: original_params = " + JSON.stringify(original_params));
 
-            // Object.assign(this.states, states);
-            Object.keys(me.states).forEach(function (key) {
-                if (states.hasOwnProperty(key)) {
-                    me.setState(key, states[key], me.states);
-                }
-            });
+            me.updateState(states);
 
             this.updateStatusIcon();
 
@@ -1957,7 +1952,7 @@ module.exports = function (RED) {
                     });
 
                     if (state_key !== '') {
-                        const differs = me.setState(state_key, msg.payload, me.states);
+                        const differs = me.updateState({ state_key: msg.payload });
                         if (differs) {
                             me.debug(".input: " + state_key + ' ' + JSON.stringify(msg.payload));
                             this.clientConn.setState(this, me.states);  // tell Google ...
@@ -1970,15 +1965,7 @@ module.exports = function (RED) {
                         this.updateStatusIcon();
                     } else {
                         me.debug(".input: some other topic");
-                        let differs = false;
-                        Object.keys(me.states).forEach(function (key) {
-                            if (msg.payload.hasOwnProperty(key)) {
-                                me.debug(".input: set state " + key + ' to ' + JSON.stringify(msg.payload[key]));
-                                if (me.setState(key, msg.payload[key], me.states)) {
-                                    differs = true;
-                                }
-                            }
-                        });
+                        let differs = me.updateState(msg.payload);
 
                         if (differs) {
                             this.clientConn.setState(this, me.states);  // tell Google ...
@@ -2160,6 +2147,22 @@ module.exports = function (RED) {
                 traits.push("action.devices.traits.Volume");
             }
             return traits;
+        }
+
+        updateState(new_states) {
+            const me = this;
+            let modified = false;
+            Object.keys(me.state_types).forEach(function (key) {
+                // TODO check modes, toggles, arrays, temperatureSettings ...
+                if (new_states.hasOwnProperty(key)) {
+                    if (me.setState(key, new_states[key], me.states, me.state_types[key])) {
+                        me.debug('updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
+                        modified = true;
+                    }
+                }
+            });
+            me.debug('updateState: new State ' + modified + ' ' + JSON.stringify(me.states));
+            return modified;
         }
 
         setState(key, value, states) {
