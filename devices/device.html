@@ -1860,7 +1860,7 @@
             },
             arm_levels_ordered: {
                 value: false, required: false
-            },            
+            },
             trait_fill: {
                 value: false, required: false
             },
@@ -1935,8 +1935,10 @@
             }
         },
         oneditprepare: function () {
-            $('#node-input-device-advanced_settings').prop('checked', false);
-            $('#node-input-device-show_trait').val('selected');
+            $('#node-input-advanced_settings').prop('checked', false);
+            $('#node-input-show_trait').val('selected');
+            this.show_trait = 'selected';
+            this.advanced_settings = false;
             // Zones
             $('#node-input-device-zone-container').css('min-height', '150px').css('min-width', '450px').editableList({
                 addItem: function (container, i, opt) {
