@@ -684,10 +684,10 @@ module.exports = function (RED) {
             }
             if (me.trait.colorsetting) {
                 attributes["commandOnlyColorSetting"] = me.command_only_colorsetting;
-                if (me.color_model !== "rgb" && me.color_model !== "rgb_temp") {
+                if (me.color_model === "rgb" || me.color_model === "rgb_temp") {
                     attributes['colorModel'] = "rgb";
                 }
-                else if (me.color_model !== "hsv" && me.color_model !== "hsv_temp") {
+                else if (me.color_model === "hsv" || me.color_model === "hsv_temp") {
                     attributes['colorModel'] = "hsv";
                 }
                 if (me.color_model !== "rgb" && me.color_model !== "hsv") {
