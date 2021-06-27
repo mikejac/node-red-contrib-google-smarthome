@@ -282,7 +282,7 @@
         "command_only_volume": false,
         "command_only_brightness": false,
         "command_only_colorsetting": false,
-        "color_model": "temp",
+        "color_model": "rgb_temp",
         "temperature_min_k": 2000,
         "temperature_max_k": 9000,
         "modes_file": "modes.json",
@@ -460,8 +460,8 @@
         "supports_network_download_speedtest": false,
         "supports_network_upload_speedtest": false,
         "trait_objectdetection": true,
-        "show_trait": "all",
-        "advanced_settings": true,
+        "show_trait": "selected",
+        "advanced_settings": false,
         "x": 570,
         "y": 140,
         "wires": [
@@ -908,25 +908,75 @@
         ]
     },
     {
+        "id": "22b74d51.90e222",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "StatusReport",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "10",
+        "topic": "StatusReport",
+        "payload": "{\"blocking\":true,\"deviceTarget\":\"Cucina\",\"priority\":0,\"statusCode\":\"needsSoftwareUpdate\"}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 680,
+        "wires": [
+            [
+                "a5782b1b.e120f8"
+            ]
+        ]
+    },
+    {
+        "id": "95cd3aa8.be0218",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "StatusReport empty",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "10",
+        "topic": "StatusReport",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 130,
+        "y": 720,
+        "wires": [
+            [
+                "a5782b1b.e120f8"
+            ]
+        ]
+    },
+    {
         "id": "85fa874.600d378",
         "type": "googlesmarthome-client",
         "name": "",
         "enabledebug": true,
         "usegooglelogin": false,
-        "loginclientid": "",
-        "emails": "",
-        "username": "userrname",
-        "password": "password",
         "usehttpnoderoot": true,
         "port": "",
         "httppath": "smarthome",
         "ssloffload": true,
-        "publickey": "6",
-        "privatekey": "7",
-        "jwtkey": "google-home.json",
         "accesstokenduration": "60",
         "reportinterval": "0",
-        "clientid": "client_id",
-        "clientsecret": "client_secred"
+        "info": "username: userrname\npassword: password\njwtkey: google-home.json\nclientid: client_id\nclientsecret: client_secred\n"
     }
 ]

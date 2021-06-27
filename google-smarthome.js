@@ -131,6 +131,10 @@ module.exports = function(RED) {
             node.app.SetState(client.id, state);
         };
 
+        this.getIdFromName = function(name) {
+            return node.app.GetIdFromName(name);
+        }
+
         this.debug = function(msg) {
             if (config.enabledebug) {
                 console.log(msg)

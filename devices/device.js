@@ -1904,6 +1904,26 @@ module.exports = function (RED) {
                             followUpResponse: payload
                         }
                     });  // tell Google ...
+                } else if (topic.toUpperCase() === 'STATUSREPORT') {
+                    let payload = Array.isArray(msg.payload) ? msg.payload : [ msg.payload ];
+                    let new_payload = [];
+                    payload.forEach(sr => {
+                        let nodeId = this.clientConn.getIdFromName(sr.deviceTarget);
+                        if (nodeId) {
+                            let new_report = {};
+                            this.cloneObject(new_report, sr, me.state_types['currentStatusReport'][0]);
+                            new_report.deviceTarget = nodeId;
+                            new_payload.push(new_report);
+                        }
+                    });
+                    if (me.updateState({ currentStatusReport: new_payload })) {
+                        this.clientConn.setState(this, me.states);  // tell Google ...
+
+                        if (this.passthru) {
+                            msg.payload = new_payload;
+                            this.send(msg);
+                        }
+                    }
                 } else {
                     let state_key = '';
                     Object.keys(me.states).forEach(function (key) {
@@ -2127,6 +2147,21 @@ module.exports = function (RED) {
             return modified;
         }
 
+        cloneObject(cur_obj, new_obj, state_values) {
+            const me = this;
+            let differs = false;
+            Object.keys(state_values).forEach(function (key) {
+                if (typeof new_obj[key] !== 'undefined' && new_obj[key] != null) {
+                    if (me.setState(key, new_obj[key], cur_obj, state_values[key] || {})) {
+                        differs = true;
+                    }
+                } else if (typeof state_values[key] === 'number' && !(state_values[key] & formats.MANDATORY)) {
+                    delete value[key];
+                }
+            });
+            return differs;
+        }
+
         setState(key, value, states, state_values) {
             const me = this;
             let differs = false;
@@ -2154,7 +2189,7 @@ module.exports = function (RED) {
                                     if (me.setState(key, value[key], old_state, state_values[key] || {})) {
                                         differs = true;
                                     }
-                                } else if (typeof state_values[key] === 'number' && state_values[key] >= formats.MANDATORY) {
+                                } else if (typeof state_values[key] === 'number' && !(state_values[key] & formats.MANDATORY)) {
                                     delete value[key];
                                 }
                             });
