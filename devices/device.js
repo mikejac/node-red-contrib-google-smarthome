@@ -684,10 +684,10 @@ module.exports = function (RED) {
             }
             if (me.trait.colorsetting) {
                 attributes["commandOnlyColorSetting"] = me.command_only_colorsetting;
-                if (me.color_model !== "rgb" && me.color_model !== "rgb_temp") {
+                if (me.color_model === "rgb" || me.color_model === "rgb_temp") {
                     attributes['colorModel'] = "rgb";
                 }
-                else if (me.color_model !== "hsv" && me.color_model !== "hsv_temp") {
+                else if (me.color_model === "hsv" || me.color_model === "hsv_temp") {
                     attributes['colorModel'] = "hsv";
                 }
                 if (me.color_model !== "rgb" && me.color_model !== "hsv") {
@@ -1241,6 +1241,11 @@ module.exports = function (RED) {
                         fill = "green";
                         text = thermostat_mode.substr(0, 1).toUpperCase() + st;
                     }
+                    if (this.trait.humiditysetting) {
+                        text += ' ' + this.states.humidityAmbientPercent + "% ";
+                    } else if (this.states.thermostatHumidityAmbient !== undefined) {
+                        text += ' ' + this.states.thermostatHumidityAmbient + "% ";
+                    }
                 } else if (this.device_type === "SENSOR") {
                     if (this.trait.brightness) {
                         text += ' bri ' + this.states.brightness;
@@ -1253,7 +1258,7 @@ module.exports = function (RED) {
                     }
                     if (this.trait.openclose) {
                         if (this.states.openPercent !== undefined) {
-                            text += ' ' + this.states.humidityAmbientPercent + "% ";
+                            text += ' ' + this.states.openPercent + "% ";
                         }
                     }
                 } else if (this.device_type === "WINDOW") {
@@ -1337,11 +1342,13 @@ module.exports = function (RED) {
             });
 
             // Copy the command params to the payload
-            Object.keys(params).forEach(function (key) {
-                if (!msg.payload.hasOwnProperty(key) && params[key] !== original_params[key]) {
-                    msg.payload[key] = params[key];
-                }
-            });
+            if (params) {
+                Object.keys(params).forEach(function (key) {
+                    if (!msg.payload.hasOwnProperty(key) && params[key] !== original_params[key]) {
+                        msg.payload[key] = params[key];
+                    }
+                });
+            }
 
             // Copy the command original params to the payload
             /*Object.keys(original_params).forEach(function (key) {
@@ -1610,7 +1617,7 @@ module.exports = function (RED) {
                         SensorState: payload
                     });  // tell Google ...
                 } else if (topic.toUpperCase() === 'LOCKUNLOCK') {
-                    let payload = { };
+                    let payload = {};
                     if (typeof msg.payload.followUpToken === 'string') {
                         payload.followUpToken = msg.payload.followUpToken;
                     }
@@ -1637,7 +1644,7 @@ module.exports = function (RED) {
                         }
                     });  // tell Google ...
                 } else if (topic.toUpperCase() === 'OPENCLOSE') {
-                    let payload = { };
+                    let payload = {};
                     if (typeof msg.payload.followUpToken === 'string') {
                         payload.followUpToken = msg.payload.followUpToken;
                     }

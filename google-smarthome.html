@@ -378,6 +378,18 @@
                 var name = email.find(".node-config-input-googlesmarthome-emails-property-name").val();
                 node.credentials.emails.push(name);
             });
+        },
+        oneditresize: function (size) {
+            // emails
+            var rows = $("#dialog-form>div:not(node-config-input-googlesmarthome-emails-container-row)");
+            var height = size.height;
+            for (var i = 0; i < rows.length; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            var editorRow = $("#dialog-form>div.node-config-input-googlesmarthome-emails-container-row");
+            height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
+            height += 16;
+            $("#node-config-input-googlesmarthome-emails-container").editableList('height', height);
         }
     });
 </script>

@@ -366,7 +366,7 @@
 
             <div class="form-row">
                 <label for="node-input-color_model"><i class="fa fa-tag"></i> <span data-i18n="device.label.color_model"></span></label>
-                <select multiple id="node-input-color_model" >
+                <select id="node-input-color_model" >
                     <option value="temp" data-i18n="device.label.temperature_k"></option>
                     <option value="rgb" data-i18n="device.label.rgb"></option>
                     <option value="hsv" data-i18n="device.label.hsv"></option>
@@ -1860,7 +1860,7 @@
             },
             arm_levels_ordered: {
                 value: false, required: false
-            },            
+            },
             trait_fill: {
                 value: false, required: false
             },
@@ -1935,8 +1935,10 @@
             }
         },
         oneditprepare: function () {
-            $('#node-input-device-advanced_settings').prop('checked', false);
-            $('#node-input-device-show_trait').val('selected');
+            $('#node-input-advanced_settings').prop('checked', false);
+            $('#node-input-show_trait').val('selected');
+            this.show_trait = 'selected';
+            this.advanced_settings = false;
             // Zones
             $('#node-input-device-zone-container').css('min-height', '150px').css('min-width', '450px').editableList({
                 addItem: function (container, i, opt) {
