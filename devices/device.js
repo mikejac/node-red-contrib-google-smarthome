@@ -718,35 +718,6 @@ module.exports = function (RED) {
                 state_types['currentFoodUnit'] = Formats.STRING;
             }
             if (me.trait.dispense) {
-                let dispense = [];
-                me.supported_dispense_items.forEach(function (item) {
-                    dispense.push({
-                        "itemName": item.item_name,
-                        "amountRemaining": {
-                            "amount": 0,
-                            "unit": "NO_UNITS"
-                        },
-                        "amountLastDispensed": {
-                            "amount": 0,
-                            "unit": "NO_UNITS"
-                        },
-                        "isCurrentlyDispensing": false
-                    })
-                });
-                me.supported_dispense_presets.forEach(function (item) {
-                    dispense.push({
-                        "itemName": item.preset_name,
-                        "amountRemaining": {
-                            "amount": 0,
-                            "unit": "NO_UNITS"
-                        },
-                        "amountLastDispensed": {
-                            "amount": 0,
-                            "unit": "NO_UNITS"
-                        },
-                        "isCurrentlyDispensing": false
-                    })
-                });
                 state_types['dispenseItems'] = [
                     {
                         itemName: Formats.STRING,
@@ -759,7 +730,8 @@ module.exports = function (RED) {
                             unit: Formats.STRING,
                         },
                         isCurrentlyDispensing: Formats.BOOL,
-                    }
+                    },
+                    'itemName'
                 ];
             }
             if (me.trait.dock) {
@@ -853,7 +825,8 @@ module.exports = function (RED) {
                         {
                             openPercent: Formats.FLOAT + Formats.MANDATORY,
                             openDirection: Formats.STRING + Formats.MANDATORY
-                        }
+                        },
+                        'openDirection'
                     ];
                 }
             }
@@ -884,7 +857,8 @@ module.exports = function (RED) {
                         name: Formats.STRING + Formats.MANDATORY,
                         currentSensorState: Formats.STRING,
                         rawValue: Formats.FLOAT
-                    }
+                    },
+                    'name'
                 ];
             }
             if (me.trait.softwareupdate) {
@@ -2159,55 +2133,7 @@ module.exports = function (RED) {
             const old_state = states[key];
             let val_type = typeof old_state;
             let new_state = undefined;
-            if (state_values === Formats.FLOAT || state_values === Formats.FLOAT + Formats.MANDATORY) {
-                if (value == null && state_values < Formats.MANDATORY) {
-                    if (states.hasOwnProperty(key)) {
-                        delete states[key];
-                        differs = true;
-                    }
-                } else {
-                    new_state = formats.FormatValue(formats.Formats.FLOAT, key, value);
-                }
-            } else if (state_values === Formats.INT || state_values === Formats.INT + Formats.MANDATORY) {
-                if (value == null && state_values < Formats.MANDATORY) {
-                    if (states.hasOwnProperty(key)) {
-                        delete states[key];
-                        differs = true;
-                    }
-                } else {
-                    new_state = formats.FormatValue(formats.Formats.INT, key, value);
-                }
-            } else if (state_values === Formats.STRING || state_values === Formats.STRING + Formats.MANDATORY) {
-                if (value == null && state_values < Formats.MANDATORY) {
-                    if (states.hasOwnProperty(key)) {
-                        delete states[key];
-                        differs = true;
-                    }
-                } else {
-                    new_state = formats.FormatValue(formats.Formats.STRING, key, value);
-                }
-            } else if (state_values === Formats.BOOL || state_values === Formats.BOOL + Formats.MANDATORY) {
-                if (value == null && state_values < Formats.MANDATORY) {
-                    if (states.hasOwnProperty(key)) {
-                        delete states[key];
-                        differs = true;
-                    }
-                } else {
-                    new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
-                }
-            } else if (state_values & Formats.COPY_OBJECT) {
-                if (val_type !== 'object' || Array.isArray(value)) {
-                    RED.log.error('key "' + key + '" must be an object.');
-                } else {
-                    Object.keys(old_state).forEach(function (key) {
-                        if (typeof value[key] !== 'undefined') {
-                            if (me.setState(key, value[key], old_state, state_values - Formats.COPY_OBJECT)) {
-                                differs = true;
-                            }
-                        }
-                    });
-                }
-            } else if (typeof state_values === 'object') {
+            if (typeof state_values === 'object') {
                 if (typeof value === "object") {
                     if (Array.isArray(old_state)) {
                         if (Array.isArray(value)) {
@@ -2240,6 +2166,54 @@ module.exports = function (RED) {
                     } else {
                         RED.log.error('key "' + key + '" must be an object.');
                     }
+                }
+            } else if (state_values & Formats.COPY_OBJECT) {
+                if (val_type !== 'object' || Array.isArray(value)) {
+                    RED.log.error('key "' + key + '" must be an object.');
+                } else {
+                    Object.keys(old_state).forEach(function (key) {
+                        if (typeof value[key] !== 'undefined') {
+                            if (me.setState(key, value[key], old_state, state_values - Formats.COPY_OBJECT)) {
+                                differs = true;
+                            }
+                        }
+                    });
+                }
+            } else if (state_values & Formats.FLOAT) {
+                if (value == null && !(state_values & Formats.MANDATORY)) {
+                    if (states.hasOwnProperty(key)) {
+                        delete states[key];
+                        differs = true;
+                    }
+                } else {
+                    new_state = formats.FormatValue(formats.Formats.FLOAT, key, value);
+                }
+            } else if (state_values & Formats.INT) {
+                if (value == null && !(state_values & Formats.MANDATORY)) {
+                    if (states.hasOwnProperty(key)) {
+                        delete states[key];
+                        differs = true;
+                    }
+                } else {
+                    new_state = formats.FormatValue(formats.Formats.INT, key, value);
+                }
+            } else if (state_values & Formats.STRING) {
+                if (value == null && !(state_values & Formats.MANDATORY)) {
+                    if (states.hasOwnProperty(key)) {
+                        delete states[key];
+                        differs = true;
+                    }
+                } else {
+                    new_state = formats.FormatValue(formats.Formats.STRING, key, value);
+                }
+            } else if (state_values & Formats.BOOL) {
+                if (value == null && !(state_values & Formats.MANDATORY)) {
+                    if (states.hasOwnProperty(key)) {
+                        delete states[key];
+                        differs = true;
+                    }
+                } else {
+                    new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
                 }
             }
             if (val_type !== 'object') {
