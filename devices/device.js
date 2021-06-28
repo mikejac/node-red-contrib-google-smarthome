@@ -1908,7 +1908,17 @@ module.exports = function (RED) {
                     let payload = Array.isArray(msg.payload) ? msg.payload : [ msg.payload ];
                     let new_payload = [];
                     payload.forEach(sr => {
-                        let nodeId = this.clientConn.getIdFromName(sr.deviceTarget);
+                        let nodeId;
+                        if (sr.deviceTarget) {
+                            let properties = this.clientConn.getProperties(sr.deviceTarget);
+                            if (Object.keys(properties).length > 0) {
+                                nodeId = sr.deviceTarget;
+                            } else {
+                                nodeId = this.clientConn.getIdFromName(sr.deviceTarget);
+                            }
+                        } else {
+                            nodeId = this.device.id;
+                        }
                         if (nodeId) {
                             let new_report = {};
                             this.cloneObject(new_report, sr, me.state_types['currentStatusReport'][0]);
@@ -2156,10 +2166,24 @@ module.exports = function (RED) {
                         differs = true;
                     }
                 } else if (typeof state_values[key] === 'number' && !(state_values[key] & formats.MANDATORY)) {
-                    delete value[key];
+                    delete cur_obj[key];
                 }
             });
             return differs;
+        }
+
+        formatValue(key, value, type) {
+            let new_state;
+            if (type & Formats.FLOAT) {
+                new_state = formats.FormatValue(formats.Formats.FLOAT, key, value);
+            } else if (type & Formats.INT) {
+                new_state = formats.FormatValue(formats.Formats.INT, key, value);
+            } else if (type & Formats.STRING) {
+                new_state = formats.FormatValue(formats.Formats.STRING, key, value);
+            } else if (type & Formats.BOOL) {
+                new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
+            }
+            return new_state;
         }
 
         setState(key, value, states, state_values) {
@@ -2170,13 +2194,68 @@ module.exports = function (RED) {
             let new_state = undefined;
             if (typeof state_values === 'object') {
                 if (typeof value === "object") {
-                    if (Array.isArray(old_state)) {
+                    if (Array.isArray(state_values)) {
                         if (Array.isArray(value)) {
-                            // TODO checks array
+                            /*
                             if (JSON.stringify(states[key]) != JSON.stringify(value)) {
                                 differs = true;
                             }
                             states[key] = value;
+                            */
+                            // checks array
+                            const ar_state_values = state_values[0];
+                            if (typeof ar_state_values === 'number') {
+                                let new_arr = [];
+                                let old_arr = Array.isArray(old_state) ? old_state : [];
+                                value.forEach((elm, idx) => {
+                                    let new_val = me.formatValue(key + '[' + idx + ']', elm, ar_state_values);
+                                    if (new_val !== undefined && new_val != null) {
+                                        new_arr.push(new_val);
+                                        if (old_arr.length > idx) {
+                                            if (old_arr[idx] != new_val) {
+                                                differs = true;
+                                            }
+                                        } else {
+                                            differs = true;
+                                        }
+                                    } else {
+                                        differs = true;
+                                    }
+                                });
+                                states[key] = new_arr;
+                            } else {
+                                // structure check
+                                let new_arr = [];
+                                let old_arr = Array.isArray(old_state) ? old_state : [];
+                                let key_id = state_values.length > 1 ? state_values[1] : undefined;
+                                value.forEach((new_obj, idx) => {
+                                    let cur_obj;
+                                    if (key_id) {
+                                        let f_arr = old_arr.filter(obj => { return obj[key_id] === new_obj[key_id] });
+                                        if (f_arr.length > 0) {
+                                            cur_obj = f_arr[0];
+                                        } else if (f_arr.length > 1) {
+                                            RED.log.error('More than one "' + key + '" for "' + key_id + '" "' + new_obj[key_id] + '"');
+                                        }
+                                    } else {
+                                        cur_obj = old_arr[idx];
+                                    }
+                                    if (cur_obj !== undefined) {
+                                        if (me.cloneObject(cur_obj, new_obj, ar_state_values)) {
+                                            differs = true;
+                                        }
+                                        if (Object.keys(cur_obj).length > 0) {
+                                            new_arr.push(cur_obj);
+                                        } else {
+                                            differs = true;
+                                        }
+                                    }
+                                });
+                                if (new_arr.length != old_arr.length) {
+                                    differs = true;
+                                }
+                                states[key] = key_id ? old_arr : new_arr;
+                            }
                         } else {
                             RED.log.error('key "' + key + '" must be an array.');
                         }
@@ -2184,13 +2263,15 @@ module.exports = function (RED) {
                         if (Array.isArray(value)) {
                             RED.log.error('key "' + key + '" must be an object.');
                         } else {
-                            Object.keys(state_values).forEach(function (key) {
-                                if (typeof value[key] !== 'undefined') {
-                                    if (me.setState(key, value[key], old_state, state_values[key] || {})) {
+                            Object.keys(state_values).forEach(function (ikey) {
+                                if (typeof value[ikey] !== 'undefined' && value[ikey] != null) {
+                                    if (me.setState(ikey, value[ikey], old_state, state_values[ikey])) {
                                         differs = true;
                                     }
-                                } else if (typeof state_values[key] === 'number' && !(state_values[key] & formats.MANDATORY)) {
-                                    delete value[key];
+                                } else if (typeof state_values[ikey] === 'number' && !(state_values[ikey] & formats.MANDATORY)) {
+                                    delete old_state[ikey];
+                                } else {
+                                    RED.log.error('key "' + key + '.' + ikey + '" is mandatory.');
                                 }
                             });
                         }
@@ -2214,42 +2295,21 @@ module.exports = function (RED) {
                         }
                     });
                 }
+            } else if (value == null) {
+                if (state_values & Formats.MANDATORY) {
+                    RED.log.error("key " + key + " is mandatory.");
+                } else if (old_state.hasOwnProperty(key)) {
+                    delete old_state[key];
+                    differs = true;
+                }
             } else if (state_values & Formats.FLOAT) {
-                if (value == null && !(state_values & Formats.MANDATORY)) {
-                    if (states.hasOwnProperty(key)) {
-                        delete states[key];
-                        differs = true;
-                    }
-                } else {
-                    new_state = formats.FormatValue(formats.Formats.FLOAT, key, value);
-                }
+                new_state = formats.FormatValue(formats.Formats.FLOAT, key, value);
             } else if (state_values & Formats.INT) {
-                if (value == null && !(state_values & Formats.MANDATORY)) {
-                    if (states.hasOwnProperty(key)) {
-                        delete states[key];
-                        differs = true;
-                    }
-                } else {
-                    new_state = formats.FormatValue(formats.Formats.INT, key, value);
-                }
+                new_state = formats.FormatValue(formats.Formats.INT, key, value);
             } else if (state_values & Formats.STRING) {
-                if (value == null && !(state_values & Formats.MANDATORY)) {
-                    if (states.hasOwnProperty(key)) {
-                        delete states[key];
-                        differs = true;
-                    }
-                } else {
-                    new_state = formats.FormatValue(formats.Formats.STRING, key, value);
-                }
+                new_state = formats.FormatValue(formats.Formats.STRING, key, value);
             } else if (state_values & Formats.BOOL) {
-                if (value == null && !(state_values & Formats.MANDATORY)) {
-                    if (states.hasOwnProperty(key)) {
-                        delete states[key];
-                        differs = true;
-                    }
-                } else {
-                    new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
-                }
+                new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
             }
             if (val_type !== 'object') {
                 if (new_state !== undefined) {

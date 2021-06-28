@@ -541,6 +541,9 @@ test_payload ".openState[0].openPercent" 50
 execute $NODE_ID OpenClose_dir 70 "DOWN"
 test_payload ".openState[1].openPercent" 70
 
+execute $NODE_ID OpenClose_dir 61 "LEFT"
+test_payload ".openState[2].openPercent" 61
+
 execute $NODE_ID OpenClose_dir 60 "LEFT"
 test_payload ".openState[2].openPercent" 60
 
