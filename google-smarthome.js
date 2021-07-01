@@ -56,20 +56,20 @@ module.exports = function(RED) {
             RED.settings.userDir,
             RED.settings.httpNodeRoot,
             config.usegooglelogin,
-            node.credentials.loginclientid || config.loginclientid || '',
-            node.credentials.emails || config.emails || '',
-            node.credentials.username || config.username || '',
-            node.credentials.password || config.password || '',
+            node.credentials.loginclientid || '',
+            node.credentials.emails || [],
+            node.credentials.username || '',
+            node.credentials.password || '',
             parseInt(config.accesstokenduration || '30'), // minutes
             config.usehttpnoderoot,
             config.httppath,
             parseInt(config.port || '0'),
             config.ssloffload,
-            node.credentials.publickey || config.publickey || '', 
-            node.credentials.privatekey || config.privatekey || '',
-            node.credentials.jwtkey || config.jwtkey || '',
-            node.credentials.clientid || config.clientid || '', 
-            node.credentials.clientsecret || config.clientsecret || '',
+            node.credentials.publickey || '', 
+            node.credentials.privatekey || '',
+            node.credentials.jwtkey || '',
+            node.credentials.clientid || '', 
+            node.credentials.clientsecret || '',
             config.reportinterval,     // minutes
             config.enabledebug);
 
@@ -130,6 +130,14 @@ module.exports = function(RED) {
             RED.log.debug("GoogleSmartHomeNode:setState(): state = " + JSON.stringify(state));
             node.app.SetState(client.id, state);
         };
+
+        this.getIdFromName = function(name) {
+            return node.app.GetIdFromName(name);
+        }
+
+        this.getProperties = function(deviceIds) {
+            return node.app.getProperties(deviceIds);
+        }
 
         this.debug = function(msg) {
             if (config.enabledebug) {
