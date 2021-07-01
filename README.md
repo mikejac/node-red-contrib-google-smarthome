@@ -39,6 +39,7 @@
   - [Switch](#--switch)
   - [Management](#--management)
 - [The config node](#the-config-node)
+- [Sending spoken notifications](#sending-spoken-notifications)
 - [Troubleshooting](#troubleshooting)
 - [Credits](#credits)
 - [Copyright and license](#copyright-and-license)
@@ -982,6 +983,25 @@ Example flow:
   `Public Key`: Full path to public key file, e.g. `fullchain.pem` from Let's Encrypt.
 
   `Private Key`: Full path to private key file, e.g. `privkey.pem` from Let's Encrypt.
+
+---
+## Sending spoken notifications
+
+Some devices support sending spoken notifications to your smart speaker. For example you can play a notification on your
+speaker when somebody rings at the front door or when the washing machine completes its cycle. Unfortunately you can not
+send custom messages, you can only trigger predefined messages.
+
+See https://developers.google.com/assistant/smarthome/develop/notifications.
+
+1. Create a device using the "Google Device" node with one of the supported traits in Node-RED and deploy. Currently
+   only the traits "Object detection", "Run cycle" and "Sensor state" support notifications.
+1. In your Google Home App open your new device and enable "Spoken Notifications".
+1. To trigger the notification send a message with a specific payload into the device node. Payloads are documented
+   [here](https://developers.google.com/assistant/smarthome/develop/notifications#events).
+
+Example flow:
+
+    [{"id":"43a13163.4a3e6","type":"google-device","z":"1fdba310.d04cad","client":"","name":"Front Door","topic":"","room_hint":"","device_type":"DOORBELL","trait_appselector":false,"trait_channel":false,"trait_inputselector":false,"trait_mediastate":false,"trait_onoff":false,"trait_transportcontrol":false,"trait_modes":false,"trait_volume":false,"trait_toggles":false,"trait_brightness":false,"trait_colorsetting":false,"appselector_file":"applications.json","channel_file":"channels.json","inputselector_file":"inputs.json","command_only_input_selector":false,"ordered_inputs":false,"support_activity_state":false,"support_playback_state":false,"command_only_onoff":false,"query_only_onoff":false,"supported_commands":["CAPTION_CONTROL","NEXT","PAUSE","PREVIOUS","RESUME","SEEK_RELATIVE","SEEK_TO_POSITION","SET_REPEAT","SHUFFLE","STOP"],"volume_max_level":100,"can_mute_and_unmute":true,"volume_default_percentage":40,"level_step_size":1,"command_only_volume":false,"command_only_brightness":false,"command_only_colorsetting":false,"color_model":"temp","temperature_min_k":2000,"temperature_max_k":9000,"modes_file":"modes.json","command_only_modes":false,"query_only_modes":false,"toggles_file":"toggles.json","command_only_toggles":false,"query_only_toggles":false,"trait_camerastream":false,"hls":"","hls_app_id":"","dash":"","dash_app_id":"","smooth_stream":"","smooth_stream_app_id":"","progressive_mp4":"","progressive_mp4_app_id":"","auth_token":"","passthru":false,"trait_scene":false,"scene_reversible":true,"trait_timer":false,"trait_temperaturesetting":false,"max_timer_limit_sec":86400,"command_only_timer":false,"available_thermostat_modes":["off","heat","cool","on","heatcool","auto","fan-only","purifier","eco","dry"],"min_threshold_celsius":"10","max_threshold_celsius":"32","thermostat_temperature_unit":"C","buffer_range_celsius":2,"command_only_temperaturesetting":false,"query_only_temperaturesetting":false,"trait_temperaturecontrol":false,"tc_min_threshold_celsius":0,"tc_max_threshold_celsius":40,"tc_temperature_step_celsius":1,"tc_temperature_unit_for_ux":"C","tc_command_only_temperaturecontrol":false,"tc_query_only_temperaturecontrol":false,"trait_humiditysetting":false,"min_percent":0,"max_percent":100,"command_only_humiditysetting":false,"query_only_humiditysetting":false,"trait_dock":false,"trait_locator":false,"trait_lockunlock":false,"trait_reboot":false,"trait_openclose":false,"discrete_only_openclose":false,"open_direction":[],"command_only_openclose":false,"query_only_openclose":false,"trait_startstop":false,"pausable":false,"available_zones":[],"lang":"en","trait_runcycle":false,"trait_softwareupdate":false,"trait_rotation":false,"supports_degrees":true,"supports_percent":true,"rotation_degrees_min":0,"rotation_degrees_max":360,"supports_continuous_rotation":false,"command_only_rotation":false,"trait_lighteffects":false,"default_sleep_duration":1800,"default_wake_duration":1800,"supported_effects":["colorLoop","sleep","wake"],"trait_statusreport":false,"trait_cook":false,"supported_cooking_modes":[],"food_presets_file":"foodPresets.json","trait_fanspeed":false,"reversible":false,"supports_fan_speed_percent":true,"fan_speeds_ordered":true,"command_only_fanspeed":false,"available_fan_speeds_file":"availableFanSpeeds.json","trait_sensorstate":false,"sensor_states_supported":[],"arm_levels_ordered":true,"trait_fill":false,"available_fill_levels_file":"availableFillLevels.json","supports_fill_percent":false,"trait_armdisarm":false,"available_arm_levels_file":"availableArmLevels.json","trait_energystorage":false,"is_rechargeable":false,"query_only_energy_storage":false,"energy_storage_distance_unit_for_ux":"KILOMETERS","trait_dispense":false,"supported_dispense_items_file":"supportedDispenseItems.json","supported_dispense_presets_file":"supportedDispensePresets.json","trait_networkcontrol":false,"supports_enabling_guest_network":false,"supports_disabling_guest_network":false,"supports_getting_guest_network_password":false,"network_profiles":[],"supports_enabling_network_profile":false,"supports_disabling_network_profile":false,"supports_network_download_speedtest":false,"supports_network_upload_speedtest":false,"trait_objectdetection":true,"show_trait":"selected","advanced_settings":false,"x":870,"y":1120,"wires":[[]]},{"id":"b20005f.91069f8","type":"inject","z":"1fdba310.d04cad","name":"Object Detection","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":"10","topic":"ObjectDetection","payload":"{\"named\":\"Alice\"}","payloadType":"json","x":640,"y":1120,"wires":[["43a13163.4a3e6"]]},{"id":"61d16f84.337cd","type":"inject","z":"1fdba310.d04cad","name":"Object Detection","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":"10","topic":"ObjectDetection","payload":"{\"unclassified\":2}","payloadType":"json","x":640,"y":1160,"wires":[["43a13163.4a3e6"]]}]
 
 ---
 ## Troubleshooting
