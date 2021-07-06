@@ -1197,10 +1197,10 @@ module.exports = function (RED) {
             if (me.trait.armdisarm) {
                 states['isArmed'] = false;
                 states['currentArmLevel'] = '';
-                states['exitAllowance'] = 60;
+                // states['exitAllowance'] = 60;
             }
             if (me.trait.brightness) {
-                states['brightness'] = 50;
+                // states['brightness'] = 50;
             }
             if (me.trait.colorsetting) {
                 if (me.color_model === "rgb") {
@@ -1219,9 +1219,9 @@ module.exports = function (RED) {
             }
             if (me.trait.cook) {
                 states['currentCookingMode'] = "NONE";
-                states['currentFoodPreset'] = "NONE";
-                states['currentFoodQuantity'] = 0;
-                states['currentFoodUnit'] = "UNKNOWN_UNITS";
+                // states['currentFoodPreset'] = "NONE";
+                // states['currentFoodQuantity'] = 0;
+                // states['currentFoodUnit'] = "UNKNOWN_UNITS";
             }
             if (me.trait.dispense) {
                 let dispense = [];
@@ -1256,7 +1256,7 @@ module.exports = function (RED) {
                 states['dispenseItems'] = dispense;
             }
             if (me.trait.dock) {
-                states['isDocked'] = false;
+                // states['isDocked'] = false;
             }
             if (me.trait.energystorage) {
                 states['descriptiveCapacityRemaining'] = "FULL";
@@ -1266,36 +1266,62 @@ module.exports = function (RED) {
                 states['isPluggedIn'] = false;
             }
             if (me.trait.fanspeed) {
-                states['currentFanSpeedSetting'] = "";
-                states['currentFanSpeedPercent'] = 0;
+                // states['currentFanSpeedSetting'] = "";
+                // states['currentFanSpeedPercent'] = 0;
             }
-            if (me.trait.lockunlock) {
-                states['isLocked'] = false;
-                states['isJammed'] = false;
+            if (me.trait.fill) {
+                states['isFilled'] = false;
+                // states['currentFillLevel'] = "";
+                // states['currentFillPercent'] = 0;
+            }
+            if (me.trait.humiditysetting) {
+                // states['humiditySetpointPercent'] = 52;
+                // states['humidityAmbientPercent'] = 52;
+            }
+            if (me.trait.inputselector) {
+                states['currentInput'] = '';
             }
             if (me.trait.lighteffects) {
                 states['activeLightEffect'] = "";
+                // states['lightEffectEndUnixTimestampSec'] = 60;
+            }
+            if (me.trait.lockunlock) {
+                // states['isLocked'] = false;
+                // states['isJammed'] = false;
+            }
+            if (me.trait.mediastate) {
+                // INACTIVE STANDBY ACTIVE
+                // states['activityState'] = 'INACTIVE';
+                // PAUSED PLAYING FAST_FORWARDING REWINDING BUFFERING STOPPED
+                // states['playbackState'] = 'STOPPED';
+            }
+            if (me.trait.modes) {
+                states['currentModeSettings'] = {};
+                this.updateModesState(me, device);
             }
             if (me.trait.networkcontrol) {
-                states['networkEnabled'] = true;
-                states['networkSettings'] = { ssid: '' };
-                states['guestNetworkEnabled'] = false;
-                states['guestNetworkSettings'] = { ssid: '' };
-                states['numConnectedDevices'] = 1;
-                states['networkUsageMB'] = 0;
-                states['networkUsageLimitMB'] = 0;
-                states['networkUsageUnlimited'] = true;
-                states['lastNetworkDownloadSpeedTest'] = {
+                // states['networkEnabled'] = true;
+                // states['networkSettings'] = { ssid: '' };
+                // states['guestNetworkEnabled'] = false;
+                // states['guestNetworkSettings'] = { ssid: '' };
+                // states['numConnectedDevices'] = 1;
+                // states['networkUsageMB'] = 0;
+                // states['networkUsageLimitMB'] = 0;
+                // states['networkUsageUnlimited'] = true;
+                /* states['lastNetworkDownloadSpeedTest'] = {
                     downloadSpeedMbps: 0,
                     unixTimestampSec: 0,
                     status: "FAILURE"
-                };
-                states['lastNetworkUploadSpeedTest'] = {
+                }; */
+                /* states['lastNetworkUploadSpeedTest'] = {
                     uploadSpeedMbps: 0,
                     unixTimestampSec: 0,
                     status: "FAILURE"
-                };
-                states['networkSpeedTestInProgress'] = false;
+                };*/
+                // states['networkSpeedTestInProgress'] = false;
+            }
+            if (me.trait.onoff) {
+                // states['on'] = false;
             }
             if (me.trait.openclose) {
                 if (me.open_direction.length < 2) {
@@ -1313,10 +1339,10 @@ module.exports = function (RED) {
             }
             if (me.trait.rotation) {
                 if (me.supports_degrees) {
-                    states['rotationDegrees'] = 0;
+                    // states['rotationDegrees'] = 0;
                 }
                 if (me.supports_percent) {
-                    states['rotationPercent'] = 0;
+                    // states['rotationPercent'] = 0;
                 }
             }
             if (me.trait.runcycle) {
@@ -1390,40 +1416,20 @@ module.exports = function (RED) {
             }
             if (me.trait.startstop) {
                 states['isRunning'] = false;
-                states['isPaused'] = false;
-                states['activeZones'] = [];
+                // states['isPaused'] = false;
+                // states['activeZones'] = [];
             }
             if (me.trait.statusreport) {
                 states['currentStatusReport'] = [];
             }
-            if (me.trait.humiditysetting) {
-                states['humiditySetpointPercent'] = 52;
-                states['humidityAmbientPercent'] = 52;
-            }
-            if (me.trait.inputselector) {
-                states['currentInput'] = '';
-            }
-            if (me.trait.mediastate) {
-                // INACTIVE STANDBY ACTIVE
-                states['activityState'] = 'INACTIVE';
-                // PAUSED PLAYING FAST_FORWARDING REWINDING BUFFERING STOPPED
-                states['playbackState'] = 'STOPPED';
-            }
-            if (me.trait.modes) {
-                states['currentModeSettings'] = {};
-                this.updateModesState(me, device);
-            }
-            if (me.trait.onoff) {
-                states['on'] = false;
-            }
             if (me.trait.temperaturecontrol) {
-                states['temperatureSetpointCelsius'] = me.tc_min_threshold_celsius;
-                states['temperatureAmbientCelsius'] = me.tc_min_threshold_celsius;
+                // states['temperatureSetpointCelsius'] = me.tc_min_threshold_celsius;
+                // states['temperatureAmbientCelsius'] = me.tc_min_threshold_celsius;
             }
             if (me.trait.temperaturesetting) {
-                states['activeThermostatMode'] = "off";
-                states['targetTempReachedEstimateUnixTimestampSec'] = me.target_temp_reached_estimate_unix_timestamp_sec;
-                states['thermostatHumidityAmbient'] = me.thermostat_humidity_ambient;
+                // states['activeThermostatMode'] = "off";
+                // states['targetTempReachedEstimateUnixTimestampSec'] = me.target_temp_reached_estimate_unix_timestamp_sec;
+                // states['thermostatHumidityAmbient'] = me.thermostat_humidity_ambient;
                 states['thermostatMode'] = "off";
                 states['thermostatTemperatureAmbient'] = me.thermostat_temperature_setpoint;
                 // 0
@@ -1434,7 +1440,7 @@ module.exports = function (RED) {
             }
             if (me.trait.timer) {
                 states['timerRemainingSec'] = -1;
-                states['timerPaused'] = false;
+                // states['timerPaused'] = false;
             }
             if (me.trait.toggles) {
                 states['currentToggleSettings'] = {};
@@ -1442,7 +1448,7 @@ module.exports = function (RED) {
             }
             if (me.trait.volume) {
                 states['currentVolume'] = me.volume_default_percentage;
-                states['isMuted'] = false;
+                // states['isMuted'] = false;
             }
         }
 
@@ -1952,7 +1958,7 @@ module.exports = function (RED) {
                         const differs = me.updateState({ state_key: msg.payload });
                         if (differs) {
                             me.debug(".input: " + state_key + ' ' + JSON.stringify(msg.payload));
-                            this.clientConn.setState(this, me.states);  // tell Google ...
+                            this.clientConn.setState(this, me.states, true);  // tell Google ...
 
                             if (this.passthru) {
                                 msg.payload = me.states[state_key];
@@ -1965,7 +1971,7 @@ module.exports = function (RED) {
                         let differs = me.updateState(msg.payload);
 
                         if (differs) {
-                            this.clientConn.setState(this, me.states);  // tell Google ...
+                            this.clientConn.setState(this, me.states, true);  // tell Google ...
 
                             if (this.passthru) {
                                 msg.payload = me.states;
@@ -2683,6 +2689,12 @@ module.exports = function (RED) {
                     executionStates.push('currentFanSpeedPercent');
                 }
             }
+            // LockUnlock
+            else if (command.command == 'action.devices.commands.LockUnlock') {
+                const lock = command.params['lock'];
+                params['isLocked'] = lock;
+                executionStates.push('isLocked');
+            }
             // HumiditySetting
             else if (command.command == 'action.devices.commands.SetHumidity') {
                 const humidity = command.params['humidity'];
@@ -2993,7 +3005,8 @@ module.exports = function (RED) {
                 const timer_time_sec = command.params['timerTimeSec'];
                 const now = Math.floor(Date.now() / 1000);
                 params['timerRemainingSec'] = timer_time_sec;
-                executionStates.push('timerRemainingSec');
+                params['timerPaused'] = false;
+                executionStates.push('timerPaused', 'timerRemainingSec');
                 me.timer_end_timestamp = now + timer_time_sec;
             }
             else if (command.command == 'action.devices.commands.TimerResume') {

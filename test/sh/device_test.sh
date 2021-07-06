@@ -142,6 +142,13 @@ execute_error() {
 # if [ 1 == 2 ] ; then
 # fi # fi
 
+execute_payload topic '{"on":true, "isDocked":null}'
+test_payload .isDocked null
+execute_payload topic '{"on":false, "isDocked":false}'
+#test_payload .isDocked false
+execute_payload topic '{"on":true, "isDocked":null}'
+test_payload .isDocked null
+
 # AppSelector 
 echo AppSelector
 execute $NODE_ID appInstall mia_application
@@ -466,7 +473,7 @@ execute $NODE_ID Locate_lang true "it"
 echo
 echo LockUnlock 
 execute $NODE_ID LockUnlock true "125"
-test_payload ".isLocked" false
+test_payload ".isLocked" true
 
 execute $NODE_ID LockUnlock false "125"
 test_payload ".isLocked" false
