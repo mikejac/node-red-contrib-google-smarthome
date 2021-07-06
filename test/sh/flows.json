@@ -789,7 +789,7 @@
         "type": "function",
         "z": "c0151475.218f98",
         "name": "",
-        "func": "msg = msg.payload;\nreturn msg;",
+        "func": "msg = msg.payload;\nreturn [[msg, { \"topic\" : \"getState\"}]];\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -964,6 +964,69 @@
                 "a5782b1b.e120f8"
             ]
         ]
+    },
+    {
+        "id": "d6e38623.42fb68",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"topic\":\"\",\"payload\":{\"on\":true}}",
+        "payloadType": "json",
+        "x": 90,
+        "y": 780,
+        "wires": [
+            [
+                "f9b996e4.ab42c8"
+            ]
+        ]
+    },
+    {
+        "id": "f9b996e4.ab42c8",
+        "type": "http request",
+        "z": "c0151475.218f98",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "localhost:1880/payload",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 260,
+        "y": 780,
+        "wires": [
+            [
+                "ddf30b0c.14e048"
+            ]
+        ]
+    },
+    {
+        "id": "ddf30b0c.14e048",
+        "type": "debug",
+        "z": "c0151475.218f98",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 420,
+        "y": 780,
+        "wires": []
     },
     {
         "id": "85fa874.600d378",

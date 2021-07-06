@@ -1615,7 +1615,12 @@ module.exports = function (RED) {
             let topic = topicArr[topicArr.length - 1];   // get last part of topic
 
             try {
-                if (topic.toUpperCase() === 'AVAILABLEAPPLICATIONS') {
+                if (topic.toUpperCase() === 'GETSTATE') {
+                    this.send({
+                        topic: msg.topic,
+                        payload: me.states
+                    });
+                } else if (topic.toUpperCase() === 'AVAILABLEAPPLICATIONS') {
                     if (this.trait.appselector) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_applications = this.loadJson('Applications', this.appselector_file, []);
@@ -2269,7 +2274,7 @@ module.exports = function (RED) {
                                         differs = true;
                                     }
                                 } else if (typeof state_values[ikey] === 'number' && !(state_values[ikey] & formats.MANDATORY)) {
-                                    delete old_state[ikey];
+                                    delete states[ikey];
                                 } else {
                                     RED.log.error('key "' + key + '.' + ikey + '" is mandatory.');
                                 }
@@ -2298,8 +2303,8 @@ module.exports = function (RED) {
             } else if (value == null) {
                 if (state_values & Formats.MANDATORY) {
                     RED.log.error("key " + key + " is mandatory.");
-                } else if (old_state.hasOwnProperty(key)) {
-                    delete old_state[key];
+                } else if (states.hasOwnProperty(key)) {
+                    delete states[key];
                     differs = true;
                 }
             } else if (state_values & Formats.FLOAT) {
