@@ -3005,7 +3005,7 @@ module.exports = function (RED) {
                 const timer_time_sec = command.params['timerTimeSec'];
                 const now = Math.floor(Date.now() / 1000);
                 params['timerRemainingSec'] = timer_time_sec;
-                params['timerPaused'] = false;
+                params['timerPaused'] = null;
                 executionStates.push('timerPaused', 'timerRemainingSec');
                 me.timer_end_timestamp = now + timer_time_sec;
             }

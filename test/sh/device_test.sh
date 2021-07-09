@@ -144,9 +144,12 @@ execute_error() {
 
 execute_payload topic '{"on":true, "isDocked":null}'
 test_payload .isDocked null
+test_payload .on true
 execute_payload topic '{"on":false, "isDocked":false}'
-#test_payload .isDocked false
+test_payload .isDocked false
+test_payload .on false
 execute_payload topic '{"on":true, "isDocked":null}'
+test_payload .on true
 test_payload .isDocked null
 
 # AppSelector 
@@ -753,10 +756,10 @@ test_out ".payload.commands[0].errorCode" '"noTimerExists"'
 
 execute $NODE_ID TimerStart 1000
 test_payload ".timerRemainingSec" 1000
-test_payload ".timerPaused" false
+test_payload ".timerPaused" null
 
 execute $NODE_ID TimerAdjust -5
-test_payload ".timerPaused" false
+test_payload ".timerPaused" null
 
 execute $NODE_ID TimerPause
 test_payload ".timerPaused" true
