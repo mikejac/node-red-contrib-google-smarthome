@@ -940,7 +940,9 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.toggles) {
-                state_types['currentToggleSettings'] = Formats.COPY_OBJECT + Formats.BOOL; // See the docs
+                if (me.query_only_toggles || !me.command_only_toggles) {
+                    state_types['currentToggleSettings'] = Formats.COPY_OBJECT + Formats.BOOL; // See the docs
+                }
             }
             // TransportControl 
             if (me.trait.volume) {
@@ -1510,8 +1512,10 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.toggles) {
-                states['currentToggleSettings'] = {};
-                this.updateTogglesState(me, device);
+                if (me.query_only_toggles || !me.command_only_toggles) {
+                    states['currentToggleSettings'] = {};
+                    this.updateTogglesState(me, device);
+                }
             }
             if (me.trait.volume) {
                 states['currentVolume'] = me.volume_default_percentage;
