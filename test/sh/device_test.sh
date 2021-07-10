@@ -221,7 +221,7 @@ test_payload ".brightness" 200
 
 execute $NODE_ID BrightnessRelative 4
 test_out ".payload.commands[0].states.online" true
-test_payload ".brightness" 208
+test_payload ".brightness" 200
 
 # CameraStream
 echo
@@ -398,11 +398,11 @@ test_payload ".currentFanSpeedPercent" 50
 test_payload ".currentFanSpeedSetting" '"speed_high"'
 
 execute $NODE_ID SetFanSpeedRelative -2 
-test_payload ".currentFanSpeedPercent" 48
+test_payload ".currentFanSpeedPercent" 50
 test_payload ".currentFanSpeedSetting" '"speed_high"'
 
 execute $NODE_ID SetFanSpeedRelative_percent 15 
-test_payload ".currentFanSpeedPercent" 55
+test_payload ".currentFanSpeedPercent" 50
 test_payload ".currentFanSpeedSetting" '"speed_high"'
 
 execute $NODE_ID Reverse 
@@ -430,10 +430,10 @@ execute $NODE_ID SetHumidity 30
 test_payload ".humiditySetpointPercent" 30
 
 execute $NODE_ID HumidityRelative -6 
-test_payload ".humiditySetpointPercent" 24
+test_payload ".humiditySetpointPercent" 30
 
 execute $NODE_ID HumidityRelative_percent 5 
-test_payload ".humiditySetpointPercent" 25
+test_payload ".humiditySetpointPercent" 30
 
 # InputSelector 
 echo
@@ -578,31 +578,31 @@ test_payload ".openState[5].openPercent" 10
 execute $NODE_ID OpenCloseRelative 5
 
 execute $NODE_ID OpenCloseRelative_dir -1 "UP"
-test_payload ".openState[0].openPercent" 49
+test_payload ".openState[0].openPercent" 50
 
 execute $NODE_ID OpenCloseRelative_dir 3 "DOWN"
-test_payload ".openState[1].openPercent" 73
+test_payload ".openState[1].openPercent" 70
 
 execute $NODE_ID OpenCloseRelative_dir -5 "LEFT"
-test_payload ".openState[2].openPercent" 55
+test_payload ".openState[2].openPercent" 60
 
 execute $NODE_ID OpenCloseRelative_dir 11 "RIGHT"
-test_payload ".openState[3].openPercent" 56
+test_payload ".openState[3].openPercent" 45
 
 execute $NODE_ID OpenCloseRelative_dir -7 "IN"
-test_payload ".openState[4].openPercent" 13
+test_payload ".openState[4].openPercent" 20
 
 execute $NODE_ID OpenCloseRelative_dir 17 "OUT"
-test_payload ".openState[5].openPercent" 27
+test_payload ".openState[5].openPercent" 10
 
 execute $NODE_ID OpenCloseRelative_dir -9 "NO_DIR"
 test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR??
-test_payload ".openState[0].openPercent" 49
-test_payload ".openState[1].openPercent" 73
-test_payload ".openState[2].openPercent" 55
-test_payload ".openState[3].openPercent" 56
-test_payload ".openState[4].openPercent" 13
-test_payload ".openState[5].openPercent" 27
+test_payload ".openState[0].openPercent" 50
+test_payload ".openState[1].openPercent" 70
+test_payload ".openState[2].openPercent" 60
+test_payload ".openState[3].openPercent" 45
+test_payload ".openState[4].openPercent" 20
+test_payload ".openState[5].openPercent" 10
 
 # Reboot 
 echo
