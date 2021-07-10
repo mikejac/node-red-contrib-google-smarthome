@@ -788,7 +788,9 @@ module.exports = function (RED) {
                 state_types['humidityAmbientPercent'] = Formats.INT;
             }
             if (me.trait.inputselector) {
-                state_types['currentInput'] = Formats.STRING + Formats.MANDATORY;
+                if (!me.command_only_input_selector) {
+                    state_types['currentInput'] = Formats.STRING + Formats.MANDATORY;
+                }
             }
             if (me.trait.lighteffects) {
                 state_types['activeLightEffect'] = Formats.STRING + Formats.MANDATORY;
@@ -1311,7 +1313,9 @@ module.exports = function (RED) {
                 // states['humidityAmbientPercent'] = 52;
             }
             if (me.trait.inputselector) {
-                states['currentInput'] = '';
+                if (!me.command_only_input_selector) {
+                    states['currentInput'] = '';
+                }
             }
             if (me.trait.lighteffects) {
                 states['activeLightEffect'] = "";
