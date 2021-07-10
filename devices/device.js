@@ -839,7 +839,9 @@ module.exports = function (RED) {
             }
             // ObjectDetection 
             if (me.trait.onoff) {
-                state_types['on'] = Formats.BOOL;
+                if (me.query_only_onoff || !me.command_only_onoff) {
+                    state_types['on'] = Formats.BOOL;
+                }
             }
             if (me.trait.openclose) {
                 if (me.open_direction.length < 2) {
@@ -1564,7 +1566,7 @@ module.exports = function (RED) {
                         }
                     }
                 } else {
-                    if (me.trait.onoff) {
+                    if (me.trait.onoff && me.states.on !== undefined) {
                         if (me.states.on) {
                             fill = "green";
                             text = "ON";
