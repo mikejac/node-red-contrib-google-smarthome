@@ -922,14 +922,16 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.temperaturesetting) {
-                state_types['activeThermostatMode'] = Formats.STRING;
-                state_types['targetTempReachedEstimateUnixTimestampSec'] = Formats.INT;
-                state_types['thermostatHumidityAmbient'] = Formats.FLOAT;
-                state_types['thermostatMode'] = Formats.STRING + Formats.MANDATORY;
-                state_types['thermostatTemperatureAmbient'] = Formats.FLOAT + Formats.MANDATORY;
-                state_types['thermostatTemperatureSetpoint'] = Formats.FLOAT + Formats.MANDATORY;       // 0 TODO optional
-                state_types['thermostatTemperatureSetpointHigh'] = Formats.FLOAT + Formats.MANDATORY;  // 1 TODO optional
-                state_types['thermostatTemperatureSetpointLow'] = Formats.FLOAT + Formats.MANDATORY;   // 1 TODO optional
+                if (me.query_only_temperaturesetting || !me.command_only_temperaturesetting) {
+                    state_types['activeThermostatMode'] = Formats.STRING;
+                    state_types['targetTempReachedEstimateUnixTimestampSec'] = Formats.INT;
+                    state_types['thermostatHumidityAmbient'] = Formats.FLOAT;
+                    state_types['thermostatMode'] = Formats.STRING + Formats.MANDATORY;
+                    state_types['thermostatTemperatureAmbient'] = Formats.FLOAT + Formats.MANDATORY;
+                    state_types['thermostatTemperatureSetpoint'] = Formats.FLOAT;       // 0 TODO One of
+                    state_types['thermostatTemperatureSetpointHigh'] = Formats.FLOAT;   // 1 TODO One of
+                    state_types['thermostatTemperatureSetpointLow'] = Formats.FLOAT;    // 1 TODO One of
+                }
             }
             if (me.trait.timer) {
                 state_types['timerRemainingSec'] = Formats.INT + Formats.MANDATORY;
@@ -1486,16 +1488,18 @@ module.exports = function (RED) {
                 // states['temperatureAmbientCelsius'] = me.tc_min_threshold_celsius;
             }
             if (me.trait.temperaturesetting) {
-                // states['activeThermostatMode'] = "off";
-                // states['targetTempReachedEstimateUnixTimestampSec'] = me.target_temp_reached_estimate_unix_timestamp_sec;
-                // states['thermostatHumidityAmbient'] = me.thermostat_humidity_ambient;
-                states['thermostatMode'] = "off";
-                states['thermostatTemperatureAmbient'] = me.thermostat_temperature_setpoint;
-                // 0
-                states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
-                // 1
-                // states['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
-                // states['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
+                if (me.query_only_temperaturesetting || !me.command_only_temperaturesetting) {
+                    // states['activeThermostatMode'] = "off";
+                    // states['targetTempReachedEstimateUnixTimestampSec'] = me.target_temp_reached_estimate_unix_timestamp_sec;
+                    // states['thermostatHumidityAmbient'] = me.thermostat_humidity_ambient;
+                    states['thermostatMode'] = "off";
+                    states['thermostatTemperatureAmbient'] = me.thermostat_temperature_setpoint;
+                    // 0
+                    states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
+                    // 1
+                    // states['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
+                    // states['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
+                }
             }
             if (me.trait.timer) {
                 states['timerRemainingSec'] = -1;
