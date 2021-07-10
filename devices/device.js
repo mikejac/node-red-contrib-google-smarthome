@@ -946,7 +946,7 @@ module.exports = function (RED) {
             }
             // TransportControl 
             if (me.trait.volume) {
-                if (me.command_only_volume) {
+                if (!me.command_only_volume) {
                     state_types['currentVolume'] = Formats.INT + Formats.MANDATORY;
                     if (me.volume_can_mute_and_unmute) {
                         state_types['isMuted'] = Formats.BOOL + Formats.MANDATORY;
@@ -1512,7 +1512,7 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.timer) {
-                if (me.command_only_timer) {
+                if (!me.command_only_timer) {
                     states['timerRemainingSec'] = -1;
                     // states['timerPaused'] = false;
                 }
@@ -2738,31 +2738,33 @@ module.exports = function (RED) {
 
             // FanSpeed 
             else if (command.command == 'action.devices.commands.SetFanSpeed') {
-                if (command.params.hasOwnProperty('fanSpeed')) {
-                    const fanSpeed = command.params['fanSpeed'];
-                    let new_fanspeed = '';
-                    this.available_fan_speeds.forEach(function (fanspeed) {
-                        if (fanspeed.speed_name === fanSpeed) {
-                            new_fanspeed = fanspeed.speed_name;
+                if (!me.command_only_fanspeed) {
+                    if (command.params.hasOwnProperty('fanSpeed')) {
+                        const fanSpeed = command.params['fanSpeed'];
+                        let new_fanspeed = '';
+                        this.available_fan_speeds.forEach(function (fanspeed) {
+                            if (fanspeed.speed_name === fanSpeed) {
+                                new_fanspeed = fanspeed.speed_name;
+                            }
+                        });
+                        if (new_fanspeed === '') {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'transientError'
+                            };
                         }
-                    });
-                    if (new_fanspeed === '') {
-                        return {
-                            status: 'ERROR',
-                            errorCode: 'transientError'
-                        };
+                        params['currentFanSpeedSetting'] = fanSpeed;
+                        executionStates.push('currentFanSpeedSetting');
                     }
-                    params['currentFanSpeedSetting'] = fanSpeed;
-                    executionStates.push('currentFanSpeedSetting');
-                }
-                if (command.params.hasOwnProperty('fanSpeedPercent')) {
-                    const fanSpeedPercent = command.params['fanSpeedPercent'];
-                    params['currentFanSpeedPercent'] = fanSpeedPercent;
-                    executionStates.push('currentFanSpeedPercent');
+                    if (command.params.hasOwnProperty('fanSpeedPercent')) {
+                        const fanSpeedPercent = command.params['fanSpeedPercent'];
+                        params['currentFanSpeedPercent'] = fanSpeedPercent;
+                        executionStates.push('currentFanSpeedPercent');
+                    }
                 }
             }
             else if (command.command == 'action.devices.commands.SetFanSpeedRelative') {
-                if (command.params.hasOwnProperty('fanSpeedRelativeWeight')) {
+                /*if (command.params.hasOwnProperty('fanSpeedRelativeWeight')) {
                     const fanSpeedRelativeWeight = command.params['fanSpeedRelativeWeight'];
                     params['currentFanSpeedPercent'] = me.states['currentFanSpeedPercent'] + fanSpeedRelativeWeight;
                     executionStates.push('currentFanSpeedPercent');
@@ -2771,7 +2773,7 @@ module.exports = function (RED) {
                     const fanSpeedRelativePercent = command.params['fanSpeedRelativePercent'];
                     params['currentFanSpeedPercent'] = Math.round(me.states['currentFanSpeedPercent'] * (1 + fanSpeedRelativePercent / 100));
                     executionStates.push('currentFanSpeedPercent');
-                }
+                }*/
             }
             // LockUnlock
             else if (command.command == 'action.devices.commands.LockUnlock') {
@@ -2781,12 +2783,14 @@ module.exports = function (RED) {
             }
             // HumiditySetting
             else if (command.command == 'action.devices.commands.SetHumidity') {
-                const humidity = command.params['humidity'];
-                params['humiditySetpointPercent'] = humidity;
-                executionStates.push('humiditySetpointPercent');
+                if (me.query_only_humiditysetting || !me.command_only_humiditysetting) {
+                    const humidity = command.params['humidity'];
+                    params['humiditySetpointPercent'] = humidity;
+                    executionStates.push('humiditySetpointPercent');
+                }
             }
             else if (command.command == 'action.devices.commands.HumidityRelative') {
-                if (command.params.hasOwnProperty('humidityRelativePercent')) {
+                /*if (command.params.hasOwnProperty('humidityRelativePercent')) {
                     const humidityRelativePercent = command.params['humidityRelativePercent'];
                     params['humiditySetpointPercent'] = Math.round(me.states['humiditySetpointPercent'] * (1 + humidityRelativePercent / 100));
                     executionStates.push('humiditySetpointPercent');
@@ -2795,7 +2799,7 @@ module.exports = function (RED) {
                     const humidityRelativeWeight = command.params['humidityRelativeWeight'];
                     params['humiditySetpointPercent'] = me.states['humiditySetpointPercent'] + humidityRelativeWeight;
                     executionStates.push('humiditySetpointPercent');
-                }
+                }*/
             }
             // NetworkControl 
             else if (command.command == 'action.devices.commands.EnableDisableNetworkProfile') {
@@ -2833,70 +2837,80 @@ module.exports = function (RED) {
             }
             // Inputs
             else if (command.command == 'action.devices.commands.SetInput') {
-                if (command.params.hasOwnProperty('newInput')) {
-                    const newInput = command.params['newInput'];
-                    let current_input_index = -1;
-                    this.available_inputs.forEach(function (input_element, index) {
-                        if (input_element.key === newInput) {
-                            current_input_index = index;
+                if (!me.command_only_input_selector) {
+                    if (command.params.hasOwnProperty('newInput')) {
+                        const newInput = command.params['newInput'];
+                        let current_input_index = -1;
+                        this.available_inputs.forEach(function (input_element, index) {
+                            if (input_element.key === newInput) {
+                                current_input_index = index;
+                            }
+                        });
+                        if (current_input_index < 0) {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'unsupportedInput'
+                            };
                         }
-                    });
-                    if (current_input_index < 0) {
-                        return {
-                            status: 'ERROR',
-                            errorCode: 'unsupportedInput'
-                        };
+                        this.current_input_index = current_input_index;
+                        params['currentInput'] = newInput;
+                        executionStates.push('currentInput');
                     }
-                    this.current_input_index = current_input_index;
-                    params['currentInput'] = newInput;
-                    executionStates.push('currentInput');
                 }
             }
             else if (command.command == 'action.devices.commands.NextInput') {
-                this.current_input_index++;
-                if (this.current_input_index >= this.available_inputs.length) {
-                    this.current_input_index = 0;
+                if (!me.command_only_input_selector) {
+                    this.current_input_index++;
+                    if (this.current_input_index >= this.available_inputs.length) {
+                        this.current_input_index = 0;
+                    }
+                    executionStates.push('currentInput');
+                    params['currentInput'] = this.available_inputs[this.current_input_index].key;
                 }
-                executionStates.push('currentInput');
-                params['currentInput'] = this.available_inputs[this.current_input_index].key;
             }
             else if (command.command == 'action.devices.commands.PreviousInput') {
-                if (this.current_input_index <= 0) {
-                    this.current_input_index = this.available_inputs.length;
+                if (!me.command_only_input_selector) {
+                    if (this.current_input_index <= 0) {
+                        this.current_input_index = this.available_inputs.length;
+                    }
+                    this.current_input_index--;
+                    executionStates.push('currentInput');
+                    params['currentInput'] = this.available_inputs[this.current_input_index].key;
                 }
-                this.current_input_index--;
-                executionStates.push('currentInput');
-                params['currentInput'] = this.available_inputs[this.current_input_index].key;
             }
             // On/Off
             else if (command.command == 'action.devices.commands.OnOff') {
-                if (command.params.hasOwnProperty('on')) {
-                    const on_param = command.params['on'];
-                    executionStates.push('on');
-                    params['on'] = on_param;
+                if (me.query_only_onoff || !me.command_only_onoff) {
+                    if (command.params.hasOwnProperty('on')) {
+                        const on_param = command.params['on'];
+                        executionStates.push('on');
+                        params['on'] = on_param;
+                    }
                 }
             }
             // OpenClose
             else if (command.command == 'action.devices.commands.OpenClose') {
-                const open_percent = command.params['openPercent'] || 0;
-                if (me.states.hasOwnProperty('openPercent')) {
-                    executionStates.push('openPercent');
-                    params['openPercent'] = open_percent;
-                } else if (command.params.hasOwnProperty('openDirection')) {
-                    const open_direction = command.params['openDirection'];
-                    let new_open_directions = [];
-                    me.states.openState.forEach(element => {
-                        new_open_directions.push({
-                            "openPercent": element.openDirection == open_direction ? open_percent : element.openPercent,
-                            "openDirection": element.openDirection
+                if (me.query_only_openclose || !me.command_only_openclose) {
+                    const open_percent = command.params['openPercent'] || 0;
+                    if (me.states.hasOwnProperty('openPercent')) {
+                        executionStates.push('openPercent');
+                        params['openPercent'] = open_percent;
+                    } else if (command.params.hasOwnProperty('openDirection')) {
+                        const open_direction = command.params['openDirection'];
+                        let new_open_directions = [];
+                        me.states.openState.forEach(element => {
+                            new_open_directions.push({
+                                "openPercent": element.openDirection == open_direction ? open_percent : element.openPercent,
+                                "openDirection": element.openDirection
+                            });
                         });
-                    });
-                    executionStates.push('openState');
-                    params['openState'] = new_open_directions;
+                        executionStates.push('openState');
+                        params['openState'] = new_open_directions;
+                    }
                 }
             }
             else if (command.command == 'action.devices.commands.OpenCloseRelative') {
-                const open_percent = command.params['openRelativePercent'] || 0;
+                /*const open_percent = command.params['openRelativePercent'] || 0;
                 if (me.states.hasOwnProperty('openPercent')) {
                     executionStates.push('openPercent');
                     params['openPercent'] = open_percent;
@@ -2911,7 +2925,7 @@ module.exports = function (RED) {
                     });
                     executionStates.push('openState');
                     params['openState'] = new_open_directions;
-                }
+                }*/
             }
             // StartStop
             else if (command.command == 'action.devices.commands.StartStop') {
@@ -3005,73 +3019,81 @@ module.exports = function (RED) {
             }
             // TempreatureControl
             else if (command.command == 'action.devices.commands.SetTemperature') {
-                const temperature = command.params['temperature'];
-                params['temperatureSetpointCelsius'] = temperature;
-                executionStates.push('temperatureSetpointCelsius');
+                if (me.tc_query_only_temperaturecontrol || !me.tc_command_only_temperaturecontrol) {
+                    const temperature = command.params['temperature'];
+                    params['temperatureSetpointCelsius'] = temperature;
+                    executionStates.push('temperatureSetpointCelsius');
+                }
             }
             // TemperatureSetting 
             else if (command.command == 'action.devices.commands.ThermostatTemperatureSetpoint') {
-                const thermostatTemperatureSetpoint = command.params['thermostatTemperatureSetpoint'];
-                delete orig_device.states['thermostatTemperatureSetpointHigh'];
-                delete me.states['thermostatTemperatureSetpointHigh'];
-                delete orig_device.states['thermostatTemperatureSetpointLow'];
-                delete me.states['thermostatTemperatureSetpointLow'];
-                if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpoint")) {
-                    orig_device.states['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint - 1;
-                    me.states['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint - 1;
-                }
-                params['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint;
-                me.thermostat_temperature_setpoint = thermostatTemperatureSetpoint;
-                executionStates.push('thermostatTemperatureSetpoint');
-            }
-            else if (command.command == 'action.devices.commands.ThermostatTemperatureSetRange') {
-                const thermostatTemperatureSetpointHigh = command.params['thermostatTemperatureSetpointHigh'];
-                const thermostatTemperatureSetpointLow = command.params['thermostatTemperatureSetpointLow'];
-                delete orig_device.states['thermostatTemperatureSetpoint'];
-                delete me.states['thermostatTemperatureSetpoint'];
-                if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpointHigh")) {
-                    orig_device.states['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh + 1;
-                    me.states['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointLow + 1;
-                    orig_device.states['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointHigh - 1;
-                    me.states['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow - 1;
-                }
-                params['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh;
-                params['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow;
-                me.thermostat_temperature_setpoint_hight = thermostatTemperatureSetpointHigh;
-                me.thermostat_temperature_setpoint_low = thermostatTemperatureSetpointLow;
-                executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
-            }
-            else if (command.command == 'action.devices.commands.ThermostatSetMode') {
-                const thermostatMode = command.params.thermostatMode;
-                params['thermostatMode'] = thermostatMode;
-                executionStates.push('thermostatMode');
-                if (thermostatMode === "heatcool") {
-                    delete orig_device.states['thermostatTemperatureSetpoint'];
-                    delete me.states['thermostatTemperatureSetpoint'];
-                    if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpointHigh")) {
-                        orig_device.states['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
-                        me.states['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
-                        orig_device.states['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
-                        me.states['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
-                    }
-                    params['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
-                    params['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
-                    executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
-                } else if (thermostatMode === "heat" || thermostatMode === "cool") {
+                if (me.query_only_temperaturesetting || !me.command_only_temperaturesetting) {
+                    const thermostatTemperatureSetpoint = command.params['thermostatTemperatureSetpoint'];
                     delete orig_device.states['thermostatTemperatureSetpointHigh'];
                     delete me.states['thermostatTemperatureSetpointHigh'];
                     delete orig_device.states['thermostatTemperatureSetpointLow'];
                     delete me.states['thermostatTemperatureSetpointLow'];
                     if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpoint")) {
-                        orig_device.states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
-                        me.states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
+                        orig_device.states['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint - 1;
+                        me.states['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint - 1;
                     }
-                    params['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
+                    params['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint;
+                    me.thermostat_temperature_setpoint = thermostatTemperatureSetpoint;
                     executionStates.push('thermostatTemperatureSetpoint');
                 }
             }
+            else if (command.command == 'action.devices.commands.ThermostatTemperatureSetRange') {
+                if (me.query_only_temperaturesetting || !me.command_only_temperaturesetting) {
+                    const thermostatTemperatureSetpointHigh = command.params['thermostatTemperatureSetpointHigh'];
+                    const thermostatTemperatureSetpointLow = command.params['thermostatTemperatureSetpointLow'];
+                    delete orig_device.states['thermostatTemperatureSetpoint'];
+                    delete me.states['thermostatTemperatureSetpoint'];
+                    if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpointHigh")) {
+                        orig_device.states['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh + 1;
+                        me.states['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointLow + 1;
+                        orig_device.states['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointHigh - 1;
+                        me.states['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow - 1;
+                    }
+                    params['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh;
+                    params['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow;
+                    me.thermostat_temperature_setpoint_hight = thermostatTemperatureSetpointHigh;
+                    me.thermostat_temperature_setpoint_low = thermostatTemperatureSetpointLow;
+                    executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
+                }
+            }
+            else if (command.command == 'action.devices.commands.ThermostatSetMode') {
+                if (me.query_only_temperaturesetting || !me.command_only_temperaturesetting) {
+                    const thermostatMode = command.params.thermostatMode;
+                    params['thermostatMode'] = thermostatMode;
+                    executionStates.push('thermostatMode');
+                    if (thermostatMode === "heatcool") {
+                        delete orig_device.states['thermostatTemperatureSetpoint'];
+                        delete me.states['thermostatTemperatureSetpoint'];
+                        if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpointHigh")) {
+                            orig_device.states['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
+                            me.states['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
+                            orig_device.states['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
+                            me.states['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
+                        }
+                        params['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
+                        params['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
+                        executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
+                    } else if (thermostatMode === "heat" || thermostatMode === "cool") {
+                        delete orig_device.states['thermostatTemperatureSetpointHigh'];
+                        delete me.states['thermostatTemperatureSetpointHigh'];
+                        delete orig_device.states['thermostatTemperatureSetpointLow'];
+                        delete me.states['thermostatTemperatureSetpointLow'];
+                        if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpoint")) {
+                            orig_device.states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
+                            me.states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
+                        }
+                        params['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
+                        executionStates.push('thermostatTemperatureSetpoint');
+                    }
+                }
+            }
             else if (command.command == 'action.devices.commands.TemperatureRelative') {
-                if (command.params.hasOwnProperty('thermostatTemperatureRelativeDegree')) {
+                /*if (command.params.hasOwnProperty('thermostatTemperatureRelativeDegree')) {
                     const thermostatTemperatureRelativeDegree = command.params['thermostatTemperatureRelativeDegree'];
                     params['thermostatTemperatureSetpoint'] = me.states['thermostatTemperatureSetpoint'] + thermostatTemperatureRelativeDegree;
                     executionStates.push('thermostatTemperatureSetpoint');
@@ -3082,11 +3104,11 @@ module.exports = function (RED) {
                     me.debug("C CHI thermostatTemperatureSetpoint " + me.states['thermostatTemperatureSetpoint']);
                     params['thermostatTemperatureSetpoint'] = me.states['thermostatTemperatureSetpoint'] + thermostatTemperatureRelativeWeight;
                     executionStates.push('thermostatTemperatureSetpoint');
-                }
+                }*/
             }
             // Timer
             else if (command.command == 'action.devices.commands.TimerStart') {
-                if (me.command_only_timer) {
+                if (!me.command_only_timer) {
                     const timer_time_sec = command.params['timerTimeSec'];
                     const now = Math.floor(Date.now() / 1000);
                     params['timerRemainingSec'] = timer_time_sec;
@@ -3096,7 +3118,7 @@ module.exports = function (RED) {
                 }
             }
             else if (command.command == 'action.devices.commands.TimerResume') {
-                if (me.command_only_timer) {
+                if (!me.command_only_timer) {
                     const now = Math.floor(Date.now() / 1000);
                     const timer_remaining_sec = me.states['timerRemainingSec'];
                     if (timer_remaining_sec > 0 && me.states['timerPaused']) {
@@ -3112,7 +3134,7 @@ module.exports = function (RED) {
                 }
             }
             else if (command.command == 'action.devices.commands.TimerPause') {
-                if (me.command_only_timer) {
+                if (!me.command_only_timer) {
                     const now = Math.floor(Date.now() / 1000);
                     if (me.states['timerPaused']) {
                         executionStates.push('timerPaused');
@@ -3130,7 +3152,7 @@ module.exports = function (RED) {
                 }
             }
             else if (command.command == 'action.devices.commands.TimerCancel') {
-                if (me.command_only_timer) {
+                if (!me.command_only_timer) {
                     const now = Math.floor(Date.now() / 1000);
                     if (now < me.timer_end_timestamp) {
                         me.states['timerRemainingSec'] = 0;
@@ -3146,7 +3168,7 @@ module.exports = function (RED) {
                 }
             }
             else if (command.command == 'action.devices.commands.TimerAdjust') {
-                if (me.command_only_timer) {
+                if (!me.command_only_timer) {
                     const now = Math.floor(Date.now() / 1000);
                     const timer_time_sec = command.params['timerTimeSec'];
                     if (me.states['timerPaused']) {
@@ -3174,39 +3196,43 @@ module.exports = function (RED) {
                 }
             }
             else if (command.command == 'action.devices.commands.setVolume') {
-                if (command.params.hasOwnProperty('volumeLevel')) {
-                    let volumeLevel = command.params['volumeLevel'];
-                    if (volumeLevel > this.volumeMaxLevel) {
-                        volumeLevel = this.volumeMaxLevel;
+                if (!me.command_only_volume) {
+                    if (command.params.hasOwnProperty('volumeLevel')) {
+                        let volumeLevel = command.params['volumeLevel'];
+                        if (volumeLevel > this.volumeMaxLevel) {
+                            volumeLevel = this.volumeMaxLevel;
+                        }
+                        params['currentVolume'] = volumeLevel;
+                        params['isMuted'] = false;
+                        executionStates.push('isMuted', 'currentVolume');
                     }
-                    params['currentVolume'] = volumeLevel;
-                    params['isMuted'] = false;
-                    executionStates.push('isMuted', 'currentVolume');
                 }
             }
             else if (command.command == 'action.devices.commands.volumeRelative') {
-                if (command.params.hasOwnProperty('relativeSteps')) {
-                    const relativeSteps = command.params['relativeSteps'];
-                    let current_volume = me.states['currentVolume'];
-                    if (current_volume >= this.volumeMaxLevel && relativeSteps > 0) {
-                        return {
-                            status: 'ERROR',
-                            errorCode: 'volumeAlreadyMax'
-                        };
-                    } else if (current_volume <= 0 && relativeSteps < 0) {
-                        return {
-                            status: 'ERROR',
-                            errorCode: 'volumeAlreadyMin'
-                        };
+                if (!me.command_only_volume) {
+                    if (command.params.hasOwnProperty('relativeSteps')) {
+                        const relativeSteps = command.params['relativeSteps'];
+                        let current_volume = me.states['currentVolume'];
+                        if (current_volume >= this.volumeMaxLevel && relativeSteps > 0) {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'volumeAlreadyMax'
+                            };
+                        } else if (current_volume <= 0 && relativeSteps < 0) {
+                            return {
+                                status: 'ERROR',
+                                errorCode: 'volumeAlreadyMin'
+                            };
+                        }
+                        current_volume += relativeSteps;
+                        if (current_volume > this.volumeMaxLevel) {
+                            current_volume = volumeMaxLevel;
+                        } else if (current_volume < 0) {
+                            current_volume = 0;
+                        }
+                        params['currentVolume'] = current_volume;
+                        executionStates.push('currentVolume');
                     }
-                    current_volume += relativeSteps;
-                    if (current_volume > this.volumeMaxLevel) {
-                        current_volume = volumeMaxLevel;
-                    } else if (current_volume < 0) {
-                        current_volume = 0;
-                    }
-                    params['currentVolume'] = current_volume;
-                    executionStates.push('currentVolume');
                 }
             }
             // Channels
@@ -3299,62 +3325,70 @@ module.exports = function (RED) {
             }
             // Modes
             else if (command.command == 'action.devices.commands.SetModes') {
-                if (command.params.hasOwnProperty('updateModeSettings')) {
-                    const updateModeSettings = command.params['updateModeSettings'];
-                    let current_modes = me.states['currentModeSettings'];
-                    let new_modes = {};
-                    this.available_modes.forEach(function (mode) {
-                        if (typeof updateModeSettings[mode.name] === 'string') {
-                            let mode_value = updateModeSettings[mode.name];
-                            mode.settings.forEach(function (setting) {
-                                if (setting.setting_name === mode_value) {
-                                    new_modes[mode.name] = mode_value;
-                                }
-                            });
-                        }
-                        if (typeof new_modes[mode.name] === 'undefined') {
-                            new_modes[mode.name] = current_modes[mode.name];
-                        }
-                    });
-                    params['currentModeSettings'] = new_modes;
-                    executionStates.push('currentModeSettings');
+                if (me.query_only_modes || !me.command_only_modes) {
+                    if (command.params.hasOwnProperty('updateModeSettings')) {
+                        const updateModeSettings = command.params['updateModeSettings'];
+                        let current_modes = me.states['currentModeSettings'];
+                        let new_modes = {};
+                        this.available_modes.forEach(function (mode) {
+                            if (typeof updateModeSettings[mode.name] === 'string') {
+                                let mode_value = updateModeSettings[mode.name];
+                                mode.settings.forEach(function (setting) {
+                                    if (setting.setting_name === mode_value) {
+                                        new_modes[mode.name] = mode_value;
+                                    }
+                                });
+                            }
+                            if (typeof new_modes[mode.name] === 'undefined') {
+                                new_modes[mode.name] = current_modes[mode.name];
+                            }
+                        });
+                        params['currentModeSettings'] = new_modes;
+                        executionStates.push('currentModeSettings');
+                    }
                 }
             }
             // Rotation
             else if (command.command == 'action.devices.commands.RotateAbsolute') {
-                if (command.params.hasOwnProperty('rotationDegrees')) {
-                    const rotationDegrees = command.params['rotationDegrees'];
-                    params['rotationDegrees'] = rotationDegrees;
-                    executionStates.push('rotationDegrees');
-                }
-                if (command.params.hasOwnProperty('rotationPercent')) {
-                    const rotationPercent = command.params['rotationPercent'];
-                    params['rotationPercent'] = rotationPercent;
-                    executionStates.push('rotationPercent');
+                if (!me.command_only_rotation) {
+                    if (command.params.hasOwnProperty('rotationDegrees')) {
+                        const rotationDegrees = command.params['rotationDegrees'];
+                        params['rotationDegrees'] = rotationDegrees;
+                        executionStates.push('rotationDegrees');
+                    }
+                    if (command.params.hasOwnProperty('rotationPercent')) {
+                        const rotationPercent = command.params['rotationPercent'];
+                        params['rotationPercent'] = rotationPercent;
+                        executionStates.push('rotationPercent');
+                    }
                 }
             }
             // Traits
             else if (command.command == 'action.devices.commands.SetToggles') {
-                if (command.params.hasOwnProperty('updateToggleSettings')) {
-                    const updateToggleSettings = command.params['updateToggleSettings'];
-                    let current_toggle = me.states['currentToggleSettings'];
-                    let toggles = {};
-                    this.available_toggles.forEach(function (toggle) {
-                        if (typeof updateToggleSettings[toggle.name] === 'boolean') {
-                            toggles[toggle.name] = updateToggleSettings[toggle.name];
-                        } else {
-                            toggles[toggle.name] = current_toggle[toggle.name] || false;
-                        }
-                    });
-                    params['currentToggleSettings'] = toggles;
-                    executionStates.push('currentToggleSettings');
+                if (me.query_only_toggles || !me.command_only_toggles) {
+                    if (command.params.hasOwnProperty('updateToggleSettings')) {
+                        const updateToggleSettings = command.params['updateToggleSettings'];
+                        let current_toggle = me.states['currentToggleSettings'];
+                        let toggles = {};
+                        this.available_toggles.forEach(function (toggle) {
+                            if (typeof updateToggleSettings[toggle.name] === 'boolean') {
+                                toggles[toggle.name] = updateToggleSettings[toggle.name];
+                            } else {
+                                toggles[toggle.name] = current_toggle[toggle.name] || false;
+                            }
+                        });
+                        params['currentToggleSettings'] = toggles;
+                        executionStates.push('currentToggleSettings');
+                    }
                 }
             }
             // Brigthness
             else if (command.command == 'action.devices.commands.BrightnessAbsolute') {
-                const brightness = command.params['brightness'];
-                params['brightness'] = brightness;
-                executionStates.push('brightness');
+                if (!me.command_only_brightness) {
+                    const brightness = command.params['brightness'];
+                    params['brightness'] = brightness;
+                    executionStates.push('brightness');
+                }
             }
             else if (command.command == 'action.devices.commands.BrightnessRelative') {
                 /*
@@ -3373,51 +3407,53 @@ module.exports = function (RED) {
             }
             // ColorSetting
             else if (command.command == 'action.devices.commands.ColorAbsolute') {
-                if (command.params.hasOwnProperty('color')) {
-                    if (command.params.color.hasOwnProperty('temperature') || command.params.color.hasOwnProperty('temperatureK')) {
-                        const temperature = command.params.color.hasOwnProperty('temperature') ? command.params.color.temperature : command.params.color.temperatureK;
-                        delete orig_device.states.color['spectrumRgb'];
-                        delete me.states.color['spectrumRgb'];
-                        delete orig_device.states.color['spectrumHsv'];
-                        delete me.states.color['spectrumHsv'];
-                        if (!me.states.color.hasOwnProperty("temperatureK")) {
-                            me.states.color = { temperatureK: temperature - 1 };
-                        }
-                        params['color'] = { temperatureK: temperature };
-                    } else if (command.params.color.hasOwnProperty('spectrumRGB') || command.params.color.hasOwnProperty('spectrumRgb')) {
-                        const spectrum_RGB = command.params.color.hasOwnProperty('spectrumRGB') ? command.params.color.spectrumRGB : command.params.color.spectrumRgb;
-                        delete orig_device.states.color['temperatureK'];
-                        delete me.states.color['temperatureK'];
-                        delete orig_device.states.color['spectrumHsv'];
-                        delete me.states.color['spectrumHsv'];
-                        if (!me.states.color.hasOwnProperty("spectrumRgb")) {
-                            me.states.color = { spectrumRgb: spectrum_RGB - 1 };
-                        }
-                        params['color'] = { spectrumRgb: spectrum_RGB };
-                    } else if (command.params.color.hasOwnProperty('spectrumHSV') || command.params.color.hasOwnProperty('spectrumHsv')) {
-                        const spectrum_HSV = command.params.color.hasOwnProperty('spectrumHSV') ? command.params.color.spectrumHSV : command.params.color.spectrumHsv;
-                        delete orig_device.states.color['temperatureK'];
-                        delete me.states.color['temperatureK'];
-                        delete orig_device.states.color['spectrumRgb'];
-                        delete me.states.color['spectrumRgb'];
-                        if (!me.states.color.hasOwnProperty("spectrumHsv")) {
-                            me.states.color = {
+                if (!me.command_only_colorsetting) {
+                    if (command.params.hasOwnProperty('color')) {
+                        if (command.params.color.hasOwnProperty('temperature') || command.params.color.hasOwnProperty('temperatureK')) {
+                            const temperature = command.params.color.hasOwnProperty('temperature') ? command.params.color.temperature : command.params.color.temperatureK;
+                            delete orig_device.states.color['spectrumRgb'];
+                            delete me.states.color['spectrumRgb'];
+                            delete orig_device.states.color['spectrumHsv'];
+                            delete me.states.color['spectrumHsv'];
+                            if (!me.states.color.hasOwnProperty("temperatureK")) {
+                                me.states.color = { temperatureK: temperature - 1 };
+                            }
+                            params['color'] = { temperatureK: temperature };
+                        } else if (command.params.color.hasOwnProperty('spectrumRGB') || command.params.color.hasOwnProperty('spectrumRgb')) {
+                            const spectrum_RGB = command.params.color.hasOwnProperty('spectrumRGB') ? command.params.color.spectrumRGB : command.params.color.spectrumRgb;
+                            delete orig_device.states.color['temperatureK'];
+                            delete me.states.color['temperatureK'];
+                            delete orig_device.states.color['spectrumHsv'];
+                            delete me.states.color['spectrumHsv'];
+                            if (!me.states.color.hasOwnProperty("spectrumRgb")) {
+                                me.states.color = { spectrumRgb: spectrum_RGB - 1 };
+                            }
+                            params['color'] = { spectrumRgb: spectrum_RGB };
+                        } else if (command.params.color.hasOwnProperty('spectrumHSV') || command.params.color.hasOwnProperty('spectrumHsv')) {
+                            const spectrum_HSV = command.params.color.hasOwnProperty('spectrumHSV') ? command.params.color.spectrumHSV : command.params.color.spectrumHsv;
+                            delete orig_device.states.color['temperatureK'];
+                            delete me.states.color['temperatureK'];
+                            delete orig_device.states.color['spectrumRgb'];
+                            delete me.states.color['spectrumRgb'];
+                            if (!me.states.color.hasOwnProperty("spectrumHsv")) {
+                                me.states.color = {
+                                    spectrumHsv: {
+                                        hue: spectrum_HSV.hue - 1,
+                                        saturation: spectrum_HSV.saturation - 1,
+                                        value: spectrum_HSV.value - 1
+                                    }
+                                };
+                            }
+                            params['color'] = {
                                 spectrumHsv: {
-                                    hue: spectrum_HSV.hue - 1,
-                                    saturation: spectrum_HSV.saturation - 1,
-                                    value: spectrum_HSV.value - 1
+                                    hue: spectrum_HSV.hue,
+                                    saturation: spectrum_HSV.saturation,
+                                    value: spectrum_HSV.value
                                 }
                             };
                         }
-                        params['color'] = {
-                            spectrumHsv: {
-                                hue: spectrum_HSV.hue,
-                                saturation: spectrum_HSV.saturation,
-                                value: spectrum_HSV.value
-                            }
-                        };
+                        executionStates.push('color');
                     }
-                    executionStates.push('color');
                 }
             }
             // Camera
