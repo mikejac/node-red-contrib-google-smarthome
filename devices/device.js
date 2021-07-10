@@ -753,7 +753,9 @@ module.exports = function (RED) {
                         unit: Formats.STRING + Formats.MANDATORY,
                     }
                 ];
-                state_types['isCharging'] = Formats.BOOL;
+                if (me.is_rechargeable) {
+                    state_types['isCharging'] = Formats.BOOL;
+                }
                 state_types['isPluggedIn'] = Formats.BOOL;
             }
             if (me.trait.fanspeed) {
@@ -959,7 +961,9 @@ module.exports = function (RED) {
             }
             if (me.trait.energystorage) {
                 attributes['queryOnlyEnergyStorage'] = me.query_only_energy_storage;
-                attributes['energyStorageDistanceUnitForUX'] = me.energy_storage_distance_unit_for_ux;
+                if (me.energy_storage_distance_unit_for_ux) {
+                    attributes['energyStorageDistanceUnitForUX'] = me.energy_storage_distance_unit_for_ux;
+                }
                 attributes['isRechargeable'] = me.is_rechargeable;
             }
             if (me.trait.fanspeed) {
@@ -1266,7 +1270,9 @@ module.exports = function (RED) {
                 states['descriptiveCapacityRemaining'] = "FULL";
                 states['capacityRemaining'] = [];
                 states['capacityUntilFull'] = [];
-                states['isCharging'] = false;
+                if (me.is_rechargeable) {
+                    states['isCharging'] = false;
+                }
                 states['isPluggedIn'] = false;
             }
             if (me.trait.fanspeed) {
