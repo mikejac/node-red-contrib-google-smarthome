@@ -912,8 +912,14 @@ module.exports = function (RED) {
                 ];
             }
             if (me.trait.temperaturecontrol) {
-                state_types['temperatureSetpointCelsius'] = Formats.FLOAT;
-                state_types['temperatureAmbientCelsius'] = Formats.FLOAT;
+                if (me.tc_query_only_temperaturecontrol || !me.tc_command_only_temperaturecontrol) {
+                    if (me.tc_query_only_temperaturecontrol) {
+                        state_types['temperatureSetpointCelsius'] = Formats.FLOAT;
+                    } else {
+                        state_types['temperatureSetpointCelsius'] = Formats.FLOAT + Formats.MANDATORY;
+                    }
+                    state_types['temperatureAmbientCelsius'] = Formats.FLOAT;
+                }
             }
             if (me.trait.temperaturesetting) {
                 state_types['activeThermostatMode'] = Formats.STRING;
@@ -1471,6 +1477,11 @@ module.exports = function (RED) {
                 states['currentStatusReport'] = [];
             }
             if (me.trait.temperaturecontrol) {
+                if (me.tc_query_only_temperaturecontrol || !me.tc_command_only_temperaturecontrol) {
+                    if (!me.tc_query_only_temperaturecontrol) {
+                        states['temperatureSetpointCelsius'] = me.tc_min_threshold_celsius;
+                    }
+                }
                 // states['temperatureSetpointCelsius'] = me.tc_min_threshold_celsius;
                 // states['temperatureAmbientCelsius'] = me.tc_min_threshold_celsius;
             }
