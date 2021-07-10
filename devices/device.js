@@ -688,7 +688,7 @@ module.exports = function (RED) {
                 state_types['currentArmLevel'] = Formats.STRING + Formats.MANDATORY;
                 state_types['exitAllowance'] = Formats.INT;
             }
-            if (me.trait.brightness) {
+            if (me.trait.brightness && !me.command_only_brightness) {
                 state_types['brightness'] = Formats.INT;
             }
             if (me.trait.colorsetting) {
@@ -1499,7 +1499,7 @@ module.exports = function (RED) {
                         text += ' ' + this.states.thermostatHumidityAmbient + "% ";
                     }
                 } else if (this.device_type === "SENSOR") {
-                    if (this.trait.brightness) {
+                    if (this.trait.brightness && this.states.brightness != undefined) {
                         text += ' bri ' + this.states.brightness;
                     }
                     if (this.trait.temperaturecontrol) {
@@ -3263,6 +3263,7 @@ module.exports = function (RED) {
                 executionStates.push('brightness');
             }
             else if (command.command == 'action.devices.commands.BrightnessRelative') {
+                /*
                 let brightness = me.states['brightness'];
                 if (command.params.hasOwnProperty('brightnessRelativePercent')) {
                     const brightnessRelativePercent = command.params['brightnessRelativePercent'];
@@ -3274,6 +3275,7 @@ module.exports = function (RED) {
                 }
                 params['brightness'] = brightness;
                 executionStates.push('brightness');
+                */
             }
             // ColorSetting
             else if (command.command == 'action.devices.commands.ColorAbsolute') {
