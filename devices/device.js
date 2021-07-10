@@ -759,8 +759,16 @@ module.exports = function (RED) {
                 state_types['isPluggedIn'] = Formats.BOOL;
             }
             if (me.trait.fanspeed) {
-                state_types['currentFanSpeedSetting'] = Formats.STRING;
-                state_types['currentFanSpeedPercent'] = Formats.INT;
+                if (!me.command_only_fanspeed) {
+                    if (me.supports_fan_speed_percent) {
+                        state_types['currentFanSpeedPercent'] = Formats.INT + Formats.MANDATORY;
+                    } else {
+                        state_types['currentFanSpeedPercent'] = Formats.INT;
+                    }
+                    if (me.available_fan_speeds.length > 0) {
+                        state_types['currentFanSpeedSetting'] = Formats.STRING;
+                    }
+                }
             }
             if (me.trait.fill) {
                 state_types['isFilled'] = Formats.BOOL + Formats.MANDATORY;
@@ -969,14 +977,11 @@ module.exports = function (RED) {
             if (me.trait.fanspeed) {
                 attributes['reversible'] = me.reversible;
                 attributes['commandOnlyFanSpeed'] = me.command_only_fanspeed;
-                if (me.supports_fan_speed_percent) {
-                    attributes['supportsFanSpeedPercent'] = me.supports_fan_speed_percent;
-                } else {
-                    attributes['availableFanSpeeds'] = {
-                        speeds: me.available_fan_speeds,
-                        ordered: me.fan_speeds_ordered
-                    };
-                }
+                attributes['supportsFanSpeedPercent'] = me.supports_fan_speed_percent;
+                attributes['availableFanSpeeds'] = {
+                    speeds: me.available_fan_speeds,
+                    ordered: me.fan_speeds_ordered
+                };
             }
             if (me.trait.fill) {
                 attributes['availableFillLevels'] = me.available_fill_levels;
@@ -1277,7 +1282,9 @@ module.exports = function (RED) {
             }
             if (me.trait.fanspeed) {
                 // states['currentFanSpeedSetting'] = "";
-                // states['currentFanSpeedPercent'] = 0;
+                if (me.supports_fan_speed_percent) {
+                    states['currentFanSpeedPercent'] = 0;
+                }
             }
             if (me.trait.fill) {
                 states['isFilled'] = false;
