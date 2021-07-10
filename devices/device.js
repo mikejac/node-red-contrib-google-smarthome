@@ -808,7 +808,9 @@ module.exports = function (RED) {
                 state_types['playbackState'] = Formats.STRING;
             }
             if (me.trait.modes) {
-                state_types['currentModeSettings'] = Formats.COPY_OBJECT + Formats.STRING; // See the docs
+                if (me.query_only_modes || !me.command_only_modes) {
+                    state_types['currentModeSettings'] = Formats.COPY_OBJECT + Formats.STRING; // See the docs
+                }
             }
             if (me.trait.networkcontrol) {
                 state_types['networkEnabled'] = Formats.BOOL;
@@ -1026,7 +1028,7 @@ module.exports = function (RED) {
             if (me.trait.modes) {
                 attributes['availableModes'] = me.available_modes;
                 attributes['commandOnlyModes'] = me.command_only_modes;
-                attributes['queryOnlyModes'] = me.query_only_modees;
+                attributes['queryOnlyModes'] = me.query_only_modes;
             }
             if (me.trait.networkcontrol) {
                 attributes['supportsEnablingGuestNetwork'] = me.supports_enabling_guest_network;
@@ -1332,8 +1334,10 @@ module.exports = function (RED) {
                 // states['playbackState'] = 'STOPPED';
             }
             if (me.trait.modes) {
-                states['currentModeSettings'] = {};
-                this.updateModesState(me, device);
+                if (me.query_only_modes || !me.command_only_modes) {
+                    states['currentModeSettings'] = {};
+                    this.updateModesState(me, device);
+                }
             }
             if (me.trait.networkcontrol) {
                 // states['networkEnabled'] = true;
