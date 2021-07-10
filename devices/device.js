@@ -263,7 +263,7 @@ module.exports = function (RED) {
             this.supported_commands = config.supported_commands;
             // Volume 
             this.volume_max_level = parseInt(config.volume_max_level) || 100;
-            this.can_mute_and_unmute = config.can_mute_and_unmute;
+            this.volume_can_mute_and_unmute = config.volume_can_mute_and_unmute;
             this.volume_default_percentage = parseInt(config.volume_default_percentage) || 40;
             this.level_step_size = parseInt(config.level_step_size) || 1;
             this.command_only_volume = config.command_only_volume;
@@ -946,8 +946,14 @@ module.exports = function (RED) {
             }
             // TransportControl 
             if (me.trait.volume) {
-                state_types['currentVolume'] = Formats.INT + Formats.MANDATORY;
-                state_types['isMuted'] = Formats.BOOL;
+                if (me.command_only_volume) {
+                    state_types['currentVolume'] = Formats.INT + Formats.MANDATORY;
+                    if (me.volume_can_mute_and_unmute) {
+                        state_types['isMuted'] = Formats.BOOL + Formats.MANDATORY;
+                    } else {
+                        state_types['isMuted'] = Formats.BOOL;
+                    }
+                }
             }
         }
 
@@ -1224,7 +1230,7 @@ module.exports = function (RED) {
             }
             if (me.trait.volume) {
                 attributes['volumeMaxLevel'] = me.volume_max_level;
-                attributes['volumeCanMuteAndUnmute'] = me.can_mute_and_unmute;
+                attributes['volumeCanMuteAndUnmute'] = me.volume_can_mute_and_unmute;
                 attributes['volumeDefaultPercentage'] = me.volume_default_percentage;
                 attributes['levelStepSize'] = me.level_step_size;
                 attributes['commandOnlyVolume'] = me.command_only_volume;
@@ -1518,8 +1524,12 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.volume) {
-                states['currentVolume'] = me.volume_default_percentage;
-                // states['isMuted'] = false;
+                if (!me.command_only_volume) {
+                    states['currentVolume'] = me.volume_default_percentage;
+                    if (me.volume_can_mute_and_unmute) {
+                        states['isMuted'] = false;
+                    }
+                }
             }
         }
 
