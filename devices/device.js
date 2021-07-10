@@ -1526,7 +1526,7 @@ module.exports = function (RED) {
                         fill = "green";
                         text = thermostat_mode.substr(0, 1).toUpperCase() + st;
                     }
-                    if (me.trait.humiditysetting) {
+                    if (me.trait.humiditysetting && me.states.humidityAmbientPercent !== undefined) {
                         text += ' ' + me.states.humidityAmbientPercent + "% ";
                     } else if (me.states.thermostatHumidityAmbient !== undefined) {
                         text += ' ' + me.states.thermostatHumidityAmbient + "% ";
@@ -1538,7 +1538,7 @@ module.exports = function (RED) {
                     if (me.trait.temperaturecontrol) {
                         text += ' ' + me.states.temperatureAmbientCelsius + "\xB0C";
                     }
-                    if (me.trait.humiditysetting) {
+                    if (me.trait.humiditysetting && me.states.humidityAmbientPercent !== undefined) {
                         text += ' ' + me.states.humidityAmbientPercent + "% ";
                     }
                     if (me.trait.openclose) {
