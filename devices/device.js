@@ -860,11 +860,13 @@ module.exports = function (RED) {
             }
             // Reboot 
             if (me.trait.rotation) {
-                if (me.supports_degrees) {
-                    state_types['rotationDegrees'] = Formats.FLOAT;
-                }
-                if (me.supports_percent) {
-                    state_types['rotationPercent'] = Formats.FLOAT;
+                if (!me.command_only_rotation) {
+                    if (me.supports_degrees) {
+                        state_types['rotationDegrees'] = Formats.FLOAT;
+                    }
+                    if (me.supports_percent) {
+                        state_types['rotationPercent'] = Formats.FLOAT;
+                    }
                 }
             }
             if (me.trait.runcycle) {
