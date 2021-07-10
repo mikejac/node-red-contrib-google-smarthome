@@ -934,8 +934,10 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.timer) {
-                state_types['timerRemainingSec'] = Formats.INT + Formats.MANDATORY;
-                state_types['timerPaused'] = Formats.BOOL;
+                if (!me.command_only_timer) {
+                    state_types['timerRemainingSec'] = Formats.INT + Formats.MANDATORY;
+                    state_types['timerPaused'] = Formats.BOOL;
+                }
             }
             if (me.trait.toggles) {
                 state_types['currentToggleSettings'] = Formats.COPY_OBJECT + Formats.BOOL; // See the docs
@@ -1502,8 +1504,10 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.timer) {
-                states['timerRemainingSec'] = -1;
-                // states['timerPaused'] = false;
+                if (me.command_only_timer) {
+                    states['timerRemainingSec'] = -1;
+                    // states['timerPaused'] = false;
+                }
             }
             if (me.trait.toggles) {
                 states['currentToggleSettings'] = {};
@@ -3068,73 +3072,83 @@ module.exports = function (RED) {
             }
             // Timer
             else if (command.command == 'action.devices.commands.TimerStart') {
-                const timer_time_sec = command.params['timerTimeSec'];
-                const now = Math.floor(Date.now() / 1000);
-                params['timerRemainingSec'] = timer_time_sec;
-                params['timerPaused'] = null;
-                executionStates.push('timerPaused', 'timerRemainingSec');
-                me.timer_end_timestamp = now + timer_time_sec;
+                if (me.command_only_timer) {
+                    const timer_time_sec = command.params['timerTimeSec'];
+                    const now = Math.floor(Date.now() / 1000);
+                    params['timerRemainingSec'] = timer_time_sec;
+                    params['timerPaused'] = null;
+                    executionStates.push('timerPaused', 'timerRemainingSec');
+                    me.timer_end_timestamp = now + timer_time_sec;
+                }
             }
             else if (command.command == 'action.devices.commands.TimerResume') {
-                const now = Math.floor(Date.now() / 1000);
-                const timer_remaining_sec = me.states['timerRemainingSec'];
-                if (timer_remaining_sec > 0 && me.states['timerPaused']) {
-                    params['timerPaused'] = false;
-                    me.timer_end_timestamp = now + timer_remaining_sec;
-                    executionStates.push('timerPaused', 'timerRemainingSec');
-                } else {
-                    return {
-                        status: 'ERROR',
-                        errorCode: 'noTimerExists'
-                    };
+                if (me.command_only_timer) {
+                    const now = Math.floor(Date.now() / 1000);
+                    const timer_remaining_sec = me.states['timerRemainingSec'];
+                    if (timer_remaining_sec > 0 && me.states['timerPaused']) {
+                        params['timerPaused'] = false;
+                        me.timer_end_timestamp = now + timer_remaining_sec;
+                        executionStates.push('timerPaused', 'timerRemainingSec');
+                    } else {
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'noTimerExists'
+                        };
+                    }
                 }
             }
             else if (command.command == 'action.devices.commands.TimerPause') {
-                const now = Math.floor(Date.now() / 1000);
-                if (me.states['timerPaused']) {
-                    executionStates.push('timerPaused');
-                }
-                else if (now < me.timer_end_timestamp) {
-                    params['timerPaused'] = true;
-                    params['timerRemainingSec'] = me.timer_end_timestamp - now;
-                    executionStates.push('timerPaused', 'timerRemainingSec');
-                } else {
-                    return {
-                        status: 'ERROR',
-                        errorCode: 'noTimerExists'
-                    };
+                if (me.command_only_timer) {
+                    const now = Math.floor(Date.now() / 1000);
+                    if (me.states['timerPaused']) {
+                        executionStates.push('timerPaused');
+                    }
+                    else if (now < me.timer_end_timestamp) {
+                        params['timerPaused'] = true;
+                        params['timerRemainingSec'] = me.timer_end_timestamp - now;
+                        executionStates.push('timerPaused', 'timerRemainingSec');
+                    } else {
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'noTimerExists'
+                        };
+                    }
                 }
             }
             else if (command.command == 'action.devices.commands.TimerCancel') {
-                const now = Math.floor(Date.now() / 1000);
-                if (now < me.timer_end_timestamp) {
-                    me.states['timerRemainingSec'] = 0;
-                    params['timerPaused'] = false;
-                    me.timer_end_timestamp = -1;
-                    executionStates.push('timerPaused', 'timerRemainingSec');
-                } else {
-                    return {
-                        status: 'ERROR',
-                        errorCode: 'noTimerExists'
-                    };
+                if (me.command_only_timer) {
+                    const now = Math.floor(Date.now() / 1000);
+                    if (now < me.timer_end_timestamp) {
+                        me.states['timerRemainingSec'] = 0;
+                        params['timerPaused'] = false;
+                        me.timer_end_timestamp = -1;
+                        executionStates.push('timerPaused', 'timerRemainingSec');
+                    } else {
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'noTimerExists'
+                        };
+                    }
                 }
             }
             else if (command.command == 'action.devices.commands.TimerAdjust') {
-                const now = Math.floor(Date.now() / 1000);
-                const timer_time_sec = command.params['timerTimeSec'];
-                if (me.states['timerPaused']) {
-                    me.states['timerRemainingSec'] = me.states['timerRemainingSec'] + timer_time_sec;
-                    executionStates.push('timerRemainingSec');
-                }
-                else if (now < me.timer_end_timestamp) {
-                    me.timer_end_timestamp = me.timer_end_timestamp + timer_time_sec;
-                    me.states['timerRemainingSec'] = me.timer_end_timestamp - now;
-                    executionStates.push('timerRemainingSec');
-                } else {
-                    return {
-                        status: 'ERROR',
-                        errorCode: 'noTimerExists'
-                    };
+                if (me.command_only_timer) {
+                    const now = Math.floor(Date.now() / 1000);
+                    const timer_time_sec = command.params['timerTimeSec'];
+                    if (me.states['timerPaused']) {
+                        me.states['timerRemainingSec'] = me.states['timerRemainingSec'] + timer_time_sec;
+                        executionStates.push('timerRemainingSec');
+                    }
+                    else if (now < me.timer_end_timestamp) {
+                        me.timer_end_timestamp = me.timer_end_timestamp + timer_time_sec;
+                        me.states['timerRemainingSec'] = me.timer_end_timestamp - now;
+                        executionStates.push('timerRemainingSec');
+                    } else {
+                        return {
+                            status: 'ERROR',
+                            errorCode: 'noTimerExists'
+                        };
+                    }
                 }
             }
             // Volume
