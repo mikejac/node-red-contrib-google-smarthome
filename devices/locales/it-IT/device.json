@@ -210,6 +210,7 @@
             "PM10" : "Materia particolata 10 (PM10)",
             "volatile_organic_compounds" : "Composti organici volatili",
 			"available_fill_levels_file": "File dei livelli di riempimento disponibili",
+			"ordered_fill_levels": "Livelli di riempimento ordinati",
 			"supports_fill_percent": "Supporta il fiempimento in percentuale",
 			"available_arm_levels_file": "File dei livelli di sicurezza",
 			"energy_storage_distance_unit_for_ux": "Unità di misura della distanza",

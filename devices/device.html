@@ -598,6 +598,11 @@
             </div>
 
             <div class="form-row">
+                <label style="width:auto" for="node-input-ordered_fill_levels"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.ordered_fill_levels"></span></label>
+                <input type="checkbox" checked id="node-input-ordered_fill_levels" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row">
                 <label style="width:auto" for="node-input-supports_fill_percent"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.supports_fill_percent"></span></label>
                 <input type="checkbox" checked id="node-input-supports_fill_percent" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
@@ -1870,6 +1875,9 @@
             },
             supports_fill_percent: {
                 value: false, required: false
+            },
+            ordered_fill_levels: {
+                value: true, required: false
             },
             trait_armdisarm: {
                 value: false, required: false

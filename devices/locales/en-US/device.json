@@ -192,6 +192,7 @@
             "PM10" : "Particulate matter 10 (PM10)",
             "volatile_organic_compounds" : "Volatile Organic Compounds",
             "available_fill_levels_file": "Available fill levels file",
+            "ordered_fill_levels": "Ordered fill levels",
             "supports_fill_percent": "Supports fill percent",
             "available_arm_levels_file": "Available arm levels file",
             "energy_storage_distance_unit_for_ux": "Energy storage distance unit for UX",

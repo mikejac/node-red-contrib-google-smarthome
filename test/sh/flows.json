@@ -7,6 +7,20 @@
         "info": ""
     },
     {
+        "id": "85fa874.600d378",
+        "type": "googlesmarthome-client",
+        "name": "",
+        "enabledebug": true,
+        "usegooglelogin": false,
+        "usehttpnoderoot": true,
+        "port": "",
+        "httppath": "smarthome",
+        "ssloffload": true,
+        "accesstokenduration": "60",
+        "reportinterval": "0",
+        "info": "username: userrname\npassword: password\njwtkey: google-home.json\nclientid: client_id\nclientsecret: client_secred\n"
+    },
+    {
         "id": "239c652d.105f6a",
         "type": "google-mgmt",
         "z": "c0151475.218f98",
@@ -537,7 +551,7 @@
         "once": true,
         "onceDelay": "10",
         "topic": "AvailableFillLevels",
-        "payload": "{\"levels\":[{\"level_name\":\"half_level\",\"level_values\":[{\"level_synonym\":[\"half\",\"half way\",\"one half\"],\"lang\":\"en\"}]},{\"level_name\":\"full_level\",\"level_values\":[{\"level_synonym\":[\"full\",\"all the way\",\"complete\"],\"lang\":\"en\"}]}],\"ordered\":true}",
+        "payload": "[{\"level_name\":\"half_level\",\"level_values\":[{\"level_synonym\":[\"half\",\"half way\",\"one half\"],\"lang\":\"en\"}]},{\"level_name\":\"full_level\",\"level_values\":[{\"level_synonym\":[\"full\",\"all the way\",\"complete\"],\"lang\":\"en\"}]}]",
         "payloadType": "json",
         "x": 130,
         "y": 240,
@@ -574,10 +588,11 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
+        "complete": "true",
+        "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1110,
+        "x": 1090,
         "y": 140,
         "wires": []
     },
@@ -1027,19 +1042,5 @@
         "x": 420,
         "y": 780,
         "wires": []
-    },
-    {
-        "id": "85fa874.600d378",
-        "type": "googlesmarthome-client",
-        "name": "",
-        "enabledebug": true,
-        "usegooglelogin": false,
-        "usehttpnoderoot": true,
-        "port": "",
-        "httppath": "smarthome",
-        "ssloffload": true,
-        "accesstokenduration": "60",
-        "reportinterval": "0",
-        "info": "username: userrname\npassword: password\njwtkey: google-home.json\nclientid: client_id\nclientsecret: client_secred\n"
     }
 ]

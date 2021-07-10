@@ -166,7 +166,7 @@ module.exports = function (RED) {
             // Fill
             this.available_fill_levels_file = config.available_fill_levels_file;
             this.available_fill_levels = [];
-            this.ordered = config.ordered;
+            this.ordered_fill_levels = config.ordered_fill_levels;
             this.supports_fill_percent = config.supports_fill_percent;
             // HumiditySetting 
             this.min_percent = parseInt(config.min_percent) || 0;
@@ -772,8 +772,16 @@ module.exports = function (RED) {
             }
             if (me.trait.fill) {
                 state_types['isFilled'] = Formats.BOOL + Formats.MANDATORY;
-                state_types['currentFillLevel'] = Formats.STRING;
-                state_types['currentFillPercent'] = Formats.FLOAT;
+                if (me.available_fill_levels.length > 0) {
+                    state_types['currentFillLevel'] = Formats.STRING + Formats.MANDATORY;
+                } else {
+                    state_types['currentFillLevel'] = Formats.STRING;
+                }
+                if (me.supports_fill_percent) {
+                    state_types['currentFillPercent'] = Formats.FLOAT;
+                } else {
+                    state_types['currentFillPercent'] = Formats.FLOAT + Formats.MANDATORY;
+                }
             }
             if (me.trait.humiditysetting) {
                 state_types['humiditySetpointPercent'] = Formats.INT;
@@ -984,8 +992,11 @@ module.exports = function (RED) {
                 };
             }
             if (me.trait.fill) {
-                attributes['availableFillLevels'] = me.available_fill_levels;
-                attributes['ordered'] = me.ordered;
+                attributes['availableFillLevels'] = {
+                    levels: me.available_fill_levels,
+                    ordered: me.ordered_fill_levels
+                };
+                attributes['ordered'] = me.ordered_fill_levels;
                 attributes['supportsFillPercent'] = me.supports_fill_percent;
             }
             if (me.trait.humiditysetting) {
@@ -1288,8 +1299,12 @@ module.exports = function (RED) {
             }
             if (me.trait.fill) {
                 states['isFilled'] = false;
-                // states['currentFillLevel'] = "";
-                // states['currentFillPercent'] = 0;
+                if (me.available_fill_levels.length > 0) {
+                    states['currentFillLevel'] = "";
+                }
+                if (me.supports_fill_percent) {
+                    states['currentFillPercent'] = 0;
+                }
             }
             if (me.trait.humiditysetting) {
                 // states['humiditySetpointPercent'] = 52;
