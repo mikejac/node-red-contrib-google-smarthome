@@ -844,16 +844,18 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.openclose) {
-                if (me.open_direction.length < 2) {
-                    state_types['openPercent'] = Formats.FLOAT + Formats.MANDATORY;
-                } else {
-                    state_types['openState'] = [
-                        {
-                            openPercent: Formats.FLOAT + Formats.MANDATORY,
-                            openDirection: Formats.STRING + Formats.MANDATORY
-                        },
-                        'openDirection'
-                    ];
+                if (me.query_only_openclose || !me.command_only_openclose) {
+                    if (me.open_direction.length < 2) {
+                        state_types['openPercent'] = Formats.FLOAT + Formats.MANDATORY;
+                    } else {
+                        state_types['openState'] = [
+                            {
+                                openPercent: Formats.FLOAT + Formats.MANDATORY,
+                                openDirection: Formats.STRING + Formats.MANDATORY
+                            },
+                            'openDirection'
+                        ];
+                    }
                 }
             }
             // Reboot 
@@ -1366,17 +1368,19 @@ module.exports = function (RED) {
                 // states['on'] = false;
             }
             if (me.trait.openclose) {
-                if (me.open_direction.length < 2) {
-                    states['openPercent'] = 0;
-                } else {
-                    let openState = [];
-                    states['openState'] = openState;
-                    me.open_direction.forEach(direction => {
-                        openState.push({
-                            openPercent: 0,
-                            openDirection: direction
+                if (me.query_only_openclose || !me.command_only_openclose) {
+                    if (me.open_direction.length < 2) {
+                        states['openPercent'] = 0;
+                    } else {
+                        let openState = [];
+                        states['openState'] = openState;
+                        me.open_direction.forEach(direction => {
+                            openState.push({
+                                openPercent: 0,
+                                openDirection: direction
+                            });
                         });
-                    });
+                    }
                 }
             }
             if (me.trait.rotation) {
@@ -1558,11 +1562,13 @@ module.exports = function (RED) {
                     }
                 } else if (me.device_type === "WINDOW") {
                     if (me.trait.openclose) {
-                        if (me.states.openPercent === 0) {
-                            text += 'CLOSED';
-                            fill = 'green';
-                        } else {
-                            text += me.discrete_only_openclose ? 'OPEN' : util.format("OPEN %d%%", me.states.openPercent);
+                        if (me.states.openPercent !== undefined) {
+                            if (me.states.openPercent === 0) {
+                                text += 'CLOSED';
+                                fill = 'green';
+                            } else {
+                                text += me.discrete_only_openclose ? 'OPEN' : util.format("OPEN %d%%", me.states.openPercent);
+                            }
                         }
                     }
                 } else {
