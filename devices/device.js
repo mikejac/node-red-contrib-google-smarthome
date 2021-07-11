@@ -1539,28 +1539,61 @@ module.exports = function (RED) {
             let fill = 'red';
             let shape = 'dot';
             if (me.states.online) {
-                if (me.device_type === "LIGHT") {
-                    if (me.states.on) {
-                        text = 'ON';
-                        fill = 'green';
+                if (me.trait.onoff) {
+                    if (me.states.on !== undefined) {
+                        if (me.states.on) {
+                            text = 'ON';
+                            fill = 'green';
+                        } else {
+                            text = 'OFF';
+                        }
                     } else {
-                        text = 'OFF';
+                        fill = 'blue';
                     }
-                    if (me.trait.brightness && me.states.brightness != undefined) {
-                        text += " bri: " + me.states.brightness;
+                } else {
+                    fill = 'blue'
+                }
+                if (me.trait.brightness && me.states.brightness !== undefined) {
+                    text += " bri: " + me.states.brightness;
+                }
+                if (me.trait.colorsetting && me.states.color.temperatureK !== undefined) {
+                    text += ' temp: ' + me.states.color.temperatureK;
+                }
+                if (me.trait.colorsetting && me.states.color.spectrumRgb !== undefined) {
+                    text += ' RGB: ' + me.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0');
+                }
+                if (me.trait.colorsetting && me.states.color.spectrumHsv !== undefined) {
+                    text += ' H: ' + me.states.color.spectrumHsv.hue +
+                        ' S: ' + me.states.color.spectrumHsv.saturation +
+                        ' V: ' + me.states.color.spectrumHsv.value;
+                }
+                if (me.trait.openclose) {
+                    if (me.states.openPercent !== undefined) {
+                        if (me.states.openPercent === 0) {
+                            text += 'CLOSED';
+                            fill = 'green';
+                        } else {
+                            text += me.discrete_only_openclose ? 'OPEN' : util.format("OPEN %d%%", me.states.openPercent);
+                        }
                     }
-                    if (me.trait.colorsetting && !me.command_only_colorsetting && me.states.color.temperatureK != undefined) {
-                        text += ' temp: ' + me.states.color.temperatureK;
+                }
+                if (me.trait.humiditysetting) {
+                    if (me.states.humidityAmbientPercent !== undefined) {
+                        text += ' H: ' + me.states.humidityAmbientPercent + "% ";
                     }
-                    if (me.trait.colorsetting && !me.command_only_colorsetting && me.states.color.spectrumRgb != undefined) {
-                        text += ' RGB: ' + me.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0');
+                    if (me.states.humiditySetpointPercent !== undefined) {
+                        text += ' TH: ' + me.states.humiditySetpointPercent + "% ";
                     }
-                    if (me.trait.colorsetting && !me.command_only_colorsetting && me.states.color.spectrumHsv != undefined) {
-                        text += ' H: ' + me.states.color.spectrumHsv.hue +
-                            ' S: ' + me.states.color.spectrumHsv.saturation +
-                            ' V: ' + me.states.color.spectrumHsv.value;
+                }
+                if (me.trait.temperaturecontrol) {
+                    if (me.states.temperatureAmbientCelsius !== undefined) {
+                        text += ' T: ' + me.states.temperatureAmbientCelsius + "\xB0C";
                     }
-                } else if (me.device_type === "THERMOSTAT") {
+                    if (me.states.temperatureSetpointCelsius !== undefined) {
+                        text += ' S: ' + me.states.temperatureSetpointCelsius + "\xB0C";
+                    }
+                }
+                if (me.trait.temperaturesetting) {
                     const thermostat_mode = me.states.thermostatMode;
                     const st = " T: " + me.states.thermostatTemperatureAmbient + " °C | S: " + me.thermostat_temperature_setpoint + " °C";
                     if (thermostat_mode === "off") {
@@ -1575,50 +1608,12 @@ module.exports = function (RED) {
                         fill = "green";
                         text = thermostat_mode.substr(0, 1).toUpperCase() + st;
                     }
-                    if (me.trait.humiditysetting && me.states.humidityAmbientPercent !== undefined) {
-                        text += ' ' + me.states.humidityAmbientPercent + "% ";
-                    } else if (me.states.thermostatHumidityAmbient !== undefined) {
+                    if (me.states.thermostatHumidityAmbient !== undefined) {
                         text += ' ' + me.states.thermostatHumidityAmbient + "% ";
                     }
-                } else if (me.device_type === "SENSOR") {
-                    if (me.trait.brightness && me.states.brightness != undefined) {
-                        text += ' bri ' + me.states.brightness;
-                    }
-                    if (me.trait.temperaturecontrol) {
-                        text += ' ' + me.states.temperatureAmbientCelsius + "\xB0C";
-                    }
-                    if (me.trait.humiditysetting && me.states.humidityAmbientPercent !== undefined) {
-                        text += ' ' + me.states.humidityAmbientPercent + "% ";
-                    }
-                    if (me.trait.openclose) {
-                        if (me.states.openPercent !== undefined) {
-                            text += ' ' + me.states.openPercent + "% ";
-                        }
-                    }
-                } else if (me.device_type === "WINDOW") {
-                    if (me.trait.openclose) {
-                        if (me.states.openPercent !== undefined) {
-                            if (me.states.openPercent === 0) {
-                                text += 'CLOSED';
-                                fill = 'green';
-                            } else {
-                                text += me.discrete_only_openclose ? 'OPEN' : util.format("OPEN %d%%", me.states.openPercent);
-                            }
-                        }
-                    }
-                } else {
-                    if (me.trait.onoff && me.states.on !== undefined) {
-                        if (me.states.on) {
-                            fill = "green";
-                            text = "ON";
-                        } else {
-                            text = "OFF";
-                        }
-                    }
-                    if (!text) {
-                        fill = "green";
-                        text = "ON";
-                    }
+                }
+                if (me.trait.energystorage) {
+                    text += ' ' + me.states.descriptiveCapacityRemaining;
                 }
             } else {
                 shape = 'ring';
@@ -1626,9 +1621,6 @@ module.exports = function (RED) {
             }
             if (!text) {
                 text = 'Unknown';
-            }
-            if (me.trait.energystorage) {
-                text += ' ' + me.states.descriptiveCapacityRemaining;
             }
             me.status({ fill: fill, shape: shape, text: text });
         }
