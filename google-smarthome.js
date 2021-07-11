@@ -294,6 +294,11 @@ module.exports = function(RED) {
                     RED.log.debug("MgmtNode(input): REQUEST_SYNC");
 
                     this.clientConn.app.RequestSync();
+                } else if (topic.toUpperCase() === 'GET_STATE') {
+                    let states = this.clientConn.app.getStates();
+                    if (states) {
+                        this.send({payload: states});
+                    }
                 }
             } catch (err) {
                 RED.log.error(err);
