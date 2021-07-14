@@ -75,6 +75,7 @@ test_no_payload() {
 }
 
 execute_payload() {
+    echo
     CMD_EXEC="$@"
     echo "$@" > request.json
     TOPIC="$1"
@@ -142,15 +143,88 @@ execute_error() {
 # if [ 1 == 2 ] ; then
 # fi # fi
 
+execute_payload topic '{"online":true,"isArmed":false,"currentArmLevel":"","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"","currentInput":"","activeLightEffect":"","currentModeSettings":{"load_mode":"","temp_mode":""},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet_toggle":false,"extra_bass_toggle":false,"energy_saving_toggle":false},"currentVolume":40,"on":true,"isDocked":false}'
+
 execute_payload topic '{"on":true, "isDocked":null}'
 test_payload .isDocked null
 test_payload .on true
+
 execute_payload topic '{"on":false, "isDocked":false}'
 test_payload .isDocked false
 test_payload .on false
+
 execute_payload topic '{"on":true, "isDocked":null}'
 test_payload .on true
 test_payload .isDocked null
+
+execute_payload null '{"currentStatusReport":[]}'
+test_payload .currentStatusReport '[]'
+
+execute_payload currentStatusReport '[]'
+test_payload .currentStatusReport '[]'
+test_payload .currentStatusReport '[]'
+
+execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"PIPPO","priority":0,"statusCode":"lowBattery"}]}'
+test_payload .currentStatusReport '[]'
+
+execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"Garage","priority":0,"statusCode":"lowBattery"}, {"blocking":false,"deviceTarget":"Ingresso","priority":0,"statusCode":"lowBattery"}]}'
+test_payload .currentStatusReport '[]'
+
+execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"Cucina","priority":0,"statusCode":"allBattery"}]}'
+test_payload .currentStatusReport[0].blocking false
+test_payload .currentStatusReport[0].priority 0
+test_payload .currentStatusReport[0].statusCode '"allBattery"'
+test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
+
+execute_payload currentStatusReport '[{"blocking":true,"deviceTarget":"Cucina","priority":1,"statusCode":"lowBattery"}]'
+test_payload .currentStatusReport[0].blocking true
+test_payload .currentStatusReport[0].priority 1
+test_payload .currentStatusReport[0].statusCode '"lowBattery"'
+test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
+
+execute_payload StatusReport '[{"blocking":false,"deviceTarget":"Cucina","priority":2,"statusCode":"okBattery"}]'
+test_payload .currentStatusReport[0].blocking true
+test_payload .currentStatusReport[0].priority 1
+test_payload .currentStatusReport[0].statusCode '"lowBattery"'
+test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
+test_payload .currentStatusReport[1].blocking false
+test_payload .currentStatusReport[1].priority 2
+test_payload .currentStatusReport[1].statusCode '"okBattery"'
+test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
+
+execute_payload StatusReport '[{"blocking":false,"deviceTarget":"Cucina","priority":2,"statusCode":"okBattery"}]'
+test_payload .currentStatusReport[0].blocking true
+test_payload .currentStatusReport[0].priority 1
+test_payload .currentStatusReport[0].statusCode '"lowBattery"'
+test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
+test_payload .currentStatusReport[1].blocking false
+test_payload .currentStatusReport[1].priority 2
+test_payload .currentStatusReport[1].statusCode '"okBattery"'
+test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
+
+execute_payload StatusReport '[]'
+test_payload .currentStatusReport[0].blocking true
+test_payload .currentStatusReport[0].priority 1
+test_payload .currentStatusReport[0].statusCode '"lowBattery"'
+test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
+test_payload .currentStatusReport[1].blocking false
+test_payload .currentStatusReport[1].priority 2
+test_payload .currentStatusReport[1].statusCode '"okBattery"'
+test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
+
+execute_payload StatusReport '[{"blocking":false,"deviceTarget":"Salotto","priority":3,"statusCode":"lowBattery"}]'
+test_payload .currentStatusReport[0].blocking true
+test_payload .currentStatusReport[0].priority 1
+test_payload .currentStatusReport[0].statusCode '"lowBattery"'
+test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
+test_payload .currentStatusReport[1].blocking false
+test_payload .currentStatusReport[1].priority 2
+test_payload .currentStatusReport[1].statusCode '"okBattery"'
+test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
+test_payload .currentStatusReport[2].blocking false
+test_payload .currentStatusReport[2].priority 3
+test_payload .currentStatusReport[2].statusCode '"lowBattery"'
+# test_payload .currentStatusReport[2].deviceTarget "\"$NODE_ID\""
 
 # AppSelector 
 echo AppSelector

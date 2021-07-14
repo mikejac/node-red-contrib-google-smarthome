@@ -745,12 +745,22 @@ module.exports = function (RED) {
                     {
                         rawValue: Formats.INT + Formats.MANDATORY,
                         unit: Formats.STRING + Formats.MANDATORY,
+                    },
+                    {
+                        keyId: "unit",
+                        addIfMissing: true,
+                        isValidKey: unit => ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'].includes(unit)
                     }
                 ];
                 state_types['capacityUntilFull'] = [
                     {
                         rawValue: Formats.INT + Formats.MANDATORY,
                         unit: Formats.STRING + Formats.MANDATORY,
+                    },
+                    {
+                        keyId: "unit",
+                        addIfMissing: true,
+                        isValidKey: unit => ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'].includes(unit)
                     }
                 ];
                 if (me.is_rechargeable) {
@@ -875,6 +885,11 @@ module.exports = function (RED) {
                         currentCycle: Formats.STRING + Formats.MANDATORY,
                         nextCycle: Formats.STRING,
                         lang: Formats.STRING + Formats.MANDATORY
+                    },
+                    {
+                        keyId: 'currentCycle',
+                        addIfMissing: true,
+                        isValidKey: cycle => cycle.strip().length > 0 ? cycle.strip() : undefined
                     }
                 ];
                 state_types['currentTotalRemainingTime'] = Formats.INT + Formats.MANDATORY;
@@ -898,7 +913,11 @@ module.exports = function (RED) {
                 state_types['isRunning'] = Formats.BOOL + Formats.MANDATORY;
                 state_types['isPaused'] = Formats.BOOL;
                 state_types['activeZones'] = [
-                    Formats.STRING
+                    Formats.STRING,
+                    {
+                        addIfMissing: true,
+                        isValidKey: zone => me.available_zones.includes(zone)
+                    }
                 ];
             }
             if (me.trait.statusreport) {
@@ -908,6 +927,11 @@ module.exports = function (RED) {
                         deviceTarget: Formats.STRING,
                         priority: Formats.INT,
                         statusCode: Formats.STRING
+                    },
+                    {
+                        keyId: ['deviceTarget', 'statusCode'],
+                        addIfMissing: true,
+                        isValidKey: nodeId => Object.keys(me.clientConn.getProperties([nodeId])).length > 0 ? nodeId : me.clientConn.getIdFromName(nodeId)
                     }
                 ];
             }
@@ -1193,7 +1217,7 @@ module.exports = function (RED) {
             }
             if (me.trait.startstop) {
                 attributes['pausable'] = me.pausable;
-                attributes['activeZones'] = me.available_zones;
+                attributes['availableZones'] = me.available_zones;
             }
             if (me.trait.temperaturecontrol) {
                 attributes['temperatureRange'] = {
@@ -1693,16 +1717,21 @@ module.exports = function (RED) {
             const me = this;
             me.debug(".input: topic = " + msg.topic);
 
-            let topicArr = String(msg.topic).split(this.topicDelim);
-            let topic = topicArr[topicArr.length - 1];   // get last part of topic
+            let topic = '';
+            let upper_topic = '';
+            if (msg.topic) {
+                let topicArr = String(msg.topic).split(this.topicDelim);
+                let topic = topicArr[topicArr.length - 1].trim();   // get last part of topic
+                upper_topic = topic.toUpperCase();
+            }
 
             try {
-                if (topic.toUpperCase() === 'GETSTATE') {
+                if (upper_topic === 'GETSTATE') {
                     this.send({
                         topic: msg.topic,
                         payload: me.states
                     });
-                } else if (topic.toUpperCase() === 'AVAILABLEAPPLICATIONS') {
+                } else if (upper_topic === 'AVAILABLEAPPLICATIONS') {
                     if (this.trait.appselector) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_applications = this.loadJson('Applications', this.appselector_file, []);
@@ -1718,7 +1747,7 @@ module.exports = function (RED) {
                         this.available_applications = [];
                         RED.log.error("Applications disabled");
                     }
-                } else if (topic.toUpperCase() === 'AVAILABLEARMLEVELS') {
+                } else if (upper_topic === 'AVAILABLEARMLEVELS') {
                     if (this.trait.armdisarm) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_arm_levels = this.loadJson('Arm levels', this.available_arm_levels_file, []);
@@ -1734,7 +1763,7 @@ module.exports = function (RED) {
                         this.available_arm_levels = [];
                         RED.log.error("Arm levels disabled");
                     }
-                } else if (topic.toUpperCase() === 'AVAILABLECHANNELS') {
+                } else if (upper_topic === 'AVAILABLECHANNELS') {
                     if (this.trait.channel) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_channels = this.loadJson('Channels', this.channel_file, []);
@@ -1750,7 +1779,7 @@ module.exports = function (RED) {
                         this.available_channels = [];
                         RED.log.error("Channels disabled");
                     }
-                } else if (topic.toUpperCase() === 'SUPPORTEDDISPENSEITEMS') {
+                } else if (upper_topic === 'SUPPORTEDDISPENSEITEMS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
                             this.supported_dispense_items = this.loadJson('Dispense items', this.supported_dispense_items_file, []);
@@ -1766,7 +1795,7 @@ module.exports = function (RED) {
                         this.supported_dispense_items = [];
                         RED.log.error("Dispense items disabled");
                     }
-                } else if (topic.toUpperCase() === 'SUPPORTEDDISPENSEPRESETS') {
+                } else if (upper_topic === 'SUPPORTEDDISPENSEPRESETS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
                             this.supported_dispense_presets = this.loadJson('Dispense presets', this.supported_dispense_presets_file, []);
@@ -1782,7 +1811,7 @@ module.exports = function (RED) {
                         this.supported_dispense_presets = [];
                         RED.log.error("Dispense presets disabled");
                     }
-                } else if (topic.toUpperCase() === 'AVAILABLEFANSPEEDS') {
+                } else if (upper_topic === 'AVAILABLEFANSPEEDS') {
                     if (this.trait.fanspeed) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file, []);
@@ -1798,7 +1827,7 @@ module.exports = function (RED) {
                         this.available_fan_speeds = [];
                         RED.log.error("Fan speeds disabled");
                     }
-                } else if (topic.toUpperCase() === 'AVAILABLEFILLLEVELS') {
+                } else if (upper_topic === 'AVAILABLEFILLLEVELS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_fill_levels = this.loadJson(' Fill levels', this.available_fill_levels_file, []);
@@ -1814,7 +1843,7 @@ module.exports = function (RED) {
                         this.available_fill_levels = [];
                         RED.log.error("Fill levels disabled");
                     }
-                } else if (topic.toUpperCase() === 'AVAILABLEFOODPRESETS') {
+                } else if (upper_topic === 'AVAILABLEFOODPRESETS') {
                     if (this.trait.cook) {
                         if (typeof msg.payload === 'undefined') {
                             this.food_presets = this.loadJson('Food presets', this.food_presets_file, []);
@@ -1830,7 +1859,7 @@ module.exports = function (RED) {
                         this.food_presets = [];
                         RED.log.error("Food presets disabled");
                     }
-                } else if (topic.toUpperCase() === 'AVAILABLEINPUTS') {
+                } else if (upper_topic === 'AVAILABLEINPUTS') {
                     if (this.trait.inputselector) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_inputs = this.loadJson('Inputs', this.inputselector_file, []);
@@ -1846,7 +1875,7 @@ module.exports = function (RED) {
                         this.available_inputs = [];
                         RED.log.error("Inputs disabled");
                     }
-                } else if (topic.toUpperCase() === 'AVAILABLEMODES') {
+                } else if (upper_topic === 'AVAILABLEMODES') {
                     if (this.trait.modes) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_modes = this.loadJson('Modes', this.modes_file, []);
@@ -1864,7 +1893,7 @@ module.exports = function (RED) {
                         this.available_modes = [];
                         RED.log.error("Modes disabled");
                     }
-                } else if (topic.toUpperCase() === 'AVAILABLETOGGLES') {
+                } else if (upper_topic === 'AVAILABLETOGGLES') {
                     if (this.trait.toggles) {
                         if (typeof msg.payload === 'undefined') {
                             this.available_toggles = this.loadJson('Toggles', this.toggles_file, []);
@@ -1882,7 +1911,7 @@ module.exports = function (RED) {
                         this.available_toggles = [];
                         RED.log.error("Toggles disabled");
                     }
-                } else if (topic.toUpperCase() === 'CAMERASTREAMAUTHTOKEN') {
+                } else if (upper_topic === 'CAMERASTREAMAUTHTOKEN') {
                     const auth_token = formats.FormatValue(formats.Formats.STRING, 'cameraStreamAuthToken', msg.payload) || "";
                     if (auth_token != me.auth_token) {
                         me.auth_token = auth_token;
@@ -1894,9 +1923,9 @@ module.exports = function (RED) {
                             }
                         }
                     }
-                } else if (topic.toUpperCase() === 'GUESTNETWORKPASSWORD') {
+                } else if (upper_topic === 'GUESTNETWORKPASSWORD') {
                     me.guest_network_password = formats.FormatValue(formats.Formats.STRING, 'guestNetworkPassword', msg.payload);
-                } else if (topic.toUpperCase() === 'OBJECTDETECTION') {
+                } else if (upper_topic === 'OBJECTDETECTION') {
                     let payload = {};
                     if (typeof msg.payload.familiar === 'number') {
                         payload.familiar = msg.payload.familiar;
@@ -1919,7 +1948,7 @@ module.exports = function (RED) {
                             detectionTimestamp: Date.now()
                         }
                     });  // tell Google ...
-                } else if (topic.toUpperCase() === 'RUNCYCLE') {
+                } else if (upper_topic === 'RUNCYCLE') {
                     let payload = { priority: 0 };
                     if (typeof msg.payload.status === 'string') {
                         payload.status = msg.payload.status;
@@ -1933,7 +1962,7 @@ module.exports = function (RED) {
                     this.clientConn.sendNotifications(this, {
                         RunCycle: payload
                     });  // tell Google ...
-                } else if (topic.toUpperCase() === 'SENSORSTATE') {
+                } else if (upper_topic === 'SENSORSTATE') {
                     let payload = { priority: 0 };
                     if (typeof msg.payload.name === 'string') {
                         payload.name = msg.payload.name;
@@ -1944,7 +1973,7 @@ module.exports = function (RED) {
                     this.clientConn.sendNotifications(this, {
                         SensorState: payload
                     });  // tell Google ...
-                } else if (topic.toUpperCase() === 'LOCKUNLOCK') {
+                } else if (upper_topic === 'LOCKUNLOCK') {
                     let payload = {};
                     if (typeof msg.payload.followUpToken === 'string') {
                         payload.followUpToken = msg.payload.followUpToken;
@@ -1964,14 +1993,14 @@ module.exports = function (RED) {
                             followUpResponse: payload
                         }
                     });  // tell Google ...
-                } else if (topic.toUpperCase() === 'NETWORKCONTROL') {
+                } else if (upper_topic === 'NETWORKCONTROL') {
                     this.clientConn.sendNotifications(this, {
                         NetworkControl: {
                             priority: 0,
                             followUpResponse: msg.payload
                         }
                     });  // tell Google ...
-                } else if (topic.toUpperCase() === 'OPENCLOSE') {
+                } else if (upper_topic === 'OPENCLOSE') {
                     let payload = {};
                     if (typeof msg.payload.followUpToken === 'string') {
                         payload.followUpToken = msg.payload.followUpToken;
@@ -1991,47 +2020,68 @@ module.exports = function (RED) {
                             followUpResponse: payload
                         }
                     });  // tell Google ...
-                } else if (topic.toUpperCase() === 'STATUSREPORT') {
-                    let payload = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
-                    let new_payload = [];
-                    payload.forEach(sr => {
-                        let nodeId;
-                        if (sr.deviceTarget) {
-                            let properties = this.clientConn.getProperties(sr.deviceTarget);
-                            if (Object.keys(properties).length > 0) {
-                                nodeId = sr.deviceTarget;
-                            } else {
-                                nodeId = this.clientConn.getIdFromName(sr.deviceTarget);
-                            }
-                        } else {
-                            nodeId = this.device.id;
-                        }
-                        if (nodeId) {
+                } else if (upper_topic === 'STATUSREPORT') {
+                    if (me.trait.statusreport) {
+                        // Update or Add reports based on deviceTarget and statusCode
+                        let payload = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
+                        let new_payload = [];
+                        me.states.currentStatusReport.forEach(report => {
                             let new_report = {};
-                            this.cloneObject(new_report, sr, me.state_types['currentStatusReport'][0]);
-                            new_report.deviceTarget = nodeId;
+                            this.cloneObject(new_report, report, me.state_types['currentStatusReport'][0]);
                             new_payload.push(new_report);
-                        }
-                    });
-                    if (me.updateState({ currentStatusReport: new_payload })) {
-                        this.clientConn.setState(this, me.states);  // tell Google ...
+                        });
+                        let differs = false;
+                        payload.forEach(sr => {
+                            let nodeId;
+                            if (sr.deviceTarget) {
+                                let properties = this.clientConn.getProperties([sr.deviceTarget]);
+                                if (Object.keys(properties).length > 0) {
+                                    nodeId = sr.deviceTarget;
+                                } else {
+                                    nodeId = this.clientConn.getIdFromName(sr.deviceTarget);
+                                }
+                            } else {
+                                nodeId = this.device.id;
+                            }
+                            if (nodeId) {
+                                let new_report = {};
+                                this.cloneObject(new_report, sr, me.state_types['currentStatusReport'][0]);
+                                if (new_report.statusCode) {
+                                    new_report.deviceTarget = nodeId;
+                                    let cur_reports = new_payload.filter(report => report.deviceTarget === nodeId && report.statusCode === new_report.statusCode)
+                                    if (cur_reports.length > 0) {
+                                        if (this.cloneObject(cur_reports[0], new_report, me.state_types['currentStatusReport'][0])) {
+                                            differs = true;
+                                        }
+                                    } else {
+                                        new_payload.push(new_report);
+                                        differs = true;
+                                    }
+                                }
+                            }
+                        });
+                        if (me.updateState({ currentStatusReport: new_payload }) || differs) {
+                            this.clientConn.setState(this, me.states);  // tell Google ...
 
-                        if (this.passthru) {
-                            msg.payload = new_payload;
-                            this.send(msg);
+                            if (this.passthru) {
+                                msg.payload = new_payload;
+                                this.send(msg);
+                            }
                         }
                     }
                 } else {
                     let state_key = '';
                     Object.keys(me.states).forEach(function (key) {
-                        if (topic.toUpperCase() == key.toUpperCase()) {
+                        if (upper_topic == key.toUpperCase()) {
                             state_key = key;
-                            me.debug(".input: found state " + key);
+                            me.debug(".input: found state " + state_key);
                         }
                     });
 
                     if (state_key !== '') {
-                        const differs = me.updateState({ state_key: msg.payload });
+                        let payload = {};
+                        payload[state_key] = msg.payload;
+                        const differs = me.updateState(payload);
                         if (differs) {
                             me.debug(".input: " + state_key + ' ' + JSON.stringify(msg.payload));
                             this.clientConn.setState(this, me.states, true);  // tell Google ...
@@ -2044,7 +2094,7 @@ module.exports = function (RED) {
                         this.updateStatusIcon();
                     } else {
                         me.debug(".input: some other topic");
-                        let differs = me.updateState(msg.payload);
+                        const differs = me.updateState(msg.payload);
 
                         if (differs) {
                             this.clientConn.setState(this, me.states, true);  // tell Google ...
@@ -2315,17 +2365,58 @@ module.exports = function (RED) {
                                 let new_arr = [];
                                 let old_arr = Array.isArray(old_state) ? old_state : [];
                                 let key_id = state_values.length > 1 ? state_values[1] : undefined;
+                                let add_if_missing = false;
+                                let is_valid_key = key => true;
+                                let replace_all = false;
+                                if (typeof key_id === 'object') {
+                                    add_if_missing = key_id.addIfMissing || false;
+                                    if (typeof key_id.isValidKey === 'function') {
+                                        is_valid_key = key_id.isValidKey;
+                                    }
+                                    if (typeof key_id.replaceAll === 'boolean') {
+                                        replace_all = key_id.replaceAll;
+                                    } else {
+                                        replace_all = true;
+                                    }
+                                    key_id = key_id.keyId;
+                                }
                                 value.forEach((new_obj, idx) => {
                                     let cur_obj;
                                     if (key_id) {
-                                        let f_arr = old_arr.filter(obj => { return obj[key_id] === new_obj[key_id] });
-                                        if (f_arr.length > 0) {
-                                            cur_obj = f_arr[0];
-                                        } else if (f_arr.length > 1) {
+                                        let f_arr;
+                                        if (typeof key_id === 'string') {
+                                            f_arr = old_arr.filter(obj => { return obj[key_id] === new_obj[key_id] });
+                                        } else {
+                                            f_arr = old_arr.filter(obj => {
+                                                let obj_equal = true;
+                                                key_id.forEach(key_idi => {
+                                                    if (obj[key_idi] !== new_obj[key_idi]) {
+                                                        obj_equal = false;
+                                                    }
+                                                });
+                                                return obj_equal;
+                                            });
+                                        }
+                                        if (f_arr.length > 1) {
                                             RED.log.error('More than one "' + key + '" for "' + key_id + '" "' + new_obj[key_id] + '"');
+                                        } else if (f_arr.length > 0) {
+                                            cur_obj = f_arr[0];
+                                        } else if (add_if_missing) {
+                                            let key_id0 = typeof key_id === 'string' ? key_id : key_id[0];
+                                            let key1 = is_valid_key(new_obj[key_id0]);
+                                            if (key1) {
+                                                cur_obj = {};
+                                                if (typeof key1 === 'string') {
+                                                    new_obj[key_id0] = key1;
+                                                }
+                                                old_arr.push(cur_obj);
+                                            }
                                         }
                                     } else {
                                         cur_obj = old_arr[idx];
+                                        if (cur_obj === undefined && add_if_missing) {
+                                            cur_obj = {};
+                                        }
                                     }
                                     if (cur_obj !== undefined) {
                                         if (me.cloneObject(cur_obj, new_obj, ar_state_values)) {
@@ -2334,14 +2425,14 @@ module.exports = function (RED) {
                                         if (Object.keys(cur_obj).length > 0) {
                                             new_arr.push(cur_obj);
                                         } else {
-                                            differs = true;
+                                            differs = true; // ??
                                         }
                                     }
                                 });
-                                if (new_arr.length != old_arr.length) {
+                                if (replace_all && new_arr.length != old_arr.length) {
                                     differs = true;
                                 }
-                                states[key] = key_id ? old_arr : new_arr;
+                                states[key] = replace_all ? new_arr : old_arr;
                             }
                         } else {
                             RED.log.error('key "' + key + '" must be an array.');
