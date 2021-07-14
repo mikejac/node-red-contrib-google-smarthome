@@ -889,7 +889,7 @@ module.exports = function (RED) {
                     {
                         keyId: 'currentCycle',
                         addIfMissing: true,
-                        isValidKey: cycle => cycle.strip().length > 0 ? cycle.strip() : undefined
+                        isValidKey: cycle => cycle.trim().length > 0 ? cycle.trim() : undefined
                     }
                 ];
                 state_types['currentTotalRemainingTime'] = Formats.INT + Formats.MANDATORY;
@@ -1729,7 +1729,8 @@ module.exports = function (RED) {
                 if (upper_topic === 'GETSTATE') {
                     this.send({
                         topic: msg.topic,
-                        payload: me.states
+                        payload: me.states,
+                        device_id: this.device.id
                     });
                 } else if (upper_topic === 'AVAILABLEAPPLICATIONS') {
                     if (this.trait.appselector) {

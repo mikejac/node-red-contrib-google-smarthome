@@ -22,10 +22,10 @@
 . ./code
 
 NODE_ID=$1 || "a5782b1b.e120f8"
+NODE_ID1=$2 || "bab53c06.fc9c3"
 PAYLOAD_FILE="$HOME/payload.json"
 OUT_FILE="$HOME/out.json"
 PAYLOAD_URL=$(dirname $BASE_URL)/payload
-TEST_TYPE=$2 || '1'
 
 ./refresh_token
 
@@ -224,7 +224,93 @@ test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
 test_payload .currentStatusReport[2].blocking false
 test_payload .currentStatusReport[2].priority 3
 test_payload .currentStatusReport[2].statusCode '"lowBattery"'
-# test_payload .currentStatusReport[2].deviceTarget "\"$NODE_ID\""
+test_payload .currentStatusReport[2].deviceTarget "\"$NODE_ID1\""
+
+execute_payload capacityRemaining '[{"unit":"SECONDS","rawValue":60}]'
+test_payload .capacityRemaining[0].unit '"SECONDS"'
+test_payload .capacityRemaining[0].rawValue 60
+
+execute_payload capacityUntilFull '[{"unit":"PERCENTAGE","rawValue":7}]'
+test_payload .capacityUntilFull[0].unit '"PERCENTAGE"'
+test_payload .capacityUntilFull[0].rawValue 7
+
+execute_payload capacityRemaining '[{"unit":"SECONDS","rawValue":70},{"unit":"KILOMETERS","rawValue":27}]'
+test_payload .capacityRemaining[0].unit '"SECONDS"'
+test_payload .capacityRemaining[0].rawValue 70
+test_payload .capacityRemaining[1].unit '"KILOMETERS"'
+test_payload .capacityRemaining[1].rawValue 27
+test_payload .capacityUntilFull[0].unit '"PERCENTAGE"'
+test_payload .capacityUntilFull[0].rawValue 7
+
+execute_payload capacityUntilFull '[{"unit":"SECONDS","rawValue":60}]'
+test_payload .capacityUntilFull[0].unit '"SECONDS"'
+test_payload .capacityUntilFull[0].rawValue 60
+test_payload .capacityRemaining[0].unit '"SECONDS"'
+test_payload .capacityRemaining[0].rawValue 70
+test_payload .capacityRemaining[1].unit '"KILOMETERS"'
+test_payload .capacityRemaining[1].rawValue 27
+
+execute_payload capacityRemaining '[{"unit":"PERCENTAGE","rawValue":7}]'
+test_payload .capacityRemaining[0].unit '"PERCENTAGE"'
+test_payload .capacityRemaining[0].rawValue 7
+test_payload .capacityUntilFull[0].unit '"SECONDS"'
+test_payload .capacityUntilFull[0].rawValue 60
+
+execute_payload openState '[{"openDirection":"DOWN","openPercent":7}]'
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 0
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 7
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 0
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 0
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 0
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 0
+
+execute_payload openState '[{"openDirection":"LEFT","openPercent":5},{"openDirection":"IN","openPercent":9}]'
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 0
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 7
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 5
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 0
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 9
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 0
+
+execute_payload currentRunCycle '[{"currentCycle":"Riscaldamento piatto","nextCycle":"Riscaldamento ugello","lang":"it"},{"currentCycle":"Riscaldamento ugello","nextCycle":"Stampa","lang":"it"}]'
+test_payload .currentRunCycle[0].currentCycle '"Riscaldamento piatto"'
+test_payload .currentRunCycle[0].nextCycle '"Riscaldamento ugello"'
+test_payload .currentRunCycle[0].lang '"it"'
+test_payload .currentRunCycle[1].currentCycle '"Riscaldamento ugello"'
+test_payload .currentRunCycle[1].nextCycle '"Stampa"'
+test_payload .currentRunCycle[1].lang '"it"'
+
+execute_payload currentSensorStateData '[{"name":"CarbonMonoxideLevel","currentSensorState":"no carbon monoxide detected","rawValue":7}]'
+test_payload .currentSensorStateData[1].name '"CarbonMonoxideLevel"'
+test_payload .currentSensorStateData[1].currentSensorState '"no carbon monoxide detected"'
+test_payload .currentSensorStateData[1].rawValue 7
+
+execute_payload activeZones '["Cucina","Salotto"]'
+#test_payload .activeZones[0] '"Cucina"'
+#test_payload .activeZones[1] '"Salotto"'
+
+execute_payload activeZones '["Cucina","Salotto", "Soggiorno"]'
+#test_payload .activeZones[0] '"Cucina"'
+#test_payload .activeZones[1] '"Salotto"'
+#test_payload .activeZones[2] '"Soggiorno"'
+
+execute_payload activeZones '["Bagno"]'
+#test_payload .activeZones[0] '"Bagno"'
+#test_payload .activeZones[1] null
+
+echo
 
 # AppSelector 
 echo AppSelector
@@ -361,24 +447,20 @@ execute $NODE_ID ColorAbsolute 'Bianco Caldo' 3000
 test_payload ".color.temperatureK" 3000
 # test_out ".payload.commands[0].states.online" true
 
-if [ "$TEST_TYPE" == '1' ] ; then
-    execute $NODE_ID ColorAbsolute_rgb 'Magenta' 16711935
-    test_payload ".color.spectrumRgb" 16711935
-    test_payload ".color.temperatureK" null
-    # test_out ".payload.commands[0].states.online" true
-fi
+execute $NODE_ID ColorAbsolute_rgb 'Magenta' 16711935
+test_payload ".color.spectrumRgb" 16711935
+test_payload ".color.temperatureK" null
+# test_out ".payload.commands[0].states.online" true
 
-if [ "$TEST_TYPE" == '2' ] ; then
-    execute $NODE_ID ColorAbsolute_hsv 'Magenta' 300 1 1
-    # test_out ".payload.commands[0].states.online" true
-    test_payload ".color.spectrumHsv.hue" 300
-    test_payload ".color.spectrumHsv.saturation" 1
-    test_payload ".color.spectrumHsv.value" 1
-    test_payload ".color.temperatureK" null
-    test_payload ".color.spectrumRgb" null
-fi
+execute $NODE_ID1 ColorAbsolute_hsv 'Magenta' 300 1 1
+# test_out ".payload.commands[0].states.online" true
+test_payload ".color.spectrumHsv.hue" 300
+test_payload ".color.spectrumHsv.saturation" 1
+test_payload ".color.spectrumHsv.value" 1
+test_payload ".color.temperatureK" null
+test_payload ".color.spectrumRgb" null
 
-execute $NODE_ID ColorAbsolute 'Bianco Freddo' 7000
+execute $NODE_ID1 ColorAbsolute 'Bianco Freddo' 7000
 test_payload ".color.spectrumRgb" null
 test_payload ".color.spectrumHsv.hue" null
 test_payload ".color.spectrumHsv.saturation" null
