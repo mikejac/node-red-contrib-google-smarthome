@@ -895,7 +895,7 @@ module.exports = function (RED) {
                     {
                         currentCycle: Formats.STRING + Formats.MANDATORY,
                         nextCycle: Formats.STRING,
-                         n: Formats.STRING + Formats.MANDATORY
+                        lang: Formats.STRING + Formats.MANDATORY
                     },
                     {
                         keyId: 'currentCycle',
