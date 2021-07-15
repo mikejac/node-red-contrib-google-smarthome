@@ -86,6 +86,7 @@ execute_payload() {
     fi
     REQUEST="{\"payload\": $PAYLOAD, \"topic\": \"$TOPIC\"}"
     echo $REQUEST
+    mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old" 
     echo "{}" > "$PAYLOAD_FILE" 
     curl -s \
         -H "Content-Type: application/json;charset=UTF-8" \
@@ -298,17 +299,19 @@ test_payload .currentSensorStateData[1].currentSensorState '"no carbon monoxide 
 test_payload .currentSensorStateData[1].rawValue 7
 
 execute_payload activeZones '["Cucina","Salotto"]'
-#test_payload .activeZones[0] '"Cucina"'
-#test_payload .activeZones[1] '"Salotto"'
+test_payload .activeZones[0] '"Cucina"'
+test_payload .activeZones[1] '"Salotto"'
+test_payload .activeZones[2] null
 
 execute_payload activeZones '["Cucina","Salotto", "Soggiorno"]'
-#test_payload .activeZones[0] '"Cucina"'
-#test_payload .activeZones[1] '"Salotto"'
-#test_payload .activeZones[2] '"Soggiorno"'
+test_payload .activeZones[0] '"Cucina"'
+test_payload .activeZones[1] '"Salotto"'
+test_payload .activeZones[2] '"Soggiorno"'
+test_payload .activeZones[3] null
 
 execute_payload activeZones '["Bagno"]'
-#test_payload .activeZones[0] '"Bagno"'
-#test_payload .activeZones[1] null
+test_payload .activeZones[0] '"Bagno"'
+test_payload .activeZones[1] null
 
 echo
 
@@ -359,15 +362,15 @@ test_out ".payload.commands[0].errorCode" '"noAvailableApp"'
 echo
 echo ArmDisarm The Arm/Disarm logic should be outside the node
 execute $NODE_ID ArmDisarm true 123
-# test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.online" true
 
 execute $NODE_ID ArmDisarm_level true L2 123
-# test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.online" true
 
 execute_error $NODE_ID ArmDisarm_level true NO_LEVEL 456
 
 execute $NODE_ID ArmDisarm_cancel true
-# test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.online" true
 
 # Brightness
 echo
@@ -445,15 +448,30 @@ echo
 echo ColorSetting 
 execute $NODE_ID ColorAbsolute 'Bianco Caldo' 3000
 test_payload ".color.temperatureK" 3000
-# test_out ".payload.commands[0].states.online" true
+test_payload ".color.spectrumRgb" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
 
 execute $NODE_ID ColorAbsolute_rgb 'Magenta' 16711935
 test_payload ".color.spectrumRgb" 16711935
 test_payload ".color.temperatureK" null
-# test_out ".payload.commands[0].states.online" true
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
+
+execute $NODE_ID ColorAbsolute 'Bianco Caldo' 4000
+test_payload ".color.temperatureK" 4000
+test_payload ".color.spectrumRgb" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
 
 execute $NODE_ID1 ColorAbsolute_hsv 'Magenta' 300 1 1
-# test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.online" true
 test_payload ".color.spectrumHsv.hue" 300
 test_payload ".color.spectrumHsv.saturation" 1
 test_payload ".color.spectrumHsv.value" 1
@@ -461,11 +479,12 @@ test_payload ".color.temperatureK" null
 test_payload ".color.spectrumRgb" null
 
 execute $NODE_ID1 ColorAbsolute 'Bianco Freddo' 7000
+test_payload ".color.temperatureK" 7000
 test_payload ".color.spectrumRgb" null
 test_payload ".color.spectrumHsv.hue" null
 test_payload ".color.spectrumHsv.saturation" null
 test_payload ".color.spectrumHsv.value" null
-# test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.online" true
 
 # Cook
 echo

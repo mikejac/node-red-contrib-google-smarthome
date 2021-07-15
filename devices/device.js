@@ -44,7 +44,7 @@ module.exports = function (RED) {
             this.device = {};
             this.client = config.client;
             this.clientConn = RED.nodes.getNode(this.client);
-            this.debug(".constructor config " + JSON.stringify(config));
+            this._debug(".constructor config " + JSON.stringify(config));
 
             if (!this.clientConn) {
                 this.error(RED._("device.errors.missing-config"));
@@ -56,6 +56,7 @@ module.exports = function (RED) {
                 return;
             }
 
+            this.lang = this.clientConn.default_lang || 'en';
             this.state_types = {};
             this.trait = {
                 appselector: config.trait_appselector || false,
@@ -99,7 +100,6 @@ module.exports = function (RED) {
             this.topicOut = config.topic;
             this.room_hint = config.room_hint;
             this.device_type = config.device_type;
-            this.lang = config.lang;
 
             // AppSelector
             this.appselector_file = config.appselector_file;
@@ -537,28 +537,28 @@ module.exports = function (RED) {
                 this.available_applications = this.loadJson('Applications', this.appselector_file, []);
             } else {
                 this.available_applications = [];
-                this.debug(".constructor: AppSelector disabled");
+                this._debug(".constructor: AppSelector disabled");
             }
 
             if (this.trait.armdisarm) {
                 this.available_arm_levels = this.loadJson('Available arm levels', this.available_arm_levels_file, []);
             } else {
                 this.available_applications = [];
-                this.debug(".constructor: ArmDisarm disabled");
+                this._debug(".constructor: ArmDisarm disabled");
             }
 
             if (this.trait.channel) {
                 this.available_channels = this.loadJson('Channels', this.channel_file, []);
             } else {
                 this.available_channels = [];
-                this.debug(".constructor: Channel disabled");
+                this._debug(".constructor: Channel disabled");
             }
 
             if (this.trait.cook) {
                 this.food_presets = this.loadJson('Food presets', this.food_presets_file, []);
             } else {
                 this.food_presets = [];
-                this.debug(".constructor: Cook disabled");
+                this._debug(".constructor: Cook disabled");
             }
 
             if (this.trait.dispense) {
@@ -567,45 +567,56 @@ module.exports = function (RED) {
             } else {
                 this.supported_dispense_items = [];
                 this.supported_dispense_presets = [];
-                this.debug(".constructor: Dispense disabled");
+                this._debug(".constructor: Dispense disabled");
             }
 
             if (this.trait.fanspeed) {
                 this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file, []);
             } else {
                 this.available_fan_speeds = [];
-                this.debug(".constructor: FanSpeeds disabled");
+                this._debug(".constructor: FanSpeeds disabled");
             }
 
             if (this.trait.fill) {
                 this.available_fill_levels = this.loadJson('Available fill levels', this.available_fill_levels_file, []);
             } else {
                 this.available_fill_levels = [];
-                this.debug(".constructor: Fill disabled");
+                this._debug(".constructor: Fill disabled");
             }
 
             if (this.trait.inputselector) {
                 this.available_inputs = this.loadJson('Available inputs', this.inputselector_file, []);
             } else {
                 this.available_inputs = [];
-                this.debug(".constructor InputSelector disabled");
+                this._debug(".constructor InputSelector disabled");
             }
 
             if (this.trait.modes) {
                 this.available_modes = this.loadJson('Modes', this.modes_file, []);
             } else {
                 this.available_modes = [];
-                this.debug(".constructor: Modes disabled");
+                this._debug(".constructor: Modes disabled");
             }
 
             if (this.trait.toggles) {
                 this.available_toggles = this.loadJson('Toggles', this.toggles_file, []);
             } else {
                 this.available_toggles = [];
-                this.debug(".constructor: Toggles disabled");
+                this._debug(".constructor: Toggles disabled");
             }
 
             this.updateStateTypesForTraits();
+
+            this.exclusive_states = {
+                color: {
+                    temperatureK: [ 'spectrumRgb', 'spectrumHsv' ],
+                    spectrumRgb: [ 'temperatureK', 'spectrumHsv' ],
+                    spectrumHsv: [ 'temperatureK', 'spectrumRgb' ],                    
+                },
+                thermostatTemperatureSetpointLow: ['thermostatTemperatureSetpoint'],
+                thermostatTemperatureSetpointHigh: ['thermostatTemperatureSetpoint'],
+                thermostatTemperatureSetpoint: ['thermostatTemperatureSetpointLow', 'thermostatTemperatureSetpointHigh'],
+            };
 
             // GoogleSmartHomeNode -> (client.registerDevice -> DeviceNode.registerDevice), app.registerDevice
             this.states = this.clientConn.register(this, 'device', config.name);
@@ -620,12 +631,12 @@ module.exports = function (RED) {
             this.on('close', this.onClose);
         }
 
-        debug(msg) {
+        _debug(msg) {
             msg = 'google-smarthome:DeviceNode' + msg;
-            if (this.clientConn && typeof this.clientConn.debug === 'function') {
-                this.clientConn.debug(msg);
+            if (this.clientConn && typeof this.clientConn._debug === 'function') {
+                this.clientConn._debug(msg);
             } else {
-                RED.log.debug(msg);
+                this.debug(msg);
             }
         }
 
@@ -634,7 +645,7 @@ module.exports = function (RED) {
          *
          */
         registerDevice(client, name) {
-            this.debug(".registerDevice: device_type " + this.device_type);
+            this._debug(".registerDevice: device_type " + this.device_type);
 
             const default_name = this.getDefaultName(this.device_type);
             const default_name_type = default_name.replace(/[_ ()/]+/g, '-').toLowerCase();
@@ -669,7 +680,7 @@ module.exports = function (RED) {
             this.updateAttributesForTraits(device);
             this.updateStatesForTraits(device);
 
-            this.debug(".registerDevice: device = " + JSON.stringify(device));
+            this._debug(".registerDevice: device = " + JSON.stringify(device));
 
             this.device = device;
             return device;
@@ -884,7 +895,7 @@ module.exports = function (RED) {
                     {
                         currentCycle: Formats.STRING + Formats.MANDATORY,
                         nextCycle: Formats.STRING,
-                        lang: Formats.STRING + Formats.MANDATORY
+                         n: Formats.STRING + Formats.MANDATORY
                     },
                     {
                         keyId: 'currentCycle',
@@ -1657,10 +1668,10 @@ module.exports = function (RED) {
             let me = this;
             let states = device.states;
             let command = device.command.startsWith('action.devices.commands.') ? device.command.substr(24) : device.command;
-            this.debug(".updated: device.command = " + JSON.stringify(command));
-            this.debug(".updated: device.states = " + JSON.stringify(states));
-            this.debug(".updated: params = " + JSON.stringify(params));
-            this.debug(".updated: original_params = " + JSON.stringify(original_params));
+            this._debug(".updated: device.command = " + JSON.stringify(command));
+            this._debug(".updated: device.states = " + JSON.stringify(states));
+            this._debug(".updated: params = " + JSON.stringify(params));
+            this._debug(".updated: original_params = " + JSON.stringify(original_params));
 
             me.updateState(states);
 
@@ -1704,7 +1715,7 @@ module.exports = function (RED) {
                 }
             });*/
 
-            // this.debug(".updated: msg = " + JSON.stringify(msg));
+            // this._debug(".updated: msg = " + JSON.stringify(msg));
 
             this.send(msg);
         };
@@ -1715,7 +1726,7 @@ module.exports = function (RED) {
          */
         onInput(msg) {
             const me = this;
-            me.debug(".input: topic = " + msg.topic);
+            me._debug(".input: topic = " + msg.topic);
 
             let topic = '';
             let upper_topic = '';
@@ -2072,10 +2083,10 @@ module.exports = function (RED) {
                     }
                 } else {
                     let state_key = '';
-                    Object.keys(me.states).forEach(function (key) {
+                    Object.keys(me.state_types).forEach(function (key) {
                         if (upper_topic == key.toUpperCase()) {
                             state_key = key;
-                            me.debug(".input: found state " + state_key);
+                            me._debug(".input: found state " + state_key);
                         }
                     });
 
@@ -2084,7 +2095,7 @@ module.exports = function (RED) {
                         payload[state_key] = msg.payload;
                         const differs = me.updateState(payload);
                         if (differs) {
-                            me.debug(".input: " + state_key + ' ' + JSON.stringify(msg.payload));
+                            me._debug(".input: " + state_key + ' ' + JSON.stringify(msg.payload));
                             this.clientConn.setState(this, me.states, true);  // tell Google ...
 
                             if (this.passthru) {
@@ -2094,7 +2105,7 @@ module.exports = function (RED) {
                         }
                         this.updateStatusIcon();
                     } else {
-                        me.debug(".input: some other topic");
+                        me._debug(".input: some other topic");
                         const differs = me.updateState(msg.payload);
 
                         if (differs) {
@@ -2127,7 +2138,7 @@ module.exports = function (RED) {
 
         updateTogglesState(me, device) {
             // Key/value pair with the toggle name of the device as the key, and the current state as the value.
-            me.debug(".updateTogglesState");
+            me._debug(".updateTogglesState");
             let states = device.states || {};
             const currentToggleSettings = states['currentToggleSettings']
             let new_toggles = {};
@@ -2143,7 +2154,7 @@ module.exports = function (RED) {
 
         updateModesState(me, device) {
             // Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
-            me.debug(".updateModesState");
+            me._debug(".updateModesState");
             let states = device.states || {};
             const currentModeSettings = states['currentModeSettings']
             let new_modes = {};
@@ -2286,12 +2297,12 @@ module.exports = function (RED) {
                 // TODO check modes, toggles, arrays, temperatureSettings ...
                 if (new_states.hasOwnProperty(key)) {
                     if (me.setState(key, new_states[key], me.states, me.state_types[key])) {
-                        me.debug('updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
+                        me._debug('updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
                         modified = true;
                     }
                 }
             });
-            me.debug('.updateState: new State ' + modified + ' ' + JSON.stringify(me.states));
+            me._debug('.updateState: new State ' + modified + ' ' + JSON.stringify(me.states));
             return modified;
         }
 
@@ -2500,7 +2511,7 @@ module.exports = function (RED) {
         }
 
         loadJson(text, filename, defaultValue) {
-            this.debug('.loadJson: ' + text);
+            this._debug('.loadJson: ' + text);
             let full_filename;
             if (!filename.startsWith(path.sep)) {
                 const userDir = RED.settings.userDir;
@@ -2508,7 +2519,7 @@ module.exports = function (RED) {
             } else {
                 full_filename = filename;
             }
-            this.debug('.loadJson: filename ' + full_filename);
+            this._debug('.loadJson: filename ' + full_filename);
 
             try {
                 let jsonFile = fs.readFileSync(
@@ -2519,12 +2530,12 @@ module.exports = function (RED) {
                     });
 
                 if (jsonFile === '') {
-                    this.debug('.loadJson: file ' + filename + ' is empty');
+                    this._debug('.loadJson: file ' + filename + ' is empty');
                     return defaultValue;
                 } else {
-                    this.debug('.loadJson: data loaded');
+                    this._debug('.loadJson: data loaded');
                     const json = JSON.parse(jsonFile);
-                    this.debug('.loadJson: json = ' + JSON.stringify(json));
+                    this._debug('.loadJson: json = ' + JSON.stringify(json));
                     return json;
                 }
             }
@@ -2535,12 +2546,12 @@ module.exports = function (RED) {
         }
 
         writeJson(text, filename, value) {
-            this.debug('.writeJson: ' + text);
+            this._debug('.writeJson: ' + text);
             if (!filename.startsWith(path.sep)) {
                 const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
             }
-            this.debug('.writeJson: filename ' + filename);
+            this._debug('.writeJson: filename ' + filename);
             if (typeof value === 'object') {
                 value = JSON.stringify(value);
             }
@@ -2553,7 +2564,7 @@ module.exports = function (RED) {
                         'flag': fs.constants.W_OK | fs.constants.O_CREAT | fs.constants.O_TRUNC
                     });
 
-                this.debug('writeJson: ' + text + ' saved');
+                this._debug('.writeJson: ' + text + ' saved');
                 return true;
             }
             catch (err) {
@@ -2574,10 +2585,10 @@ module.exports = function (RED) {
                 'executionStates': executionStates
             };
 
-            me.debug(".execCommand: command " + JSON.stringify(command));
-            me.debug(".execCommand: states " + JSON.stringify(me.states));
-            // me.debug(".execCommand: device " +  JSON.stringify(device));
-            // me.debug(".execCommand: me.device " +  JSON.stringify(me.device));
+            me._debug(".execCommand: command " + JSON.stringify(command));
+            me._debug(".execCommand: states " + JSON.stringify(me.states));
+            // me._debug(".execCommand: device " +  JSON.stringify(device));
+            // me._debug(".execCommand: me.device " +  JSON.stringify(me.device));
 
             // Applications
             if ((command.command == 'action.devices.commands.appInstall') ||
@@ -3184,8 +3195,8 @@ module.exports = function (RED) {
                 }
                 if (command.params.hasOwnProperty('thermostatTemperatureRelativeWeight')) {
                     const thermostatTemperatureRelativeWeight = command.params['thermostatTemperatureRelativeWeight'];
-                    me.debug("C CHI thermostatTemperatureRelativeWeight " + thermostatTemperatureRelativeWeight);
-                    me.debug("C CHI thermostatTemperatureSetpoint " + me.states['thermostatTemperatureSetpoint']);
+                    me._debug("C CHI thermostatTemperatureRelativeWeight " + thermostatTemperatureRelativeWeight);
+                    me._debug("C CHI thermostatTemperatureSetpoint " + me.states['thermostatTemperatureSetpoint']);
                     params['thermostatTemperatureSetpoint'] = me.states['thermostatTemperatureSetpoint'] + thermostatTemperatureRelativeWeight;
                     executionStates.push('thermostatTemperatureSetpoint');
                 }*/

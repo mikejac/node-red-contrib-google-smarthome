@@ -63,27 +63,6 @@
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
     
-    <div class="form-row">
-        <label for="node-input-lang"><i class="fa fa-tag"></i> <span data-i18n="device.label.lang"></span></label>
-        <select id="node-input-lang" >
-            <option value='da' data-i18n='device.label.da'></option>
-            <option value='nl' data-i18n='device.label.nl'></option>
-            <option value='en' data-i18n='device.label.en'></option>
-            <option value='fr' data-i18n='device.label.fr'></option>
-            <option value='de' data-i18n='device.label.de'></option>
-            <option value='hi' data-i18n='device.label.hi'></option>
-            <option value='id' data-i18n='device.label.id'></option>
-            <option value='it' data-i18n='device.label.it'></option>
-            <option value='ja' data-i18n='device.label.ja'></option>
-            <option value='ko' data-i18n='device.label.ko'></option>
-            <option value='no' data-i18n='device.label.no'></option>
-            <option value='pt-BR' data-i18n='device.label.pt-BR'></option>
-            <option value='es' data-i18n='device.label.es'></option>
-            <option value='sv' data-i18n='device.label.sv'></option>
-            <option value='th' data-i18n='device.label.th'></option>
-        </select>
-    </div>
-
     <div class="form-row" id="device_type">
         <label for="node-input-device_type"><i class="fa fa-tag"></i> <span data-i18n="device.label.device_type"></span></label>
         <select id="node-input-device_type" >
@@ -1769,9 +1748,6 @@
             },
             available_zones: {
                 value: [], required: false
-            },
-            lang: {
-                value: "en", required: false
             },
             trait_runcycle: {
                 value: false, required: false

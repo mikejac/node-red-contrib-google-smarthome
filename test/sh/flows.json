@@ -11,6 +11,7 @@
         "type": "googlesmarthome-client",
         "name": "",
         "enabledebug": true,
+        "default_lang": "it",
         "usegooglelogin": false,
         "usehttpnoderoot": true,
         "port": "",
@@ -26,7 +27,7 @@
         "z": "c0151475.218f98",
         "client": "85fa874.600d378",
         "name": "",
-        "x": 510,
+        "x": 550,
         "y": 60,
         "wires": [
             [
@@ -376,7 +377,6 @@
             "Camera di Eliana",
             "Soggiorno"
         ],
-        "lang": "en",
         "trait_runcycle": true,
         "trait_softwareupdate": true,
         "trait_rotation": true,
@@ -1174,7 +1174,6 @@
             "Camera di Eliana",
             "Bagno"
         ],
-        "lang": "en",
         "trait_runcycle": true,
         "trait_softwareupdate": true,
         "trait_rotation": true,
