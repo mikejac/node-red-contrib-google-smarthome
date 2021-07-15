@@ -117,9 +117,9 @@ module.exports = function(RED) {
             node.app.SendNotifications(client.id, notifications);
         };
 
-        this.setState = function(client, state) {
+        this.setState = function(client, state, replaceAll) {
             RED.log.debug("GoogleSmartHomeNode:setState(): state = " + JSON.stringify(state));
-            node.app.SetState(client.id, state);
+            node.app.SetState(client.id, state, replaceAll);
         };
 
         this.getIdFromName = function(name) {

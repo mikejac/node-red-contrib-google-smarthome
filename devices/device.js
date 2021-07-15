@@ -2073,7 +2073,7 @@ module.exports = function (RED) {
                             }
                         });
                         if (me.updateState({ currentStatusReport: new_payload }) || differs) {
-                            this.clientConn.setState(this, me.states);  // tell Google ...
+                            this.clientConn.setState(this, me.states, true);  // tell Google ...
 
                             if (this.passthru) {
                                 msg.payload = new_payload;
@@ -2294,9 +2294,9 @@ module.exports = function (RED) {
             const me = this;
             let modified = false;
             Object.keys(me.state_types).forEach(function (key) {
-                // TODO check modes, toggles, arrays, temperatureSettings ...
+                // check modes, toggles, arrays, temperatureSettings ...
                 if (new_states.hasOwnProperty(key)) {
-                    if (me.setState(key, new_states[key], me.states, me.state_types[key])) {
+                    if (me.setState(key, new_states[key], me.states, me.state_types[key], me.exclusive_states[key] || {})) {
                         me._debug('updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
                         modified = true;
                     }
@@ -2306,12 +2306,15 @@ module.exports = function (RED) {
             return modified;
         }
 
-        cloneObject(cur_obj, new_obj, state_values) {
+        cloneObject(cur_obj, new_obj, state_values, exclusive_states) {
             const me = this;
             let differs = false;
+            if (exclusive_states === undefined) {
+                exclusive_states = {};
+            }
             Object.keys(state_values).forEach(function (key) {
                 if (typeof new_obj[key] !== 'undefined' && new_obj[key] != null) {
-                    if (me.setState(key, new_obj[key], cur_obj, state_values[key] || {})) {
+                    if (me.setState(key, new_obj[key], cur_obj, state_values[key] || {}, exclusive_states[key] || {})) {
                         differs = true;
                     }
                 } else if (typeof state_values[key] === 'number' && !(state_values[key] & formats.MANDATORY)) {
@@ -2335,12 +2338,17 @@ module.exports = function (RED) {
             return new_state;
         }
 
-        setState(key, value, states, state_values) {
+        setState(key, value, states, state_values, exclusive_states) {
             const me = this;
             let differs = false;
             const old_state = states[key];
             let val_type = typeof old_state;
             let new_state = undefined;
+            let exclusive_states_arr = [];
+            if (Array.isArray(exclusive_states)) {
+                exclusive_states_arr = exclusive_states;
+                exclusive_states = {};
+            }
             if (typeof state_values === 'object') {
                 if (typeof value === "object") {
                     if (Array.isArray(state_values)) {
@@ -2431,7 +2439,7 @@ module.exports = function (RED) {
                                         }
                                     }
                                     if (cur_obj !== undefined) {
-                                        if (me.cloneObject(cur_obj, new_obj, ar_state_values)) {
+                                        if (me.cloneObject(cur_obj, new_obj, ar_state_values, exclusive_states)) {
                                             differs = true;
                                         }
                                         if (Object.keys(cur_obj).length > 0) {
@@ -2455,7 +2463,7 @@ module.exports = function (RED) {
                         } else {
                             Object.keys(state_values).forEach(function (ikey) {
                                 if (typeof value[ikey] !== 'undefined' && value[ikey] != null) {
-                                    if (me.setState(ikey, value[ikey], old_state, state_values[ikey])) {
+                                    if (me.setState(ikey, value[ikey], old_state, state_values[ikey], exclusive_states[ikey] || {})) {
                                         differs = true;
                                     }
                                 } else if (typeof state_values[ikey] === 'number' && !(state_values[ikey] & formats.MANDATORY)) {
@@ -2479,7 +2487,7 @@ module.exports = function (RED) {
                 } else {
                     Object.keys(old_state).forEach(function (key) {
                         if (typeof value[key] !== 'undefined') {
-                            if (me.setState(key, value[key], old_state, state_values - Formats.COPY_OBJECT)) {
+                            if (me.setState(key, value[key], old_state, state_values - Formats.COPY_OBJECT, {})) {
                                 differs = true;
                             }
                         }
@@ -2506,6 +2514,9 @@ module.exports = function (RED) {
                     differs = old_state !== new_state;
                     states[key] = new_state;
                 }
+            }
+            if (differs) {
+                exclusive_states_arr.forEach(rkey => delete states[rkey]);
             }
             return differs;
         }
