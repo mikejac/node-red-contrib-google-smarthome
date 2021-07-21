@@ -1,0 +1,226 @@
+{
+    "topic": "",
+    "payload": {
+        "online": true,
+        "isArmed": false,
+        "currentArmLevel": "",
+        "exitAllowance": 60,
+        "brightness": 50,
+        "color": {
+            "temperatureK": 9000,
+            "spectrumRgb": 16777215,
+            "spectrumHsv": {
+                "hue": 0.0,
+                "saturation": 0.0,
+                "value": 1
+            }
+        },
+        "currentCookingMode": "NONE",
+        "currentFoodPreset": "NONE",
+        "currentFoodQuantity": 0,
+        "currentFoodUnit": "UNKNOWN_UNITS",
+        "dispenseItems": [
+            {
+                "itemName": "water",
+                "amountRemaining": {
+                    "amount": 0,
+                    "unit": "NO_UNITS"
+                },
+                "amountLastDispensed": {
+                    "amount": 0,
+                    "unit": "NO_UNITS"
+                },
+                "isCurrentlyDispensing": false
+            },
+            {
+                "itemName": "cat_bowl",
+                "amountRemaining": {
+                    "amount": 0,
+                    "unit": "NO_UNITS"
+                },
+                "amountLastDispensed": {
+                    "amount": 0,
+                    "unit": "NO_UNITS"
+                },
+                "isCurrentlyDispensing": false
+            },
+            {
+                "itemName": "glass_1",
+                "amountRemaining": {
+                    "amount": 0,
+                    "unit": "NO_UNITS"
+                },
+                "amountLastDispensed": {
+                    "amount": 0,
+                    "unit": "NO_UNITS"
+                },
+                "isCurrentlyDispensing": false
+            }
+        ],
+        "isDocked": false,
+        "descriptiveCapacityRemaining": "FULL",
+        "capacityRemaining": [],
+        "capacityUntilFull": [],
+        "isCharging": false,
+        "isPluggedIn": false,
+        "currentFanSpeedSetting": "",
+        "currentFanSpeedPercent": 0,
+        "isLocked": false,
+        "isJammed": false,
+        "activeLightEffect": "",
+        "networkEnabled": true,
+        "networkSettings": {
+            "ssid": ""
+        },
+        "guestNetworkEnabled": false,
+        "guestNetworkSettings": {
+            "ssid": ""
+        },
+        "numConnectedDevices": 1,
+        "networkUsageMB": 0,
+        "networkUsageLimitMB": 0,
+        "networkUsageUnlimited": true,
+        "lastNetworkDownloadSpeedTest": {
+            "downloadSpeedMbps": 0,
+            "unixTimestampSec": 0,
+            "status": "FAILURE"
+        },
+        "lastNetworkUploadSpeedTest": {
+            "uploadSpeedMbps": 0,
+            "unixTimestampSec": 0,
+            "status": "FAILURE"
+        },
+        "networkSpeedTestInProgress": false,
+        "openPercent": 100,
+        "openState": [
+            {
+                "openPercent": 0,
+                "openDirection": "UP"
+            },
+            {
+                "openPercent": 0,
+                "openDirection": "DOWN"
+            },
+            {
+                "openPercent": 0,
+                "openDirection": "LEFT"
+            },
+            {
+                "openPercent": 0,
+                "openDirection": "RIGHT"
+            },
+            {
+                "openPercent": 0,
+                "openDirection": "IN"
+            },
+            {
+                "openPercent": 0,
+                "openDirection": "OUT"
+            }
+        ],
+        "rotationDegrees": 0,
+        "rotationPercent": 0,
+        "currentRunCycle": [
+            {
+                "currentCycle": "unknown",
+                "lang": "en"
+            }
+        ],
+        "currentTotalRemainingTime": 0,
+        "currentCycleRemainingTime": 0,
+        "currentSensorStateData": [
+            {
+                "name": "AirQuality",
+                "currentSensorState": "unknown",
+                "rawValue": 0
+            },
+            {
+                "name": "CarbonMonoxideLevel",
+                "currentSensorState": "unknown",
+                "rawValue": 0
+            },
+            {
+                "name": "SmokeLevel",
+                "currentSensorState": "unknown",
+                "rawValue": 0
+            },
+            {
+                "name": "FilterCleanliness",
+                "currentSensorState": "unknown"
+            },
+            {
+                "name": "WaterLeak",
+                "currentSensorState": "unknown"
+            },
+            {
+                "name": "RainDetection",
+                "currentSensorState": "unknown"
+            },
+            {
+                "name": "FilterLifeTime",
+                "currentSensorState": "unknown",
+                "rawValue": 0
+            },
+            {
+                "name": "PreFilterLifeTime",
+                "rawValue": 0
+            },
+            {
+                "name": "HEPAFilterLifeTime",
+                "rawValue": 0
+            },
+            {
+                "name": "Max2FilterLifeTime",
+                "rawValue": 0
+            },
+            {
+                "name": "CarbonDioxideLevel",
+                "rawValue": 0
+            },
+            {
+                "name": "PM2.5",
+                "rawValue": 0
+            },
+            {
+                "name": "PM10",
+                "rawValue": 0
+            },
+            {
+                "name": "VolatileOrganicCompounds",
+                "rawValue": 0
+            }
+        ],
+        "lastSoftwareUpdateUnixTimestampSec": 0,
+        "isRunning": false,
+        "isPaused": false,
+        "activeZones": [],
+        "currentStatusReport": [],
+        "humiditySetpointPercent": 52,
+        "humidityAmbientPercent": 52,
+        "currentInput": "",
+        "activityState": "INACTIVE",
+        "playbackState": "STOPPED",
+        "currentModeSettings": {
+            "load_mode": "",
+            "temp_mode": ""
+        },
+        "on": false,
+        "temperatureSetpointCelsius": 0,
+        "temperatureAmbientCelsius": 0,
+        "activeThermostatMode": "off",
+        "targetTempReachedEstimateUnixTimestampSec": 360,
+        "thermostatHumidityAmbient": 60,
+        "thermostatMode": "off",
+        "thermostatTemperatureAmbient": 1,
+        "thermostatTemperatureSetpoint": 1,
+        "timerRemainingSec": -1,
+        "timerPaused": false,
+        "currentToggleSettings": {
+            "quiet_toggle": false,
+            "extra_bass_toggle": false,
+            "energy_saving_toggle": false
+        },
+        "currentVolume": 40,
+        "isMuted": false
+    }
+}

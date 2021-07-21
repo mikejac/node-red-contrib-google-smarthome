@@ -21,11 +21,11 @@
 . ./data
 . ./code
 
-NODE_ID=$1 || "98599ced.c9cc6"
+NODE_ID=$1 || "a5782b1b.e120f8"
+NODE_ID1=$2 || "bab53c06.fc9c3"
 PAYLOAD_FILE="$HOME/payload.json"
 OUT_FILE="$HOME/out.json"
 PAYLOAD_URL=$(dirname $BASE_URL)/payload
-TEST_TYPE=$2 || '1'
 
 ./refresh_token
 
@@ -75,6 +75,7 @@ test_no_payload() {
 }
 
 execute_payload() {
+    echo
     CMD_EXEC="$@"
     echo "$@" > request.json
     TOPIC="$1"
@@ -85,6 +86,7 @@ execute_payload() {
     fi
     REQUEST="{\"payload\": $PAYLOAD, \"topic\": \"$TOPIC\"}"
     echo $REQUEST
+    mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old" 
     echo "{}" > "$PAYLOAD_FILE" 
     curl -s \
         -H "Content-Type: application/json;charset=UTF-8" \
@@ -142,6 +144,283 @@ execute_error() {
 # if [ 1 == 2 ] ; then
 # fi # fi
 
+execute_payload topic '{"online":true,"isArmed":false,"currentArmLevel":"","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"","currentInput":"","activeLightEffect":"","currentModeSettings":{"load_mode":"","temp_mode":""},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet_toggle":false,"extra_bass_toggle":false,"energy_saving_toggle":false},"currentVolume":40,"on":true,"isDocked":false}'
+test_payload .online true
+test_payload .isArmed false
+test_payload .currentArmLevel '""'
+test_payload .color.temperatureK 9000
+test_payload .currentCookingMode '"NONE"'
+test_payload .dispenseItems[0].itemName '"water"'
+test_payload .dispenseItems[0].amountRemaining.amount 10
+test_payload .dispenseItems[0].amountRemaining.unit '"NO_UNITS"'
+test_payload .dispenseItems[0].amountLastDispensed.amount 11
+test_payload .dispenseItems[0].amountLastDispensed.unit '"NO_UNITS"'
+test_payload .dispenseItems[0].isCurrentlyDispensing false
+test_payload .dispenseItems[1].itemName '"cat_bowl"'
+test_payload .dispenseItems[1].amountRemaining.amount 12
+test_payload .dispenseItems[1].amountRemaining.unit '"NO_UNITS"'
+test_payload .dispenseItems[1].amountLastDispensed.amount 13
+test_payload .dispenseItems[1].amountLastDispensed.unit '"NO_UNITS"'
+test_payload .dispenseItems[1].isCurrentlyDispensing false
+test_payload .dispenseItems[2].itemName '"glass_1"'
+test_payload .dispenseItems[2].amountRemaining.amount 14
+test_payload .dispenseItems[2].amountRemaining.unit '"NO_UNITS"'
+test_payload .dispenseItems[2].amountLastDispensed.amount 15
+test_payload .dispenseItems[2].amountLastDispensed.unit '"NO_UNITS"'
+test_payload .dispenseItems[2].isCurrentlyDispensing false
+test_payload .descriptiveCapacityRemaining '"FULL"'
+test_payload .capacityRemaining '[]'
+test_payload .capacityUntilFull '[]'
+test_payload .isPluggedIn false
+test_payload .currentFanSpeedPercent 0
+test_payload .isFilled false
+test_payload .currentFillLevel '""'
+test_payload .currentInput '""'
+test_payload .activeLightEffect '""'
+test_payload .currentModeSettings.load_mode '""'
+test_payload .currentModeSettings.temp_mode '""'
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 0
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 0
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 0
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 0
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 0
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 0
+test_payload .currentRunCycle[0].currentCycle '"unknown"'
+test_payload .currentRunCycle[0].lang '"en"'
+test_payload .currentTotalRemainingTime 0
+test_payload .currentCycleRemainingTime 0
+test_payload .currentSensorStateData[0].name '"AirQuality"'
+test_payload .currentSensorStateData[0].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[0].rawValue 0
+test_payload .currentSensorStateData[1].name '"CarbonMonoxideLevel"'
+test_payload .currentSensorStateData[1].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[1].rawValue 0
+test_payload .currentSensorStateData[2].name '"SmokeLevel"'
+test_payload .currentSensorStateData[2].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[2].rawValue 0
+test_payload .currentSensorStateData[3].name '"FilterCleanliness"'
+test_payload .currentSensorStateData[3].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[3].rawValue null
+test_payload .currentSensorStateData[4].name '"WaterLeak"'
+test_payload .currentSensorStateData[4].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[4].rawValue null
+test_payload .currentSensorStateData[5].name '"RainDetection"'
+test_payload .currentSensorStateData[5].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[5].rawValue null
+test_payload .currentSensorStateData[6].name '"FilterLifeTime"'
+test_payload .currentSensorStateData[6].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[6].rawValue 0
+test_payload .currentSensorStateData[7].name '"PreFilterLifeTime"'
+test_payload .currentSensorStateData[7].currentSensorState null
+test_payload .currentSensorStateData[7].rawValue 0
+test_payload .currentSensorStateData[8].name '"HEPAFilterLifeTime"'
+test_payload .currentSensorStateData[8].currentSensorState null
+test_payload .currentSensorStateData[8].rawValue 0
+test_payload .currentSensorStateData[9].name '"Max2FilterLifeTime"'
+test_payload .currentSensorStateData[9].currentSensorState null
+test_payload .currentSensorStateData[9].rawValue 0
+test_payload .currentSensorStateData[10].name '"CarbonDioxideLevel"'
+test_payload .currentSensorStateData[10].currentSensorState null
+test_payload .currentSensorStateData[10].rawValue 0
+test_payload .currentSensorStateData[11].name '"PM2.5"'
+test_payload .currentSensorStateData[11].currentSensorState null
+test_payload .currentSensorStateData[11].rawValue 0
+test_payload .currentSensorStateData[12].name '"PM10"'
+test_payload .currentSensorStateData[12].currentSensorState null
+test_payload .currentSensorStateData[12].rawValue 0
+test_payload .currentSensorStateData[13].name '"VolatileOrganicCompounds"'
+test_payload .currentSensorStateData[13].currentSensorState null
+test_payload .currentSensorStateData[13].rawValue 0
+test_payload .lastSoftwareUpdateUnixTimestampSec 0
+test_payload .isRunning false
+test_payload .currentStatusReport '[]'
+test_payload .temperatureSetpointCelsius 0
+test_payload .thermostatMode '"off"'
+test_payload .thermostatTemperatureAmbient 1
+test_payload .thermostatTemperatureSetpoint 1
+test_payload .timerRemainingSec -1
+test_payload .currentToggleSettings.quiet_toggle false
+test_payload .currentToggleSettings.extra_bass_toggle false
+test_payload .currentToggleSettings.energy_saving_toggle false
+test_payload .currentVolume 40
+test_payload .on true
+test_payload .isDocked false
+
+execute_payload topic '{"on":true, "isDocked":null}'
+test_payload .isDocked null
+test_payload .on true
+
+execute_payload topic '{"on":false, "isDocked":false}'
+test_payload .isDocked false
+test_payload .on false
+
+execute_payload topic '{"on":true, "isDocked":null}'
+test_payload .on true
+test_payload .isDocked null
+
+execute_payload null '{"currentStatusReport":[]}'
+test_payload .currentStatusReport '[]'
+
+execute_payload currentStatusReport '[]'
+test_payload .currentStatusReport '[]'
+test_payload .currentStatusReport '[]'
+
+execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"PIPPO","priority":0,"statusCode":"lowBattery"}]}'
+test_payload .currentStatusReport '[]'
+
+execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"Garage","priority":0,"statusCode":"lowBattery"}, {"blocking":false,"deviceTarget":"Ingresso","priority":0,"statusCode":"lowBattery"}]}'
+test_payload .currentStatusReport '[]'
+
+execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"Cucina","priority":0,"statusCode":"allBattery"}]}'
+test_payload .currentStatusReport[0].blocking false
+test_payload .currentStatusReport[0].priority 0
+test_payload .currentStatusReport[0].statusCode '"allBattery"'
+test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
+
+execute_payload currentStatusReport '[{"blocking":true,"deviceTarget":"Cucina","priority":1,"statusCode":"lowBattery"}]'
+test_payload .currentStatusReport[0].blocking true
+test_payload .currentStatusReport[0].priority 1
+test_payload .currentStatusReport[0].statusCode '"lowBattery"'
+test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
+
+execute_payload StatusReport '[{"blocking":false,"deviceTarget":"Cucina","priority":2,"statusCode":"okBattery"}]'
+test_payload .currentStatusReport[0].blocking true
+test_payload .currentStatusReport[0].priority 1
+test_payload .currentStatusReport[0].statusCode '"lowBattery"'
+test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
+test_payload .currentStatusReport[1].blocking false
+test_payload .currentStatusReport[1].priority 2
+test_payload .currentStatusReport[1].statusCode '"okBattery"'
+test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
+
+execute_payload StatusReport '[{"blocking":false,"deviceTarget":"Cucina","priority":2,"statusCode":"okBattery"}]'
+test_payload .currentStatusReport[0].blocking true
+test_payload .currentStatusReport[0].priority 1
+test_payload .currentStatusReport[0].statusCode '"lowBattery"'
+test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
+test_payload .currentStatusReport[1].blocking false
+test_payload .currentStatusReport[1].priority 2
+test_payload .currentStatusReport[1].statusCode '"okBattery"'
+test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
+
+execute_payload StatusReport '[]'
+test_payload .currentStatusReport[0].blocking true
+test_payload .currentStatusReport[0].priority 1
+test_payload .currentStatusReport[0].statusCode '"lowBattery"'
+test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
+test_payload .currentStatusReport[1].blocking false
+test_payload .currentStatusReport[1].priority 2
+test_payload .currentStatusReport[1].statusCode '"okBattery"'
+test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
+
+execute_payload StatusReport '[{"blocking":false,"deviceTarget":"Salotto","priority":3,"statusCode":"lowBattery"}]'
+test_payload .currentStatusReport[0].blocking true
+test_payload .currentStatusReport[0].priority 1
+test_payload .currentStatusReport[0].statusCode '"lowBattery"'
+test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
+test_payload .currentStatusReport[1].blocking false
+test_payload .currentStatusReport[1].priority 2
+test_payload .currentStatusReport[1].statusCode '"okBattery"'
+test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
+test_payload .currentStatusReport[2].blocking false
+test_payload .currentStatusReport[2].priority 3
+test_payload .currentStatusReport[2].statusCode '"lowBattery"'
+test_payload .currentStatusReport[2].deviceTarget "\"$NODE_ID1\""
+
+execute_payload capacityRemaining '[{"unit":"SECONDS","rawValue":60}]'
+test_payload .capacityRemaining[0].unit '"SECONDS"'
+test_payload .capacityRemaining[0].rawValue 60
+
+execute_payload capacityUntilFull '[{"unit":"PERCENTAGE","rawValue":7}]'
+test_payload .capacityUntilFull[0].unit '"PERCENTAGE"'
+test_payload .capacityUntilFull[0].rawValue 7
+
+execute_payload capacityRemaining '[{"unit":"SECONDS","rawValue":70},{"unit":"KILOMETERS","rawValue":27}]'
+test_payload .capacityRemaining[0].unit '"SECONDS"'
+test_payload .capacityRemaining[0].rawValue 70
+test_payload .capacityRemaining[1].unit '"KILOMETERS"'
+test_payload .capacityRemaining[1].rawValue 27
+test_payload .capacityUntilFull[0].unit '"PERCENTAGE"'
+test_payload .capacityUntilFull[0].rawValue 7
+
+execute_payload capacityUntilFull '[{"unit":"SECONDS","rawValue":60}]'
+test_payload .capacityUntilFull[0].unit '"SECONDS"'
+test_payload .capacityUntilFull[0].rawValue 60
+test_payload .capacityRemaining[0].unit '"SECONDS"'
+test_payload .capacityRemaining[0].rawValue 70
+test_payload .capacityRemaining[1].unit '"KILOMETERS"'
+test_payload .capacityRemaining[1].rawValue 27
+
+execute_payload capacityRemaining '[{"unit":"PERCENTAGE","rawValue":7}]'
+test_payload .capacityRemaining[0].unit '"PERCENTAGE"'
+test_payload .capacityRemaining[0].rawValue 7
+test_payload .capacityUntilFull[0].unit '"SECONDS"'
+test_payload .capacityUntilFull[0].rawValue 60
+
+execute_payload openState '[{"openDirection":"DOWN","openPercent":7}]'
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 0
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 7
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 0
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 0
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 0
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 0
+
+execute_payload openState '[{"openDirection":"LEFT","openPercent":5},{"openDirection":"IN","openPercent":9}]'
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 0
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 7
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 5
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 0
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 9
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 0
+
+execute_payload currentRunCycle '[{"currentCycle":"Riscaldamento piatto","nextCycle":"Riscaldamento ugello","lang":"it"},{"currentCycle":"Riscaldamento ugello","nextCycle":"Stampa","lang":"it"}]'
+test_payload .currentRunCycle[0].currentCycle '"Riscaldamento piatto"'
+test_payload .currentRunCycle[0].nextCycle '"Riscaldamento ugello"'
+test_payload .currentRunCycle[0].lang '"it"'
+test_payload .currentRunCycle[1].currentCycle '"Riscaldamento ugello"'
+test_payload .currentRunCycle[1].nextCycle '"Stampa"'
+test_payload .currentRunCycle[1].lang '"it"'
+
+execute_payload currentSensorStateData '[{"name":"CarbonMonoxideLevel","currentSensorState":"no carbon monoxide detected","rawValue":7}]'
+test_payload .currentSensorStateData[1].name '"CarbonMonoxideLevel"'
+test_payload .currentSensorStateData[1].currentSensorState '"no carbon monoxide detected"'
+test_payload .currentSensorStateData[1].rawValue 7
+
+execute_payload activeZones '["Cucina","Salotto"]'
+test_payload .activeZones[0] '"Cucina"'
+test_payload .activeZones[1] '"Salotto"'
+test_payload .activeZones[2] null
+
+execute_payload activeZones '["Cucina","Salotto", "Soggiorno"]'
+test_payload .activeZones[0] '"Cucina"'
+test_payload .activeZones[1] '"Salotto"'
+test_payload .activeZones[2] '"Soggiorno"'
+test_payload .activeZones[3] null
+
+execute_payload activeZones '["Bagno"]'
+test_payload .activeZones[0] '"Bagno"'
+test_payload .activeZones[1] null
+
+echo
+
 # AppSelector 
 echo AppSelector
 execute $NODE_ID appInstall mia_application
@@ -189,15 +468,15 @@ test_out ".payload.commands[0].errorCode" '"noAvailableApp"'
 echo
 echo ArmDisarm The Arm/Disarm logic should be outside the node
 execute $NODE_ID ArmDisarm true 123
-# test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.online" true
 
 execute $NODE_ID ArmDisarm_level true L2 123
-# test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.online" true
 
 execute_error $NODE_ID ArmDisarm_level true NO_LEVEL 456
 
 execute $NODE_ID ArmDisarm_cancel true
-# test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.online" true
 
 # Brightness
 echo
@@ -211,7 +490,7 @@ test_payload ".brightness" 200
 
 execute $NODE_ID BrightnessRelative 4
 test_out ".payload.commands[0].states.online" true
-test_payload ".brightness" 208
+test_payload ".brightness" 200
 
 # CameraStream
 echo
@@ -275,31 +554,51 @@ echo
 echo ColorSetting 
 execute $NODE_ID ColorAbsolute 'Bianco Caldo' 3000
 test_payload ".color.temperatureK" 3000
-# test_out ".payload.commands[0].states.online" true
-
-if [ "$TEST_TYPE" == '1' ] ; then
-    execute $NODE_ID ColorAbsolute_rgb 'Magenta' 16711935
-    test_payload ".color.spectrumRgb" 16711935
-    test_payload ".color.temperatureK" null
-    # test_out ".payload.commands[0].states.online" true
-fi
-
-if [ "$TEST_TYPE" == '2' ] ; then
-    execute $NODE_ID ColorAbsolute_hsv 'Magenta' 300 1 1
-    # test_out ".payload.commands[0].states.online" true
-    test_payload ".color.spectrumHsv.hue" 300
-    test_payload ".color.spectrumHsv.saturation" 1
-    test_payload ".color.spectrumHsv.value" 1
-    test_payload ".color.temperatureK" null
-    test_payload ".color.spectrumRgb" null
-fi
-
-execute $NODE_ID ColorAbsolute 'Bianco Freddo' 7000
 test_payload ".color.spectrumRgb" null
 test_payload ".color.spectrumHsv.hue" null
 test_payload ".color.spectrumHsv.saturation" null
 test_payload ".color.spectrumHsv.value" null
-# test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.online" true
+
+execute $NODE_ID ColorAbsolute_rgb 'Magenta' 16711935
+test_payload ".color.spectrumRgb" 16711935
+test_payload ".color.temperatureK" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
+
+execute $NODE_ID ColorAbsolute 'Bianco Caldo' 4000
+test_payload ".color.temperatureK" 4000
+test_payload ".color.spectrumRgb" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
+
+execute $NODE_ID1 ColorAbsolute_hsv 'Magenta' 300 1 1
+test_out ".payload.commands[0].states.online" true
+test_payload ".color.spectrumHsv.hue" 300
+test_payload ".color.spectrumHsv.saturation" 1
+test_payload ".color.spectrumHsv.value" 1
+test_payload ".color.temperatureK" null
+test_payload ".color.spectrumRgb" null
+
+execute $NODE_ID1 ColorAbsolute 'Bianco Freddo' 7000
+test_payload ".color.temperatureK" 7000
+test_payload ".color.spectrumRgb" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
+
+execute $NODE_ID1 ColorAbsolute_hsv 'Blu' 500 2 3
+test_out ".payload.commands[0].states.online" true
+test_payload ".color.spectrumHsv.hue" 500
+test_payload ".color.spectrumHsv.saturation" 2
+test_payload ".color.spectrumHsv.value" 3
+test_payload ".color.temperatureK" null
+test_payload ".color.spectrumRgb" null
 
 # Cook
 echo
@@ -388,11 +687,11 @@ test_payload ".currentFanSpeedPercent" 50
 test_payload ".currentFanSpeedSetting" '"speed_high"'
 
 execute $NODE_ID SetFanSpeedRelative -2 
-test_payload ".currentFanSpeedPercent" 48
+test_payload ".currentFanSpeedPercent" 50
 test_payload ".currentFanSpeedSetting" '"speed_high"'
 
 execute $NODE_ID SetFanSpeedRelative_percent 15 
-test_payload ".currentFanSpeedPercent" 55
+test_payload ".currentFanSpeedPercent" 50
 test_payload ".currentFanSpeedSetting" '"speed_high"'
 
 execute $NODE_ID Reverse 
@@ -420,10 +719,10 @@ execute $NODE_ID SetHumidity 30
 test_payload ".humiditySetpointPercent" 30
 
 execute $NODE_ID HumidityRelative -6 
-test_payload ".humiditySetpointPercent" 24
+test_payload ".humiditySetpointPercent" 30
 
 execute $NODE_ID HumidityRelative_percent 5 
-test_payload ".humiditySetpointPercent" 25
+test_payload ".humiditySetpointPercent" 30
 
 # InputSelector 
 echo
@@ -466,7 +765,7 @@ execute $NODE_ID Locate_lang true "it"
 echo
 echo LockUnlock 
 execute $NODE_ID LockUnlock true "125"
-test_payload ".isLocked" false
+test_payload ".isLocked" true
 
 execute $NODE_ID LockUnlock false "125"
 test_payload ".isLocked" false
@@ -568,31 +867,31 @@ test_payload ".openState[5].openPercent" 10
 execute $NODE_ID OpenCloseRelative 5
 
 execute $NODE_ID OpenCloseRelative_dir -1 "UP"
-test_payload ".openState[0].openPercent" 49
+test_payload ".openState[0].openPercent" 50
 
 execute $NODE_ID OpenCloseRelative_dir 3 "DOWN"
-test_payload ".openState[1].openPercent" 73
+test_payload ".openState[1].openPercent" 70
 
 execute $NODE_ID OpenCloseRelative_dir -5 "LEFT"
-test_payload ".openState[2].openPercent" 55
+test_payload ".openState[2].openPercent" 60
 
 execute $NODE_ID OpenCloseRelative_dir 11 "RIGHT"
-test_payload ".openState[3].openPercent" 56
+test_payload ".openState[3].openPercent" 45
 
 execute $NODE_ID OpenCloseRelative_dir -7 "IN"
-test_payload ".openState[4].openPercent" 13
+test_payload ".openState[4].openPercent" 20
 
 execute $NODE_ID OpenCloseRelative_dir 17 "OUT"
-test_payload ".openState[5].openPercent" 27
+test_payload ".openState[5].openPercent" 10
 
 execute $NODE_ID OpenCloseRelative_dir -9 "NO_DIR"
 test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR??
-test_payload ".openState[0].openPercent" 49
-test_payload ".openState[1].openPercent" 73
-test_payload ".openState[2].openPercent" 55
-test_payload ".openState[3].openPercent" 56
-test_payload ".openState[4].openPercent" 13
-test_payload ".openState[5].openPercent" 27
+test_payload ".openState[0].openPercent" 50
+test_payload ".openState[1].openPercent" 70
+test_payload ".openState[2].openPercent" 60
+test_payload ".openState[3].openPercent" 45
+test_payload ".openState[4].openPercent" 20
+test_payload ".openState[5].openPercent" 10
 
 # Reboot 
 echo
@@ -746,10 +1045,10 @@ test_out ".payload.commands[0].errorCode" '"noTimerExists"'
 
 execute $NODE_ID TimerStart 1000
 test_payload ".timerRemainingSec" 1000
-test_payload ".timerPaused" false
+test_payload ".timerPaused" null
 
 execute $NODE_ID TimerAdjust -5
-test_payload ".timerPaused" false
+test_payload ".timerPaused" null
 
 execute $NODE_ID TimerPause
 test_payload ".timerPaused" true

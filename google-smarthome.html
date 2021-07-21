@@ -34,6 +34,27 @@
     </div>
 
     <div class="form-row">
+        <label for="node-config-input-default_lang"><i class="fa fa-tag"></i> <span data-i18n="googlesmarthome.label.default_lang"></span></label>
+        <select id="node-config-input-default_lang" >
+            <option value='da' data-i18n='googlesmarthome.label.da'></option>
+            <option value='nl' data-i18n='googlesmarthome.label.nl'></option>
+            <option value='en' data-i18n='googlesmarthome.label.en'></option>
+            <option value='fr' data-i18n='googlesmarthome.label.fr'></option>
+            <option value='de' data-i18n='googlesmarthome.label.de'></option>
+            <option value='hi' data-i18n='googlesmarthome.label.hi'></option>
+            <option value='id' data-i18n='googlesmarthome.label.id'></option>
+            <option value='it' data-i18n='googlesmarthome.label.it'></option>
+            <option value='ja' data-i18n='googlesmarthome.label.ja'></option>
+            <option value='ko' data-i18n='googlesmarthome.label.ko'></option>
+            <option value='no' data-i18n='googlesmarthome.label.no'></option>
+            <option value='pt-BR' data-i18n='googlesmarthome.label.pt-BR'></option>
+            <option value='es' data-i18n='googlesmarthome.label.es'></option>
+            <option value='sv' data-i18n='googlesmarthome.label.sv'></option>
+            <option value='th' data-i18n='googlesmarthome.label.th'></option>
+        </select>
+    </div>
+
+    <div class="form-row">
         <b>Local Authentication</b>
     </div>
 
@@ -183,6 +204,9 @@
             },
             enabledebug: {
                 value: false
+            },
+            default_lang: {
+                value: "en", required: true,
             },
             usegooglelogin : {
                 value: false
@@ -488,7 +512,7 @@
             },
             name: {
                 value: ""
-            }
+            },
         },
         inputs: 1,
         outputs: 1,

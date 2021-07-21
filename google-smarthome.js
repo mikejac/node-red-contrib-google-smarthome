@@ -39,16 +39,7 @@ module.exports = function(RED) {
         this.mgmtNodes = {};
 
         var node = this;
-        /*console.log("credentials " + JSON.stringify(node.credentials));
-        console.log("config.loginclientid " + JSON.stringify(config.loginclientid));
-        console.log("config.emails " + JSON.stringify(config.emails));
-        console.log("config.username " + JSON.stringify(config.username));
-        console.log("config.password " + JSON.stringify(config.password));
-        console.log("config.publickey " + JSON.stringify(config.publickey));
-        console.log("config.privatekey " + JSON.stringify(config.privatekey));
-        console.log("config.jwtkey " + JSON.stringify(config.jwtkey));
-        console.log("config.clientid " + JSON.stringify(config.clientid));
-        console.log("config.clientsecret " + JSON.stringify(config.clientsecret));*/
+        this.default_lang = config.default_lang || 'en';
 
         this.app = new GoogleSmartHome(
             this,
@@ -98,7 +89,7 @@ module.exports = function(RED) {
                 RED.log.debug('GoogleSmartHomeNode:register(): sucessfully registered device ' + type + ' ' + client.id);
                 return JSON.parse(JSON.stringify(states));
             } else {
-                this.debug('GoogleSmartHomeNode:register(): registering device ' + type + ' ' + client.id + ' failed');
+                RED.log.debug('GoogleSmartHomeNode:register(): registering device ' + type + ' ' + client.id + ' failed');
                 return {};
             }
         };
@@ -126,9 +117,9 @@ module.exports = function(RED) {
             node.app.SendNotifications(client.id, notifications);
         };
 
-        this.setState = function(client, state) {
+        this.setState = function(client, state, replaceAll) {
             RED.log.debug("GoogleSmartHomeNode:setState(): state = " + JSON.stringify(state));
-            node.app.SetState(client.id, state);
+            node.app.SetState(client.id, state, replaceAll);
         };
 
         this.getIdFromName = function(name) {
@@ -139,7 +130,7 @@ module.exports = function(RED) {
             return node.app.getProperties(deviceIds);
         }
 
-        this.debug = function(msg) {
+        this._debug = function(msg) {
             if (config.enabledebug) {
                 console.log(msg)
             } else {
@@ -294,6 +285,11 @@ module.exports = function(RED) {
                     RED.log.debug("MgmtNode(input): REQUEST_SYNC");
 
                     this.clientConn.app.RequestSync();
+                } else if (topic.toUpperCase() === 'GET_STATE') {
+                    let states = this.clientConn.app.getStates();
+                    if (states) {
+                        this.send({payload: states});
+                    }
                 }
             } catch (err) {
                 RED.log.error(err);

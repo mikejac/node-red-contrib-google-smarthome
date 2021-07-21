@@ -63,27 +63,6 @@
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
     
-    <div class="form-row">
-        <label for="node-input-lang"><i class="fa fa-tag"></i> <span data-i18n="device.label.lang"></span></label>
-        <select id="node-input-lang" >
-            <option value='da' data-i18n='device.label.da'></option>
-            <option value='nl' data-i18n='device.label.nl'></option>
-            <option value='en' data-i18n='device.label.en'></option>
-            <option value='fr' data-i18n='device.label.fr'></option>
-            <option value='de' data-i18n='device.label.de'></option>
-            <option value='hi' data-i18n='device.label.hi'></option>
-            <option value='id' data-i18n='device.label.id'></option>
-            <option value='it' data-i18n='device.label.it'></option>
-            <option value='ja' data-i18n='device.label.ja'></option>
-            <option value='ko' data-i18n='device.label.ko'></option>
-            <option value='no' data-i18n='device.label.no'></option>
-            <option value='pt-BR' data-i18n='device.label.pt-BR'></option>
-            <option value='es' data-i18n='device.label.es'></option>
-            <option value='sv' data-i18n='device.label.sv'></option>
-            <option value='th' data-i18n='device.label.th'></option>
-        </select>
-    </div>
-
     <div class="form-row" id="device_type">
         <label for="node-input-device_type"><i class="fa fa-tag"></i> <span data-i18n="device.label.device_type"></span></label>
         <select id="node-input-device_type" >
@@ -520,6 +499,7 @@
             <div class="form-row">
                 <label for="node-input-energy_storage_distance_unit_for_ux"><i class="fa fa-tag"></i> <span data-i18n="device.label.energy_storage_distance_unit_for_ux"></span></label>
                 <select id="node-input-energy_storage_distance_unit_for_ux" >
+                    <option value=""></option>
                     <option value="KILOMETERS" data-i18n="device.label.KILOMETERS"></option>
                     <option value="MILES" data-i18n="device.label.MILES"></option>
                 </select>
@@ -594,6 +574,11 @@
             <div class="form-row">
                 <label style="width:auto" for="node-input-available_fill_levels_file"><i class="fa fa-file"></i> <span data-i18n="device.label.available_fill_levels_file"></span></label>
                 <input type="text" id="node-input-available_fill_levels_file" data-i18n="[placeholder]device.placeholder.available_fill_levels_file">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-ordered_fill_levels"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.ordered_fill_levels"></span></label>
+                <input type="checkbox" checked id="node-input-ordered_fill_levels" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
 
             <div class="form-row">
@@ -1419,8 +1404,8 @@
             </div>
 
             <div class="form-row">
-                <label style="width:auto" for="node-input-can_mute_and_unmute"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.can_mute_and_unmute"></span></label>
-                <input type="checkbox" checked id="node-input-can_mute_and_unmute" style="display:inline-block; width:auto; vertical-align:top;">
+                <label style="width:auto" for="node-input-volume_can_mute_and_unmute"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.volume_can_mute_and_unmute"></span></label>
+                <input type="checkbox" checked id="node-input-volume_can_mute_and_unmute" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
 
             <div class="form-row">
@@ -1547,7 +1532,7 @@
                     return !isNaN(v) && Number.isInteger(f) && n >= 0;
                 }
             },
-            can_mute_and_unmute: {
+            volume_can_mute_and_unmute: {
                 value: true, required: false
             },
             volume_default_percentage: {
@@ -1764,9 +1749,6 @@
             available_zones: {
                 value: [], required: false
             },
-            lang: {
-                value: "en", required: false
-            },
             trait_runcycle: {
                 value: false, required: false
             },
@@ -1870,6 +1852,9 @@
             supports_fill_percent: {
                 value: false, required: false
             },
+            ordered_fill_levels: {
+                value: true, required: false
+            },
             trait_armdisarm: {
                 value: false, required: false
             },
@@ -1886,7 +1871,7 @@
                 value: false, required: false
             },
             energy_storage_distance_unit_for_ux: {
-                value: "KILOMETERS", required: false
+                value: "", required: false
             },
             trait_dispense: {
                 value: false, required: false
