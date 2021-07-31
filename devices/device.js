@@ -609,9 +609,9 @@ module.exports = function (RED) {
 
             this.exclusive_states = {
                 color: {
-                    temperatureK: [ 'spectrumRgb', 'spectrumHsv' ],
-                    spectrumRgb: [ 'temperatureK', 'spectrumHsv' ],
-                    spectrumHsv: [ 'temperatureK', 'spectrumRgb' ],                    
+                    temperatureK: ['spectrumRgb', 'spectrumHsv'],
+                    spectrumRgb: ['temperatureK', 'spectrumHsv'],
+                    spectrumHsv: ['temperatureK', 'spectrumRgb'],
                 },
                 thermostatTemperatureSetpointLow: ['thermostatTemperatureSetpoint'],
                 thermostatTemperatureSetpointHigh: ['thermostatTemperatureSetpoint'],
@@ -1673,7 +1673,13 @@ module.exports = function (RED) {
             this._debug(".updated: params = " + JSON.stringify(params));
             this._debug(".updated: original_params = " + JSON.stringify(original_params));
 
-            me.updateState(states);
+            const modified = me.updateState(params || states);
+            if (modified) {
+                Object.keys(states).forEach(function (key) {
+                    delete states[key];
+                });
+                this.cloneObject(states, me.states, me.state_types, me.exclusive_states);
+            }
 
             this.updateStatusIcon();
 
@@ -2297,7 +2303,7 @@ module.exports = function (RED) {
                 // check modes, toggles, arrays, temperatureSettings ...
                 if (new_states.hasOwnProperty(key)) {
                     if (me.setState(key, new_states[key], me.states, me.state_types[key], me.exclusive_states[key] || {})) {
-                        me._debug('updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
+                        me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
                         modified = true;
                     }
                 }
@@ -2341,7 +2347,7 @@ module.exports = function (RED) {
         setState(key, value, states, state_values, exclusive_states) {
             const me = this;
             let differs = false;
-            const old_state = states[key];
+            let old_state = typeof states === 'object' ? states[key] : {};
             let val_type = typeof old_state;
             let new_state = undefined;
             let exclusive_states_arr = [];
@@ -2461,8 +2467,15 @@ module.exports = function (RED) {
                         if (Array.isArray(value)) {
                             RED.log.error('key "' + key + '" must be an object.');
                         } else {
+                            if (states[key] === undefined) {
+                                states[key] = {};
+                                old_state = states[key];
+                            }
                             Object.keys(state_values).forEach(function (ikey) {
                                 if (typeof value[ikey] !== 'undefined' && value[ikey] != null) {
+                                    if (typeof old_state[ikey] == 'undefined') {
+                                        old_state[ikey] = {};
+                                    }
                                     if (me.setState(ikey, value[ikey], old_state, state_values[ikey], exclusive_states[ikey] || {})) {
                                         differs = true;
                                     }
@@ -2509,7 +2522,7 @@ module.exports = function (RED) {
             } else if (state_values & Formats.BOOL) {
                 new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
             }
-            if (val_type !== 'object') {
+            if (typeof state_values !== 'object') {
                 if (new_state !== undefined) {
                     differs = old_state !== new_state;
                     states[key] = new_state;
@@ -3135,14 +3148,6 @@ module.exports = function (RED) {
             else if (command.command == 'action.devices.commands.ThermostatTemperatureSetpoint') {
                 if (me.query_only_temperaturesetting || !me.command_only_temperaturesetting) {
                     const thermostatTemperatureSetpoint = command.params['thermostatTemperatureSetpoint'];
-                    delete orig_device.states['thermostatTemperatureSetpointHigh'];
-                    delete me.states['thermostatTemperatureSetpointHigh'];
-                    delete orig_device.states['thermostatTemperatureSetpointLow'];
-                    delete me.states['thermostatTemperatureSetpointLow'];
-                    if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpoint")) {
-                        orig_device.states['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint - 1;
-                        me.states['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint - 1;
-                    }
                     params['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint;
                     me.thermostat_temperature_setpoint = thermostatTemperatureSetpoint;
                     executionStates.push('thermostatTemperatureSetpoint');
@@ -3152,14 +3157,6 @@ module.exports = function (RED) {
                 if (me.query_only_temperaturesetting || !me.command_only_temperaturesetting) {
                     const thermostatTemperatureSetpointHigh = command.params['thermostatTemperatureSetpointHigh'];
                     const thermostatTemperatureSetpointLow = command.params['thermostatTemperatureSetpointLow'];
-                    delete orig_device.states['thermostatTemperatureSetpoint'];
-                    delete me.states['thermostatTemperatureSetpoint'];
-                    if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpointHigh")) {
-                        orig_device.states['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh + 1;
-                        me.states['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointLow + 1;
-                        orig_device.states['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointHigh - 1;
-                        me.states['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow - 1;
-                    }
                     params['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh;
                     params['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow;
                     me.thermostat_temperature_setpoint_hight = thermostatTemperatureSetpointHigh;
@@ -3173,26 +3170,10 @@ module.exports = function (RED) {
                     params['thermostatMode'] = thermostatMode;
                     executionStates.push('thermostatMode');
                     if (thermostatMode === "heatcool") {
-                        delete orig_device.states['thermostatTemperatureSetpoint'];
-                        delete me.states['thermostatTemperatureSetpoint'];
-                        if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpointHigh")) {
-                            orig_device.states['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
-                            me.states['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
-                            orig_device.states['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
-                            me.states['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
-                        }
                         params['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
                         params['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
                         executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
                     } else if (thermostatMode === "heat" || thermostatMode === "cool") {
-                        delete orig_device.states['thermostatTemperatureSetpointHigh'];
-                        delete me.states['thermostatTemperatureSetpointHigh'];
-                        delete orig_device.states['thermostatTemperatureSetpointLow'];
-                        delete me.states['thermostatTemperatureSetpointLow'];
-                        if (!orig_device.states.hasOwnProperty("thermostatTemperatureSetpoint")) {
-                            orig_device.states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
-                            me.states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
-                        }
                         params['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
                         executionStates.push('thermostatTemperatureSetpoint');
                     }
@@ -3517,39 +3498,12 @@ module.exports = function (RED) {
                     if (command.params.hasOwnProperty('color')) {
                         if (command.params.color.hasOwnProperty('temperature') || command.params.color.hasOwnProperty('temperatureK')) {
                             const temperature = command.params.color.hasOwnProperty('temperature') ? command.params.color.temperature : command.params.color.temperatureK;
-                            delete orig_device.states.color['spectrumRgb'];
-                            delete me.states.color['spectrumRgb'];
-                            delete orig_device.states.color['spectrumHsv'];
-                            delete me.states.color['spectrumHsv'];
-                            if (!me.states.color.hasOwnProperty("temperatureK")) {
-                                me.states.color = { temperatureK: temperature - 1 };
-                            }
                             params['color'] = { temperatureK: temperature };
                         } else if (command.params.color.hasOwnProperty('spectrumRGB') || command.params.color.hasOwnProperty('spectrumRgb')) {
                             const spectrum_RGB = command.params.color.hasOwnProperty('spectrumRGB') ? command.params.color.spectrumRGB : command.params.color.spectrumRgb;
-                            delete orig_device.states.color['temperatureK'];
-                            delete me.states.color['temperatureK'];
-                            delete orig_device.states.color['spectrumHsv'];
-                            delete me.states.color['spectrumHsv'];
-                            if (!me.states.color.hasOwnProperty("spectrumRgb")) {
-                                me.states.color = { spectrumRgb: spectrum_RGB - 1 };
-                            }
                             params['color'] = { spectrumRgb: spectrum_RGB };
                         } else if (command.params.color.hasOwnProperty('spectrumHSV') || command.params.color.hasOwnProperty('spectrumHsv')) {
                             const spectrum_HSV = command.params.color.hasOwnProperty('spectrumHSV') ? command.params.color.spectrumHSV : command.params.color.spectrumHsv;
-                            delete orig_device.states.color['temperatureK'];
-                            delete me.states.color['temperatureK'];
-                            delete orig_device.states.color['spectrumRgb'];
-                            delete me.states.color['spectrumRgb'];
-                            if (!me.states.color.hasOwnProperty("spectrumHsv")) {
-                                me.states.color = {
-                                    spectrumHsv: {
-                                        hue: spectrum_HSV.hue - 1,
-                                        saturation: spectrum_HSV.saturation - 1,
-                                        value: spectrum_HSV.value - 1
-                                    }
-                                };
-                            }
                             params['color'] = {
                                 spectrumHsv: {
                                     hue: spectrum_HSV.hue,
