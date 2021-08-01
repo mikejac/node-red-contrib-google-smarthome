@@ -534,36 +534,36 @@ module.exports = function (RED) {
 
             let error_msg = '';
             if (this.trait.appselector) {
-                this.available_applications = this.loadJson('Applications', this.appselector_file, []);
+                this.available_applications = this.loadJson('Applications', this.appselector_file.replace(/<id>/g, this.id), []);
             } else {
                 this.available_applications = [];
                 this._debug(".constructor: AppSelector disabled");
             }
 
             if (this.trait.armdisarm) {
-                this.available_arm_levels = this.loadJson('Available arm levels', this.available_arm_levels_file, []);
+                this.available_arm_levels = this.loadJson('Available arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []);
             } else {
                 this.available_applications = [];
                 this._debug(".constructor: ArmDisarm disabled");
             }
 
             if (this.trait.channel) {
-                this.available_channels = this.loadJson('Channels', this.channel_file, []);
+                this.available_channels = this.loadJson('Channels', this.channel_file.replace(/<id>/g, this.id), []);
             } else {
                 this.available_channels = [];
                 this._debug(".constructor: Channel disabled");
             }
 
             if (this.trait.cook) {
-                this.food_presets = this.loadJson('Food presets', this.food_presets_file, []);
+                this.food_presets = this.loadJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), []);
             } else {
                 this.food_presets = [];
                 this._debug(".constructor: Cook disabled");
             }
 
             if (this.trait.dispense) {
-                this.supported_dispense_items = this.loadJson('Supported dispense', this.supported_dispense_items_file, []);
-                this.supported_dispense_presets = this.loadJson('Supported dispense presets', this.supported_dispense_presets_file, []);
+                this.supported_dispense_items = this.loadJson('Supported dispense', this.supported_dispense_items_file.replace(/<id>/g, this.id), []);
+                this.supported_dispense_presets = this.loadJson('Supported dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), []);
             } else {
                 this.supported_dispense_items = [];
                 this.supported_dispense_presets = [];
@@ -571,35 +571,35 @@ module.exports = function (RED) {
             }
 
             if (this.trait.fanspeed) {
-                this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file, []);
+                this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), []);
             } else {
                 this.available_fan_speeds = [];
                 this._debug(".constructor: FanSpeeds disabled");
             }
 
             if (this.trait.fill) {
-                this.available_fill_levels = this.loadJson('Available fill levels', this.available_fill_levels_file, []);
+                this.available_fill_levels = this.loadJson('Available fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), []);
             } else {
                 this.available_fill_levels = [];
                 this._debug(".constructor: Fill disabled");
             }
 
             if (this.trait.inputselector) {
-                this.available_inputs = this.loadJson('Available inputs', this.inputselector_file, []);
+                this.available_inputs = this.loadJson('Available inputs', this.inputselector_file.replace(/<id>/g, this.id), []);
             } else {
                 this.available_inputs = [];
                 this._debug(".constructor InputSelector disabled");
             }
 
             if (this.trait.modes) {
-                this.available_modes = this.loadJson('Modes', this.modes_file, []);
+                this.available_modes = this.loadJson('Modes', this.modes_file.replace(/<id>/g, this.id), []);
             } else {
                 this.available_modes = [];
                 this._debug(".constructor: Modes disabled");
             }
 
             if (this.trait.toggles) {
-                this.available_toggles = this.loadJson('Toggles', this.toggles_file, []);
+                this.available_toggles = this.loadJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), []);
             } else {
                 this.available_toggles = [];
                 this._debug(".constructor: Toggles disabled");
@@ -1752,10 +1752,10 @@ module.exports = function (RED) {
                 } else if (upper_topic === 'AVAILABLEAPPLICATIONS') {
                     if (this.trait.appselector) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_applications = this.loadJson('Applications', this.appselector_file, []);
+                            this.available_applications = this.loadJson('Applications', this.appselector_file.replace(/<id>/g, this.id), []);
                         } else {
-                            if (!this.writeJson('Applications', this.appselector_file, msg.payload)) {
-                                RED.log.error("Error saving Applications to file " + this.appselector_file);
+                            if (!this.writeJson('Applications', this.appselector_file.replace(/<id>/g, this.id), msg.payload)) {
+                                RED.log.error("Error saving Applications to file " + this.appselector_file.replace(/<id>/g, this.id));
                             } else {
                                 this.available_applications = msg.payload;
                                 this.clientConn.app.RequestSync();
@@ -1768,10 +1768,10 @@ module.exports = function (RED) {
                 } else if (upper_topic === 'AVAILABLEARMLEVELS') {
                     if (this.trait.armdisarm) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_arm_levels = this.loadJson('Arm levels', this.available_arm_levels_file, []);
+                            this.available_arm_levels = this.loadJson('Arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []);
                         } else {
-                            if (!this.writeJson('Arm levels', this.available_arm_levels_file, msg.payload)) {
-                                RED.log.error("Error saving Arm levels to file " + this.available_arm_levels_file);
+                            if (!this.writeJson('Arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), msg.payload)) {
+                                RED.log.error("Error saving Arm levels to file " + this.available_arm_levels_file.replace(/<id>/g, this.id));
                             } else {
                                 this.available_arm_levels = msg.payload;
                                 this.clientConn.app.RequestSync();
@@ -1784,10 +1784,10 @@ module.exports = function (RED) {
                 } else if (upper_topic === 'AVAILABLECHANNELS') {
                     if (this.trait.channel) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_channels = this.loadJson('Channels', this.channel_file, []);
+                            this.available_channels = this.loadJson('Channels', this.channel_file.replace(/<id>/g, this.id), []);
                         } else {
-                            if (!this.writeJson('Channels', this.channel_file, msg.payload)) {
-                                RED.log.error("Error saving Channels to file " + this.channel_file);
+                            if (!this.writeJson('Channels', this.channel_file.replace(/<id>/g, this.id), msg.payload)) {
+                                RED.log.error("Error saving Channels to file " + this.channel_file.replace(/<id>/g, this.id));
                             } else {
                                 this.available_channels = msg.payload;
                                 this.clientConn.app.RequestSync();
@@ -1800,10 +1800,10 @@ module.exports = function (RED) {
                 } else if (upper_topic === 'SUPPORTEDDISPENSEITEMS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
-                            this.supported_dispense_items = this.loadJson('Dispense items', this.supported_dispense_items_file, []);
+                            this.supported_dispense_items = this.loadJson('Dispense items', this.supported_dispense_items_file.replace(/<id>/g, this.id), []);
                         } else {
-                            if (!this.writeJson('Dispense items', this.supported_dispense_items_file, msg.payload)) {
-                                RED.log.error("Error saving Dispense items to file " + this.supported_dispense_items_file);
+                            if (!this.writeJson('Dispense items', this.supported_dispense_items_file.replace(/<id>/g, this.id), msg.payload)) {
+                                RED.log.error("Error saving Dispense items to file " + this.supported_dispense_items_file.replace(/<id>/g, this.id));
                             } else {
                                 this.supported_dispense_items = msg.payload;
                                 this.clientConn.app.RequestSync();
@@ -1816,10 +1816,10 @@ module.exports = function (RED) {
                 } else if (upper_topic === 'SUPPORTEDDISPENSEPRESETS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
-                            this.supported_dispense_presets = this.loadJson('Dispense presets', this.supported_dispense_presets_file, []);
+                            this.supported_dispense_presets = this.loadJson('Dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), []);
                         } else {
-                            if (!this.writeJson('Dispense presets', this.supported_dispense_presets_file, msg.payload)) {
-                                RED.log.error("Error saving Dispense presets to file " + this.supported_dispense_presets_file);
+                            if (!this.writeJson('Dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), msg.payload)) {
+                                RED.log.error("Error saving Dispense presets to file " + this.supported_dispense_presets_file.replace(/<id>/g, this.id));
                             } else {
                                 this.supported_dispense_presets = msg.payload;
                                 this.clientConn.app.RequestSync();
@@ -1832,10 +1832,10 @@ module.exports = function (RED) {
                 } else if (upper_topic === 'AVAILABLEFANSPEEDS') {
                     if (this.trait.fanspeed) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file, []);
+                            this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), []);
                         } else {
-                            if (!this.writeJson('Fan speeds', this.available_fan_speeds_file, msg.payload)) {
-                                RED.log.error("Error saving Fan speeds to file " + this.available_fan_speeds_file);
+                            if (!this.writeJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), msg.payload)) {
+                                RED.log.error("Error saving Fan speeds to file " + this.available_fan_speeds_file.replace(/<id>/g, this.id));
                             } else {
                                 this.available_fan_speeds = msg.payload;
                                 this.clientConn.app.RequestSync();
@@ -1848,10 +1848,10 @@ module.exports = function (RED) {
                 } else if (upper_topic === 'AVAILABLEFILLLEVELS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_fill_levels = this.loadJson(' Fill levels', this.available_fill_levels_file, []);
+                            this.available_fill_levels = this.loadJson(' Fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), []);
                         } else {
-                            if (!this.writeJson(' Fill levels', this.available_fill_levels_file, msg.payload)) {
-                                RED.log.error("Error saving Fill levels to file " + this.available_fill_levels_file);
+                            if (!this.writeJson(' Fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), msg.payload)) {
+                                RED.log.error("Error saving Fill levels to file " + this.available_fill_levels_file.replace(/<id>/g, this.id));
                             } else {
                                 this.available_fill_levels = msg.payload;
                                 this.clientConn.app.RequestSync();
@@ -1864,10 +1864,10 @@ module.exports = function (RED) {
                 } else if (upper_topic === 'AVAILABLEFOODPRESETS') {
                     if (this.trait.cook) {
                         if (typeof msg.payload === 'undefined') {
-                            this.food_presets = this.loadJson('Food presets', this.food_presets_file, []);
+                            this.food_presets = this.loadJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), []);
                         } else {
-                            if (!this.writeJson('Food presets', this.food_presets_file, msg.payload)) {
-                                RED.log.error("Error saving Food presets to file " + this.food_presets_file);
+                            if (!this.writeJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), msg.payload)) {
+                                RED.log.error("Error saving Food presets to file " + this.food_presets_file.replace(/<id>/g, this.id));
                             } else {
                                 this.food_presets = msg.payload;
                                 this.clientConn.app.RequestSync();
@@ -1880,10 +1880,10 @@ module.exports = function (RED) {
                 } else if (upper_topic === 'AVAILABLEINPUTS') {
                     if (this.trait.inputselector) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_inputs = this.loadJson('Inputs', this.inputselector_file, []);
+                            this.available_inputs = this.loadJson('Inputs', this.inputselector_file.replace(/<id>/g, this.id), []);
                         } else {
-                            if (!this.writeJson('Inputs', this.inputselector_file, msg.payload)) {
-                                RED.log.error("Error saving Inputs to file " + this.inputselector_file);
+                            if (!this.writeJson('Inputs', this.inputselector_file.replace(/<id>/g, this.id), msg.payload)) {
+                                RED.log.error("Error saving Inputs to file " + this.inputselector_file.replace(/<id>/g, this.id));
                             } else {
                                 this.available_inputs = msg.payload;
                                 this.clientConn.app.RequestSync();
@@ -1896,11 +1896,11 @@ module.exports = function (RED) {
                 } else if (upper_topic === 'AVAILABLEMODES') {
                     if (this.trait.modes) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_modes = this.loadJson('Modes', this.modes_file, []);
+                            this.available_modes = this.loadJson('Modes', this.modes_file.replace(/<id>/g, this.id), []);
                             this.updateModesState(me, me);
                         } else {
-                            if (!this.writeJson('Modes', this.modes_file, msg.payload)) {
-                                RED.log.error("Error saving Modes to file " + this.modes_file);
+                            if (!this.writeJson('Modes', this.modes_file.replace(/<id>/g, this.id), msg.payload)) {
+                                RED.log.error("Error saving Modes to file " + this.modes_file.replace(/<id>/g, this.id));
                             } else {
                                 this.available_modes = msg.payload;
                                 this.updateModesState(me, me);
@@ -1914,11 +1914,11 @@ module.exports = function (RED) {
                 } else if (upper_topic === 'AVAILABLETOGGLES') {
                     if (this.trait.toggles) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_toggles = this.loadJson('Toggles', this.toggles_file, []);
+                            this.available_toggles = this.loadJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), []);
                             this.updateTogglesState(me, me);
                         } else {
-                            if (!this.writeJson('Toggles', this.toggles_file, msg.payload)) {
-                                RED.log.error("Error saving Toggles to file " + this.toggles_file);
+                            if (!this.writeJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), msg.payload)) {
+                                RED.log.error("Error saving Toggles to file " + this.toggles_file.replace(/<id>/g, this.id));
                             } else {
                                 this.available_toggles = msg.payload;
                                 this.updateTogglesState(me, me);
@@ -2535,65 +2535,69 @@ module.exports = function (RED) {
         }
 
         loadJson(text, filename, defaultValue) {
-            this._debug('.loadJson: ' + text);
-            let full_filename;
-            if (!filename.startsWith(path.sep)) {
-                const userDir = RED.settings.userDir;
-                full_filename = path.join(userDir, filename);
-            } else {
-                full_filename = filename;
-            }
-            this._debug('.loadJson: filename ' + full_filename);
-
-            try {
-                let jsonFile = fs.readFileSync(
-                    full_filename,
-                    {
-                        'encoding': 'utf8',
-                        'flag': fs.constants.R_OK | fs.constants.W_OK | fs.constants.O_CREAT
-                    });
-
-                if (jsonFile === '') {
-                    this._debug('.loadJson: file ' + filename + ' is empty');
-                    return defaultValue;
+            if (filename) {
+                this._debug('.loadJson: ' + text);
+                let full_filename;
+                if (!filename.startsWith(path.sep)) {
+                    const userDir = RED.settings.userDir;
+                    full_filename = path.join(userDir, filename);
                 } else {
-                    this._debug('.loadJson: data loaded');
-                    const json = JSON.parse(jsonFile);
-                    this._debug('.loadJson: json = ' + JSON.stringify(json));
-                    return json;
+                    full_filename = filename;
                 }
-            }
-            catch (err) {
-                RED.log.error('Error on loading ' + text + ' filename ' + filename + ': ' + err.toString());
-                return defaultValue;
+                this._debug('.loadJson: filename ' + full_filename);
+
+                try {
+                    let jsonFile = fs.readFileSync(
+                        full_filename,
+                        {
+                            'encoding': 'utf8',
+                            'flag': fs.constants.R_OK | fs.constants.W_OK | fs.constants.O_CREAT
+                        });
+
+                    if (jsonFile === '') {
+                        this._debug('.loadJson: file ' + filename + ' is empty');
+                        return defaultValue;
+                    } else {
+                        this._debug('.loadJson: data loaded');
+                        const json = JSON.parse(jsonFile);
+                        this._debug('.loadJson: json = ' + JSON.stringify(json));
+                        return json;
+                    }
+                }
+                catch (err) {
+                    RED.log.error('Error on loading ' + text + ' filename ' + filename + ': ' + err.toString());
+                    return defaultValue;
+                }
             }
         }
 
         writeJson(text, filename, value) {
-            this._debug('.writeJson: ' + text);
-            if (!filename.startsWith(path.sep)) {
-                const userDir = RED.settings.userDir;
-                filename = path.join(userDir, filename);
-            }
-            this._debug('.writeJson: filename ' + filename);
-            if (typeof value === 'object') {
-                value = JSON.stringify(value);
-            }
-            try {
-                fs.writeFileSync(
-                    filename,
-                    value,
-                    {
-                        'encoding': 'utf8',
-                        'flag': fs.constants.W_OK | fs.constants.O_CREAT | fs.constants.O_TRUNC
-                    });
+            if (filename) {
+                this._debug('.writeJson: ' + text);
+                if (!filename.startsWith(path.sep)) {
+                    const userDir = RED.settings.userDir;
+                    filename = path.join(userDir, filename);
+                }
+                this._debug('.writeJson: filename ' + filename);
+                if (typeof value === 'object') {
+                    value = JSON.stringify(value);
+                }
+                try {
+                    fs.writeFileSync(
+                        filename,
+                        value,
+                        {
+                            'encoding': 'utf8',
+                            'flag': fs.constants.W_OK | fs.constants.O_CREAT | fs.constants.O_TRUNC
+                        });
 
-                this._debug('.writeJson: ' + text + ' saved');
-                return true;
-            }
-            catch (err) {
-                RED.log.error('Error on saving ' + text + ' filename + ' + filename + ': ' + err.toString());
-                return false;
+                    this._debug('.writeJson: ' + text + ' saved');
+                    return true;
+                }
+                catch (err) {
+                    RED.log.error('Error on saving ' + text + ' filename + ' + filename + ': ' + err.toString());
+                    return false;
+                }
             }
         }
 
