@@ -17,6 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+# node-red -u $HOME/nrsh | awk '/HttpActions:reportState..: postData = / { pd=substr($0, 39); print pd; print pd > "reportState.json"; close("reportState.json"); }'
+# ./device_test.sh "a5782b1b.e120f8" "bab53c06.fc9c3"
+#
 
 . ./data
 . ./code
@@ -24,6 +27,7 @@
 NODE_ID=$1 || "a5782b1b.e120f8"
 NODE_ID1=$2 || "bab53c06.fc9c3"
 PAYLOAD_FILE="$HOME/payload.json"
+REPORT_STATE_FILE="$HOME/reportState.json"
 OUT_FILE="$HOME/out.json"
 PAYLOAD_URL=$(dirname $BASE_URL)/payload
 
@@ -40,7 +44,7 @@ test_json() {
     if [ "$V" != "$VAL" ] ; then
         echo
         echo "CMD: ./execute $CMD_EXEC"
-        echo "$TYPE: $STR"
+        echo "${TYPE}: $STR"
         echo "JSON tag: $JPATH"
         echo "Value expected: $VAL"
         echo "Value found: $V"
@@ -58,6 +62,11 @@ test_out() {
 
 test_payload() {
     test_json Payload "$PAYLOAD" "$@"
+    # if [ "$1" != ".command" ] ; then
+    Q=$1
+    if [[ "$Q" != ".command" && $Q != .params.* ]] ; then
+        test_json ReportState "$REPORT_STATE" ".payload.devices.states.\"$LAST_NODE_ID\"$1" "$2"
+    fi
 }
 
 test_no_payload() {
@@ -88,6 +97,7 @@ execute_payload() {
     echo $REQUEST
     mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old" 
     echo "{}" > "$PAYLOAD_FILE" 
+    # echo "{}" > "$REPORT_STATE_FILE" 
     curl -s \
         -H "Content-Type: application/json;charset=UTF-8" \
         --data "$REQUEST" \
@@ -100,6 +110,8 @@ execute_payload() {
         echo $REQUEST
     fi
     PAYLOAD=$(cat "$PAYLOAD_FILE")
+    REPORT_STATE=$(cat "$REPORT_STATE_FILE")
+    LAST_NODE_ID="$NODE_ID"
 }
 
 execute() {
@@ -110,10 +122,13 @@ execute() {
     echo ./execute "$@"
     mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old" 
     echo "{}" > "$PAYLOAD_FILE" 
+    # echo "{}" > "$REPORT_STATE_FILE" 
     ./execute "$@" > "$OUT_FILE"
     OUT=$(cat  "$OUT_FILE")
     #sleep 1
     PAYLOAD=$(cat "$PAYLOAD_FILE")
+    REPORT_STATE=$(cat "$REPORT_STATE_FILE")
+    LAST_NODE_ID="$1"
     test_out ".payload.commands[0].status" '"SUCCESS"'
     test_payload .online true
     test_payload .command "\"$CMD\""
@@ -143,6 +158,8 @@ execute_error() {
 }
 # if [ 1 == 2 ] ; then
 # fi # fi
+
+execute_payload topic '{"online":false,"isArmed":false,"currentArmLevel":"","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"","currentInput":"","activeLightEffect":"","currentModeSettings":{"load_mode":"","temp_mode":""},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet_toggle":false,"extra_bass_toggle":false,"energy_saving_toggle":false},"currentVolume":40,"on":true,"isDocked":false}'
 
 execute_payload topic '{"online":true,"isArmed":false,"currentArmLevel":"","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"","currentInput":"","activeLightEffect":"","currentModeSettings":{"load_mode":"","temp_mode":""},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet_toggle":false,"extra_bass_toggle":false,"energy_saving_toggle":false},"currentVolume":40,"on":true,"isDocked":false}'
 test_payload .online true
