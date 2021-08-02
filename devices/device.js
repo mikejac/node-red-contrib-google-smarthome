@@ -1675,9 +1675,6 @@ module.exports = function (RED) {
 
             const modified = me.updateState(params || states);
             if (modified) {
-                Object.keys(states).forEach(function (key) {
-                    delete states[key];
-                });
                 this.cloneObject(states, me.states, me.state_types, me.exclusive_states);
             }
 
@@ -2348,7 +2345,6 @@ module.exports = function (RED) {
             const me = this;
             let differs = false;
             let old_state = typeof states === 'object' ? states[key] : {};
-            let val_type = typeof old_state;
             let new_state = undefined;
             let exclusive_states_arr = [];
             if (Array.isArray(exclusive_states)) {
@@ -2491,11 +2487,11 @@ module.exports = function (RED) {
                     if (Array.isArray(old_state)) {
                         RED.log.error('key "' + key + '" must be an array.');
                     } else {
-                        RED.log.error('key "' + key + '" must be an object.');
+                        RED.log.error('key2 "' + key + '" must be an object.');
                     }
                 }
             } else if (state_values & Formats.COPY_OBJECT) {
-                if (val_type !== 'object' || Array.isArray(value)) {
+                if (typeof value !== 'object' || Array.isArray(value)) {
                     RED.log.error('key "' + key + '" must be an object.');
                 } else {
                     Object.keys(old_state).forEach(function (key) {
