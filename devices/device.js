@@ -2487,7 +2487,7 @@ module.exports = function (RED) {
                     if (Array.isArray(old_state)) {
                         RED.log.error('key "' + key + '" must be an array.');
                     } else {
-                        RED.log.error('key2 "' + key + '" must be an object.');
+                        RED.log.error('key "' + key + '" must be an object.');
                     }
                 }
             } else if (state_values & Formats.COPY_OBJECT) {
