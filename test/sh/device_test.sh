@@ -30,6 +30,7 @@ PAYLOAD_FILE="$HOME/payload.json"
 REPORT_STATE_FILE="$HOME/reportState.json"
 OUT_FILE="$HOME/out.json"
 PAYLOAD_URL=$(dirname $BASE_URL)/payload
+TEST_NUM=0
 
 ./refresh_token
 
@@ -85,6 +86,8 @@ test_no_payload() {
 
 execute_payload() {
     echo
+    ((TEST_NUM=TEST_NUM+1))
+    echo "# $TEST_NUM"
     CMD_EXEC="$@"
     echo "$@" > request.json
     TOPIC="$1"
@@ -117,6 +120,8 @@ execute_payload() {
 execute() {
     CMD_EXEC="$@"
     echo
+    ((TEST_NUM=TEST_NUM+1))
+    echo "# $TEST_NUM"
     CMD_=$2
     CMD="${CMD_%%_*}"
     echo ./execute "$@"
