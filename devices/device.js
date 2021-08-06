@@ -171,8 +171,8 @@ module.exports = function (RED) {
             // HumiditySetting 
             this.min_percent = parseInt(config.min_percent) || 0;
             this.max_percent = parseInt(config.max_percent) || 100;
-            this.command_only_humiditysetting = config.command_and_query_humiditysetting === 'command';
-            this.query_only_humiditysetting = config.command_and_query_humiditysetting === 'query';
+            this.command_only_humiditysetting = config.command_query_humiditysetting === 'command';
+            this.query_only_humiditysetting = config.command_query_humiditysetting === 'query';
             // InputSelector 
             this.inputselector_file = config.inputselector_file;
             this.available_inputs = [];
@@ -191,8 +191,8 @@ module.exports = function (RED) {
             // Modes 
             this.modes_file = config.modes_file;
             this.available_modes = [];
-            this.command_only_modes = config.command_and_query_modes === 'command';
-            this.query_only_modes = config.command_and_query_modes === 'query';
+            this.command_only_modes = config.command_query_modes === 'command';
+            this.query_only_modes = config.command_query_modes === 'query';
             // NetworkControl
             this.supports_enabling_guest_network = config.supports_enabling_guest_network;
             this.supports_disabling_guest_network = config.supports_disabling_guest_network;
@@ -205,13 +205,13 @@ module.exports = function (RED) {
             this.guest_network_password = '';
             // ObjectDetection 
             // OnOff 
-            this.command_only_onoff = config.command_and_query_onoff === 'command';
-            this.query_only_onoff = config.command_and_query_onoff === 'query';
+            this.command_only_onoff = config.command_query_onoff === 'command';
+            this.query_only_onoff = config.command_query_onoff === 'query';
             // OpenClose
             this.discrete_only_openclose = config.discrete_only_openclose;
             this.open_direction = config.open_direction;
-            this.command_only_openclose = config.command_and_query_openclose === 'command';
-            this.query_only_openclose = config.command_and_query_openclose === 'query';
+            this.command_only_openclose = config.command_query_openclose === 'command';
+            this.query_only_openclose = config.command_query_openclose === 'query';
             // Reboot 
             // Rotation 
             this.supports_degrees = config.supports_degrees;
@@ -235,8 +235,8 @@ module.exports = function (RED) {
             this.tc_max_threshold_celsius = config.tc_max_threshold_celsius;
             this.tc_temperature_step_celsius = config.tc_temperature_step_celsius;
             this.tc_temperature_unit_for_ux = config.tc_temperature_unit_for_ux;
-            this.command_only_temperaturecontrol = config.tc_command_and_query_temperaturecontrol === 'command';
-            this.query_only_temperaturecontrol = config.tc_command_and_query_temperaturecontrol === 'query';
+            this.command_only_temperaturecontrol = config.tc_command_query_temperaturecontrol === 'command';
+            this.query_only_temperaturecontrol = config.tc_command_query_temperaturecontrol === 'query';
             // TemperatureSetting
             this.available_thermostat_modes = config.available_thermostat_modes;
             this.min_threshold_celsius = parseInt(config.min_threshold_celsius) || 10;
@@ -246,8 +246,8 @@ module.exports = function (RED) {
             this.thermostat_temperature_setpoint_hight = this.max_threshold_celsius;
             this.thermostat_temperature_unit = config.thermostat_temperature_unit || "C";
             this.buffer_range_celsius = parseInt(config.buffer_range_celsius) || 2;
-            this.command_only_temperaturesetting = config.command_and_query_temperaturesetting === 'command';
-            this.query_only_temperaturesetting = config.command_and_query_temperaturesetting === 'query';
+            this.command_only_temperaturesetting = config.command_query_temperaturesetting === 'command';
+            this.query_only_temperaturesetting = config.command_query_temperaturesetting === 'query';
             this.target_temp_reached_estimate_unix_timestamp_sec = 360;
             this.thermostat_humidity_ambient = 60;
             // Timer 
@@ -257,8 +257,8 @@ module.exports = function (RED) {
             // Toggles
             this.toggles_file = config.toggles_file;
             this.available_toggles = [];
-            this.command_only_toggles = config.command_and_query_toggles === 'command';
-            this.query_only_toggles = config.command_and_query_toggles === 'query';
+            this.command_only_toggles = config.command_query_toggles === 'command';
+            this.query_only_toggles = config.command_query_toggles === 'query';
             // TransportControl 
             this.supported_commands = config.supported_commands;
             // Volume 
@@ -1637,15 +1637,15 @@ module.exports = function (RED) {
                 }
                 if (me.trait.temperaturecontrol) {
                     if (me.states.temperatureAmbientCelsius !== undefined) {
-                        text += ' T: ' + me.states.temperatureAmbientCelsius + "\xB0C";
+                        text += ' TC: ' + me.states.temperatureAmbientCelsius + "\xB0C";
                     }
                     if (me.states.temperatureSetpointCelsius !== undefined) {
-                        text += ' S: ' + me.states.temperatureSetpointCelsius + "\xB0C";
+                        text += ' SC: ' + me.states.temperatureSetpointCelsius + "\xB0C";
                     }
                 }
                 if (me.trait.temperaturesetting) {
                     const thermostat_mode = me.states.thermostatMode;
-                    const st = " T: " + me.states.thermostatTemperatureAmbient + " °C | S: " + me.thermostat_temperature_setpoint + " °C";
+                    const st = " T: " + me.states.thermostatTemperatureAmbient + " °C | S: " + me.thermostat_temperature_setpoint + "\xB0C";
                     if (thermostat_mode === "off") {
                         text = "OFF " + st;
                     } else if (thermostat_mode === "heat" || thermostat_mode === "cool") {
@@ -1653,7 +1653,7 @@ module.exports = function (RED) {
                         text = thermostat_mode.substr(0, 1).toUpperCase() + st;
                     } else if (thermostat_mode === "heatcool") {
                         fill = "green";
-                        text = "H/C T: " + me.states.thermostatTemperatureAmbient + " °C | S: [" + me.thermostat_temperature_setpoint + " - " + me.states.thermostatTemperatureSetpointHigh + "] °C";
+                        text = "H/C T: " + me.states.thermostatTemperatureAmbient + " °C | S: [" + me.thermostat_temperature_setpoint + " - " + me.states.thermostatTemperatureSetpointHigh + "] \xB0C";
                     } else {
                         fill = "green";
                         text = thermostat_mode.substr(0, 1).toUpperCase() + st;
@@ -2054,11 +2054,13 @@ module.exports = function (RED) {
                     // Update or Add reports based on deviceTarget and statusCode
                     let payload = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
                     let new_payload = [];
-                    me.states.currentStatusReport.forEach(report => {
-                        let new_report = {};
-                        this.cloneObject(new_report, report, me.state_types['currentStatusReport'][0]);
-                        new_payload.push(new_report);
-                    });
+                    if (typeof me.states.currentStatusReport !== 'undefined') {
+                        me.states.currentStatusReport.forEach(report => {
+                            let new_report = {};
+                            this.cloneObject(new_report, report, me.state_types['currentStatusReport'][0]);
+                            new_payload.push(new_report);
+                        });
+                    }
                     let differs = false;
                     payload.forEach(sr => {
                         let nodeId;
