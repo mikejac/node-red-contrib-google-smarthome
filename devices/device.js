@@ -2469,9 +2469,7 @@ module.exports = function (RED) {
                                     differs = true;
                                 }
                                 states[key] = replace_all ? new_arr : old_arr;
-                                console.log("CCHI array key " + key + " " + JSON.stringify(states[key]));
                                 if (remove_if_no_data && states[key].length === 0) {
-                                    console.log("CCHI remove array key " + key);
                                     delete states[key];
                                 }
                             }
