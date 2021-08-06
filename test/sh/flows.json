@@ -27,7 +27,7 @@
         "z": "c0151475.218f98",
         "client": "85fa874.600d378",
         "name": "",
-        "x": 550,
+        "x": 330,
         "y": 60,
         "wires": [
             [
@@ -47,7 +47,7 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 710,
+        "x": 510,
         "y": 60,
         "wires": []
     },
@@ -56,7 +56,7 @@
         "type": "debug",
         "z": "c0151475.218f98",
         "name": "",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -64,8 +64,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 750,
-        "y": 100,
+        "x": 950,
+        "y": 360,
         "wires": []
     },
     {
@@ -78,11 +78,12 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 360,
-        "y": 220,
+        "x": 340,
+        "y": 660,
         "wires": [
             [
-                "a5782b1b.e120f8"
+                "a5782b1b.e120f8",
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -97,10 +98,11 @@
         "initialize": "",
         "finalize": "",
         "x": 380,
-        "y": 140,
+        "y": 280,
         "wires": [
             [
-                "a5782b1b.e120f8"
+                "a5782b1b.e120f8",
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -126,10 +128,11 @@
         "payload": "[{\"key\":\"rai1\",\"names\":[\"Rai 1\"],\"number\":\"1\"},{\"key\":\"rai1_hd\",\"names\":[\"Rai 1 HD\"],\"number\":\"501\"},{\"key\":\"rai2\",\"names\":[\"Rai 2\"],\"number\":\"2\"},{\"key\":\"rai2_hd\",\"names\":[\"Rai 2 HD\"],\"number\":\"502\"},{\"key\":\"rai3\",\"names\":[\"Rai 3\"],\"number\":\"3\"},{\"key\":\"rai3_hd\",\"names\":[\"Rai 3 HD\"],\"number\":\"503\"},{\"key\":\"realtime\",\"names\":[\"Realtime\"],\"number\":\"31\"}]",
         "payloadType": "json",
         "x": 130,
-        "y": 80,
+        "y": 340,
         "wires": [
             [
-                "a5782b1b.e120f8"
+                "a5782b1b.e120f8",
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -155,10 +158,11 @@
         "payload": "[{\"name\":\"load_mode\",\"name_values\":[{\"name_synonym\":[\"load\",\"size\",\"load size\"],\"lang\":\"en\"}],\"settings\":[{\"setting_name\":\"small_load\",\"setting_values\":[{\"setting_synonym\":[\"small\",\"half\"],\"lang\":\"en\"}]},{\"setting_name\":\"medium_load\",\"setting_values\":[{\"setting_synonym\":[\"medium\",\"normal\"],\"lang\":\"en\"}]},{\"setting_name\":\"large_load\",\"setting_values\":[{\"setting_synonym\":[\"large\",\"full\"],\"lang\":\"en\"}]}],\"ordered\":true},{\"name\":\"temp_mode\",\"name_values\":[{\"name_synonym\":[\"temperature\",\"temp\"],\"lang\":\"en\"}],\"settings\":[{\"setting_name\":\"hot_temp\",\"setting_values\":[{\"setting_synonym\":[\"hot\",\"white\"],\"lang\":\"en\"}]},{\"setting_name\":\"warm_temp\",\"setting_values\":[{\"setting_synonym\":[\"warm\",\"color\"],\"lang\":\"en\"}]},{\"setting_name\":\"cold_temp\",\"setting_values\":[{\"setting_synonym\":[\"cold\",\"delicate\"],\"lang\":\"en\"}]}],\"ordered\":false}]",
         "payloadType": "json",
         "x": 120,
-        "y": 360,
+        "y": 620,
         "wires": [
             [
-                "a5782b1b.e120f8"
+                "a5782b1b.e120f8",
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -184,7 +188,7 @@
         "payload": "[\"quiet\",{\"key\":\"extra_bass\",\"names\":[\"Extra bass\",\"Loud bass\",\"Powerful bass\"]},{\"names\":[\"Energy Saving\",\"Low Energy\"]}]",
         "payloadType": "json",
         "x": 130,
-        "y": 400,
+        "y": 660,
         "wires": [
             [
                 "1a88512b.3271af"
@@ -213,7 +217,7 @@
         "payload": "[\"hdmi 1\",{\"key\":\"hdmi_2\",\"names\":[\"hdmi 2\",\"Second HDMI\",\"DVD Reader\",\"DVD\"]},{\"names\":[\"hdmi 3\",\"Third HDMI\",\"Playstation 5\",\"PS5\"]}]",
         "payloadType": "json",
         "x": 120,
-        "y": 320,
+        "y": 260,
         "wires": [
             [
                 "b1733921.983838"
@@ -242,7 +246,7 @@
         "payload": "[\"YouTube\",{\"key\":\"video\",\"names\":[\"Google Vide\",\"Video\"]},{\"names\":[\"Amazon Prime Video\",\"Prime Video\"]}]",
         "payloadType": "json",
         "x": 140,
-        "y": 40,
+        "y": 300,
         "wires": [
             [
                 "b1733921.983838"
@@ -276,8 +280,7 @@
         "ordered_inputs": false,
         "support_activity_state": false,
         "support_playback_state": false,
-        "command_only_onoff": false,
-        "query_only_onoff": false,
+        "command_query_onoff": "",
         "supported_commands": [
             "CAPTION_CONTROL",
             "NEXT",
@@ -301,11 +304,9 @@
         "temperature_min_k": 2000,
         "temperature_max_k": 9000,
         "modes_file": "modes_<id>.json",
-        "command_only_modes": false,
-        "query_only_modes": false,
+        "command_query_modes": "",
         "toggles_file": "toggles_<id>.json",
-        "command_only_toggles": false,
-        "query_only_toggles": false,
+        "command_query_toggles": "",
         "trait_camerastream": true,
         "hls": "http://HLS",
         "hls_app_id": "HLS_APPID",
@@ -339,20 +340,17 @@
         "max_threshold_celsius": "50",
         "thermostat_temperature_unit": "C",
         "buffer_range_celsius": 2,
-        "command_only_temperaturesetting": false,
-        "query_only_temperaturesetting": false,
+        "command_query_temperaturesetting": "",
         "trait_temperaturecontrol": true,
         "tc_min_threshold_celsius": 0,
         "tc_max_threshold_celsius": 40,
         "tc_temperature_step_celsius": 1,
         "tc_temperature_unit_for_ux": "C",
-        "tc_command_only_temperaturecontrol": false,
-        "tc_query_only_temperaturecontrol": false,
+        "tc_command_query_temperaturecontrol": "",
         "trait_humiditysetting": true,
         "min_percent": 0,
         "max_percent": 100,
-        "command_only_humiditysetting": false,
-        "query_only_humiditysetting": false,
+        "command_query_humiditysetting": "",
         "trait_dock": true,
         "trait_locator": true,
         "trait_lockunlock": true,
@@ -367,8 +365,7 @@
             "IN",
             "OUT"
         ],
-        "command_only_openclose": false,
-        "query_only_openclose": false,
+        "command_query_openclose": "",
         "trait_startstop": true,
         "pausable": false,
         "available_zones": [
@@ -458,7 +455,7 @@
         "trait_armdisarm": true,
         "available_arm_levels_file": "availableArmLevels_<id>.json",
         "trait_energystorage": true,
-        "is_rechargeable": false,
+        "is_rechargeable": true,
         "query_only_energy_storage": false,
         "energy_storage_distance_unit_for_ux": "KILOMETERS",
         "trait_dispense": true,
@@ -478,8 +475,8 @@
         "trait_objectdetection": true,
         "show_trait": "selected",
         "advanced_settings": false,
-        "x": 570,
-        "y": 140,
+        "x": 750,
+        "y": 400,
         "wires": [
             [
                 "3b5fad59.292ad2",
@@ -497,8 +494,8 @@
         "createDir": false,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 930,
-        "y": 140,
+        "x": 1130,
+        "y": 400,
         "wires": [
             [
                 "91772b2a.3a72b8"
@@ -527,10 +524,11 @@
         "payload": "[{\"speed_name\":\"speed_low\",\"speed_values\":[{\"speed_synonym\":[\"low\",\"slow\"],\"lang\":\"en\"}]},{\"speed_name\":\"speed_high\",\"speed_values\":[{\"speed_synonym\":[\"high\",\"fast\"],\"lang\":\"en\"}]}]",
         "payloadType": "json",
         "x": 140,
-        "y": 200,
+        "y": 460,
         "wires": [
             [
-                "a5782b1b.e120f8"
+                "a5782b1b.e120f8",
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -556,10 +554,11 @@
         "payload": "[{\"level_name\":\"half_level\",\"level_values\":[{\"level_synonym\":[\"half\",\"half way\",\"one half\"],\"lang\":\"en\"}]},{\"level_name\":\"full_level\",\"level_values\":[{\"level_synonym\":[\"full\",\"all the way\",\"complete\"],\"lang\":\"en\"}]}]",
         "payloadType": "json",
         "x": 130,
-        "y": 240,
+        "y": 500,
         "wires": [
             [
-                "a5782b1b.e120f8"
+                "a5782b1b.e120f8",
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -573,8 +572,8 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 760,
-        "y": 140,
+        "x": 960,
+        "y": 400,
         "wires": [
             [
                 "88a4ec5b.56a57"
@@ -586,7 +585,7 @@
         "type": "debug",
         "z": "c0151475.218f98",
         "name": "",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -594,8 +593,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1090,
-        "y": 140,
+        "x": 1290,
+        "y": 400,
         "wires": []
     },
     {
@@ -620,10 +619,11 @@
         "payload": "[{\"food_preset_name\":\"white_rice\",\"supported_units\":[\"CUPS\"],\"food_synonyms\":[{\"synonym\":[\"White Rice\",\"Rice\"],\"lang\":\"en\"}]},{\"food_preset_name\":\"brown_rice\",\"supported_units\":[\"CUPS\"],\"food_synonyms\":[{\"synonym\":[\"Brown Rice\"],\"lang\":\"en\"}]}]",
         "payloadType": "json",
         "x": 140,
-        "y": 280,
+        "y": 540,
         "wires": [
             [
-                "a5782b1b.e120f8"
+                "a5782b1b.e120f8",
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -649,10 +649,11 @@
         "payload": "1234567890",
         "payloadType": "str",
         "x": 150,
-        "y": 480,
+        "y": 740,
         "wires": [
             [
-                "a5782b1b.e120f8"
+                "a5782b1b.e120f8",
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -678,10 +679,11 @@
         "payload": "[{\"item_name\":\"water\",\"item_name_synonyms\":[{\"lang\":\"en\",\"synonyms\":[\"water\"]}],\"supported_units\":[\"TEASPOONS\",\"TABLESPOONS\",\"FLUID_OUNCES\",\"CUPS\",\"PINTS\",\"QUARTS\",\"GALLONS\",\"MILLILITERS\",\"LITERS\",\"DECILITERS\"],\"default_portion\":{\"amount\":2,\"unit\":\"CUPS\"}}]",
         "payloadType": "json",
         "x": 150,
-        "y": 120,
+        "y": 380,
         "wires": [
             [
-                "a5782b1b.e120f8"
+                "a5782b1b.e120f8",
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -707,10 +709,11 @@
         "payload": "[{\"preset_name\":\"cat_bowl\",\"preset_name_synonyms\":[{\"lang\":\"en\",\"synonyms\":[\"cat water bowl\",\"cat water dish\",\"cat water cup\"]}]},{\"preset_name\":\"glass_1\",\"preset_name_synonyms\":[{\"lang\":\"en\",\"synonyms\":[\"glass of water\",\"glass\"]}]}]",
         "payloadType": "json",
         "x": 160,
-        "y": 160,
+        "y": 420,
         "wires": [
             [
-                "a5782b1b.e120f8"
+                "a5782b1b.e120f8",
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -736,10 +739,11 @@
         "payload": "[{\"itemName\":\"water\",\"amountRemaining\":{\"amount\":10,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":11,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"cat_bowl\",\"amountRemaining\":{\"amount\":12,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":13,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"glass_1\",\"amountRemaining\":{\"amount\":14,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":15,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false}]",
         "payloadType": "json",
         "x": 120,
-        "y": 520,
+        "y": 780,
         "wires": [
             [
-                "a5782b1b.e120f8"
+                "a5782b1b.e120f8",
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -765,7 +769,7 @@
         "payload": "{\"named\":\"Alice\"}",
         "payloadType": "json",
         "x": 130,
-        "y": 560,
+        "y": 860,
         "wires": [
             [
                 "a5782b1b.e120f8"
@@ -779,8 +783,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 670,
-        "y": 320,
+        "x": 630,
+        "y": 180,
         "wires": []
     },
     {
@@ -792,12 +796,11 @@
         "method": "post",
         "upload": false,
         "swaggerDoc": "",
-        "x": 360,
-        "y": 320,
+        "x": 320,
+        "y": 180,
         "wires": [
             [
-                "9edf3963.39cb08",
-                "63f3b303.94fadc"
+                "9edf3963.39cb08"
             ]
         ]
     },
@@ -806,35 +809,20 @@
         "type": "function",
         "z": "c0151475.218f98",
         "name": "",
-        "func": "msg = msg.payload;\nconsole.log(\"\\nNew message \" + JSON.stringify(msg));\nreturn [[msg, { \"topic\" : \"getState\"}]];\n",
-        "outputs": 1,
+        "func": "msg1 = msg.payload;\nmsg.payload = \"OK\";\nconsole.log(\"\\nNew message \" + JSON.stringify(msg1));\nreturn [msg, [msg1, { \"topic\" : \"getState\"}]];\n",
+        "outputs": 2,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 480,
-        "y": 260,
-        "wires": [
-            [
-                "a5782b1b.e120f8"
-            ]
-        ]
-    },
-    {
-        "id": "63f3b303.94fadc",
-        "type": "function",
-        "z": "c0151475.218f98",
-        "name": "",
-        "func": "msg.payload = \"OK\";\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 520,
-        "y": 320,
+        "y": 180,
         "wires": [
             [
                 "53e3f7ca.522118"
+            ],
+            [
+                "a5782b1b.e120f8"
             ]
         ]
     },
@@ -860,10 +848,11 @@
         "payload": "[{\"level_name\":\"L1\",\"level_values\":[{\"level_synonym\":[\"home and guarding\",\"SL1\"],\"lang\":\"en\"},{\"level_synonym\":[\"Allarme in casa\",\"SL1\"],\"lang\":\"it\"}]},{\"level_name\":\"L2\",\"level_values\":[{\"level_synonym\":[\"away and guarding\",\"SL2\"],\"lang\":\"en\"},{\"level_synonym\":[\"Allarme fuori casa\",\"SL2\"],\"lang\":\"it\"}]}]",
         "payloadType": "json",
         "x": 140,
-        "y": 440,
+        "y": 700,
         "wires": [
             [
-                "a5782b1b.e120f8"
+                "a5782b1b.e120f8",
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -889,7 +878,7 @@
         "payload": "Auth Token",
         "payloadType": "str",
         "x": 150,
-        "y": 600,
+        "y": 900,
         "wires": [
             [
                 "a5782b1b.e120f8"
@@ -918,7 +907,7 @@
         "payload": "",
         "payloadType": "str",
         "x": 160,
-        "y": 640,
+        "y": 940,
         "wires": [
             [
                 "a5782b1b.e120f8"
@@ -947,7 +936,7 @@
         "payload": "{\"blocking\":true,\"deviceTarget\":\"Cucina\",\"priority\":0,\"statusCode\":\"needsSoftwareUpdate\"}",
         "payloadType": "json",
         "x": 110,
-        "y": 680,
+        "y": 980,
         "wires": [
             [
                 "a5782b1b.e120f8"
@@ -976,7 +965,7 @@
         "payload": "[]",
         "payloadType": "json",
         "x": 130,
-        "y": 720,
+        "y": 1020,
         "wires": [
             [
                 "a5782b1b.e120f8"
@@ -987,7 +976,7 @@
         "id": "d6e38623.42fb68",
         "type": "inject",
         "z": "c0151475.218f98",
-        "name": "",
+        "name": "on",
         "props": [
             {
                 "p": "payload"
@@ -1001,7 +990,7 @@
         "payload": "{\"topic\":\"\",\"payload\":{\"on\":true}}",
         "payloadType": "json",
         "x": 90,
-        "y": 780,
+        "y": 1060,
         "wires": [
             [
                 "f9b996e4.ab42c8"
@@ -1021,8 +1010,8 @@
         "persist": false,
         "proxy": "",
         "authType": "",
-        "x": 260,
-        "y": 780,
+        "x": 310,
+        "y": 1060,
         "wires": [
             [
                 "ddf30b0c.14e048"
@@ -1042,8 +1031,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 420,
-        "y": 780,
+        "x": 510,
+        "y": 1060,
         "wires": []
     },
     {
@@ -1073,8 +1062,7 @@
         "ordered_inputs": false,
         "support_activity_state": false,
         "support_playback_state": false,
-        "command_only_onoff": false,
-        "query_only_onoff": false,
+        "command_query_onoff": "",
         "supported_commands": [
             "CAPTION_CONTROL",
             "NEXT",
@@ -1098,11 +1086,9 @@
         "temperature_min_k": 2000,
         "temperature_max_k": 9000,
         "modes_file": "modes_<id>.json",
-        "command_only_modes": false,
-        "query_only_modes": false,
+        "command_query_modes": "",
         "toggles_file": "toggles_<id>.json",
-        "command_only_toggles": false,
-        "query_only_toggles": false,
+        "command_query_toggles": "",
         "trait_camerastream": true,
         "hls": "http://HLS",
         "hls_app_id": "HLS_APPID",
@@ -1136,20 +1122,17 @@
         "max_threshold_celsius": "50",
         "thermostat_temperature_unit": "C",
         "buffer_range_celsius": 2,
-        "command_only_temperaturesetting": false,
-        "query_only_temperaturesetting": false,
+        "command_query_temperaturesetting": "",
         "trait_temperaturecontrol": true,
         "tc_min_threshold_celsius": 0,
         "tc_max_threshold_celsius": 40,
         "tc_temperature_step_celsius": 1,
         "tc_temperature_unit_for_ux": "C",
-        "tc_command_only_temperaturecontrol": false,
-        "tc_query_only_temperaturecontrol": false,
+        "tc_command_query_temperaturecontrol": "",
         "trait_humiditysetting": true,
         "min_percent": 0,
         "max_percent": 100,
-        "command_only_humiditysetting": false,
-        "query_only_humiditysetting": false,
+        "command_query_humiditysetting": "",
         "trait_dock": true,
         "trait_locator": true,
         "trait_lockunlock": true,
@@ -1164,8 +1147,7 @@
             "IN",
             "OUT"
         ],
-        "command_only_openclose": false,
-        "query_only_openclose": false,
+        "command_query_openclose": "",
         "trait_startstop": true,
         "pausable": false,
         "available_zones": [
@@ -1275,8 +1257,8 @@
         "trait_objectdetection": true,
         "show_trait": "selected",
         "advanced_settings": false,
-        "x": 570,
-        "y": 200,
+        "x": 750,
+        "y": 460,
         "wires": [
             [
                 "b8fbf920.d74d68",
@@ -1300,8 +1282,9 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "getState",
-        "x": 360,
-        "y": 40,
+        "payloadType": "str",
+        "x": 100,
+        "y": 180,
         "wires": [
             [
                 "a5782b1b.e120f8"
@@ -1325,8 +1308,8 @@
         "onceDelay": 0.1,
         "topic": "getState",
         "payloadType": "str",
-        "x": 360,
-        "y": 80,
+        "x": 100,
+        "y": 220,
         "wires": [
             [
                 "bab53c06.fc9c3"
@@ -1338,7 +1321,7 @@
         "type": "debug",
         "z": "c0151475.218f98",
         "name": "",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -1346,8 +1329,92 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 750,
-        "y": 200,
+        "x": 990,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "68a774d1.6dca4c",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "report_state",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "report_state",
+        "payloadType": "str",
+        "x": 110,
+        "y": 20,
+        "wires": [
+            [
+                "239c652d.105f6a"
+            ]
+        ]
+    },
+    {
+        "id": "59d2b01f.9c2ca",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "request_sync",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "15",
+        "topic": "request_sync",
+        "payloadType": "str",
+        "x": 120,
+        "y": 60,
+        "wires": [
+            [
+                "239c652d.105f6a"
+            ]
+        ]
+    },
+    {
+        "id": "16cf7c71.0f9f94",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "restart_server",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "restart_server",
+        "x": 110,
+        "y": 100,
+        "wires": [
+            [
+                "239c652d.105f6a"
+            ]
+        ]
+    },
+    {
+        "id": "b1dd20d4.85a7c",
+        "type": "comment",
+        "z": "c0151475.218f98",
+        "name": "Notifications",
+        "info": "",
+        "x": 90,
+        "y": 820,
         "wires": []
     }
 ]

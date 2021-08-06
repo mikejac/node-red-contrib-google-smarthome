@@ -171,8 +171,8 @@ module.exports = function (RED) {
             // HumiditySetting 
             this.min_percent = parseInt(config.min_percent) || 0;
             this.max_percent = parseInt(config.max_percent) || 100;
-            this.command_only_humiditysetting = config.command_only_humiditysetting;
-            this.query_only_humiditysetting = config.query_only_humiditysetting;
+            this.command_only_humiditysetting = config.command_and_query_humiditysetting === 'command';
+            this.query_only_humiditysetting = config.command_and_query_humiditysetting === 'query';
             // InputSelector 
             this.inputselector_file = config.inputselector_file;
             this.available_inputs = [];
@@ -191,8 +191,8 @@ module.exports = function (RED) {
             // Modes 
             this.modes_file = config.modes_file;
             this.available_modes = [];
-            this.command_only_modes = config.command_only_modes;
-            this.query_only_modes = config.query_only_modes;
+            this.command_only_modes = config.command_and_query_modes === 'command';
+            this.query_only_modes = config.command_and_query_modes === 'query';
             // NetworkControl
             this.supports_enabling_guest_network = config.supports_enabling_guest_network;
             this.supports_disabling_guest_network = config.supports_disabling_guest_network;
@@ -205,13 +205,13 @@ module.exports = function (RED) {
             this.guest_network_password = '';
             // ObjectDetection 
             // OnOff 
-            this.command_only_onoff = config.command_only_onoff;
-            this.query_only_onoff = config.query_only_onoff;
+            this.command_only_onoff = config.command_and_query_onoff === 'command';
+            this.query_only_onoff = config.command_and_query_onoff === 'query';
             // OpenClose
             this.discrete_only_openclose = config.discrete_only_openclose;
             this.open_direction = config.open_direction;
-            this.command_only_openclose = config.command_only_openclose;
-            this.query_only_openclose = config.query_only_openclose;
+            this.command_only_openclose = config.command_and_query_openclose === 'command';
+            this.query_only_openclose = config.command_and_query_openclose === 'query';
             // Reboot 
             // Rotation 
             this.supports_degrees = config.supports_degrees;
@@ -235,8 +235,8 @@ module.exports = function (RED) {
             this.tc_max_threshold_celsius = config.tc_max_threshold_celsius;
             this.tc_temperature_step_celsius = config.tc_temperature_step_celsius;
             this.tc_temperature_unit_for_ux = config.tc_temperature_unit_for_ux;
-            this.tc_command_only_temperaturecontrol = config.tc_command_only_temperaturecontrol;
-            this.tc_query_only_temperaturecontrol = config.tc_query_only_temperaturecontrol;
+            this.command_only_temperaturecontrol = config.tc_command_and_query_temperaturecontrol === 'command';
+            this.query_only_temperaturecontrol = config.tc_command_and_query_temperaturecontrol === 'query';
             // TemperatureSetting
             this.available_thermostat_modes = config.available_thermostat_modes;
             this.min_threshold_celsius = parseInt(config.min_threshold_celsius) || 10;
@@ -246,8 +246,8 @@ module.exports = function (RED) {
             this.thermostat_temperature_setpoint_hight = this.max_threshold_celsius;
             this.thermostat_temperature_unit = config.thermostat_temperature_unit || "C";
             this.buffer_range_celsius = parseInt(config.buffer_range_celsius) || 2;
-            this.command_only_temperaturesetting = config.command_only_temperaturesetting;
-            this.query_only_temperaturesetting = config.query_only_temperaturesetting;
+            this.command_only_temperaturesetting = config.command_and_query_temperaturesetting === 'command';
+            this.query_only_temperaturesetting = config.command_and_query_temperaturesetting === 'query';
             this.target_temp_reached_estimate_unix_timestamp_sec = 360;
             this.thermostat_humidity_ambient = 60;
             // Timer 
@@ -257,8 +257,8 @@ module.exports = function (RED) {
             // Toggles
             this.toggles_file = config.toggles_file;
             this.available_toggles = [];
-            this.command_only_toggles = config.command_only_toggles;
-            this.query_only_toggles = config.query_only_toggles;
+            this.command_only_toggles = config.command_and_query_toggles === 'command';
+            this.query_only_toggles = config.command_and_query_toggles === 'query';
             // TransportControl 
             this.supported_commands = config.supported_commands;
             // Volume 
@@ -763,18 +763,18 @@ module.exports = function (RED) {
                         isValidKey: unit => ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'].includes(unit)
                     }
                 ];
-                state_types['capacityUntilFull'] = [
-                    {
-                        rawValue: Formats.INT + Formats.MANDATORY,
-                        unit: Formats.STRING + Formats.MANDATORY,
-                    },
-                    {
-                        keyId: "unit",
-                        addIfMissing: true,
-                        isValidKey: unit => ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'].includes(unit)
-                    }
-                ];
                 if (me.is_rechargeable) {
+                    state_types['capacityUntilFull'] = [
+                        {
+                            rawValue: Formats.INT + Formats.MANDATORY,
+                            unit: Formats.STRING + Formats.MANDATORY,
+                        },
+                        {
+                            keyId: "unit",
+                            addIfMissing: true,
+                            isValidKey: unit => ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'].includes(unit)
+                        }
+                    ];
                     state_types['isCharging'] = Formats.BOOL;
                 }
                 state_types['isPluggedIn'] = Formats.BOOL;
@@ -805,8 +805,10 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.humiditysetting) {
-                state_types['humiditySetpointPercent'] = Formats.INT;
-                state_types['humidityAmbientPercent'] = Formats.INT;
+                if (!me.command_only_humiditysetting) {
+                    state_types['humiditySetpointPercent'] = Formats.INT;
+                    state_types['humidityAmbientPercent'] = Formats.INT;
+                }
             }
             if (me.trait.inputselector) {
                 if (!me.command_only_input_selector) {
@@ -829,8 +831,8 @@ module.exports = function (RED) {
                 state_types['playbackState'] = Formats.STRING;
             }
             if (me.trait.modes) {
-                if (me.query_only_modes || !me.command_only_modes) {
-                    state_types['currentModeSettings'] = Formats.COPY_OBJECT + Formats.STRING; // See the docs
+                if (!me.command_only_modes) {
+                    state_types['currentModeSettings'] = Formats.COPY_OBJECT + Formats.STRING; // Mode keys are not defined in advance, See the docs
                 }
             }
             if (me.trait.networkcontrol) {
@@ -860,12 +862,12 @@ module.exports = function (RED) {
             }
             // ObjectDetection 
             if (me.trait.onoff) {
-                if (me.query_only_onoff || !me.command_only_onoff) {
+                if (!me.command_only_onoff) {
                     state_types['on'] = Formats.BOOL;
                 }
             }
             if (me.trait.openclose) {
-                if (me.query_only_openclose || !me.command_only_openclose) {
+                if (!me.command_only_openclose) {
                     if (me.open_direction.length < 2) {
                         state_types['openPercent'] = Formats.FLOAT + Formats.MANDATORY;
                     } else {
@@ -879,7 +881,7 @@ module.exports = function (RED) {
                     }
                 }
             }
-            // Reboot 
+            // Reboot, no state
             if (me.trait.rotation) {
                 if (!me.command_only_rotation) {
                     if (me.supports_degrees) {
@@ -947,8 +949,8 @@ module.exports = function (RED) {
                 ];
             }
             if (me.trait.temperaturecontrol) {
-                if (me.tc_query_only_temperaturecontrol || !me.tc_command_only_temperaturecontrol) {
-                    if (me.tc_query_only_temperaturecontrol) {
+                if (!me.command_only_temperaturecontrol) {
+                    if (me.query_only_temperaturecontrol) { // Required if queryOnlyTemperatureControl set to false
                         state_types['temperatureSetpointCelsius'] = Formats.FLOAT;
                     } else {
                         state_types['temperatureSetpointCelsius'] = Formats.FLOAT + Formats.MANDATORY;
@@ -957,15 +959,15 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.temperaturesetting) {
-                if (me.query_only_temperaturesetting || !me.command_only_temperaturesetting) {
+                if (!me.command_only_temperaturesetting) {
                     state_types['activeThermostatMode'] = Formats.STRING;
                     state_types['targetTempReachedEstimateUnixTimestampSec'] = Formats.INT;
                     state_types['thermostatHumidityAmbient'] = Formats.FLOAT;
                     state_types['thermostatMode'] = Formats.STRING + Formats.MANDATORY;
                     state_types['thermostatTemperatureAmbient'] = Formats.FLOAT + Formats.MANDATORY;
-                    state_types['thermostatTemperatureSetpoint'] = Formats.FLOAT;       // 0 TODO One of
-                    state_types['thermostatTemperatureSetpointHigh'] = Formats.FLOAT;   // 1 TODO One of
-                    state_types['thermostatTemperatureSetpointLow'] = Formats.FLOAT;    // 1 TODO One of
+                    state_types['thermostatTemperatureSetpoint'] = Formats.FLOAT + Formats.MANDATORY;       // 0 One of
+                    state_types['thermostatTemperatureSetpointHigh'] = Formats.FLOAT + Formats.MANDATORY;   // 1 One of
+                    state_types['thermostatTemperatureSetpointLow'] = Formats.FLOAT + Formats.MANDATORY;    // 1 One of
                 }
             }
             if (me.trait.timer) {
@@ -975,8 +977,8 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.toggles) {
-                if (me.query_only_toggles || !me.command_only_toggles) {
-                    state_types['currentToggleSettings'] = Formats.COPY_OBJECT + Formats.BOOL; // See the docs
+                if (!me.command_only_toggles) {
+                    state_types['currentToggleSettings'] = Formats.COPY_OBJECT + Formats.BOOL; // Toggles keys are not defined in advance, See the docs
                 }
             }
             // TransportControl 
@@ -1237,8 +1239,8 @@ module.exports = function (RED) {
                 };
                 attributes['temperatureStepCelsius'] = me.tc_temperature_step_celsius;
                 attributes['temperatureUnitForUX'] = me.tc_temperature_unit_for_ux;
-                attributes['commandOnlyTemperatureControl'] = me.tc_command_only_temperaturecontrol;
-                attributes['queryOnlyTemperatureControl'] = me.tc_query_only_temperaturecontrol;
+                attributes['commandOnlyTemperatureControl'] = me.command_only_temperaturecontrol;
+                attributes['queryOnlyTemperatureControl'] = me.query_only_temperaturecontrol;
             }
             if (me.trait.temperaturesetting) {
                 attributes['availableThermostatModes'] = me.available_thermostat_modes;
@@ -1348,15 +1350,15 @@ module.exports = function (RED) {
             if (me.trait.energystorage) {
                 states['descriptiveCapacityRemaining'] = "FULL";
                 states['capacityRemaining'] = [];
-                states['capacityUntilFull'] = [];
                 if (me.is_rechargeable) {
+                    states['capacityUntilFull'] = [];
                     states['isCharging'] = false;
                 }
                 states['isPluggedIn'] = false;
             }
             if (me.trait.fanspeed) {
                 // states['currentFanSpeedSetting'] = "";
-                if (me.supports_fan_speed_percent) {
+                if (!me.command_only_fanspeed && me.supports_fan_speed_percent) {
                     states['currentFanSpeedPercent'] = 0;
                 }
             }
@@ -1375,55 +1377,59 @@ module.exports = function (RED) {
             }
             if (me.trait.inputselector) {
                 if (!me.command_only_input_selector) {
-                    states['currentInput'] = '';
+                    if (me.availableInputs && me.availableInputs.length > 0) {
+                        states['currentInput'] = me.availableInputs[0].key;
+                    } else {
+                        states['currentInput'] = '';
+                    }
                 }
             }
             if (me.trait.lighteffects) {
                 states['activeLightEffect'] = "";
                 // states['lightEffectEndUnixTimestampSec'] = 60;
             }
-            if (me.trait.lockunlock) {
-                // states['isLocked'] = false;
-                // states['isJammed'] = false;
-            }
-            if (me.trait.mediastate) {
-                // INACTIVE STANDBY ACTIVE
-                // states['activityState'] = 'INACTIVE';
-                // PAUSED PLAYING FAST_FORWARDING REWINDING BUFFERING STOPPED
-                // states['playbackState'] = 'STOPPED';
-            }
+            //if (me.trait.lockunlock) {
+            // states['isLocked'] = false;
+            // states['isJammed'] = false;
+            //}
+            //if (me.trait.mediastate) {
+            // INACTIVE STANDBY ACTIVE
+            // states['activityState'] = 'INACTIVE';
+            // PAUSED PLAYING FAST_FORWARDING REWINDING BUFFERING STOPPED
+            // states['playbackState'] = 'STOPPED';
+            //}
             if (me.trait.modes) {
-                if (me.query_only_modes || !me.command_only_modes) {
+                if (!me.command_only_modes) {
                     states['currentModeSettings'] = {};
                     this.updateModesState(me, device);
                 }
             }
-            if (me.trait.networkcontrol) {
-                // states['networkEnabled'] = true;
-                // states['networkSettings'] = { ssid: '' };
-                // states['guestNetworkEnabled'] = false;
-                // states['guestNetworkSettings'] = { ssid: '' };
-                // states['numConnectedDevices'] = 1;
-                // states['networkUsageMB'] = 0;
-                // states['networkUsageLimitMB'] = 0;
-                // states['networkUsageUnlimited'] = true;
-                /* states['lastNetworkDownloadSpeedTest'] = {
-                    downloadSpeedMbps: 0,
-                    unixTimestampSec: 0,
-                    status: "FAILURE"
-                }; */
-                /* states['lastNetworkUploadSpeedTest'] = {
-                    uploadSpeedMbps: 0,
-                    unixTimestampSec: 0,
-                    status: "FAILURE"
-                };*/
-                // states['networkSpeedTestInProgress'] = false;
-            }
-            if (me.trait.onoff) {
-                // states['on'] = false;
-            }
+            //if (me.trait.networkcontrol) {
+            // states['networkEnabled'] = true;
+            // states['networkSettings'] = { ssid: '' };
+            // states['guestNetworkEnabled'] = false;
+            // states['guestNetworkSettings'] = { ssid: '' };
+            // states['numConnectedDevices'] = 1;
+            // states['networkUsageMB'] = 0;
+            // states['networkUsageLimitMB'] = 0;
+            // states['networkUsageUnlimited'] = true;
+            /* states['lastNetworkDownloadSpeedTest'] = {
+                downloadSpeedMbps: 0,
+                unixTimestampSec: 0,
+                status: "FAILURE"
+            }; */
+            /* states['lastNetworkUploadSpeedTest'] = {
+                uploadSpeedMbps: 0,
+                unixTimestampSec: 0,
+                status: "FAILURE"
+            };*/
+            // states['networkSpeedTestInProgress'] = false;
+            //}
+            //if (me.trait.onoff) {
+            // states['on'] = false;
+            //}
             if (me.trait.openclose) {
-                if (me.query_only_openclose || !me.command_only_openclose) {
+                if (!me.command_only_openclose) {
                     if (me.open_direction.length < 2) {
                         states['openPercent'] = 0;
                     } else {
@@ -1438,14 +1444,14 @@ module.exports = function (RED) {
                     }
                 }
             }
-            if (me.trait.rotation) {
+            /*if (me.trait.rotation) {
                 if (me.supports_degrees) {
                     // states['rotationDegrees'] = 0;
                 }
                 if (me.supports_percent) {
                     // states['rotationPercent'] = 0;
                 }
-            }
+            }*/
             if (me.trait.runcycle) {
                 states['currentRunCycle'] = [{
                     currentCycle: "unknown",
@@ -1524,20 +1530,17 @@ module.exports = function (RED) {
                 states['currentStatusReport'] = [];
             }
             if (me.trait.temperaturecontrol) {
-                if (me.tc_query_only_temperaturecontrol || !me.tc_command_only_temperaturecontrol) {
-                    if (!me.tc_query_only_temperaturecontrol) {
-                        states['temperatureSetpointCelsius'] = me.tc_min_threshold_celsius;
-                    }
+                if (!me.query_only_temperaturecontrol) { // Required if queryOnlyTemperatureControl set to false
+                    states['temperatureSetpointCelsius'] = me.tc_min_threshold_celsius;
                 }
-                // states['temperatureSetpointCelsius'] = me.tc_min_threshold_celsius;
                 // states['temperatureAmbientCelsius'] = me.tc_min_threshold_celsius;
             }
             if (me.trait.temperaturesetting) {
-                if (me.query_only_temperaturesetting || !me.command_only_temperaturesetting) {
-                    // states['activeThermostatMode'] = "off";
+                if (!me.command_only_temperaturesetting) {
+                    // states['activeThermostatMode'] = "none";
                     // states['targetTempReachedEstimateUnixTimestampSec'] = me.target_temp_reached_estimate_unix_timestamp_sec;
                     // states['thermostatHumidityAmbient'] = me.thermostat_humidity_ambient;
-                    states['thermostatMode'] = "off";
+                    states['thermostatMode'] = "none";
                     states['thermostatTemperatureAmbient'] = me.thermostat_temperature_setpoint;
                     // 0
                     states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
@@ -1553,7 +1556,7 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.toggles) {
-                if (me.query_only_toggles || !me.command_only_toggles) {
+                if (!me.command_only_toggles) {
                     states['currentToggleSettings'] = {};
                     this.updateTogglesState(me, device);
                 }
@@ -1940,7 +1943,7 @@ module.exports = function (RED) {
                     }
                 } else if (upper_topic === 'GUESTNETWORKPASSWORD') {
                     me.guest_network_password = formats.FormatValue(formats.Formats.STRING, 'guestNetworkPassword', msg.payload);
-                } else if (upper_topic === 'OBJECTDETECTION') {
+                } else if (me.trait.objectdetection && upper_topic === 'OBJECTDETECTION') {
                     let payload = {};
                     if (typeof msg.payload.familiar === 'number') {
                         payload.familiar = msg.payload.familiar;
@@ -1963,7 +1966,7 @@ module.exports = function (RED) {
                             detectionTimestamp: Date.now()
                         }
                     });  // tell Google ...
-                } else if (upper_topic === 'RUNCYCLE') {
+                } else if (me.trait.runcycle && upper_topic === 'RUNCYCLE') {
                     let payload = { priority: 0 };
                     if (typeof msg.payload.status === 'string') {
                         payload.status = msg.payload.status;
@@ -1977,7 +1980,7 @@ module.exports = function (RED) {
                     this.clientConn.sendNotifications(this, {
                         RunCycle: payload
                     });  // tell Google ...
-                } else if (upper_topic === 'SENSORSTATE') {
+                } else if (me.trait.sensorstate && upper_topic === 'SENSORSTATE') {
                     let payload = { priority: 0 };
                     if (typeof msg.payload.name === 'string') {
                         payload.name = msg.payload.name;
@@ -1988,7 +1991,7 @@ module.exports = function (RED) {
                     this.clientConn.sendNotifications(this, {
                         SensorState: payload
                     });  // tell Google ...
-                } else if (upper_topic === 'LOCKUNLOCK') {
+                } else if (me.trait.lockunlock && upper_topic === 'LOCKUNLOCK') {
                     let payload = {};
                     if (typeof msg.payload.followUpToken === 'string') {
                         payload.followUpToken = msg.payload.followUpToken;
@@ -2008,14 +2011,14 @@ module.exports = function (RED) {
                             followUpResponse: payload
                         }
                     });  // tell Google ...
-                } else if (upper_topic === 'NETWORKCONTROL') {
+                } else if (me.trait.networkcontrol && upper_topic === 'NETWORKCONTROL') {
                     this.clientConn.sendNotifications(this, {
                         NetworkControl: {
                             priority: 0,
                             followUpResponse: msg.payload
                         }
                     });  // tell Google ...
-                } else if (upper_topic === 'OPENCLOSE') {
+                } else if (me.trait.openclose && upper_topic === 'OPENCLOSE') {
                     let payload = {};
                     if (typeof msg.payload.followUpToken === 'string') {
                         payload.followUpToken = msg.payload.followUpToken;
@@ -2035,53 +2038,51 @@ module.exports = function (RED) {
                             followUpResponse: payload
                         }
                     });  // tell Google ...
-                } else if (upper_topic === 'STATUSREPORT') {
-                    if (me.trait.statusreport) {
-                        // Update or Add reports based on deviceTarget and statusCode
-                        let payload = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
-                        let new_payload = [];
-                        me.states.currentStatusReport.forEach(report => {
-                            let new_report = {};
-                            this.cloneObject(new_report, report, me.state_types['currentStatusReport'][0]);
-                            new_payload.push(new_report);
-                        });
-                        let differs = false;
-                        payload.forEach(sr => {
-                            let nodeId;
-                            if (sr.deviceTarget) {
-                                let properties = this.clientConn.getProperties([sr.deviceTarget]);
-                                if (Object.keys(properties).length > 0) {
-                                    nodeId = sr.deviceTarget;
-                                } else {
-                                    nodeId = this.clientConn.getIdFromName(sr.deviceTarget);
-                                }
+                } else if (me.trait.statusreport && upper_topic === 'STATUSREPORT') {
+                    // Update or Add reports based on deviceTarget and statusCode
+                    let payload = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
+                    let new_payload = [];
+                    me.states.currentStatusReport.forEach(report => {
+                        let new_report = {};
+                        this.cloneObject(new_report, report, me.state_types['currentStatusReport'][0]);
+                        new_payload.push(new_report);
+                    });
+                    let differs = false;
+                    payload.forEach(sr => {
+                        let nodeId;
+                        if (sr.deviceTarget) {
+                            let properties = this.clientConn.getProperties([sr.deviceTarget]);
+                            if (Object.keys(properties).length > 0) {
+                                nodeId = sr.deviceTarget;
                             } else {
-                                nodeId = this.device.id;
+                                nodeId = this.clientConn.getIdFromName(sr.deviceTarget);
                             }
-                            if (nodeId) {
-                                let new_report = {};
-                                this.cloneObject(new_report, sr, me.state_types['currentStatusReport'][0]);
-                                if (new_report.statusCode) {
-                                    new_report.deviceTarget = nodeId;
-                                    let cur_reports = new_payload.filter(report => report.deviceTarget === nodeId && report.statusCode === new_report.statusCode)
-                                    if (cur_reports.length > 0) {
-                                        if (this.cloneObject(cur_reports[0], new_report, me.state_types['currentStatusReport'][0])) {
-                                            differs = true;
-                                        }
-                                    } else {
-                                        new_payload.push(new_report);
+                        } else {
+                            nodeId = this.device.id;
+                        }
+                        if (nodeId) {
+                            let new_report = {};
+                            this.cloneObject(new_report, sr, me.state_types['currentStatusReport'][0]);
+                            if (new_report.statusCode) {
+                                new_report.deviceTarget = nodeId;
+                                let cur_reports = new_payload.filter(report => report.deviceTarget === nodeId && report.statusCode === new_report.statusCode)
+                                if (cur_reports.length > 0) {
+                                    if (this.cloneObject(cur_reports[0], new_report, me.state_types['currentStatusReport'][0])) {
                                         differs = true;
                                     }
+                                } else {
+                                    new_payload.push(new_report);
+                                    differs = true;
                                 }
                             }
-                        });
-                        if (me.updateState({ currentStatusReport: new_payload }) || differs) {
-                            this.clientConn.setState(this, me.states, true);  // tell Google ...
+                        }
+                    });
+                    if (me.updateState({ currentStatusReport: new_payload }) || differs) {
+                        this.clientConn.setState(this, me.states, true);  // tell Google ...
 
-                            if (this.passthru) {
-                                msg.payload = new_payload;
-                                this.send(msg);
-                            }
+                        if (this.passthru) {
+                            msg.payload = new_payload;
+                            this.send(msg);
                         }
                     }
                 } else {
@@ -2297,7 +2298,6 @@ module.exports = function (RED) {
             const me = this;
             let modified = false;
             Object.keys(me.state_types).forEach(function (key) {
-                // check modes, toggles, arrays, temperatureSettings ...
                 if (new_states.hasOwnProperty(key)) {
                     if (me.setState(key, new_states[key], me.states, me.state_types[key], me.exclusive_states[key] || {})) {
                         me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
@@ -2902,7 +2902,7 @@ module.exports = function (RED) {
             }
             // HumiditySetting
             else if (command.command == 'action.devices.commands.SetHumidity') {
-                if (me.query_only_humiditysetting || !me.command_only_humiditysetting) {
+                if (!me.command_only_humiditysetting) {
                     const humidity = command.params['humidity'];
                     params['humiditySetpointPercent'] = humidity;
                     executionStates.push('humiditySetpointPercent');
@@ -2999,7 +2999,7 @@ module.exports = function (RED) {
             }
             // On/Off
             else if (command.command == 'action.devices.commands.OnOff') {
-                if (me.query_only_onoff || !me.command_only_onoff) {
+                if (!me.command_only_onoff) {
                     if (command.params.hasOwnProperty('on')) {
                         const on_param = command.params['on'];
                         executionStates.push('on');
@@ -3009,7 +3009,7 @@ module.exports = function (RED) {
             }
             // OpenClose
             else if (command.command == 'action.devices.commands.OpenClose') {
-                if (me.query_only_openclose || !me.command_only_openclose) {
+                if (!me.command_only_openclose) {
                     const open_percent = command.params['openPercent'] || 0;
                     if (me.states.hasOwnProperty('openPercent')) {
                         executionStates.push('openPercent');
@@ -3138,7 +3138,7 @@ module.exports = function (RED) {
             }
             // TempreatureControl
             else if (command.command == 'action.devices.commands.SetTemperature') {
-                if (me.tc_query_only_temperaturecontrol || !me.tc_command_only_temperaturecontrol) {
+                if (!me.command_only_temperaturecontrol) {
                     const temperature = command.params['temperature'];
                     params['temperatureSetpointCelsius'] = temperature;
                     executionStates.push('temperatureSetpointCelsius');
@@ -3146,7 +3146,7 @@ module.exports = function (RED) {
             }
             // TemperatureSetting 
             else if (command.command == 'action.devices.commands.ThermostatTemperatureSetpoint') {
-                if (me.query_only_temperaturesetting || !me.command_only_temperaturesetting) {
+                if (!me.command_only_temperaturesetting) {
                     const thermostatTemperatureSetpoint = command.params['thermostatTemperatureSetpoint'];
                     params['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint;
                     me.thermostat_temperature_setpoint = thermostatTemperatureSetpoint;
@@ -3154,7 +3154,7 @@ module.exports = function (RED) {
                 }
             }
             else if (command.command == 'action.devices.commands.ThermostatTemperatureSetRange') {
-                if (me.query_only_temperaturesetting || !me.command_only_temperaturesetting) {
+                if (!me.command_only_temperaturesetting) {
                     const thermostatTemperatureSetpointHigh = command.params['thermostatTemperatureSetpointHigh'];
                     const thermostatTemperatureSetpointLow = command.params['thermostatTemperatureSetpointLow'];
                     params['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh;
@@ -3165,7 +3165,7 @@ module.exports = function (RED) {
                 }
             }
             else if (command.command == 'action.devices.commands.ThermostatSetMode') {
-                if (me.query_only_temperaturesetting || !me.command_only_temperaturesetting) {
+                if (!me.command_only_temperaturesetting) {
                     const thermostatMode = command.params.thermostatMode;
                     params['thermostatMode'] = thermostatMode;
                     executionStates.push('thermostatMode');
@@ -3276,10 +3276,12 @@ module.exports = function (RED) {
             }
             // Volume
             else if (command.command == 'action.devices.commands.mute') {
-                if (command.params.hasOwnProperty('mute')) {
-                    const mute = command.params['mute'];
-                    params['isMuted'] = mute;
-                    executionStates.push('isMuted', 'currentVolume');
+                if (!me.command_only_volume) {
+                    if (command.params.hasOwnProperty('mute')) {
+                        const mute = command.params['mute'];
+                        params['isMuted'] = mute;
+                        executionStates.push('isMuted', 'currentVolume');
+                    }
                 }
             }
             else if (command.command == 'action.devices.commands.setVolume') {
@@ -3412,7 +3414,7 @@ module.exports = function (RED) {
             }
             // Modes
             else if (command.command == 'action.devices.commands.SetModes') {
-                if (me.query_only_modes || !me.command_only_modes) {
+                if (!me.command_only_modes) {
                     if (command.params.hasOwnProperty('updateModeSettings')) {
                         const updateModeSettings = command.params['updateModeSettings'];
                         let current_modes = me.states['currentModeSettings'];
@@ -3452,7 +3454,7 @@ module.exports = function (RED) {
             }
             // Traits
             else if (command.command == 'action.devices.commands.SetToggles') {
-                if (me.query_only_toggles || !me.command_only_toggles) {
+                if (!me.command_only_toggles) {
                     if (command.params.hasOwnProperty('updateToggleSettings')) {
                         const updateToggleSettings = command.params['updateToggleSettings'];
                         let current_toggle = me.states['currentToggleSettings'];

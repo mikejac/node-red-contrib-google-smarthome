@@ -34,12 +34,12 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-client"><i class="fa fa-globe"></i> SmartHome</label>
+        <label style="width:auto" for="node-input-client"><i class="fa fa-globe"></i> SmartHome</label>
         <input type="text" id="node-input-client">
     </div>
 
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="device.label.name"></span></label>
+        <label style="width:auto" for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="device.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]device.placeholder.name">
     </div>
 
@@ -48,12 +48,12 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-topic"><i class="fa fa-tag"></i> <span data-i18n="device.label.topic"></span></label>
+        <label style="width:auto" for="node-input-topic"><i class="fa fa-tag"></i> <span data-i18n="device.label.topic"></span></label>
         <input type="text" id="node-input-topic" data-i18n="[placeholder]device.placeholder.topic">
     </div>
 
     <div class="form-row">
-        <label for="node-input-room_hint"><i class="fa fa-tag"></i> <span data-i18n="device.label.room_hint"></span></label>
+        <label style="width:auto" for="node-input-room_hint"><i class="fa fa-tag"></i> <span data-i18n="device.label.room_hint"></span></label>
         <input type="text" id="node-input-room_hint" data-i18n="[placeholder]device.placeholder.room_hint">
     </div>
 
@@ -64,7 +64,7 @@
     </div>
     
     <div class="form-row" id="device_type">
-        <label for="node-input-device_type"><i class="fa fa-tag"></i> <span data-i18n="device.label.device_type"></span></label>
+        <label style="width:auto" for="node-input-device_type"><i class="fa fa-tag"></i> <span data-i18n="device.label.device_type"></span></label>
         <select id="node-input-device_type" >
             <option value='AC_UNIT' data-i18n='device.device_type.AC_UNIT'></option>
             <option value='AIRCOOLER' data-i18n='device.device_type.AIRCOOLER'></option>
@@ -149,7 +149,7 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-show_trait"><i class="fa fa-tag"></i> <span data-i18n="device.label.show_trait"></span></label>
+        <label style="width:auto" for="node-input-show_trait"><i class="fa fa-tag"></i> <span data-i18n="device.label.show_trait"></span></label>
         <select id="node-input-show_trait" >
             <option value="selected" data-i18n="device.label.selected"></option>
             <option value="recommended" data-i18n="device.label.recommended"></option>
@@ -157,7 +157,7 @@
         </select>
     </div>
 
-    <div class="form-row">
+    <div class="form-row" hidden>
         <label style="width:auto" for="node-input-advanced_settings"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.advanced_settings"></span></label>
         <input type="checkbox" checked id="node-input-advanced_settings" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
@@ -179,7 +179,7 @@
 
         <div id="trait_appselector">
             <div class="form-row">
-                <label for="node-input-appselector_file"><i class="fa fa-file"></i> <span data-i18n="device.label.appselector_file"></span></label>
+                <label style="width:auto" for="node-input-appselector_file"><i class="fa fa-file"></i> <span data-i18n="device.label.appselector_file"></span></label>
                 <input type="text" id="node-input-appselector_file" data-i18n="[placeholder]device.placeholder.appselector_file">
             </div>
         </div>
@@ -253,47 +253,47 @@
 
         <div id="trait_camerastream">
             <div class="form-row">
-                <label for="node-input-hls"><i class="fa fa-globe"></i> <span data-i18n="device.label.hls"></span></label>
+                <label style="width:auto" for="node-input-hls"><i class="fa fa-globe"></i> <span data-i18n="device.label.hls"></span></label>
                 <input type="text" id="node-input-hls" data-i18n="[placeholder]device.placeholder.hls">
             </div>
         
             <div class="form-row">
-                <label for="node-input-hls_app_id"><i class="fa fa-tag"></i> <span data-i18n="device.label.hls_app_id"></span></label>
+                <label style="width:auto" for="node-input-hls_app_id"><i class="fa fa-tag"></i> <span data-i18n="device.label.hls_app_id"></span></label>
                 <input type="text" id="node-input-hls_app_id" data-i18n="[placeholder]device.placeholder.hls_app_id">
             </div>
         
             <div class="form-row">
-                <label for="node-input-dash"><i class="fa fa-globe"></i> <span data-i18n="device.label.dash"></span></label>
+                <label style="width:auto" for="node-input-dash"><i class="fa fa-globe"></i> <span data-i18n="device.label.dash"></span></label>
                 <input type="text" id="node-input-dash" data-i18n="[placeholder]device.placeholder.dash">
             </div>
         
             <div class="form-row">
-                <label for="node-input-dash_app_id"><i class="fa fa-tag"></i> <span data-i18n="device.label.dash_app_id"></span></label>
+                <label style="width:auto" for="node-input-dash_app_id"><i class="fa fa-tag"></i> <span data-i18n="device.label.dash_app_id"></span></label>
                 <input type="text" id="node-input-dash_app_id" data-i18n="[placeholder]device.placeholder.dash_app_id">
             </div>
         
             <div class="form-row">
-                <label for="node-input-smooth_stream"><i class="fa fa-globe"></i> <span data-i18n="device.label.smooth_stream"></span></label>
+                <label style="width:auto" for="node-input-smooth_stream"><i class="fa fa-globe"></i> <span data-i18n="device.label.smooth_stream"></span></label>
                 <input type="text" id="node-input-smooth_stream" data-i18n="[placeholder]device.placeholder.smooth_stream">
             </div>
         
             <div class="form-row">
-                <label for="node-input-smooth_stream_app_id"><i class="fa fa-tag"></i> <span data-i18n="device.label.smooth_stream_app_id"></span></label>
+                <label style="width:auto" for="node-input-smooth_stream_app_id"><i class="fa fa-tag"></i> <span data-i18n="device.label.smooth_stream_app_id"></span></label>
                 <input type="text" id="node-input-smooth_stream_app_id" data-i18n="[placeholder]device.placeholder.smooth_stream_app_id">
             </div>
         
             <div class="form-row">
-                <label for="node-input-progressive_mp4"><i class="fa fa-globe"></i> <span data-i18n="device.label.progressive_mp4"></span></label>
+                <label style="width:auto" for="node-input-progressive_mp4"><i class="fa fa-globe"></i> <span data-i18n="device.label.progressive_mp4"></span></label>
                 <input type="text" id="node-input-progressive_mp4" data-i18n="[placeholder]device.placeholder.progressive_mp4">
             </div>
         
             <div class="form-row">
-                <label for="node-input-progressive_mp4_app_id"><i class="fa fa-tag"></i> <span data-i18n="device.label.progressive_mp4_app_id"></span></label>
+                <label style="width:auto" for="node-input-progressive_mp4_app_id"><i class="fa fa-tag"></i> <span data-i18n="device.label.progressive_mp4_app_id"></span></label>
                 <input type="text" id="node-input-progressive_mp4_app_id" data-i18n="[placeholder]device.placeholder.progressive_mp4_app_id">
             </div>
         
             <div class="form-row">
-                <label for="node-input-auth_token"><i class="fa fa-tag"></i> <span data-i18n="device.label.auth_token"></span></label>
+                <label style="width:auto" for="node-input-auth_token"><i class="fa fa-tag"></i> <span data-i18n="device.label.auth_token"></span></label>
                 <input type="text" id="node-input-auth_token" data-i18n="[placeholder]device.placeholder.auth_token">
             </div>
         </div>
@@ -316,7 +316,7 @@
 
         <div id="trait_channel">
             <div class="form-row">
-                <label for="node-input-channel_file"><i class="fa fa-file"></i> <span data-i18n="device.label.channel_file"></span></label>
+                <label style="width:auto" for="node-input-channel_file"><i class="fa fa-file"></i> <span data-i18n="device.label.channel_file"></span></label>
                 <input type="text" id="node-input-channel_file" data-i18n="[placeholder]device.placeholder.channel_file">
             </div>
         </div>
@@ -344,7 +344,7 @@
             </div>
 
             <div class="form-row">
-                <label for="node-input-color_model"><i class="fa fa-tag"></i> <span data-i18n="device.label.color_model"></span></label>
+                <label style="width:auto" for="node-input-color_model"><i class="fa fa-tag"></i> <span data-i18n="device.label.color_model"></span></label>
                 <select id="node-input-color_model" >
                     <option value="temp" data-i18n="device.label.temperature_k"></option>
                     <option value="rgb" data-i18n="device.label.rgb"></option>
@@ -358,12 +358,12 @@
                 <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.color_temperature_range"></span></label></b>
 
                 <div class="form-row">
-                    <label for="node-input-temperature_min_k"><i class="fa fa-tag"></i> <span data-i18n="device.label.temperature_min_k"></span></label>
+                    <label style="width:auto" for="node-input-temperature_min_k"><i class="fa fa-tag"></i> <span data-i18n="device.label.temperature_min_k"></span></label>
                     <input type="text" id="node-input-temperature_min_k" data-i18n="[placeholder]device.placeholder.temperature_min_k">
                 </div>
 
                 <div class="form-row">
-                    <label for="node-input-temperature_max_k"><i class="fa fa-tag"></i> <span data-i18n="device.label.temperature_max_k"></span></label>
+                    <label style="width:auto" for="node-input-temperature_max_k"><i class="fa fa-tag"></i> <span data-i18n="device.label.temperature_max_k"></span></label>
                     <input type="text" id="node-input-temperature_max_k" data-i18n="[placeholder]device.placeholder.temperature_max_k">
                 </div>
             </div>
@@ -387,7 +387,7 @@
 
         <div id="trait_cook">
             <div class="form-row">
-                <label for="node-input-supported_cooking_modes"><i class="fa fa-tag"></i> <span data-i18n="device.label.supported_cooking_modes"></span></label>
+                <label style="width:auto" for="node-input-supported_cooking_modes"><i class="fa fa-tag"></i> <span data-i18n="device.label.supported_cooking_modes"></span></label>
                 <select multiple id="node-input-supported_cooking_modes" >
                     <option value="UNKNOWN_COOKING_MODE" data-i18n="device.label.UNKNOWN_COOKING_MODE"></option>
                     <option value="BAKE" data-i18n="device.label.BAKE"></option>
@@ -421,7 +421,7 @@
             </div>
 
             <div class="form-row">
-                <label for="node-input-food_presets_file"><i class="fa fa-file"></i> <span data-i18n="device.label.food_presets_file"></span></label>
+                <label style="width:auto" for="node-input-food_presets_file"><i class="fa fa-file"></i> <span data-i18n="device.label.food_presets_file"></span></label>
                 <input type="text" id="node-input-food_presets_file" data-i18n="[placeholder]device.placeholder.food_presets_file">
             </div>
         </div>
@@ -444,12 +444,12 @@
 
         <div id="trait_dispense">
             <div class="form-row">
-                <label for="node-input-supported_dispense_items_file"><i class="fa fa-file"></i> <span data-i18n="device.label.supported_dispense_items_file"></span></label>
+                <label style="width:auto" for="node-input-supported_dispense_items_file"><i class="fa fa-file"></i> <span data-i18n="device.label.supported_dispense_items_file"></span></label>
                 <input type="text" id="node-input-supported_dispense_items_file" data-i18n="[placeholder]device.placeholder.supported_dispense_items_file">
             </div>
 
             <div class="form-row">
-                <label for="node-input-supported_dispense_presets_file"><i class="fa fa-file"></i> <span data-i18n="device.label.supported_dispense_presets_file"></span></label>
+                <label style="width:auto" for="node-input-supported_dispense_presets_file"><i class="fa fa-file"></i> <span data-i18n="device.label.supported_dispense_presets_file"></span></label>
                 <input type="text" id="node-input-supported_dispense_presets_file" data-i18n="[placeholder]device.placeholder.supported_dispense_presets_file">
             </div>
         </div>
@@ -497,7 +497,7 @@
             </div>
 
             <div class="form-row">
-                <label for="node-input-energy_storage_distance_unit_for_ux"><i class="fa fa-tag"></i> <span data-i18n="device.label.energy_storage_distance_unit_for_ux"></span></label>
+                <label style="width:auto" for="node-input-energy_storage_distance_unit_for_ux"><i class="fa fa-tag"></i> <span data-i18n="device.label.energy_storage_distance_unit_for_ux"></span></label>
                 <select id="node-input-energy_storage_distance_unit_for_ux" >
                     <option value=""></option>
                     <option value="KILOMETERS" data-i18n="device.label.KILOMETERS"></option>
@@ -615,13 +615,12 @@
             </div>
 
             <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-command_only_humiditysetting"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.command_only_humiditysetting"></span></label>
-                <input type="checkbox" checked id="node-input-command_only_humiditysetting" style="display:inline-block; width:auto; vertical-align:top;">
-            </div>
-
-            <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-query_only_humiditysetting"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.query_only_humiditysetting"></span></label>
-                <input type="checkbox" checked id="node-input-query_only_humiditysetting" style="display:inline-block; width:auto; vertical-align:top;">
+                <label style="width:auto" for="node-input-command_query_humiditysetting"><i class="fa fa-tag"></i> <span data-i18n="device.label.command_query"></span></label>
+                <select style="width: fit-content" id="node-input-command_query_humiditysetting" >
+                    <option value="" data-i18n="device.label.command_and_query_humiditysetting"></option>
+                    <option value="command" data-i18n="device.label.command_only_humiditysetting"></option>
+                    <option value="query" data-i18n="device.label.query_only_humiditysetting"></option>
+                </select>
             </div>
         </div>
     </div>
@@ -643,7 +642,7 @@
 
         <div id="trait_inputselector">
             <div class="form-row">
-                <label for="node-input-inputselector_file"><i class="fa fa-file"></i> <span data-i18n="device.label.inputselector_file"></span></label>
+                <label style="width:auto" for="node-input-inputselector_file"><i class="fa fa-file"></i> <span data-i18n="device.label.inputselector_file"></span></label>
                 <input type="text" id="node-input-inputselector_file" data-i18n="[placeholder]device.placeholder.inputselector_file">
             </div>
 
@@ -676,17 +675,17 @@
 
         <div id="trait_lighteffects">
             <div class="form-row">
-                <label for="node-input-default_sleep_duration"><i class="fa fa-tag"></i> <span data-i18n="device.label.default_sleep_duration"></span></label>
+                <label style="width:auto" for="node-input-default_sleep_duration"><i class="fa fa-tag"></i> <span data-i18n="device.label.default_sleep_duration"></span></label>
                 <input type="text" id="node-input-default_sleep_duration" data-i18n="[placeholder]device.placeholder.default_sleep_duration">
             </div>
 
             <div class="form-row">
-                <label for="node-input-default_wake_duration"><i class="fa fa-tag"></i> <span data-i18n="device.label.default_wake_duration"></span></label>
+                <label style="width:auto" for="node-input-default_wake_duration"><i class="fa fa-tag"></i> <span data-i18n="device.label.default_wake_duration"></span></label>
                 <input type="text" id="node-input-default_wake_duration" data-i18n="[placeholder]device.placeholder.default_wake_duration">
             </div>
 
             <div class="form-row">
-                <label for="node-input-supported_effects"><i class="fa fa-tag"></i> <span data-i18n="device.label.supported_effects"></span></label>
+                <label style="width:auto" for="node-input-supported_effects"><i class="fa fa-tag"></i> <span data-i18n="device.label.supported_effects"></span></label>
                 <select multiple id="node-input-supported_effects" >
                     <option value="colorLoop" data-i18n="device.label.color_loop"></option>
                     <option value="sleep" data-i18n="device.label.sleep"></option>
@@ -781,18 +780,17 @@
 
         <div id="trait_modes">
             <div class="form-row">
-                <label for="node-input-modes_file"><i class="fa fa-file"></i> <span data-i18n="device.label.modes_file"></span></label>
+                <label style="width:auto" for="node-input-modes_file"><i class="fa fa-file"></i> <span data-i18n="device.label.modes_file"></span></label>
                 <input type="text" id="node-input-modes_file" data-i18n="[placeholder]device.placeholder.modes_file">
             </div>
 
             <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-command_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.command_only_modes"></span></label>
-                <input type="checkbox" checked id="node-input-command_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
-            </div>
-
-            <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-query_only_modes"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.query_only_modes"></span></label>
-                <input type="checkbox" checked id="node-input-query_only_modes" style="display:inline-block; width:auto; vertical-align:top;">
+                <label style="width:auto" for="node-input-command_query_modes"><i class="fa fa-tag"></i> <span data-i18n="device.label.command_query"></span></label>
+                <select style="width: fit-content" id="node-input-command_query_modes" >
+                    <option value="command" data-i18n="device.label.command_only_modes"></option>
+                    <option value="query" data-i18n="device.label.query_only_modes"></option>
+                    <option value="" data-i18n="device.label.command_and_query_modes"></option>
+                </select>
             </div>
         </div>
     </div>
@@ -894,13 +892,12 @@
 
         <div id="trait_onoff">
             <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-command_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.command_only_onoff"></span></label>
-                <input type="checkbox" checked id="node-input-command_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
-            </div>
-
-            <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-query_only_onoff"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.query_only_onoff"></span></label>
-                <input type="checkbox" checked id="node-input-query_only_onoff" style="display:inline-block; width:auto; vertical-align:top;">
+                <label style="width:auto" for="node-input-command_query_onoff"><i class="fa fa-tag"></i> <span data-i18n="device.label.command_query"></span></label>
+                <select style="width: fit-content" id="node-input-command_query_onoff" >
+                    <option value="" data-i18n="device.label.command_and_query_onoff"></option>
+                    <option value="command" data-i18n="device.label.command_only_onoff"></option>
+                    <option value="query" data-i18n="device.label.query_only_onoff"></option>
+                </select>
             </div>
         </div>
     </div>
@@ -927,7 +924,7 @@
             </div>
 
             <div class="form-row">
-                <label for="node-input-open_direction"><i class="fa fa-tag"></i> <span data-i18n="device.label.open_direction"></span></label>
+                <label style="width:auto" for="node-input-open_direction"><i class="fa fa-tag"></i> <span data-i18n="device.label.open_direction"></span></label>
                 <select multiple id="node-input-open_direction" >
                     <option value="UP" data-i18n="device.label.up"></option>
                     <option value="DOWN" data-i18n="device.label.down"></option>
@@ -939,13 +936,12 @@
             </div>
 
             <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-command_only_openclose"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.command_only_openclose"></span></label>
-                <input type="checkbox" checked id="node-input-command_only_openclose" style="display:inline-block; width:auto; vertical-align:top;">
-            </div>
-
-            <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-query_only_openclose"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.query_only_openclose"></span></label>
-                <input type="checkbox" checked id="node-input-query_only_openclose" style="display:inline-block; width:auto; vertical-align:top;">
+                <label style="width:auto" for="node-input-command_query_openclose"><i class="fa fa-tag"></i> <span data-i18n="device.label.command_query"></span></label>
+                <select style="width: fit-content" id="node-input-command_query_openclose" >
+                    <option value="" data-i18n="device.label.command_and_query_openclose"></option>
+                    <option value="command" data-i18n="device.label.command_only_openclose"></option>
+                    <option value="query" data-i18n="device.label.query_only_openclose"></option>
+                </select>
             </div>
         </div>
     </div>
@@ -1078,7 +1074,7 @@
 
         <div id="trait_sensorstate">
             <div class="form-row">
-                <label for="node-input-sensor_states_supported"><i class="fa fa-tag"></i> <span data-i18n="device.label.sensor_states_supported"></span></label>
+                <label style="width:auto" for="node-input-sensor_states_supported"><i class="fa fa-tag"></i> <span data-i18n="device.label.sensor_states_supported"></span></label>
                 <select multiple id="node-input-sensor_states_supported" >
                     <option value="AirQuality" data-i18n="device.label.air_quality"></option>
                     <option value="CarbonMonoxideLevel" data-i18n="device.label.carbon_monoxide_level"></option>
@@ -1201,7 +1197,7 @@
             </div>
 
             <div class="form-row">
-                <label for="node-input-tc_temperature_unit_for_ux"><i class="fa fa-tag"></i> <span data-i18n="device.label.tc_temperature_unit_for_ux"></span></label>
+                <label style="width:auto" for="node-input-tc_temperature_unit_for_ux"><i class="fa fa-tag"></i> <span data-i18n="device.label.tc_temperature_unit_for_ux"></span></label>
                 <select id="node-input-tc_temperature_unit_for_ux" >
                     <option value="C" data-i18n="device.label._c"></option>
                     <option value="F" data-i18n="device.label._f"></option>
@@ -1209,13 +1205,12 @@
             </div>
 
             <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-tc_command_only_temperaturecontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.tc_command_only_temperaturecontrol"></span></label>
-                <input type="checkbox" checked id="node-input-tc_command_only_temperaturecontrol" style="display:inline-block; width:auto; vertical-align:top;">
-            </div>
-
-            <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-tc_query_only_temperaturecontrol"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.tc_query_only_temperaturecontrol"></span></label>
-                <input type="checkbox" checked id="node-input-tc_query_only_temperaturecontrol" style="display:inline-block; width:auto; vertical-align:top;">
+                <label style="width:auto" for="node-input-tc_command_query_temperaturecontrol"><i class="fa fa-tag"></i> <span data-i18n="device.label.command_query"></span></label>
+                <select style="width: fit-content" id="node-input-tc_command_query_temperaturecontrol" >
+                    <option value="" data-i18n="device.label.tc_command_and_query_temperaturecontrol"></option>
+                    <option value="command" data-i18n="device.label.tc_command_only_temperaturecontrol"></option>
+                    <option value="query" data-i18n="device.label.tc_query_only_temperaturecontrol"></option>
+                </select>
             </div>
         </div>
     </div>
@@ -1237,7 +1232,7 @@
 
         <div id="trait_temperaturesetting">
             <div class="form-row">
-                <label for="node-input-available_thermostat_modes"><i class="fa fa-tag"></i> <span data-i18n="device.label.available_thermostat_modes"></span></label>
+                <label style="width:auto" for="node-input-available_thermostat_modes"><i class="fa fa-tag"></i> <span data-i18n="device.label.available_thermostat_modes"></span></label>
                 <select multiple id="node-input-available_thermostat_modes" >
                     <option value="off" data-i18n="device.label.off"></option>
                     <option value="heat" data-i18n="device.label.heat"></option>
@@ -1263,7 +1258,7 @@
             </div>
 
             <div class="form-row">
-                <label for="node-input-thermostat_temperature_unit"><i class="fa fa-tag"></i> <span data-i18n="device.label.thermostat_temperature_unit"></span></label>
+                <label style="width:auto" for="node-input-thermostat_temperature_unit"><i class="fa fa-tag"></i> <span data-i18n="device.label.thermostat_temperature_unit"></span></label>
                 <select id="node-input-thermostat_temperature_unit" >
                     <option value="C" data-i18n="device.label._c"></option>
                     <option value="F" data-i18n="device.label._f"></option>
@@ -1276,13 +1271,12 @@
             </div>
 
             <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-command_only_temperaturesetting"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.command_only_temperaturesetting"></span></label>
-                <input type="checkbox" checked id="node-input-command_only_temperaturesetting" style="display:inline-block; width:auto; vertical-align:top;">
-            </div>
-
-            <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-query_only_temperaturesetting"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.query_only_temperaturesetting"></span></label>
-                <input type="checkbox" checked id="node-input-query_only_temperaturesetting" style="display:inline-block; width:auto; vertical-align:top;">
+                <label style="width:auto" for="node-input-command_query_temperaturesetting"><i class="fa fa-tag"></i> <span data-i18n="device.label.command_query"></span></label>
+                <select style="width: fit-content" id="node-input-command_query_temperaturesetting" >
+                    <option value="" data-i18n="device.label.command_and_query_temperaturesetting"></option>
+                    <option value="command" data-i18n="device.label.command_only_temperaturesetting"></option>
+                    <option value="query" data-i18n="device.label.query_only_temperaturesetting"></option>
+                </select>
             </div>
         </div>
     </div>
@@ -1332,18 +1326,17 @@
 
         <div id="trait_toggles">
             <div class="form-row">
-                <label for="node-input-toggles_file"><i class="fa fa-file"></i> <span data-i18n="device.label.toggles_file"></span></label>
+                <label style="width:auto" for="node-input-toggles_file"><i class="fa fa-file"></i> <span data-i18n="device.label.toggles_file"></span></label>
                 <input type="text" id="node-input-toggles_file" data-i18n="[placeholder]device.placeholder.toggles_file">
             </div>
 
             <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-command_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.command_only_toggles"></span></label>
-                <input type="checkbox" checked id="node-input-command_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
-            </div>
-
-            <div class="form-row device-advanced">
-                <label style="width:auto" for="node-input-query_only_toggles"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.query_only_toggles"></span></label>
-                <input type="checkbox" checked id="node-input-query_only_toggles" style="display:inline-block; width:auto; vertical-align:top;">
+                <label style="width:auto" for="node-input-command_query_toggles"><i class="fa fa-tag"></i> <span data-i18n="device.label.command_query"></span></label>
+                <select style="width: fit-content" id="node-input-command_query_toggles" >
+                    <option value="" data-i18n="device.label.command_and_query_toggles"></option>
+                    <option value="command" data-i18n="device.label.command_only_toggles"></option>
+                    <option value="query" data-i18n="device.label.query_only_toggles"></option>
+                </select>
             </div>
         </div>
     </div>
@@ -1365,7 +1358,7 @@
 
         <div id="trait_transportcontrol">
             <div class="form-row">
-                <label for="node-input-supported_commands"><i class="fa fa-tag"></i> <span data-i18n="device.label.supported_commands"></span></label>
+                <label style="width:auto" for="node-input-supported_commands"><i class="fa fa-tag"></i> <span data-i18n="device.label.supported_commands"></span></label>
                 <select multiple id="node-input-supported_commands" >
                     <option value="CAPTION_CONTROL" data-i18n="device.label.caption_control"></option>
                     <option value="NEXT" data-i18n="device.label.next"></option>
@@ -1399,7 +1392,7 @@
 
         <div id="trait_volume">
             <div class="form-row">
-                <label for="node-input-volume_max_level"><i class="fa fa-tag"></i> <span data-i18n="device.label.volume_max_level"></span></label>
+                <label style="width:auto" for="node-input-volume_max_level"><i class="fa fa-tag"></i> <span data-i18n="device.label.volume_max_level"></span></label>
                 <input type="text" id="node-input-volume_max_level" data-i18n="[placeholder]device.placeholder.volume_max_level">
             </div>
 
@@ -1409,12 +1402,12 @@
             </div>
 
             <div class="form-row">
-                <label for="node-input-volume_default_percentage"><i class="fa fa-tag"></i> <span data-i18n="device.label.volume_default_percentage"></span></label>
+                <label style="width:auto" for="node-input-volume_default_percentage"><i class="fa fa-tag"></i> <span data-i18n="device.label.volume_default_percentage"></span></label>
                 <input type="text" id="node-input-volume_default_percentage" data-i18n="[placeholder]device.placeholder.volume_default_percentage">
             </div>
 
             <div class="form-row">
-                <label for="node-input-level_step_size"><i class="fa fa-tag"></i> <span data-i18n="device.label.level_step_size"></span></label>
+                <label style="width:auto" for="node-input-level_step_size"><i class="fa fa-tag"></i> <span data-i18n="device.label.level_step_size"></span></label>
                 <input type="text" id="node-input-level_step_size" data-i18n="[placeholder]device.placeholder.level_step_size">
             </div>
 
@@ -1516,11 +1509,8 @@
             support_playback_state: {
                 value: false, required: false
             },
-            command_only_onoff: {
-                value: false, required: false
-            },
-            query_only_onoff: {
-                value: false, required: false
+            command_query_onoff: {
+                value: "", required: false
             },
             supported_commands: {
                 value: ['CAPTION_CONTROL', 'NEXT', 'PAUSE', 'PREVIOUS', 'RESUME', 'SEEK_RELATIVE', 'SEEK_TO_POSITION', 'SET_REPEAT', 'SHUFFLE', 'STOP'], required: false
@@ -1578,20 +1568,14 @@
             modes_file: {
                 value: "modes_<id>.json", required: false
             },
-            command_only_modes: {
-                value: false, required: false
-            },
-            query_only_modes: {
-                value: false, required: false
+            command_query_modes: {
+                value: "", required: false
             },
             toggles_file: {
                 value: "toggles_<id>.json", required: false
             },
-            command_only_toggles: {
-                value: false, required: false
-            },
-            query_only_toggles: {
-                value: false, required: false
+            command_query_toggles: {
+                value: "", required: false
             },
             trait_camerastream: {
                 value: false, required: false
@@ -1663,11 +1647,8 @@
             buffer_range_celsius: {
                 value: 2, required: false, validate: RED.validators.number()
             },
-            command_only_temperaturesetting: {
-                value: false, required: false
-            },
-            query_only_temperaturesetting: {
-                value: false, required: false
+            command_query_temperaturesetting: {
+                value: "", required: false
             },
             trait_temperaturecontrol: {
                 value: false, required: false
@@ -1684,11 +1665,8 @@
             tc_temperature_unit_for_ux: {
                 value: "C", required: false
             },
-            tc_command_only_temperaturecontrol: {
-                value: false, required: false
-            },
-            tc_query_only_temperaturecontrol: {
-                value: false, required: false
+            tc_command_query_temperaturecontrol: {
+                value: "", required: false
             },
             trait_humiditysetting: {
                 value: false, required: false
@@ -1707,11 +1685,8 @@
                     return !isNaN(v) && Number.isInteger(f) && n > 0;
                 }
             },
-            command_only_humiditysetting: {
-                value: false, required: false
-            },
-            query_only_humiditysetting: {
-                value: false, required: false
+            command_query_humiditysetting: {
+                value: "", required: false
             },
             trait_dock: {
                 value: false, required: false
@@ -1734,11 +1709,8 @@
             open_direction: {
                 value: [], required: false
             },
-            command_only_openclose: {
-                value: false, required: false
-            },
-            query_only_openclose: {
-                value: false, required: false
+            command_query_openclose: {
+                value: "", required: false
             },
             trait_startstop: {
                 value: false, required: false
@@ -1916,14 +1888,14 @@
                 value: "selected", required: false
             },
             advanced_settings: {
-                value: false, required: false
+                value: true, required: false
             }
         },
         oneditprepare: function () {
-            $('#node-input-advanced_settings').prop('checked', false);
+            $('#node-input-advanced_settings').prop('checked', true);
             $('#node-input-show_trait').val('selected');
             this.show_trait = 'selected';
-            this.advanced_settings = false;
+            this.advanced_settings = true;
             // Zones
             $('#node-input-device-zone-container').css('min-height', '150px').css('min-width', '450px').editableList({
                 addItem: function (container, i, opt) {
