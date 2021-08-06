@@ -744,7 +744,10 @@ module.exports = function (RED) {
                         },
                         isCurrentlyDispensing: Formats.BOOL,
                     },
-                    'itemName'
+                    {
+                        keyId: 'itemName',
+                        removeIfNoData: true,
+                    }
                 ];
             }
             if (me.trait.dock) {
@@ -760,6 +763,7 @@ module.exports = function (RED) {
                     {
                         keyId: "unit",
                         addIfMissing: true,
+                        removeIfNoData: true,
                         isValidKey: unit => ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'].includes(unit)
                     }
                 ];
@@ -772,6 +776,7 @@ module.exports = function (RED) {
                         {
                             keyId: "unit",
                             addIfMissing: true,
+                            removeIfNoData: true,
                             isValidKey: unit => ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'].includes(unit)
                         }
                     ];
@@ -902,6 +907,7 @@ module.exports = function (RED) {
                     {
                         keyId: 'currentCycle',
                         addIfMissing: true,
+                        removeIfNoData: true,
                         isValidKey: cycle => cycle.trim().length > 0 ? cycle.trim() : undefined
                     }
                 ];
@@ -929,6 +935,7 @@ module.exports = function (RED) {
                     Formats.STRING,
                     {
                         addIfMissing: true,
+                        removeIfNoData: true,
                         isValidKey: zone => me.available_zones.includes(zone)
                     }
                 ];
@@ -944,6 +951,7 @@ module.exports = function (RED) {
                     {
                         keyId: ['deviceTarget', 'statusCode'],
                         addIfMissing: true,
+                        removeIfNoData: true,
                         isValidKey: nodeId => Object.keys(me.clientConn.getProperties([nodeId])).length > 0 ? nodeId : me.clientConn.getIdFromName(nodeId)
                     }
                 ];
@@ -1349,9 +1357,9 @@ module.exports = function (RED) {
             }
             if (me.trait.energystorage) {
                 states['descriptiveCapacityRemaining'] = "FULL";
-                states['capacityRemaining'] = [];
+                // states['capacityRemaining'] = [];
                 if (me.is_rechargeable) {
-                    states['capacityUntilFull'] = [];
+                    // states['capacityUntilFull'] = [];
                     states['isCharging'] = false;
                 }
                 states['isPluggedIn'] = false;
@@ -1516,7 +1524,11 @@ module.exports = function (RED) {
                     }
                     current_sensor_state_data.push(current_sensor);
                 });
-                states['currentSensorStateData'] = current_sensor_state_data;
+                if (current_sensor_state_data.length > 0) {
+                    states['currentSensorStateData'] = current_sensor_state_data;
+                } else {
+                    delete me.state_types['currentSensorStateData'];
+                }
             }
             if (me.trait.softwareupdate) {
                 states['lastSoftwareUpdateUnixTimestampSec'] = 0;
@@ -1526,9 +1538,9 @@ module.exports = function (RED) {
                 // states['isPaused'] = false;
                 // states['activeZones'] = [];
             }
-            if (me.trait.statusreport) {
+            /*if (me.trait.statusreport) {
                 states['currentStatusReport'] = [];
-            }
+            }*/
             if (me.trait.temperaturecontrol) {
                 if (!me.query_only_temperaturecontrol) { // Required if queryOnlyTemperatureControl set to false
                     states['temperatureSetpointCelsius'] = me.tc_min_threshold_celsius;
@@ -2388,10 +2400,12 @@ module.exports = function (RED) {
                                 let old_arr = Array.isArray(old_state) ? old_state : [];
                                 let key_id = state_values.length > 1 ? state_values[1] : undefined;
                                 let add_if_missing = false;
+                                let remove_if_no_data = false;
                                 let is_valid_key = key => true;
                                 let replace_all = false;
                                 if (typeof key_id === 'object') {
                                     add_if_missing = key_id.addIfMissing || false;
+                                    remove_if_no_data = key_id.removeIfNoData || false;
                                     if (typeof key_id.isValidKey === 'function') {
                                         is_valid_key = key_id.isValidKey;
                                     }
@@ -2455,6 +2469,11 @@ module.exports = function (RED) {
                                     differs = true;
                                 }
                                 states[key] = replace_all ? new_arr : old_arr;
+                                console.log("CCHI array key " + key + " " + JSON.stringify(states[key]));
+                                if (remove_if_no_data && states[key].length === 0) {
+                                    console.log("CCHI remove array key " + key);
+                                    delete states[key];
+                                }
                             }
                         } else {
                             RED.log.error('key "' + key + '" must be an array.');
