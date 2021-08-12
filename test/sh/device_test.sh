@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-# node-red -u $HOME/nrsh | awk '/HttpActions:reportState..: postData = / { pd=substr($0, 39); print pd; print pd > "reportState.json"; close("reportState.json"); }'
+# node-red -u $HOME/nrsh | awk '{ print; } /HttpActions:reportState..: postData = / { pd=substr($0, 39); print pd > "reportState.json"; close("reportState.json"); }'
 # ./device_test.sh "a5782b1b.e120f8" "bab53c06.fc9c3"
 #
 
@@ -30,6 +30,7 @@ PAYLOAD_FILE="$HOME/payload.json"
 REPORT_STATE_FILE="$HOME/reportState.json"
 OUT_FILE="$HOME/out.json"
 PAYLOAD_URL=$(dirname $BASE_URL)/payload
+TEST_NUM=0
 
 ./refresh_token
 
@@ -85,6 +86,8 @@ test_no_payload() {
 
 execute_payload() {
     echo
+    ((TEST_NUM=TEST_NUM+1))
+    echo "# $TEST_NUM"
     CMD_EXEC="$@"
     echo "$@" > request.json
     TOPIC="$1"
@@ -117,6 +120,8 @@ execute_payload() {
 execute() {
     CMD_EXEC="$@"
     echo
+    ((TEST_NUM=TEST_NUM+1))
+    echo "# $TEST_NUM"
     CMD_=$2
     CMD="${CMD_%%_*}"
     echo ./execute "$@"
@@ -186,8 +191,8 @@ test_payload .dispenseItems[2].amountLastDispensed.amount 15
 test_payload .dispenseItems[2].amountLastDispensed.unit '"NO_UNITS"'
 test_payload .dispenseItems[2].isCurrentlyDispensing false
 test_payload .descriptiveCapacityRemaining '"FULL"'
-test_payload .capacityRemaining '[]'
-test_payload .capacityUntilFull '[]'
+test_payload .capacityRemaining null # '[]'
+test_payload .capacityUntilFull null # '[]'
 test_payload .isPluggedIn false
 test_payload .currentFanSpeedPercent 0
 test_payload .isFilled false
@@ -256,7 +261,7 @@ test_payload .currentSensorStateData[13].currentSensorState null
 test_payload .currentSensorStateData[13].rawValue 0
 test_payload .lastSoftwareUpdateUnixTimestampSec 0
 test_payload .isRunning false
-test_payload .currentStatusReport '[]'
+test_payload .currentStatusReport null # '[]'
 test_payload .temperatureSetpointCelsius 0
 test_payload .thermostatMode '"off"'
 test_payload .thermostatTemperatureAmbient 1
@@ -282,17 +287,17 @@ test_payload .on true
 test_payload .isDocked null
 
 execute_payload null '{"currentStatusReport":[]}'
-test_payload .currentStatusReport '[]'
+test_payload .currentStatusReport null # '[]'
 
 execute_payload currentStatusReport '[]'
-test_payload .currentStatusReport '[]'
-test_payload .currentStatusReport '[]'
+test_payload .currentStatusReport null # '[]'
+test_payload .currentStatusReport null # '[]'
 
 execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"PIPPO","priority":0,"statusCode":"lowBattery"}]}'
-test_payload .currentStatusReport '[]'
+test_payload .currentStatusReport null # '[]'
 
 execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"Garage","priority":0,"statusCode":"lowBattery"}, {"blocking":false,"deviceTarget":"Ingresso","priority":0,"statusCode":"lowBattery"}]}'
-test_payload .currentStatusReport '[]'
+test_payload .currentStatusReport null # '[]'
 
 execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"Cucina","priority":0,"statusCode":"allBattery"}]}'
 test_payload .currentStatusReport[0].blocking false
