@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # node-red -u $HOME/nrsh | awk '{ print; } /HttpActions:reportState..: postData = / { pd=substr($0, 39); print pd > "reportState.json"; close("reportState.json"); }'
-# ./device_test.sh "a5782b1b.e120f8" "bab53c06.fc9c3"
+# cd $HOME/nrsh/node_modules/node-red-contrib-google-smarthome/test/sh/ ; ./device_test.sh "a5782b1b.e120f8" "bab53c06.fc9c3"
 #
 
 . ./data
@@ -213,6 +213,7 @@ test_payload .openState[4].openDirection '"IN"'
 test_payload .openState[4].openPercent 0
 test_payload .openState[5].openDirection '"OUT"'
 test_payload .openState[5].openPercent 0
+test_payload .openState[6] null
 test_payload .currentRunCycle[0].currentCycle '"unknown"'
 test_payload .currentRunCycle[0].lang '"en"'
 test_payload .currentTotalRemainingTime 0
@@ -259,6 +260,7 @@ test_payload .currentSensorStateData[12].rawValue 0
 test_payload .currentSensorStateData[13].name '"VolatileOrganicCompounds"'
 test_payload .currentSensorStateData[13].currentSensorState null
 test_payload .currentSensorStateData[13].rawValue 0
+test_payload .currentSensorStateData[14] null
 test_payload .lastSoftwareUpdateUnixTimestampSec 0
 test_payload .isRunning false
 test_payload .currentStatusReport null # '[]'
@@ -398,6 +400,7 @@ test_payload .openState[4].openDirection '"IN"'
 test_payload .openState[4].openPercent 0
 test_payload .openState[5].openDirection '"OUT"'
 test_payload .openState[5].openPercent 0
+test_payload .openState[6] null
 
 execute_payload openState '[{"openDirection":"LEFT","openPercent":5},{"openDirection":"IN","openPercent":9}]'
 test_payload .openState[0].openDirection '"UP"'
@@ -412,6 +415,7 @@ test_payload .openState[4].openDirection '"IN"'
 test_payload .openState[4].openPercent 9
 test_payload .openState[5].openDirection '"OUT"'
 test_payload .openState[5].openPercent 0
+test_payload .openState[6] null
 
 execute_payload currentRunCycle '[{"currentCycle":"Riscaldamento piatto","nextCycle":"Riscaldamento ugello","lang":"it"},{"currentCycle":"Riscaldamento ugello","nextCycle":"Stampa","lang":"it"}]'
 test_payload .currentRunCycle[0].currentCycle '"Riscaldamento piatto"'
@@ -422,9 +426,49 @@ test_payload .currentRunCycle[1].nextCycle '"Stampa"'
 test_payload .currentRunCycle[1].lang '"it"'
 
 execute_payload currentSensorStateData '[{"name":"CarbonMonoxideLevel","currentSensorState":"no carbon monoxide detected","rawValue":7}]'
+test_payload .currentSensorStateData[0].name '"AirQuality"'
+test_payload .currentSensorStateData[0].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[0].rawValue 0
 test_payload .currentSensorStateData[1].name '"CarbonMonoxideLevel"'
 test_payload .currentSensorStateData[1].currentSensorState '"no carbon monoxide detected"'
 test_payload .currentSensorStateData[1].rawValue 7
+test_payload .currentSensorStateData[2].name '"SmokeLevel"'
+test_payload .currentSensorStateData[2].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[2].rawValue 0
+test_payload .currentSensorStateData[3].name '"FilterCleanliness"'
+test_payload .currentSensorStateData[3].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[3].rawValue null
+test_payload .currentSensorStateData[4].name '"WaterLeak"'
+test_payload .currentSensorStateData[4].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[4].rawValue null
+test_payload .currentSensorStateData[5].name '"RainDetection"'
+test_payload .currentSensorStateData[5].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[5].rawValue null
+test_payload .currentSensorStateData[6].name '"FilterLifeTime"'
+test_payload .currentSensorStateData[6].currentSensorState '"unknown"'
+test_payload .currentSensorStateData[6].rawValue 0
+test_payload .currentSensorStateData[7].name '"PreFilterLifeTime"'
+test_payload .currentSensorStateData[7].currentSensorState null
+test_payload .currentSensorStateData[7].rawValue 0
+test_payload .currentSensorStateData[8].name '"HEPAFilterLifeTime"'
+test_payload .currentSensorStateData[8].currentSensorState null
+test_payload .currentSensorStateData[8].rawValue 0
+test_payload .currentSensorStateData[9].name '"Max2FilterLifeTime"'
+test_payload .currentSensorStateData[9].currentSensorState null
+test_payload .currentSensorStateData[9].rawValue 0
+test_payload .currentSensorStateData[10].name '"CarbonDioxideLevel"'
+test_payload .currentSensorStateData[10].currentSensorState null
+test_payload .currentSensorStateData[10].rawValue 0
+test_payload .currentSensorStateData[11].name '"PM2.5"'
+test_payload .currentSensorStateData[11].currentSensorState null
+test_payload .currentSensorStateData[11].rawValue 0
+test_payload .currentSensorStateData[12].name '"PM10"'
+test_payload .currentSensorStateData[12].currentSensorState null
+test_payload .currentSensorStateData[12].rawValue 0
+test_payload .currentSensorStateData[13].name '"VolatileOrganicCompounds"'
+test_payload .currentSensorStateData[13].currentSensorState null
+test_payload .currentSensorStateData[13].rawValue 0
+test_payload .currentSensorStateData[14] null
 
 execute_payload activeZones '["Cucina","Salotto"]'
 test_payload .activeZones[0] '"Cucina"'
@@ -857,63 +901,247 @@ echo OpenClose
 execute $NODE_ID OpenClose 70
 
 execute $NODE_ID OpenClose_dir 50 "UP"
-test_payload ".openState[0].openPercent" 50
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 7
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 5
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 0
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 9
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 0
+test_payload .openState[6] null
 
 execute $NODE_ID OpenClose_dir 70 "DOWN"
-test_payload ".openState[1].openPercent" 70
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 5
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 0
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 9
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 0
+test_payload .openState[6] null
 
 execute $NODE_ID OpenClose_dir 61 "LEFT"
-test_payload ".openState[2].openPercent" 61
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 61
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 0
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 9
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 0
+test_payload .openState[6] null
+
 
 execute $NODE_ID OpenClose_dir 60 "LEFT"
-test_payload ".openState[2].openPercent" 60
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 0
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 9
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 0
+test_payload .openState[6] null
 
 execute $NODE_ID OpenClose_dir 45 "RIGHT"
-test_payload ".openState[3].openPercent" 45
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 45
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 9
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 0
+test_payload .openState[6] null
 
 execute $NODE_ID OpenClose_dir 20 "IN"
-test_payload ".openState[4].openPercent" 20
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 45
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 20
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 0
+test_payload .openState[6] null
 
 execute $NODE_ID OpenClose_dir 10 "OUT"
-test_payload ".openState[5].openPercent" 10
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 45
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 20
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 10
+test_payload .openState[6] null
 
 execute $NODE_ID OpenClose_dir 70 "NO_DIR"
 test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR??
-test_payload ".openState[0].openPercent" 50
-test_payload ".openState[1].openPercent" 70
-test_payload ".openState[2].openPercent" 60
-test_payload ".openState[3].openPercent" 45
-test_payload ".openState[4].openPercent" 20
-test_payload ".openState[5].openPercent" 10
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 45
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 20
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 10
+test_payload .openState[6] null
 
 execute $NODE_ID OpenCloseRelative 5
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 45
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 20
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 10
+test_payload .openState[6] null
 
 execute $NODE_ID OpenCloseRelative_dir -1 "UP"
-test_payload ".openState[0].openPercent" 50
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 45
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 20
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 10
+test_payload .openState[6] null
 
 execute $NODE_ID OpenCloseRelative_dir 3 "DOWN"
-test_payload ".openState[1].openPercent" 70
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 45
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 20
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 10
+test_payload .openState[6] null
 
 execute $NODE_ID OpenCloseRelative_dir -5 "LEFT"
-test_payload ".openState[2].openPercent" 60
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 45
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 20
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 10
+test_payload .openState[6] null
 
 execute $NODE_ID OpenCloseRelative_dir 11 "RIGHT"
-test_payload ".openState[3].openPercent" 45
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 45
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 20
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 10
+test_payload .openState[6] null
 
 execute $NODE_ID OpenCloseRelative_dir -7 "IN"
-test_payload ".openState[4].openPercent" 20
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 45
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 20
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 10
+test_payload .openState[6] null
 
 execute $NODE_ID OpenCloseRelative_dir 17 "OUT"
-test_payload ".openState[5].openPercent" 10
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 45
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 20
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 10
+test_payload .openState[6] null
 
 execute $NODE_ID OpenCloseRelative_dir -9 "NO_DIR"
 test_out ".payload.commands[0].status" '"SUCCESS"' # ERROR??
-test_payload ".openState[0].openPercent" 50
-test_payload ".openState[1].openPercent" 70
-test_payload ".openState[2].openPercent" 60
-test_payload ".openState[3].openPercent" 45
-test_payload ".openState[4].openPercent" 20
-test_payload ".openState[5].openPercent" 10
+test_payload .openState[0].openDirection '"UP"'
+test_payload .openState[0].openPercent 50
+test_payload .openState[1].openDirection '"DOWN"'
+test_payload .openState[1].openPercent 70
+test_payload .openState[2].openDirection '"LEFT"'
+test_payload .openState[2].openPercent 60
+test_payload .openState[3].openDirection '"RIGHT"'
+test_payload .openState[3].openPercent 45
+test_payload .openState[4].openDirection '"IN"'
+test_payload .openState[4].openPercent 20
+test_payload .openState[5].openDirection '"OUT"'
+test_payload .openState[5].openPercent 10
+test_payload .openState[6] null
 
 # Reboot 
 echo

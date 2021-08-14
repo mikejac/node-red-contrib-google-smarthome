@@ -881,7 +881,12 @@ module.exports = function (RED) {
                                 openPercent: Formats.FLOAT + Formats.MANDATORY,
                                 openDirection: Formats.STRING + Formats.MANDATORY
                             },
-                            'openDirection'
+                            {
+                                keyId: 'openDirection',
+                                removeIfNoData: true,
+                                replaceAll: false,
+                                isValidKey: direction => me.open_direction.includes(direction.trim()) ? direction.trim() : undefined
+                            }
                         ];
                     }
                 }
@@ -921,8 +926,14 @@ module.exports = function (RED) {
                         name: Formats.STRING + Formats.MANDATORY,
                         currentSensorState: Formats.STRING,
                         rawValue: Formats.FLOAT
-                    },
-                    'name'
+                    }, 
+                    {
+                        keyId: 'name',
+                        addIfMissing: true,
+                        removeIfNoData: true,
+                        replaceAll: false,
+                        isValidKey: name => me.sensor_states_supported.includes(name.trim()) ? name.trim() : undefined
+                    }
                 ];
             }
             if (me.trait.softwareupdate) {
@@ -936,7 +947,7 @@ module.exports = function (RED) {
                     {
                         addIfMissing: true,
                         removeIfNoData: true,
-                        isValidKey: zone => me.available_zones.includes(zone)
+                        isValidKey: zone => me.available_zones.includes(zone.trim()) ? zone.trim() : undefined
                     }
                 ];
             }
@@ -1993,16 +2004,16 @@ module.exports = function (RED) {
                         RunCycle: payload
                     });  // tell Google ...
                 } else if (me.trait.sensorstate && upper_topic === 'SENSORSTATE') {
-                    let payload = { priority: 0 };
-                    if (typeof msg.payload.name === 'string') {
-                        payload.name = msg.payload.name;
+                    if (typeof msg.payload.name === 'string' && msg.payload.name.trim() && me.sensor_states_supported.includes(msg.payload.name.trim())) {
+                        let payload = { priority: 0 };
+                        payload.name = msg.payload.name.trim();
+                        if (typeof msg.payload.currentSensorState === 'string' && msg.payload.currentSensorState.trim()) {
+                            payload.currentSensorState = msg.payload.currentSensorState.trim();
+                            this.clientConn.sendNotifications(this, {
+                                SensorState: payload
+                            });  // tell Google ...
+                        }
                     }
-                    if (typeof msg.payload.currentSensorState === 'string') {
-                        payload.currentSensorState = msg.payload.currentSensorState;
-                    }
-                    this.clientConn.sendNotifications(this, {
-                        SensorState: payload
-                    });  // tell Google ...
                 } else if (me.trait.lockunlock && upper_topic === 'LOCKUNLOCK') {
                     let payload = {};
                     if (typeof msg.payload.followUpToken === 'string') {
