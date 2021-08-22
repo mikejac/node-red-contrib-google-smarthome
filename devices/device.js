@@ -1281,7 +1281,7 @@ module.exports = function (RED) {
                 attributes['commandOnlyToggles'] = me.command_only_toggles;
                 attributes['queryOnlyToggles'] = me.query_only_toggles;
             }
-            if (me.trait.transport_control) {
+            if (me.trait.transportcontrol) {
                 attributes['transportControlSupportedCommands'] = me.supported_commands;
             }
             if (me.trait.volume) {
