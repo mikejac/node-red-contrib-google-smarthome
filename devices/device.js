@@ -543,7 +543,7 @@ module.exports = function (RED) {
             if (this.trait.armdisarm) {
                 this.available_arm_levels = this.loadJson('Available arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []);
             } else {
-                this.available_applications = [];
+                this.available_arm_levels = [];
                 this._debug(".constructor: ArmDisarm disabled");
             }
 
