@@ -469,7 +469,7 @@ module.exports = function (RED) {
                     this.trait.onoff = true;
                     break;
                 case "SPEAKER": // Speaker
-                    this.trait.volunme = true;
+                    this.trait.volume = true;
                     break;
                 case "SPRINKLER": // Sprinkler
                     this.trait.startstop = true;
@@ -1029,7 +1029,7 @@ module.exports = function (RED) {
             if (me.trait.brightness) {
                 attributes['commandOnlyBrightness'] = me.command_only_brightness;
             }
-            if (me.trait.channels) {
+            if (me.trait.channel) {
                 attributes['availableChannels'] = me.available_channels;
             }
             if (me.trait.colorsetting) {
