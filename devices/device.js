@@ -469,7 +469,7 @@ module.exports = function (RED) {
                     this.trait.onoff = true;
                     break;
                 case "SPEAKER": // Speaker
-                    this.trait.volunme = true;
+                    this.trait.volume = true;
                     break;
                 case "SPRINKLER": // Sprinkler
                     this.trait.startstop = true;
@@ -543,7 +543,7 @@ module.exports = function (RED) {
             if (this.trait.armdisarm) {
                 this.available_arm_levels = this.loadJson('Available arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []);
             } else {
-                this.available_applications = [];
+                this.available_arm_levels = [];
                 this._debug(".constructor: ArmDisarm disabled");
             }
 
@@ -691,7 +691,7 @@ module.exports = function (RED) {
             let state_types = me.state_types;
             state_types['online'] = Formats.BOOL + Formats.MANDATORY;
 
-            if (me.trait.apps) {
+            if (me.trait.appselector) {
                 state_types['currentApplication'] = Formats.STRING + Formats.MANDATORY;
             }
             if (me.trait.armdisarm) {
@@ -1017,7 +1017,7 @@ module.exports = function (RED) {
             let me = this;
             let attributes = device.properties.attributes;
 
-            if (me.trait.apps) {
+            if (me.trait.appselector) {
                 attributes['availableApplications'] = me.available_applications;
             }
             if (me.trait.armdisarm) {
@@ -1029,7 +1029,7 @@ module.exports = function (RED) {
             if (me.trait.brightness) {
                 attributes['commandOnlyBrightness'] = me.command_only_brightness;
             }
-            if (me.trait.channels) {
+            if (me.trait.channel) {
                 attributes['availableChannels'] = me.available_channels;
             }
             if (me.trait.colorsetting) {
@@ -1281,7 +1281,7 @@ module.exports = function (RED) {
                 attributes['commandOnlyToggles'] = me.command_only_toggles;
                 attributes['queryOnlyToggles'] = me.query_only_toggles;
             }
-            if (me.trait.transport_control) {
+            if (me.trait.transportcontrol) {
                 attributes['transportControlSupportedCommands'] = me.supported_commands;
             }
             if (me.trait.volume) {
@@ -1297,7 +1297,7 @@ module.exports = function (RED) {
             let me = this;
             let states = device.states;
 
-            if (me.trait.apps) {
+            if (me.trait.appselector) {
                 states['currentApplication'] = '';
             }
             if (me.trait.armdisarm) {
