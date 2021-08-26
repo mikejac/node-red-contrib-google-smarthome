@@ -29,6 +29,7 @@ NODE_ID1=$2 || "bab53c06.fc9c3"
 PAYLOAD_FILE="$HOME/payload.json"
 REPORT_STATE_FILE="$HOME/reportState.json"
 OUT_FILE="$HOME/out.json"
+SYNC_FILE="$HOME/sync.json"
 PAYLOAD_URL=$(dirname $BASE_URL)/payload
 TEST_NUM=0
 
@@ -139,6 +140,22 @@ execute() {
     test_payload .command "\"$CMD\""
 }
 
+request_sync() {
+    echo
+    ((TEST_NUM=TEST_NUM+1))
+    echo "# $TEST_NUM"
+    echo ./execute request_sync
+    mv "$SYNC_FILE" "$SYNC_FILE.old" 
+    echo "{}" > "$SYNC_FILE" 
+    ./request_sync "$@" > "$SYNC_FILE"
+    SYNC_STATE=$(cat "$SYNC_FILE")
+    test_sync .payload.agentUserId "\"0\""
+}
+
+test_sync() {
+    test_json Sync "$SYNC_STATE" "$@"
+}
+
 execute_no_payload() {
     CMD_EXEC="$@"
     echo
@@ -163,6 +180,60 @@ execute_error() {
 }
 # if [ 1 == 2 ] ; then
 # fi # fi
+
+request_sync
+test_sync .payload.devices[0].type "\""action.devices.types.TV"\""
+test_sync .payload.devices[0].traits[0]  "\""action.devices.traits.AppSelector"\""
+test_sync .payload.devices[0].traits[1]  "\""action.devices.traits.ArmDisarm"\""
+test_sync .payload.devices[0].traits[2]  "\""action.devices.traits.Brightness"\""
+test_sync .payload.devices[0].traits[3]  "\""action.devices.traits.CameraStream"\""
+test_sync .payload.devices[0].traits[4]  "\""action.devices.traits.Channel"\""
+test_sync .payload.devices[0].traits[5]  "\""action.devices.traits.ColorSetting"\""
+test_sync .payload.devices[0].traits[6]  "\""action.devices.traits.Cook"\""
+test_sync .payload.devices[0].traits[7]  "\""action.devices.traits.Dispense"\""
+test_sync .payload.devices[0].traits[8]  "\""action.devices.traits.Dock"\""
+test_sync .payload.devices[0].traits[9]  "\""action.devices.traits.EnergyStorage"\""
+test_sync .payload.devices[0].traits[10]  "\""action.devices.traits.FanSpeed"\""
+test_sync .payload.devices[0].traits[11]  "\""action.devices.traits.Fill"\""
+test_sync .payload.devices[0].traits[12]  "\""action.devices.traits.HumiditySetting"\""
+test_sync .payload.devices[0].traits[13]  "\""action.devices.traits.InputSelector"\""
+test_sync .payload.devices[0].traits[14]  "\""action.devices.traits.LightEffects"\""
+test_sync .payload.devices[0].traits[15]  "\""action.devices.traits.Locator"\""
+test_sync .payload.devices[0].traits[16]  "\""action.devices.traits.LockUnlock"\""
+test_sync .payload.devices[0].traits[17]  "\""action.devices.traits.MediaState"\""
+test_sync .payload.devices[0].traits[18]  "\""action.devices.traits.Modes"\""
+test_sync .payload.devices[0].traits[19]  "\""action.devices.traits.NetworkControl"\""
+test_sync .payload.devices[0].traits[20]  "\""action.devices.traits.ObjectDetection"\""
+test_sync .payload.devices[0].traits[21]  "\""action.devices.traits.OnOff"\""
+test_sync .payload.devices[0].traits[22]  "\""action.devices.traits.OpenClose"\""
+test_sync .payload.devices[0].traits[23]  "\""action.devices.traits.Reboot"\""
+test_sync .payload.devices[0].traits[24]  "\""action.devices.traits.Rotation"\""
+test_sync .payload.devices[0].traits[25]  "\""action.devices.traits.RunCycle"\""
+test_sync .payload.devices[0].traits[26]  "\""action.devices.traits.SensorState"\""
+test_sync .payload.devices[0].traits[27]  "\""action.devices.traits.SoftwareUpdate"\""
+test_sync .payload.devices[0].traits[28]  "\""action.devices.traits.StartStop"\""
+test_sync .payload.devices[0].traits[29]  "\""action.devices.traits.StatusReport"\""
+test_sync .payload.devices[0].traits[30]  "\""action.devices.traits.TemperatureControl"\""
+test_sync .payload.devices[0].traits[31]  "\""action.devices.traits.TemperatureSetting"\""
+test_sync .payload.devices[0].traits[32]  "\""action.devices.traits.Timer"\""
+test_sync .payload.devices[0].traits[33]  "\""action.devices.traits.Toggles"\""
+test_sync .payload.devices[0].traits[34]  "\""action.devices.traits.TransportControl"\""
+test_sync .payload.devices[0].traits[35]  "\""action.devices.traits.Volume"\""
+test_sync .payload.devices[0].traits[36]  null
+test_sync .payload.devices[0].name.defaultNames[0]  "\""Node-RED\ Television"\""
+test_sync .payload.devices[0].name.name  "\""Cucina"\""
+test_sync .payload.devices[0].roomHint  "\"""\""
+test_sync .payload.devices[0].willReportState  true
+test_sync .payload.devices[0].notificationSupportedByAgent  true
+test_sync .payload.devices[0].deviceInfo.manufacturer  "\""Node-RED"\""
+test_sync .payload.devices[0].deviceInfo.model  "\""nr-device-television-v1"\""
+test_sync .payload.devices[0].deviceInfo.swVersion  "\""1.0"\""
+test_sync .payload.devices[0].deviceInfo.hwVersion  "\""1.0"\""
+test_sync .payload.devices[0].id  "\""$NODE_ID"\""
+#test_sync .payload.devices[0].attributes  "\""$NODE_ID"\""
+
+echo
+
 
 execute_payload topic '{"online":false,"isArmed":false,"currentArmLevel":"","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"","currentInput":"","activeLightEffect":"","currentModeSettings":{"load_mode":"","temp_mode":""},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet_toggle":false,"extra_bass_toggle":false,"energy_saving_toggle":false},"currentVolume":40,"on":true,"isDocked":false}'
 
