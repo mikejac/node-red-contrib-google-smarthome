@@ -243,7 +243,7 @@
         "once": true,
         "onceDelay": "10",
         "topic": "AvailableApplications",
-        "payload": "[\"YouTube\",{\"key\":\"video\",\"names\":[\"Google Vide\",\"Video\"]},{\"names\":[\"Amazon Prime Video\",\"Prime Video\"]}]",
+        "payload": "[\"YouTube\",{\"key\":\"video\",\"names\":[\"Google Video\",\"Video\"]},{\"names\":[\"Amazon Prime Video\",\"Prime Video\"]}]",
         "payloadType": "json",
         "x": 140,
         "y": 300,
