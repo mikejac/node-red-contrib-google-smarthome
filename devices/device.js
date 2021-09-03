@@ -60,6 +60,7 @@ module.exports = function (RED) {
 
             this.lang = this.clientConn.default_lang || 'en';
             this.state_types = {};
+            this.errorCode = undefined;
             this.trait = {
                 appselector: config.trait_appselector || false,
                 armdisarm: config.trait_armdisarm || false,
@@ -631,6 +632,7 @@ module.exports = function (RED) {
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
+            this.clientConn.app.ScheduuleRequestSync();
         }
 
         _debug(msg) {
@@ -1778,6 +1780,12 @@ module.exports = function (RED) {
                         payload: me.states,
                         device_id: this.device.id
                     });
+                } else if (upper_topic === 'ERRORCODE') {
+                    if (typeof msg.payload === 'string' && msg.payload.trim()) {
+                        me.errorCode = msg.payload.trim();
+                    } else {
+                        me.errorCode = undefined;
+                    }
                 } else if (upper_topic === 'AVAILABLEAPPLICATIONS') {
                     if (this.trait.appselector) {
                         if (typeof msg.payload === 'undefined') {
@@ -2838,6 +2846,15 @@ module.exports = function (RED) {
             };
 
             me._debug(".execCommand: command " + JSON.stringify(command));
+
+            if (me.errorCode) {
+                me._debug(".execCommand: errorCode " + JSON.stringify(me.errorCode));
+                return {
+                    status: 'ERROR',
+                    errorCode: me.errorCode
+                };
+            }
+
             me._debug(".execCommand: states " + JSON.stringify(me.states));
             // me._debug(".execCommand: device " +  JSON.stringify(device));
             // me._debug(".execCommand: me.device " +  JSON.stringify(me.device));

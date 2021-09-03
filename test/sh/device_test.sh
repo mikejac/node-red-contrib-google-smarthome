@@ -1014,6 +1014,12 @@ execute_payload activeZones '["Bagno"]'
 test_payload .activeZones[0] '"Bagno"'
 test_payload .activeZones[1] null
 
+execute_payload errorCode '"inSoftwareUpdate"'
+execute_error $NODE_ID appInstall youtube_application
+test_out ".payload.commands[0].errorCode" '"inSoftwareUpdate"'
+
+execute_payload errorCode '""'
+
 echo
 
 # AppSelector 
