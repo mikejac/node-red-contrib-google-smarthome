@@ -132,7 +132,7 @@ If you want to use login with username/password instead, skip this section.
     * Login Client ID: If Google Login is enabled, the client id you gained from the *Google Sign-In* integration.
     * Authorized emails: If Google Login is enabled, the email addresses authorized to log in.  
     * Username/Password: If Google Login is disabled, the credentials you want to use when linking your account in the Google Home App later. These are not the credentials to your Google account!
-    * Client ID and Secret: The same strings you generated and entered on Google Search Console earlier.
+    * Client ID and Secret: The same strings you generated and entered on Google Actions Console earlier.
     * Jwt Key: The JSON file you downloaded earlier. Can be an absolute path or a path relative to Node-REDs user dir.
     * Port: The port on which the service should run. If left empty, it will run on the same port as Node-RED.
     * Path: URL path on which the service will run. If left empty, https://example.com:3001/smarthome will be used. If set, it will be https://example.com:3001/<yourpath>/smarthome.
