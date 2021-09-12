@@ -288,7 +288,14 @@ module.exports = function(RED) {
                 } else if (topic.toUpperCase() === 'GET_STATE') {
                     let states = this.clientConn.app.getStates();
                     if (states) {
-                        this.send({payload: states});
+                        this.send({
+                            topic: topic,
+                            payload: states
+                        });
+                    }
+                } else if (topic.toUpperCase() === 'SET_STATE') {
+                    if (typeof msg.payload === 'object') {
+                        this.clientConn.app.setStates(msg.payload);
                     }
                 }
             } catch (err) {

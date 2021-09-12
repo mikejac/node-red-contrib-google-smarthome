@@ -29,7 +29,9 @@ NODE_ID1=$2 || "bab53c06.fc9c3"
 PAYLOAD_FILE="$HOME/payload.json"
 REPORT_STATE_FILE="$HOME/reportState.json"
 OUT_FILE="$HOME/out.json"
+SYNC_FILE="$HOME/sync.json"
 PAYLOAD_URL=$(dirname $BASE_URL)/payload
+LANG="it"
 TEST_NUM=0
 
 ./refresh_token
@@ -105,7 +107,7 @@ execute_payload() {
         -H "Content-Type: application/json;charset=UTF-8" \
         --data "$REQUEST" \
         $PAYLOAD_URL  > "$OUT_FILE"
-    OUT=$(cat  "$OUT_FILE")
+    OUT=$(cat "$OUT_FILE")
     if [ "$OUT" != "OK" ] ; then
         echo ERROR
         echo "Result $OUT"
@@ -129,7 +131,7 @@ execute() {
     echo "{}" > "$PAYLOAD_FILE" 
     # echo "{}" > "$REPORT_STATE_FILE" 
     ./execute "$@" > "$OUT_FILE"
-    OUT=$(cat  "$OUT_FILE")
+    OUT=$(cat "$OUT_FILE")
     #sleep 1
     PAYLOAD=$(cat "$PAYLOAD_FILE")
     REPORT_STATE=$(cat "$REPORT_STATE_FILE")
@@ -139,13 +141,29 @@ execute() {
     test_payload .command "\"$CMD\""
 }
 
+request_sync() {
+    echo
+    ((TEST_NUM=TEST_NUM+1))
+    echo "# $TEST_NUM"
+    echo ./execute request_sync
+    mv "$SYNC_FILE" "$SYNC_FILE.old" 
+    echo "{}" > "$SYNC_FILE" 
+    ./request_sync "$@" > "$SYNC_FILE"
+    SYNC_STATE=$(cat "$SYNC_FILE")
+    test_sync .payload.agentUserId "\"0\""
+}
+
+test_sync() {
+    test_json Sync "$SYNC_STATE" "$@"
+}
+
 execute_no_payload() {
     CMD_EXEC="$@"
     echo
     echo ./execute "$@"
     echo "{}" > "$PAYLOAD_FILE" 
     ./execute "$@" > "$OUT_FILE"
-    OUT=$(cat  "$OUT_FILE")
+    OUT=$(cat "$OUT_FILE")
     PAYLOAD=$(cat "$PAYLOAD_FILE")
     test_out ".payload.commands[0].status" '"SUCCESS"'
     test_no_payload
@@ -163,6 +181,517 @@ execute_error() {
 }
 # if [ 1 == 2 ] ; then
 # fi # fi
+
+request_sync
+test_sync .payload.devices[0].type "\""action.devices.types.TV"\""
+test_sync .payload.devices[0].traits[0] "\""action.devices.traits.AppSelector"\""
+test_sync .payload.devices[0].traits[1] "\""action.devices.traits.ArmDisarm"\""
+test_sync .payload.devices[0].traits[2] "\""action.devices.traits.Brightness"\""
+test_sync .payload.devices[0].traits[3] "\""action.devices.traits.CameraStream"\""
+test_sync .payload.devices[0].traits[4] "\""action.devices.traits.Channel"\""
+test_sync .payload.devices[0].traits[5] "\""action.devices.traits.ColorSetting"\""
+test_sync .payload.devices[0].traits[6] "\""action.devices.traits.Cook"\""
+test_sync .payload.devices[0].traits[7] "\""action.devices.traits.Dispense"\""
+test_sync .payload.devices[0].traits[8] "\""action.devices.traits.Dock"\""
+test_sync .payload.devices[0].traits[9] "\""action.devices.traits.EnergyStorage"\""
+test_sync .payload.devices[0].traits[10] "\""action.devices.traits.FanSpeed"\""
+test_sync .payload.devices[0].traits[11] "\""action.devices.traits.Fill"\""
+test_sync .payload.devices[0].traits[12] "\""action.devices.traits.HumiditySetting"\""
+test_sync .payload.devices[0].traits[13] "\""action.devices.traits.InputSelector"\""
+test_sync .payload.devices[0].traits[14] "\""action.devices.traits.LightEffects"\""
+test_sync .payload.devices[0].traits[15] "\""action.devices.traits.Locator"\""
+test_sync .payload.devices[0].traits[16] "\""action.devices.traits.LockUnlock"\""
+test_sync .payload.devices[0].traits[17] "\""action.devices.traits.MediaState"\""
+test_sync .payload.devices[0].traits[18] "\""action.devices.traits.Modes"\""
+test_sync .payload.devices[0].traits[19] "\""action.devices.traits.NetworkControl"\""
+test_sync .payload.devices[0].traits[20] "\""action.devices.traits.ObjectDetection"\""
+test_sync .payload.devices[0].traits[21] "\""action.devices.traits.OnOff"\""
+test_sync .payload.devices[0].traits[22] "\""action.devices.traits.OpenClose"\""
+test_sync .payload.devices[0].traits[23] "\""action.devices.traits.Reboot"\""
+test_sync .payload.devices[0].traits[24] "\""action.devices.traits.Rotation"\""
+test_sync .payload.devices[0].traits[25] "\""action.devices.traits.RunCycle"\""
+test_sync .payload.devices[0].traits[26] "\""action.devices.traits.SensorState"\""
+test_sync .payload.devices[0].traits[27] "\""action.devices.traits.SoftwareUpdate"\""
+test_sync .payload.devices[0].traits[28] "\""action.devices.traits.StartStop"\""
+test_sync .payload.devices[0].traits[29] "\""action.devices.traits.StatusReport"\""
+test_sync .payload.devices[0].traits[30] "\""action.devices.traits.TemperatureControl"\""
+test_sync .payload.devices[0].traits[31] "\""action.devices.traits.TemperatureSetting"\""
+test_sync .payload.devices[0].traits[32] "\""action.devices.traits.Timer"\""
+test_sync .payload.devices[0].traits[33] "\""action.devices.traits.Toggles"\""
+test_sync .payload.devices[0].traits[34] "\""action.devices.traits.TransportControl"\""
+test_sync .payload.devices[0].traits[35] "\""action.devices.traits.Volume"\""
+test_sync .payload.devices[0].traits[36] null
+test_sync .payload.devices[0].name.defaultNames[0] "\""Node-RED\ Television"\""
+test_sync .payload.devices[0].name.name "\""Cucina"\""
+test_sync .payload.devices[0].roomHint "\"""\""
+test_sync .payload.devices[0].willReportState  true
+test_sync .payload.devices[0].notificationSupportedByAgent  true
+test_sync .payload.devices[0].deviceInfo.manufacturer "\""Node-RED"\""
+test_sync .payload.devices[0].deviceInfo.model "\""nr-device-television-v1"\""
+test_sync .payload.devices[0].deviceInfo.swVersion "\""1.0"\""
+test_sync .payload.devices[0].deviceInfo.hwVersion "\""1.0"\""
+test_sync .payload.devices[0].id "\""$NODE_ID"\""
+
+# availableApplications
+test_sync .payload.devices[0].attributes.availableApplications[0].key "\""youtube_application"\""
+test_sync .payload.devices[0].attributes.availableApplications[0].names[0].lang "\""$LANG"\""
+test_sync .payload.devices[0].attributes.availableApplications[0].names[0].name_synonym[0] "\""YouTube"\""
+test_sync .payload.devices[0].attributes.availableApplications[0].names[0].name_synonym[1] null
+
+test_sync .payload.devices[0].attributes.availableApplications[1].key "\""video_application"\""
+test_sync .payload.devices[0].attributes.availableApplications[1].names[0].lang "\""$LANG"\""
+test_sync .payload.devices[0].attributes.availableApplications[1].names[0].name_synonym[0] "\""Google\ Video"\""
+test_sync .payload.devices[0].attributes.availableApplications[1].names[0].name_synonym[1] "\""Video"\""
+test_sync .payload.devices[0].attributes.availableApplications[1].names[0].name_synonym[2] null
+
+test_sync .payload.devices[0].attributes.availableApplications[2].key "\""amazon_prime_video_application"\""
+test_sync .payload.devices[0].attributes.availableApplications[2].names[0].lang "\""$LANG"\""
+test_sync .payload.devices[0].attributes.availableApplications[2].names[0].name_synonym[0] "\""Amazon\ Prime\ Video"\""
+test_sync .payload.devices[0].attributes.availableApplications[2].names[0].name_synonym[1] "\""Prime\ Video"\""
+test_sync .payload.devices[0].attributes.availableApplications[2].names[0].name_synonym[2] null
+
+test_sync .payload.devices[0].attributes.availableApplications[3] null
+
+# availableArmLevels
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[0].level_name "\""L1"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[0].level_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[0].level_values[0].level_synonym[0] "\""home\ and\ guarding"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[0].level_values[0].level_synonym[1] "\""SL1"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[0].level_values[0].level_synonym[2] null
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[0].level_values[1].lang "\""it"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[0].level_values[1].level_synonym[0] "\""Allarme\ in\ casa"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[0].level_values[1].level_synonym[1] "\""SL1"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[0].level_values[1].level_synonym[2] null
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[0].level_values[2] null
+
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[1].level_name "\""L2"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[1].level_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[1].level_values[0].level_synonym[0] "\""away\ and\ guarding"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[1].level_values[0].level_synonym[1] "\""SL2"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[1].level_values[0].level_synonym[2] null
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[1].level_values[1].lang "\""it"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[1].level_values[1].level_synonym[0] "\""Allarme\ fuori\ casa"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[1].level_values[1].level_synonym[1] "\""SL2"\""
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[1].level_values[1].level_synonym[2] null
+test_sync .payload.devices[0].attributes.availableArmLevels.levels[1].level_values[2] null
+test_sync .payload.devices[0].attributes.availableArmLevels.ordered true
+
+test_sync .payload.devices[0].attributes.commandOnlyBrightness false
+
+# availableChannels
+test_sync .payload.devices[0].attributes.availableChannels[0].key "\""rai1"\""
+test_sync .payload.devices[0].attributes.availableChannels[0].names[0] "\""Rai\ 1"\""
+test_sync .payload.devices[0].attributes.availableChannels[0].names[1] null
+test_sync .payload.devices[0].attributes.availableChannels[0].number "\""1"\""
+
+test_sync .payload.devices[0].attributes.availableChannels[1].key "\""rai1_hd"\""
+test_sync .payload.devices[0].attributes.availableChannels[1].names[0] "\""Rai\ 1\ HD"\""
+test_sync .payload.devices[0].attributes.availableChannels[1].names[1] null
+test_sync .payload.devices[0].attributes.availableChannels[1].number "\""501"\""
+
+test_sync .payload.devices[0].attributes.availableChannels[2].key "\""rai2"\""
+test_sync .payload.devices[0].attributes.availableChannels[2].names[0] "\""Rai\ 2"\""
+test_sync .payload.devices[0].attributes.availableChannels[2].names[1] null
+test_sync .payload.devices[0].attributes.availableChannels[2].number "\""2"\""
+
+test_sync .payload.devices[0].attributes.availableChannels[3].key "\""rai2_hd"\""
+test_sync .payload.devices[0].attributes.availableChannels[3].names[0] "\""Rai\ 2\ HD"\""
+test_sync .payload.devices[0].attributes.availableChannels[3].names[1] null
+test_sync .payload.devices[0].attributes.availableChannels[3].number "\""502"\""
+
+test_sync .payload.devices[0].attributes.availableChannels[4].key "\""rai3"\""
+test_sync .payload.devices[0].attributes.availableChannels[4].names[0] "\""Rai\ 3"\""
+test_sync .payload.devices[0].attributes.availableChannels[4].names[1] null
+test_sync .payload.devices[0].attributes.availableChannels[4].number "\""3"\""
+
+test_sync .payload.devices[0].attributes.availableChannels[5].key "\""rai3_hd"\""
+test_sync .payload.devices[0].attributes.availableChannels[5].names[0] "\""Rai\ 3\ HD"\""
+test_sync .payload.devices[0].attributes.availableChannels[5].names[1] null
+test_sync .payload.devices[0].attributes.availableChannels[5].number "\""503"\""
+
+test_sync .payload.devices[0].attributes.availableChannels[6].key "\""realtime"\""
+test_sync .payload.devices[0].attributes.availableChannels[6].names[0] "\""Realtime"\""
+test_sync .payload.devices[0].attributes.availableChannels[6].names[1] null
+test_sync .payload.devices[0].attributes.availableChannels[6].number "\""31"\""
+
+test_sync .payload.devices[0].attributes.availableChannels[7] null
+
+test_sync .payload.devices[0].attributes.commandOnlyColorSetting false
+test_sync .payload.devices[0].attributes.colorModel "\""rgb"\""
+test_sync .payload.devices[0].attributes.colorTemperatureRange.temperatureMinK 2000
+test_sync .payload.devices[0].attributes.colorTemperatureRange.temperatureMaxK 9000
+test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[0] "\""hls"\""
+test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[1] "\""dash"\""
+test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[2] "\""smooth_stream"\""
+test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[3] "\""progressive_mp4"\""
+test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[4] null
+test_sync .payload.devices[0].attributes.cameraStreamNeedAuthToken true
+
+test_sync .payload.devices[0].attributes.supportedCookingModes[0] "\""UNKNOWN_COOKING_MODE"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[1] "\""BAKE"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[2] "\""BEAT"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[3] "\""BLEND"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[4] "\""BOIL"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[5] "\""BREW"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[6] "\""BROIL"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[7] "\""CONVECTION_BAKE"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[8] "\""COOK"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[9] "\""DEFROST"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[10] "\""DEHYDRATE"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[11] "\""FERMENT"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[12] "\""FRY"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[13] "\""GRILL"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[14] "\""KNEAD"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[15] "\""MICROWAVE"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[16] "\""MIX"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[17] "\""PRESSURE_COOK"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[18] "\""PUREE"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[19] "\""ROAST"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[20] "\""SAUTE"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[21] "\""SLOW_COOK"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[22] "\""SOUS_VIDE"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[23] "\""STEAM"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[24] "\""STEW"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[25] "\""STIR"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[26] "\""WARM"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[27] "\""WHIP"\""
+test_sync .payload.devices[0].attributes.supportedCookingModes[28] null
+
+# foodPresets
+test_sync .payload.devices[0].attributes.foodPresets[0].food_preset_name "\""white_rice"\""
+test_sync .payload.devices[0].attributes.foodPresets[0].supported_units[0] "\""CUPS"\""
+test_sync .payload.devices[0].attributes.foodPresets[0].supported_units[1] null
+test_sync .payload.devices[0].attributes.foodPresets[0].food_synonyms[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.foodPresets[0].food_synonyms[0].synonym[0] "\""White\ Rice"\""
+test_sync .payload.devices[0].attributes.foodPresets[0].food_synonyms[0].synonym[1] "\""Rice"\""
+test_sync .payload.devices[0].attributes.foodPresets[0].food_synonyms[0].synonym[2] null
+test_sync .payload.devices[0].attributes.foodPresets[0].food_synonyms[1] null
+
+test_sync .payload.devices[0].attributes.foodPresets[1].food_preset_name "\""brown_rice"\""
+test_sync .payload.devices[0].attributes.foodPresets[1].supported_units[0] "\""CUPS"\""
+test_sync .payload.devices[0].attributes.foodPresets[1].supported_units[1] null
+test_sync .payload.devices[0].attributes.foodPresets[1].food_synonyms[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.foodPresets[1].food_synonyms[0].synonym[0] "\""Brown\ Rice"\""
+test_sync .payload.devices[0].attributes.foodPresets[1].food_synonyms[0].synonym[1] null
+test_sync .payload.devices[0].attributes.foodPresets[1].food_synonyms[1] null
+
+test_sync .payload.devices[0].attributes.foodPresets[2] null
+
+# supportedDispenseItems
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].item_name "\""water"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].item_name_synonyms[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].item_name_synonyms[0].synonyms[0] "\""water"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].item_name_synonyms[0].synonyms[1] null
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].supported_units[0] "\""TEASPOONS"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].supported_units[1] "\""TABLESPOONS"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].supported_units[2] "\""FLUID_OUNCES"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].supported_units[3] "\""CUPS"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].supported_units[4] "\""PINTS"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].supported_units[5] "\""QUARTS"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].supported_units[6] "\""GALLONS"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].supported_units[7] "\""MILLILITERS"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].supported_units[8] "\""LITERS"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].supported_units[9] "\""DECILITERS"\""
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].supported_units[10] null
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].default_portion.amount 2
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].default_portion.unit "\""CUPS"\""
+
+test_sync .payload.devices[0].attributes.supportedDispenseItems[0].item_name_synonyms[1] null
+
+test_sync .payload.devices[0].attributes.supportedDispenseItems[1] null
+
+# supportedDispensePresets
+test_sync .payload.devices[0].attributes.supportedDispensePresets[0].preset_name "\""cat_bowl"\""
+test_sync .payload.devices[0].attributes.supportedDispensePresets[0].preset_name_synonyms[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.supportedDispensePresets[0].preset_name_synonyms[0].synonyms[0] "\""cat\ water\ bowl"\""
+test_sync .payload.devices[0].attributes.supportedDispensePresets[0].preset_name_synonyms[0].synonyms[1] "\""cat\ water\ dish"\""
+test_sync .payload.devices[0].attributes.supportedDispensePresets[0].preset_name_synonyms[0].synonyms[2] "\""cat\ water\ cup"\""
+test_sync .payload.devices[0].attributes.supportedDispensePresets[0].preset_name_synonyms[0].synonyms[3] null
+
+test_sync .payload.devices[0].attributes.supportedDispensePresets[1].preset_name "\""glass_1"\""
+test_sync .payload.devices[0].attributes.supportedDispensePresets[1].preset_name_synonyms[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.supportedDispensePresets[1].preset_name_synonyms[0].synonyms[0] "\""glass\ of\ water"\""
+test_sync .payload.devices[0].attributes.supportedDispensePresets[1].preset_name_synonyms[0].synonyms[1] "\""glass"\""
+test_sync .payload.devices[0].attributes.supportedDispensePresets[1].preset_name_synonyms[0].synonyms[2] null
+
+test_sync .payload.devices[0].attributes.supportedDispensePresets[2] null
+
+test_sync .payload.devices[0].attributes.queryOnlyEnergyStorage false
+test_sync .payload.devices[0].attributes.energyStorageDistanceUnitForUX "\""KILOMETERS"\""
+test_sync .payload.devices[0].attributes.isRechargeable true
+test_sync .payload.devices[0].attributes.reversible false
+test_sync .payload.devices[0].attributes.commandOnlyFanSpeed false
+test_sync .payload.devices[0].attributes.supportsFanSpeedPercent true
+
+# availableFanSpeeds
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_name "\""speed_low"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[0].speed_synonym[0] "\""low"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[0].speed_synonym[1] "\""slow"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[0].speed_synonym[2] null
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[1] null
+
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_name "\""speed_high"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[0].speed_synonym[0] "\""high"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[0].speed_synonym[1] "\""fast"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[0].speed_synonym[2] null
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[1] null
+
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[2] null
+
+test_sync .payload.devices[0].attributes.availableFanSpeeds.ordered true
+
+# availableFillLevels
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[0].level_name "\""half_level"\""
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[0].level_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[0].level_values[0].level_synonym[0] "\""half"\""
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[0].level_values[0].level_synonym[1] "\""half\ way"\""
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[0].level_values[0].level_synonym[2] "\""one\ half"\""
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[0].level_values[0].level_synonym[3] null
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[0].level_values[1] null
+
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[1].level_name "\""full_level"\""
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[1].level_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[1].level_values[0].level_synonym[0] "\""full"\""
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[1].level_values[0].level_synonym[1] "\""all\ the\ way"\""
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[1].level_values[0].level_synonym[2] "\""complete"\""
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[1].level_values[0].level_synonym[3] null
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[1].level_values[1] null
+
+test_sync .payload.devices[0].attributes.availableFillLevels.levels[2] null
+
+test_sync .payload.devices[0].attributes.availableFillLevels.ordered true
+test_sync .payload.devices[0].attributes.availableFillLevels.supportsFillPercent false
+
+test_sync .payload.devices[0].attributes.humiditySetpointRange.minPercent 0
+test_sync .payload.devices[0].attributes.humiditySetpointRange.maxPercent 100
+
+test_sync .payload.devices[0].attributes.commandOnlyHumiditySetting false
+test_sync .payload.devices[0].attributes.queryOnlyHumiditySetting false
+
+
+# availableInputs
+test_sync .payload.devices[0].attributes.availableInputs[0].key "\""hdmi_1_input"\""
+test_sync .payload.devices[0].attributes.availableInputs[0].names[0].lang "\""it"\""
+test_sync .payload.devices[0].attributes.availableInputs[0].names[0].name_synonym[0] "\""hdmi\ 1"\""
+test_sync .payload.devices[0].attributes.availableInputs[0].names[0].name_synonym[1] null
+test_sync .payload.devices[0].attributes.availableInputs[0].names[1] null
+
+test_sync .payload.devices[0].attributes.availableInputs[1].key "\""hdmi_2_input"\""
+test_sync .payload.devices[0].attributes.availableInputs[1].names[0].lang "\""it"\""
+test_sync .payload.devices[0].attributes.availableInputs[1].names[0].name_synonym[0] "\""hdmi\ 2"\""
+test_sync .payload.devices[0].attributes.availableInputs[1].names[0].name_synonym[1] "\""Second\ HDMI"\""
+test_sync .payload.devices[0].attributes.availableInputs[1].names[0].name_synonym[2] "\""DVD\ Reader"\""
+test_sync .payload.devices[0].attributes.availableInputs[1].names[0].name_synonym[3] "\""DVD"\""
+test_sync .payload.devices[0].attributes.availableInputs[1].names[0].name_synonym[4] null
+test_sync .payload.devices[0].attributes.availableInputs[1].names[1] null
+
+test_sync .payload.devices[0].attributes.availableInputs[2].key "\""hdmi_3_input"\""
+test_sync .payload.devices[0].attributes.availableInputs[2].names[0].lang "\""it"\""
+test_sync .payload.devices[0].attributes.availableInputs[2].names[0].name_synonym[0] "\""hdmi\ 3"\""
+test_sync .payload.devices[0].attributes.availableInputs[2].names[0].name_synonym[1] "\""Third\ HDMI"\""
+test_sync .payload.devices[0].attributes.availableInputs[2].names[0].name_synonym[2] "\""Playstation\ 5"\""
+test_sync .payload.devices[0].attributes.availableInputs[2].names[0].name_synonym[3] "\""PS5"\""
+test_sync .payload.devices[0].attributes.availableInputs[2].names[0].name_synonym[4] null
+test_sync .payload.devices[0].attributes.availableInputs[2].names[1] null
+
+test_sync .payload.devices[0].attributes.availableInputs[3] null
+
+test_sync .payload.devices[0].attributes.commandOnlyInputSelector false
+test_sync .payload.devices[0].attributes.orderedInputs false
+test_sync .payload.devices[0].attributes.defaultSleepDuration 1800
+test_sync .payload.devices[0].attributes.defaultWakeDuration 1800
+
+# supportedEffects
+
+test_sync .payload.devices[0].attributes.supportActivityState false
+test_sync .payload.devices[0].attributes.supportPlaybackState false
+
+# availableModes
+test_sync .payload.devices[0].attributes.availableModes[0].name "\""load_mode"\""
+test_sync .payload.devices[0].attributes.availableModes[0].name_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableModes[0].name_values[0].name_synonym[0] "\""load"\""
+test_sync .payload.devices[0].attributes.availableModes[0].name_values[0].name_synonym[1] "\""size"\""
+test_sync .payload.devices[0].attributes.availableModes[0].name_values[0].name_synonym[2] "\""load\ size"\""
+test_sync .payload.devices[0].attributes.availableModes[0].name_values[0].name_synonym[3] null
+test_sync .payload.devices[0].attributes.availableModes[0].name_values[1] null
+
+test_sync .payload.devices[0].attributes.availableModes[0].settings[0].setting_name "\""small_load"\""
+test_sync .payload.devices[0].attributes.availableModes[0].settings[0].setting_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableModes[0].settings[0].setting_values[0].setting_synonym[0] "\""small"\""
+test_sync .payload.devices[0].attributes.availableModes[0].settings[0].setting_values[0].setting_synonym[1] "\""half"\""
+test_sync .payload.devices[0].attributes.availableModes[0].settings[0].setting_values[0].setting_synonym[2] null
+test_sync .payload.devices[0].attributes.availableModes[0].settings[0].setting_values[1] null
+test_sync .payload.devices[0].attributes.availableModes[0].settings[1].setting_name "\""medium_load"\""
+test_sync .payload.devices[0].attributes.availableModes[0].settings[1].setting_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableModes[0].settings[1].setting_values[0].setting_synonym[0] "\""medium"\""
+test_sync .payload.devices[0].attributes.availableModes[0].settings[1].setting_values[0].setting_synonym[1] "\""normal"\""
+test_sync .payload.devices[0].attributes.availableModes[0].settings[1].setting_values[0].setting_synonym[2] null
+test_sync .payload.devices[0].attributes.availableModes[0].settings[1].setting_values[1] null
+test_sync .payload.devices[0].attributes.availableModes[0].settings[2].setting_name "\""large_load"\""
+test_sync .payload.devices[0].attributes.availableModes[0].settings[2].setting_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableModes[0].settings[2].setting_values[0].setting_synonym[0] "\""large"\""
+test_sync .payload.devices[0].attributes.availableModes[0].settings[2].setting_values[0].setting_synonym[1] "\""full"\""
+test_sync .payload.devices[0].attributes.availableModes[0].settings[2].setting_values[0].setting_synonym[2] null
+test_sync .payload.devices[0].attributes.availableModes[0].settings[2].setting_values[1] null
+test_sync .payload.devices[0].attributes.availableModes[0].settings[3] null
+test_sync .payload.devices[0].attributes.availableModes[0].ordered true
+
+test_sync .payload.devices[0].attributes.availableModes[1].name "\""temp_mode"\""
+test_sync .payload.devices[0].attributes.availableModes[1].name_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableModes[1].name_values[0].name_synonym[0] "\""temperature"\""
+test_sync .payload.devices[0].attributes.availableModes[1].name_values[0].name_synonym[1] "\""temp"\""
+test_sync .payload.devices[0].attributes.availableModes[1].name_values[0].name_synonym[2] null
+test_sync .payload.devices[0].attributes.availableModes[1].name_values[1] null
+
+test_sync .payload.devices[0].attributes.availableModes[1].settings[0].setting_name "\""hot_temp"\""
+test_sync .payload.devices[0].attributes.availableModes[1].settings[0].setting_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableModes[1].settings[0].setting_values[0].setting_synonym[0] "\""hot"\""
+test_sync .payload.devices[0].attributes.availableModes[1].settings[0].setting_values[0].setting_synonym[1] "\""white"\""
+test_sync .payload.devices[0].attributes.availableModes[1].settings[0].setting_values[0].setting_synonym[2] null
+test_sync .payload.devices[0].attributes.availableModes[1].settings[0].setting_values[1] null
+test_sync .payload.devices[0].attributes.availableModes[1].settings[1].setting_name "\""warm_temp"\""
+test_sync .payload.devices[0].attributes.availableModes[1].settings[1].setting_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableModes[1].settings[1].setting_values[0].setting_synonym[0] "\""warm"\""
+test_sync .payload.devices[0].attributes.availableModes[1].settings[1].setting_values[0].setting_synonym[1] "\""color"\""
+test_sync .payload.devices[0].attributes.availableModes[1].settings[1].setting_values[0].setting_synonym[2] null
+test_sync .payload.devices[0].attributes.availableModes[1].settings[1].setting_values[1] null
+test_sync .payload.devices[0].attributes.availableModes[1].settings[2].setting_name "\""cold_temp"\""
+test_sync .payload.devices[0].attributes.availableModes[1].settings[2].setting_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableModes[1].settings[2].setting_values[0].setting_synonym[0] "\""cold"\""
+test_sync .payload.devices[0].attributes.availableModes[1].settings[2].setting_values[0].setting_synonym[1] "\""delicate"\""
+test_sync .payload.devices[0].attributes.availableModes[1].settings[2].setting_values[0].setting_synonym[2] null
+test_sync .payload.devices[0].attributes.availableModes[1].settings[2].setting_values[1] null
+test_sync .payload.devices[0].attributes.availableModes[1].settings[3] null
+test_sync .payload.devices[0].attributes.availableModes[1].ordered false
+
+test_sync .payload.devices[0].attributes.availableModes[2] null
+
+
+test_sync .payload.devices[0].attributes.commandOnlyModes false
+test_sync .payload.devices[0].attributes.queryOnlyModes false
+test_sync .payload.devices[0].attributes.supportsEnablingGuestNetwork false
+test_sync .payload.devices[0].attributes.supportsDisablingGuestNetwork false
+test_sync .payload.devices[0].attributes.supportsGettingGuestNetworkPassword false
+test_sync .payload.devices[0].attributes.networkProfiles[0] "\""Kids"\""
+test_sync .payload.devices[0].attributes.networkProfiles[1] null
+
+test_sync .payload.devices[0].attributes.supportsEnablingNetworkProfile false
+test_sync .payload.devices[0].attributes.supportsDisablingNetworkProfile false
+test_sync .payload.devices[0].attributes.supportsNetworkDownloadSpeedTest false
+test_sync .payload.devices[0].attributes.supportsNetworkUploadSpeedTest false
+test_sync .payload.devices[0].attributes.commandOnlyOnOff false
+test_sync .payload.devices[0].attributes.queryOnlyOnOff false
+test_sync .payload.devices[0].attributes.discreteOnlyOpenClose false
+
+test_sync .payload.devices[0].attributes.openDirection[0] "\""UP"\""
+test_sync .payload.devices[0].attributes.openDirection[1] "\""DOWN"\""
+test_sync .payload.devices[0].attributes.openDirection[2] "\""LEFT"\""
+test_sync .payload.devices[0].attributes.openDirection[3] "\""RIGHT"\""
+test_sync .payload.devices[0].attributes.openDirection[4] "\""IN"\""
+test_sync .payload.devices[0].attributes.openDirection[5] "\""OUT"\""
+test_sync .payload.devices[0].attributes.openDirection[6] null
+
+test_sync .payload.devices[0].attributes.commandOnlyOpenClose false
+test_sync .payload.devices[0].attributes.queryOnlyOpenClose false
+test_sync .payload.devices[0].attributes.supportsDegrees true
+test_sync .payload.devices[0].attributes.supportsPercent true
+test_sync .payload.devices[0].attributes.rotationDegreesRange[0].rotationDegreesMin 0
+test_sync .payload.devices[0].attributes.rotationDegreesRange[0].rotationDegreesMax 360
+test_sync .payload.devices[0].attributes.rotationDegreesRange[1] null
+
+test_sync .payload.devices[0].attributes.supportsContinuousRotation false
+test_sync .payload.devices[0].attributes.commandOnlyRotation false
+
+# sensorStatesSupported
+# TODO 
+
+test_sync .payload.devices[0].attributes.pausable false
+
+test_sync .payload.devices[0].attributes.availableZones[0] "\""Cucina"\""
+test_sync .payload.devices[0].attributes.availableZones[1] "\""Salotto"\""
+test_sync .payload.devices[0].attributes.availableZones[2] "\""Camera\ di\ Eliana"\""
+test_sync .payload.devices[0].attributes.availableZones[3] "\""Soggiorno"\""
+test_sync .payload.devices[0].attributes.availableZones[4] null
+
+test_sync .payload.devices[0].attributes.temperatureRange.minThresholdCelsius 0
+test_sync .payload.devices[0].attributes.temperatureRange.maxThresholdCelsius 40
+
+test_sync .payload.devices[0].attributes.temperatureStepCelsius 1
+test_sync .payload.devices[0].attributes.temperatureUnitForUX "\""C"\""
+test_sync .payload.devices[0].attributes.commandOnlyTemperatureControl false
+test_sync .payload.devices[0].attributes.queryOnlyTemperatureControl false
+
+test_sync .payload.devices[0].attributes.availableThermostatModes[0] "\""off"\""
+test_sync .payload.devices[0].attributes.availableThermostatModes[1] "\""heat"\""
+test_sync .payload.devices[0].attributes.availableThermostatModes[2] "\""cool"\""
+test_sync .payload.devices[0].attributes.availableThermostatModes[3] "\""on"\""
+test_sync .payload.devices[0].attributes.availableThermostatModes[4] "\""heatcool"\""
+test_sync .payload.devices[0].attributes.availableThermostatModes[5] "\""auto"\""
+test_sync .payload.devices[0].attributes.availableThermostatModes[6] "\""fan-only"\""
+test_sync .payload.devices[0].attributes.availableThermostatModes[7] "\""purifier"\""
+test_sync .payload.devices[0].attributes.availableThermostatModes[8] "\""eco"\""
+test_sync .payload.devices[0].attributes.availableThermostatModes[9] "\""dry"\""
+test_sync .payload.devices[0].attributes.availableThermostatModes[10] null
+
+test_sync .payload.devices[0].attributes.thermostatTemperatureRange.minThresholdCelsius 1
+test_sync .payload.devices[0].attributes.thermostatTemperatureRange.maxThresholdCelsius 50
+
+test_sync .payload.devices[0].attributes.thermostatTemperatureUnit "\""C"\""
+test_sync .payload.devices[0].attributes.bufferRangeCelsius 2
+test_sync .payload.devices[0].attributes.commandOnlyTemperatureSetting false
+test_sync .payload.devices[0].attributes.queryOnlyTemperatureSetting false
+test_sync .payload.devices[0].attributes.maxTimerLimitSec 86400
+test_sync .payload.devices[0].attributes.commandOnlyTimer false
+
+# availableToggles
+test_sync .payload.devices[0].attributes.availableToggles[0].name "\""quiet_toggle"\""
+test_sync .payload.devices[0].attributes.availableToggles[0].name_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableToggles[0].name_values[0].name_synonym[0] "\""quiet"\""
+test_sync .payload.devices[0].attributes.availableToggles[0].name_values[0].name_synonym[1] null
+test_sync .payload.devices[0].attributes.availableToggles[0].name_values[1] null
+
+test_sync .payload.devices[0].attributes.availableToggles[1].name "\""extra_bass_toggle"\""
+test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].name_synonym[0] "\""Extra\ bass"\""
+test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].name_synonym[1] "\""Loud\ bass"\""
+test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].name_synonym[2] "\""Powerful\ bass"\""
+test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].name_synonym[3] null
+test_sync .payload.devices[0].attributes.availableToggles[1].name_values[1] null
+
+test_sync .payload.devices[0].attributes.availableToggles[2].name "\""energy_saving_toggle"\""
+test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].name_synonym[0] "\""Energy\ Saving"\""
+test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].name_synonym[1] "\""Low\ Energy"\""
+test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].name_synonym[2] null
+test_sync .payload.devices[0].attributes.availableToggles[2].name_values[1] null
+
+test_sync .payload.devices[0].attributes.availableToggles[3] null
+
+test_sync .payload.devices[0].attributes.commandOnlyToggles false
+test_sync .payload.devices[0].attributes.queryOnlyToggles false
+
+test_sync .payload.devices[0].attributes.transportControlSupportedCommands[0] "\""CAPTION_CONTROL"\""
+test_sync .payload.devices[0].attributes.transportControlSupportedCommands[1] "\""NEXT"\""
+test_sync .payload.devices[0].attributes.transportControlSupportedCommands[2] "\""PAUSE"\""
+test_sync .payload.devices[0].attributes.transportControlSupportedCommands[3] "\""PREVIOUS"\""
+test_sync .payload.devices[0].attributes.transportControlSupportedCommands[4] "\""RESUME"\""
+test_sync .payload.devices[0].attributes.transportControlSupportedCommands[5] "\""SEEK_RELATIVE"\""
+test_sync .payload.devices[0].attributes.transportControlSupportedCommands[6] "\""SEEK_TO_POSITION"\""
+test_sync .payload.devices[0].attributes.transportControlSupportedCommands[7] "\""SET_REPEAT"\""
+test_sync .payload.devices[0].attributes.transportControlSupportedCommands[8] "\""SHUFFLE"\""
+test_sync .payload.devices[0].attributes.transportControlSupportedCommands[9] "\""STOP"\""
+test_sync .payload.devices[0].attributes.transportControlSupportedCommands[10] null
+
+test_sync .payload.devices[0].attributes.volumeMaxLevel 100
+test_sync .payload.devices[0].attributes.volumeCanMuteAndUnmute true
+test_sync .payload.devices[0].attributes.volumeDefaultPercentage 40
+test_sync .payload.devices[0].attributes.levelStepSize 1
+test_sync .payload.devices[0].attributes.commandOnlyVolume false
+
+echo
+
 
 execute_payload topic '{"online":false,"isArmed":false,"currentArmLevel":"","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"","currentInput":"","activeLightEffect":"","currentModeSettings":{"load_mode":"","temp_mode":""},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet_toggle":false,"extra_bass_toggle":false,"energy_saving_toggle":false},"currentVolume":40,"on":true,"isDocked":false}'
 
@@ -470,12 +999,12 @@ test_payload .currentSensorStateData[13].currentSensorState null
 test_payload .currentSensorStateData[13].rawValue 0
 test_payload .currentSensorStateData[14] null
 
-execute_payload activeZones '["Cucina","Salotto"]'
+execute_payload activeZones '["Cucina", "Salotto"]'
 test_payload .activeZones[0] '"Cucina"'
 test_payload .activeZones[1] '"Salotto"'
 test_payload .activeZones[2] null
 
-execute_payload activeZones '["Cucina","Salotto", "Soggiorno"]'
+execute_payload activeZones '["Cucina", "Salotto", "Soggiorno"]'
 test_payload .activeZones[0] '"Cucina"'
 test_payload .activeZones[1] '"Salotto"'
 test_payload .activeZones[2] '"Soggiorno"'
@@ -484,6 +1013,12 @@ test_payload .activeZones[3] null
 execute_payload activeZones '["Bagno"]'
 test_payload .activeZones[0] '"Bagno"'
 test_payload .activeZones[1] null
+
+execute_payload errorCode '"inSoftwareUpdate"'
+execute_error $NODE_ID appInstall youtube_application
+test_out ".payload.commands[0].errorCode" '"inSoftwareUpdate"'
+
+execute_payload errorCode '""'
 
 echo
 

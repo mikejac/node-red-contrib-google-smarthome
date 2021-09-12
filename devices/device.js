@@ -23,6 +23,8 @@ module.exports = function (RED) {
     const fs = require('fs');
     const path = require('path');
     const util = require('util');
+    const COOK_SUPPORTED_UNIT = ["UNKNOWN_UNITS", "NO_UNITS", "CENTIMETERS", "CUPS", "DECILITERS", "FEET", "FLUID_OUNCES", "GALLONS", "GRAMS", "INCHES", "KILOGRAMS", "LITERS", "METERS", "MILLIGRAMS", "MILLILITERS", "MILLIMETERS", "OUNCES", "PINCH", "PINTS", "PORTION", "POUNDS", "QUARTS", "TABLESPOONS", "TEASPOONS"];
+    const DISPENSE_SUPPORTED_UNIT = ["CENTIMETERS", "CUPS", "DECILITERS", "FLUID_OUNCES", "GALLONS", "GRAMS", "KILOGRAMS", "LITERS", "MILLIGRAMS", "MILLILITERS", "MILLIMETERS", "NO_UNITS", "OUNCES", "PINCH", "PINTS", "PORTION", "POUNDS", "QUARTS", "TABLESPOONS", "TEASPOONS"];
 
     const Formats = {
         BOOL: 1,
@@ -58,6 +60,7 @@ module.exports = function (RED) {
 
             this.lang = this.clientConn.default_lang || 'en';
             this.state_types = {};
+            this.errorCode = undefined;
             this.trait = {
                 appselector: config.trait_appselector || false,
                 armdisarm: config.trait_armdisarm || false,
@@ -534,36 +537,36 @@ module.exports = function (RED) {
 
             let error_msg = '';
             if (this.trait.appselector) {
-                this.available_applications = this.loadJson('Applications', this.appselector_file.replace(/<id>/g, this.id), []);
+                this.available_applications = this.to_available_applications(this.loadJson('Applications', this.appselector_file.replace(/<id>/g, this.id), []));
             } else {
                 this.available_applications = [];
                 this._debug(".constructor: AppSelector disabled");
             }
 
             if (this.trait.armdisarm) {
-                this.available_arm_levels = this.loadJson('Available arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []);
+                this.available_arm_levels = this.to_available_arm_levels(this.loadJson('Available arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []));
             } else {
                 this.available_arm_levels = [];
                 this._debug(".constructor: ArmDisarm disabled");
             }
 
             if (this.trait.channel) {
-                this.available_channels = this.loadJson('Channels', this.channel_file.replace(/<id>/g, this.id), []);
+                this.available_channels = this.to_available_channels(this.loadJson('Channels', this.channel_file.replace(/<id>/g, this.id), []));
             } else {
                 this.available_channels = [];
                 this._debug(".constructor: Channel disabled");
             }
 
             if (this.trait.cook) {
-                this.food_presets = this.loadJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), []);
+                this.food_presets = this.to_food_presets(this.loadJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), []));
             } else {
                 this.food_presets = [];
                 this._debug(".constructor: Cook disabled");
             }
 
             if (this.trait.dispense) {
-                this.supported_dispense_items = this.loadJson('Supported dispense', this.supported_dispense_items_file.replace(/<id>/g, this.id), []);
-                this.supported_dispense_presets = this.loadJson('Supported dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), []);
+                this.supported_dispense_items = this.to_supported_dispense_items(this.loadJson('Supported dispense', this.supported_dispense_items_file.replace(/<id>/g, this.id), []));
+                this.supported_dispense_presets = this.to_supported_dispense_presets(this.loadJson('Supported dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), []));
             } else {
                 this.supported_dispense_items = [];
                 this.supported_dispense_presets = [];
@@ -571,35 +574,35 @@ module.exports = function (RED) {
             }
 
             if (this.trait.fanspeed) {
-                this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), []);
+                this.available_fan_speeds = this.to_available_fan_speeds(this.loadJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), []));
             } else {
                 this.available_fan_speeds = [];
                 this._debug(".constructor: FanSpeeds disabled");
             }
 
             if (this.trait.fill) {
-                this.available_fill_levels = this.loadJson('Available fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), []);
+                this.available_fill_levels = this.to_available_fill_levels(this.loadJson('Available fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), []));
             } else {
                 this.available_fill_levels = [];
                 this._debug(".constructor: Fill disabled");
             }
 
             if (this.trait.inputselector) {
-                this.available_inputs = this.loadJson('Available inputs', this.inputselector_file.replace(/<id>/g, this.id), []);
+                this.available_inputs = this.to_available_inputs(this.loadJson('Available inputs', this.inputselector_file.replace(/<id>/g, this.id), []));
             } else {
                 this.available_inputs = [];
                 this._debug(".constructor InputSelector disabled");
             }
 
             if (this.trait.modes) {
-                this.available_modes = this.loadJson('Modes', this.modes_file.replace(/<id>/g, this.id), []);
+                this.available_modes = this.to_available_modes(this.loadJson('Modes', this.modes_file.replace(/<id>/g, this.id), []));
             } else {
                 this.available_modes = [];
                 this._debug(".constructor: Modes disabled");
             }
 
             if (this.trait.toggles) {
-                this.available_toggles = this.loadJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), []);
+                this.available_toggles = this.to_available_toggles(this.loadJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), []));
             } else {
                 this.available_toggles = [];
                 this._debug(".constructor: Toggles disabled");
@@ -629,6 +632,7 @@ module.exports = function (RED) {
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
+            this.clientConn.app.ScheduuleRequestSync();
         }
 
         _debug(msg) {
@@ -804,9 +808,9 @@ module.exports = function (RED) {
                     state_types['currentFillLevel'] = Formats.STRING;
                 }
                 if (me.supports_fill_percent) {
-                    state_types['currentFillPercent'] = Formats.FLOAT;
-                } else {
                     state_types['currentFillPercent'] = Formats.FLOAT + Formats.MANDATORY;
+                } else {
+                    state_types['currentFillPercent'] = Formats.FLOAT;
                 }
             }
             if (me.trait.humiditysetting) {
@@ -926,7 +930,7 @@ module.exports = function (RED) {
                         name: Formats.STRING + Formats.MANDATORY,
                         currentSensorState: Formats.STRING,
                         rawValue: Formats.FLOAT
-                    }, 
+                    },
                     {
                         keyId: 'name',
                         addIfMissing: true,
@@ -1078,10 +1082,9 @@ module.exports = function (RED) {
             if (me.trait.fill) {
                 attributes['availableFillLevels'] = {
                     levels: me.available_fill_levels,
-                    ordered: me.ordered_fill_levels
+                    ordered: me.ordered_fill_levels,
+                    supportsFillPercent: me.supports_fill_percent
                 };
-                attributes['ordered'] = me.ordered_fill_levels;
-                attributes['supportsFillPercent'] = me.supports_fill_percent;
             }
             if (me.trait.humiditysetting) {
                 attributes['humiditySetpointRange'] = {
@@ -1293,6 +1296,40 @@ module.exports = function (RED) {
             }
         }
 
+        getDispenseNewState() {
+            let me = this;
+            let dispense = [];
+            me.supported_dispense_items.forEach(function (item) {
+                dispense.push({
+                    itemName: item.item_name,
+                    amountRemaining: {
+                        amount: 0,
+                        unit: "NO_UNITS"
+                    },
+                    amountLastDispensed: {
+                        amount: 0,
+                        unit: "NO_UNITS"
+                    },
+                    isCurrentlyDispensing: false
+                })
+            });
+            me.supported_dispense_presets.forEach(function (item) {
+                dispense.push({
+                    "itemName": item.preset_name,
+                    "amountRemaining": {
+                        "amount": 0,
+                        "unit": "NO_UNITS"
+                    },
+                    "amountLastDispensed": {
+                        "amount": 0,
+                        "unit": "NO_UNITS"
+                    },
+                    "isCurrentlyDispensing": false
+                })
+            });
+            return dispense;
+        }
+
         updateStatesForTraits(device) {
             let me = this;
             let states = device.states;
@@ -1332,36 +1369,7 @@ module.exports = function (RED) {
                 // states['currentFoodUnit'] = "UNKNOWN_UNITS";
             }
             if (me.trait.dispense) {
-                let dispense = [];
-                me.supported_dispense_items.forEach(function (item) {
-                    dispense.push({
-                        "itemName": item.item_name,
-                        "amountRemaining": {
-                            "amount": 0,
-                            "unit": "NO_UNITS"
-                        },
-                        "amountLastDispensed": {
-                            "amount": 0,
-                            "unit": "NO_UNITS"
-                        },
-                        "isCurrentlyDispensing": false
-                    })
-                });
-                me.supported_dispense_presets.forEach(function (item) {
-                    dispense.push({
-                        "itemName": item.preset_name,
-                        "amountRemaining": {
-                            "amount": 0,
-                            "unit": "NO_UNITS"
-                        },
-                        "amountLastDispensed": {
-                            "amount": 0,
-                            "unit": "NO_UNITS"
-                        },
-                        "isCurrentlyDispensing": false
-                    })
-                });
-                states['dispenseItems'] = dispense;
+                states['dispenseItems'] = this.getDispenseNewState();
             }
             if (me.trait.dock) {
                 // states['isDocked'] = false;
@@ -1772,186 +1780,194 @@ module.exports = function (RED) {
                         payload: me.states,
                         device_id: this.device.id
                     });
+                } else if (upper_topic === 'ERRORCODE') {
+                    if (typeof msg.payload === 'string' && msg.payload.trim()) {
+                        me.errorCode = msg.payload.trim();
+                    } else {
+                        me.errorCode = undefined;
+                    }
                 } else if (upper_topic === 'AVAILABLEAPPLICATIONS') {
                     if (this.trait.appselector) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_applications = this.loadJson('Applications', this.appselector_file.replace(/<id>/g, this.id), []);
+                            this.available_applications = this.to_available_applications(this.loadJson('Applications', this.appselector_file.replace(/<id>/g, this.id), []));
                         } else {
-                            if (!this.writeJson('Applications', this.appselector_file.replace(/<id>/g, this.id), msg.payload)) {
+                            this.available_applications = this.to_available_applications(msg.payload);
+                            if (!this.writeJson('Applications', this.appselector_file.replace(/<id>/g, this.id), this.available_applications)) {
                                 RED.log.error("Error saving Applications to file " + this.appselector_file.replace(/<id>/g, this.id));
-                            } else {
-                                this.available_applications = msg.payload;
-                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
                         this.available_applications = [];
                         RED.log.error("Applications disabled");
                     }
+                    this.device.properties.attributes.availableApplications = this.available_applications;
+                    this.clientConn.app.ScheduuleRequestSync();
                 } else if (upper_topic === 'AVAILABLEARMLEVELS') {
                     if (this.trait.armdisarm) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_arm_levels = this.loadJson('Arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []);
+                            this.available_arm_levels = this.to_available_arm_levels(this.loadJson('Arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []));
                         } else {
-                            if (!this.writeJson('Arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), msg.payload)) {
+                            this.available_arm_levels = this.to_available_arm_levels(msg.payload);
+                            if (!this.writeJson('Arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), this.available_arm_levels)) {
                                 RED.log.error("Error saving Arm levels to file " + this.available_arm_levels_file.replace(/<id>/g, this.id));
-                            } else {
-                                this.available_arm_levels = msg.payload;
-                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
                         this.available_arm_levels = [];
                         RED.log.error("Arm levels disabled");
                     }
+                    this.device.properties.attributes.availableArmLevels.levels = this.available_arm_levels;
+                    this.clientConn.app.ScheduuleRequestSync();
                 } else if (upper_topic === 'AVAILABLECHANNELS') {
                     if (this.trait.channel) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_channels = this.loadJson('Channels', this.channel_file.replace(/<id>/g, this.id), []);
+                            this.available_channels = this.to_available_channels(this.loadJson('Channels', this.channel_file.replace(/<id>/g, this.id), []));
                         } else {
-                            if (!this.writeJson('Channels', this.channel_file.replace(/<id>/g, this.id), msg.payload)) {
+                            this.available_channels = this.to_available_channels(msg.payload);
+                            if (!this.writeJson('Channels', this.channel_file.replace(/<id>/g, this.id), this.available_channels)) {
                                 RED.log.error("Error saving Channels to file " + this.channel_file.replace(/<id>/g, this.id));
-                            } else {
-                                this.available_channels = msg.payload;
-                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
                         this.available_channels = [];
                         RED.log.error("Channels disabled");
                     }
+                    this.device.properties.attributes.availableChannels = this.available_channels;
+                    this.clientConn.app.ScheduuleRequestSync();
                 } else if (upper_topic === 'SUPPORTEDDISPENSEITEMS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
-                            this.supported_dispense_items = this.loadJson('Dispense items', this.supported_dispense_items_file.replace(/<id>/g, this.id), []);
+                            this.supported_dispense_items = this.to_supported_dispense_items(this.loadJson('Dispense items', this.supported_dispense_items_file.replace(/<id>/g, this.id), []));
                         } else {
-                            if (!this.writeJson('Dispense items', this.supported_dispense_items_file.replace(/<id>/g, this.id), msg.payload)) {
+                            this.supported_dispense_items = this.to_supported_dispense_items(msg.payload);
+                            if (!this.writeJson('Dispense items', this.supported_dispense_items_file.replace(/<id>/g, this.id), this.supported_dispense_items)) {
                                 RED.log.error("Error saving Dispense items to file " + this.supported_dispense_items_file.replace(/<id>/g, this.id));
-                            } else {
-                                this.supported_dispense_items = msg.payload;
-                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
                         this.supported_dispense_items = [];
                         RED.log.error("Dispense items disabled");
                     }
+                    this.device.properties.attributes.supportedDispenseItems = this.supported_dispense_items;
+                    this.states['dispenseItems'] = this.getDispenseNewState();
+                    this.clientConn.app.ScheduuleRequestSync();
                 } else if (upper_topic === 'SUPPORTEDDISPENSEPRESETS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
-                            this.supported_dispense_presets = this.loadJson('Dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), []);
+                            this.supported_dispense_presets = this.to_supported_dispense_presets(this.loadJson('Dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), []));
                         } else {
-                            if (!this.writeJson('Dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), msg.payload)) {
+                            this.supported_dispense_presets = this.to_supported_dispense_presets(msg.payload);
+                            if (!this.writeJson('Dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), this.supported_dispense_presets)) {
                                 RED.log.error("Error saving Dispense presets to file " + this.supported_dispense_presets_file.replace(/<id>/g, this.id));
-                            } else {
-                                this.supported_dispense_presets = msg.payload;
-                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
                         this.supported_dispense_presets = [];
                         RED.log.error("Dispense presets disabled");
                     }
+                    this.device.properties.attributes.supportedDispensePresets = this.supported_dispense_presets;
+                    this.states['dispenseItems'] = this.getDispenseNewState();
+                    this.clientConn.app.ScheduuleRequestSync();
                 } else if (upper_topic === 'AVAILABLEFANSPEEDS') {
                     if (this.trait.fanspeed) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_fan_speeds = this.loadJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), []);
+                            this.available_fan_speeds = this.to_available_fan_speeds(this.loadJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), []));
                         } else {
-                            if (!this.writeJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), msg.payload)) {
+                            this.available_fan_speeds = this.to_available_fan_speeds(msg.payload);
+                            if (!this.writeJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), this.available_fan_speeds)) {
                                 RED.log.error("Error saving Fan speeds to file " + this.available_fan_speeds_file.replace(/<id>/g, this.id));
-                            } else {
-                                this.available_fan_speeds = msg.payload;
-                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
                         this.available_fan_speeds = [];
                         RED.log.error("Fan speeds disabled");
                     }
+                    this.device.properties.attributes.availableFanSpeeds.speeds = this.available_fan_speeds;
+                    this.clientConn.app.ScheduuleRequestSync();
                 } else if (upper_topic === 'AVAILABLEFILLLEVELS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_fill_levels = this.loadJson(' Fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), []);
+                            this.available_fill_levels = this.to_available_fill_levels(this.loadJson(' Fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), []));
                         } else {
-                            if (!this.writeJson(' Fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), msg.payload)) {
+                            this.available_fill_levels = this.to_available_fill_levels(msg.payload);
+                            if (!this.writeJson(' Fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), this.available_fill_levels)) {
                                 RED.log.error("Error saving Fill levels to file " + this.available_fill_levels_file.replace(/<id>/g, this.id));
-                            } else {
-                                this.available_fill_levels = msg.payload;
-                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
                         this.available_fill_levels = [];
                         RED.log.error("Fill levels disabled");
                     }
+                    this.device.properties.attributes.availableFillLevels.levels = this.available_fill_levels;
+                    this.clientConn.app.ScheduuleRequestSync();
                 } else if (upper_topic === 'AVAILABLEFOODPRESETS') {
                     if (this.trait.cook) {
                         if (typeof msg.payload === 'undefined') {
-                            this.food_presets = this.loadJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), []);
+                            this.food_presets = this.to_food_presets(this.loadJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), []));
                         } else {
-                            if (!this.writeJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), msg.payload)) {
+                            this.food_presets = this.to_food_presets(msg.payload);
+                            if (!this.writeJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), this.food_presets)) {
                                 RED.log.error("Error saving Food presets to file " + this.food_presets_file.replace(/<id>/g, this.id));
-                            } else {
-                                this.food_presets = msg.payload;
-                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
                         this.food_presets = [];
                         RED.log.error("Food presets disabled");
                     }
+                    this.device.properties.attributes.foodPresets = this.food_presets;
+                    this.clientConn.app.ScheduuleRequestSync();
                 } else if (upper_topic === 'AVAILABLEINPUTS') {
                     if (this.trait.inputselector) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_inputs = this.loadJson('Inputs', this.inputselector_file.replace(/<id>/g, this.id), []);
+                            this.available_inputs = this.to_available_inputs(this.loadJson('Inputs', this.inputselector_file.replace(/<id>/g, this.id), []));
                         } else {
-                            if (!this.writeJson('Inputs', this.inputselector_file.replace(/<id>/g, this.id), msg.payload)) {
+                            this.available_inputs = this.to_available_inputs(msg.payload);
+                            if (!this.writeJson('Inputs', this.inputselector_file.replace(/<id>/g, this.id), this.available_inputs)) {
                                 RED.log.error("Error saving Inputs to file " + this.inputselector_file.replace(/<id>/g, this.id));
-                            } else {
-                                this.available_inputs = msg.payload;
-                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
                         this.available_inputs = [];
                         RED.log.error("Inputs disabled");
                     }
+                    this.device.properties.attributes.availableInputs = this.available_inputs;
+                    this.clientConn.app.ScheduuleRequestSync();
                 } else if (upper_topic === 'AVAILABLEMODES') {
                     if (this.trait.modes) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_modes = this.loadJson('Modes', this.modes_file.replace(/<id>/g, this.id), []);
+                            this.available_modes = this.to_available_modes(this.loadJson('Modes', this.modes_file.replace(/<id>/g, this.id), []));
                             this.updateModesState(me, me);
                         } else {
-                            if (!this.writeJson('Modes', this.modes_file.replace(/<id>/g, this.id), msg.payload)) {
+                            this.available_modes = this.to_available_modes(msg.payload);
+                            if (!this.writeJson('Modes', this.modes_file.replace(/<id>/g, this.id), this.available_modes)) {
                                 RED.log.error("Error saving Modes to file " + this.modes_file.replace(/<id>/g, this.id));
-                            } else {
-                                this.available_modes = msg.payload;
-                                this.updateModesState(me, me);
-                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
                         this.available_modes = [];
                         RED.log.error("Modes disabled");
                     }
+                    this.device.properties.attributes.availableModes = this.available_modes;
+                    this.updateModesState(me, me);
+                    this.clientConn.app.ScheduuleRequestSync();
                 } else if (upper_topic === 'AVAILABLETOGGLES') {
                     if (this.trait.toggles) {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_toggles = this.loadJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), []);
+                            this.available_toggles = this.to_available_toggles(this.loadJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), []));
                             this.updateTogglesState(me, me);
                         } else {
-                            if (!this.writeJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), msg.payload)) {
+                            this.available_toggles = this.to_available_toggles(msg.payload);
+                            if (!this.writeJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), this.available_toggles)) {
                                 RED.log.error("Error saving Toggles to file " + this.toggles_file.replace(/<id>/g, this.id));
-                            } else {
-                                this.available_toggles = msg.payload;
-                                this.updateTogglesState(me, me);
-                                this.clientConn.app.RequestSync();
                             }
                         }
                     } else {
                         this.available_toggles = [];
                         RED.log.error("Toggles disabled");
                     }
+                    this.device.properties.attributes.availableToggles = this.available_toggles;
+                    this.updateTogglesState(me, me);
+                    this.clientConn.app.ScheduuleRequestSync();
                 } else if (upper_topic === 'CAMERASTREAMAUTHTOKEN') {
                     const auth_token = formats.FormatValue(formats.Formats.STRING, 'cameraStreamAuthToken', msg.payload) || "";
                     if (auth_token != me.auth_token) {
@@ -1960,7 +1976,7 @@ module.exports = function (RED) {
                             let cameraStreamNeedAuthToken = this.device.properties.attributes.cameraStreamNeedAuthToken;
                             if (cameraStreamNeedAuthToken != (auth_token.length > 0)) {
                                 this.device.properties.attributes['cameraStreamNeedAuthToken'] = auth_token.length > 0;
-                                this.clientConn.app.RequestSync();
+                                this.clientConn.app.ScheduuleRequestSync();
                             }
                         }
                     }
@@ -2305,7 +2321,7 @@ module.exports = function (RED) {
                 traits.push("action.devices.traits.TemperatureSetting");
             }
             if (trait.timer) {
-                traits.push("action.devices.traits.Timer ");
+                traits.push("action.devices.traits.Timer");
             }
             if (trait.toggles) {
                 traits.push("action.devices.traits.Toggles");
@@ -2560,6 +2576,196 @@ module.exports = function (RED) {
             return differs;
         }
 
+        to_available_applications(json_data) {
+            return this.key_name_synonym(json_data, 'key', 'names', 'name_synonym');
+        }
+
+        to_available_arm_levels(json_data) {
+            return this.key_name_synonym(json_data, 'level_name', 'level_values', 'level_synonym');
+        }
+
+        to_available_channels(json_data) {
+            let f = function (data_in, data_out) {
+                if (typeof data_in.number === 'string') {
+                    data_out.number = data_in.number;
+                }
+                return true;
+            };
+            return this.key_name_synonym(json_data, 'key', 'names', undefined, f);
+        }
+
+        to_food_presets(json_data) {
+            let f = function (data_in, data_out) {
+                if (Array.isArray(data_in.supported_units)) {
+                    data_out.supported_units = [];
+                    data_in.supported_units.forEach(unit => {
+                        if (typeof unit === 'string' && !data_out.supported_units.includes(unit.trim().toUpperCase()) && COOK_SUPPORTED_UNIT.includes(unit.trim().toUpperCase())) {
+                            data_out.supported_units.push(unit.trim().toUpperCase());
+                        }
+                    });
+                    return data_out.supported_units.length > 0;
+                }
+                return false;
+            };
+            return this.key_name_synonym(json_data, 'food_preset_name', 'food_synonyms', 'synonym', f);
+        }
+
+        to_supported_dispense_items(json_data) {
+            let f = function (data_in, data_out) {
+                if (Array.isArray(data_in.supported_units)) {
+                    data_out.supported_units = [];
+                    data_in.supported_units.forEach(unit => {
+                        if (typeof unit === 'string' && !data_out.supported_units.includes(unit.trim().toUpperCase()) && DISPENSE_SUPPORTED_UNIT.includes(unit.trim().toUpperCase())) {
+                            data_out.supported_units.push(unit.trim().toUpperCase());
+                        }
+                    });
+                    if (typeof data_in.default_portion.amount === 'number' && typeof data_in.default_portion.unit === 'string' && data_out.supported_units.includes(data_in.default_portion.unit.trim().toUpperCase())) {
+                        data_out.default_portion = {
+                            amount: data_in.default_portion.amount,
+                            unit: data_in.default_portion.unit.trim().toUpperCase()
+                        };
+                        return data_out.supported_units.length > 0;
+                    }
+                }
+                return false;
+            };
+            return this.key_name_synonym(json_data, 'item_name', 'item_name_synonyms', 'synonyms', f);
+        }
+
+        to_supported_dispense_presets(json_data) {
+            return this.key_name_synonym(json_data, 'preset_name', 'preset_name_synonyms', 'synonyms');
+        }
+
+        to_available_fan_speeds(json_data) {
+            return this.key_name_synonym(json_data, 'speed_name', 'speed_values', 'speed_synonym');
+        }
+
+        to_available_fill_levels(json_data) {
+            return this.key_name_synonym(json_data, 'level_name', 'level_values', 'level_synonym');
+        }
+
+        to_available_inputs(json_data) {
+            return this.key_name_synonym(json_data, 'key', 'names', 'name_synonym');
+        }
+
+        to_available_modes(json_data) {
+            let key_name_synonym = this.key_name_synonym;
+            let f = function (data_in, data_out) {
+                if (Array.isArray(data_in.settings)) {
+                    data_out.settings = key_name_synonym(data_in.settings, 'setting_name', 'setting_values', 'setting_synonym');
+                    if (typeof data_in.ordered === 'boolean') {
+                        data_out.ordered = data_in.ordered;
+                    }
+                    return data_out.settings.length > 0;
+                }
+                return false;
+            };
+            return this.key_name_synonym(json_data, 'name', 'name_values', 'name_synonym', f);
+        }
+
+        to_available_toggles(json_data) {
+            return this.key_name_synonym(json_data, 'name', 'name_values', 'name_synonym');
+        }
+
+        key_name_synonym(json_data, key1, key2, key3, manage_other_fields) {
+            const me = this;
+            let new_data = [];
+            if (Array.isArray(json_data)) {
+                if (typeof manage_other_fields !== 'function') {
+                    manage_other_fields = function (data_in, data_out) { return true; }
+                }
+                json_data.forEach(rec => {
+                    if (typeof rec[key1] === 'string' && rec[key1].trim()) {
+                        let new_rec = {};
+                        new_rec[key1] = rec[key1].trim();
+                        let found = new_data.filter(element => element[key1] === new_rec[key1]);
+                        if (found.length === 0 && Array.isArray(rec[key2])) {
+                            new_rec[key2] = [];
+                            rec[key2].forEach(names => {
+                                if (key3) {
+                                    let lang = typeof names.lang === 'string' ? names.lang.trim() : '';
+                                    if (lang.length === 0) {
+                                        lang = me.lang;
+                                    }
+                                    if (Array.isArray(names[key3])) {
+                                        let name_synonym = [];
+                                        names[key3].forEach(name => {
+                                            if (typeof name === 'string' && name.trim().length > 0 && !name_synonym.includes(name.trim())) {
+                                                name_synonym.push(name.trim());
+                                            }
+                                        });
+                                        if (name_synonym.length > 0) {
+                                            let new_key2 = {};
+                                            new_key2['lang'] = lang;
+                                            new_key2[key3] = name_synonym;
+                                            if (manage_other_fields(rec, new_rec)) {
+                                                new_rec[key2].push(new_key2);
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    if (typeof names === 'string' && names.trim() && !new_rec[key2].includes(names.trim())) {
+                                        new_rec[key2].push(names.trim());
+                                    }
+                                }
+                            });
+                            if (new_rec[key2].length > 0) {
+                                let ok = true;
+                                if (!key3) {
+                                    ok = manage_other_fields(rec, new_rec);
+                                }
+                                if (ok) {
+                                    new_data.push(new_rec);
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            return new_data;
+        }
+
+        key_name_synonym1(json_data) {
+            const me = this;
+            let new_data = [];
+            if (Array.isArray(json_data)) {
+                json_data.forEach(rec => {
+                    if (typeof rec.key === 'string' && rec.key.trim()) {
+                        let new_rec = {};
+                        new_rec.key = rec.key.trim();
+                        let found = new_data.filter(element => element.key === new_rec.key);
+                        if (found.length === 0 && Array.isArray(rec.names)) {
+                            new_rec.names = [];
+                            rec.names.forEach(names => {
+                                let lang = typeof names.lang === 'string' ? names.lang.trim() : '';
+                                if (lang.length === 0) {
+                                    lang = me.lang;
+                                }
+                                if (Array.isArray(names.name_synonym)) {
+                                    let name_synonym = [];
+                                    names.name_synonym.forEach(name => {
+                                        if (typeof name === 'string' && name.trim().length > 0 && !name_synonym.includes(name.trim())) {
+                                            name_synonym.push(name.trim());
+                                        }
+                                    });
+                                    if (name_synonym.length > 0) {
+                                        new_rec.names.push({
+                                            lang: lang,
+                                            name_synonym: name_synonym
+                                        });
+                                    }
+                                }
+                            });
+                            if (new_rec.names.length > 0) {
+                                new_data.push(new_rec);
+                            }
+                        }
+                    }
+                });
+            }
+            return new_data;
+        }
+
         loadJson(text, filename, defaultValue) {
             if (filename) {
                 this._debug('.loadJson: ' + text);
@@ -2640,6 +2846,15 @@ module.exports = function (RED) {
             };
 
             me._debug(".execCommand: command " + JSON.stringify(command));
+
+            if (me.errorCode) {
+                me._debug(".execCommand: errorCode " + JSON.stringify(me.errorCode));
+                return {
+                    status: 'ERROR',
+                    errorCode: me.errorCode
+                };
+            }
+
             me._debug(".execCommand: states " + JSON.stringify(me.states));
             // me._debug(".execCommand: device " +  JSON.stringify(device));
             // me._debug(".execCommand: me.device " +  JSON.stringify(me.device));
