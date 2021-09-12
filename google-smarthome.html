@@ -54,116 +54,116 @@
         </select>
     </div>
 
-    <div class="form-row">
-        <b>Local Authentication</b>
-    </div>
-
-    <div class="form-row">
-        <label style="width:auto" for="node-config-input-usegooglelogin"><i class="fa fa-arrow-right"></i> <span data-i18n="googlesmarthome.label.usegooglelogin"></span></label>
-        <input type="checkbox" id="node-config-input-usegooglelogin" style="display:inline-block; width:auto; vertical-align:top;">
-    </div>
-
-    <div class="form-row hidden" id="usegooglelogin" style="background: #fbfbfb">
-        <div class="form-row">
-            <label for="node-config-input-loginclientid"><i class="fa fa-user"></i> <span data-i18n="googlesmarthome.label.loginclientid"></span></label>
-            <input type="text" id="node-config-input-loginclientid">
-        </div>
+    <fieldset>
+        <legend>Local Authentication</legend>
 
         <div class="form-row">
-            <div class="form-row" style="margin-bottom:0;">
-                <label><i class="fa fa-list"></i> <span data-i18n="googlesmarthome.label.emails"></span></label>
-            </div>
-            <div class="form-row node-config-input-googlesmarthome-emails-container-row">
-                <ol id="node-config-input-googlesmarthome-emails-container"></ol>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-row" id="useloginpwd" style="background: #fbfbfb">
-        <div class="form-row">
-            <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="googlesmarthome.label.username"></span></label>
-            <input type="text" id="node-config-input-username">
+            <label style="width:auto" for="node-config-input-usegooglelogin"><i class="fa fa-arrow-right"></i> <span data-i18n="googlesmarthome.label.usegooglelogin"></span></label>
+            <input type="checkbox" id="node-config-input-usegooglelogin" style="display:inline-block; width:auto; vertical-align:top;">
         </div>
 
-        <div class="form-row">
-            <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="googlesmarthome.label.password"></span></label>
-            <input type="password" id="node-config-input-password">
-        </div>
-    </div>
-
-    <div class="form-row">
-        <label for="node-config-input-accesstokenduration"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.accesstokenduration"></span></label>
-        <input type="text" id="node-config-input-accesstokenduration" data-i18n="[placeholder]googlesmarthome.placeholder.accesstokenduration">
-    </div>
-
-    <div class="form-row">
-        <b>Actions on Google Project Settings</b>
-    </div>
-
-    <div class="form-row">
-        <label for="node-config-input-clientid"><i class="fa fa-user"></i> <span data-i18n="googlesmarthome.label.clientid"></span></label>
-        <input type="text" id="node-config-input-clientid">
-    </div>
-
-    <div class="form-row">
-        <label for="node-config-input-clientsecret"><i class="fa fa-lock"></i> <span data-i18n="googlesmarthome.label.clientsecret"></span></label>
-        <input type="password" id="node-config-input-clientsecret">
-    </div>
-
-    <div class="form-row">
-        <b>Google HomeGraph Settings</b>
-    </div>
-
-    <div class="form-row">
-        <label for="node-config-input-jwtkey"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.jwtkey"></span></label>
-        <input type="text" id="node-config-input-jwtkey">
-    </div>
-
-    <div class="form-row">
-        <label for="node-config-input-reportinterval"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.reportinterval"></span></label>
-        <input type="text" id="node-config-input-reportinterval" data-i18n="[placeholder]googlesmarthome.placeholder.reportinterval">
-    </div>
-
-    <div class="form-row">
-        <b>Web Server Settings</b>
-    </div>
-
-    <div class="form-row">
-        <label for="node-config-input-port"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.port"></span></label>
-        <input type="text" id="node-config-input-port" data-i18n="[placeholder]googlesmarthome.placeholder.port">
-    </div>
-
-    <div class="form-row">
-        <label for="node-config-input-httppath"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.httppath"></span></label>
-        <input type="text" id="node-config-input-httppath">
-    </div>
-
-    <div class="form-row hidden" id="connectioninfo" style="background: #fbfbfb">
-
-        <div class="form-row">
-            <label style="width:auto" for="node-config-input-usehttpnoderoot"><i class="fa fa-arrow-right"></i> <span data-i18n="googlesmarthome.label.usehttpnoderoot"></span></label>
-            <input type="checkbox" id="node-config-input-usehttpnoderoot" style="display:inline-block; width:auto; vertical-align:top;">
-        </div>
-    
-    
-        <div class="form-row">
-            <label style="width:auto" for="node-config-input-ssloffload"><i class="fa fa-arrow-right"></i> <span data-i18n="googlesmarthome.label.ssloffload"></span></label>
-            <input type="checkbox" id="node-config-input-ssloffload" style="display:inline-block; width:auto; vertical-align:top;">
-        </div>
-
-        <div class="form-row hidden" id="ssloffloadkeys" style="background: #fbfbfb">
-
+        <div class="form-row hidden" id="usegooglelogin" style="background: #fbfbfb">
             <div class="form-row">
-                <label for="node-config-input-publickey"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.publickey"></span></label>
-                <input type="text" id="node-config-input-publickey">
+                <label for="node-config-input-loginclientid"><i class="fa fa-user"></i> <span data-i18n="googlesmarthome.label.loginclientid"></span></label>
+                <input type="text" id="node-config-input-loginclientid">
             </div>
 
             <div class="form-row">
-                <label for="node-config-input-privatekey"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.privatekey"></span></label>
-                <input type="text" id="node-config-input-privatekey">
+                <div class="form-row" style="margin-bottom:0;">
+                    <label><i class="fa fa-list"></i> <span data-i18n="googlesmarthome.label.emails"></span></label>
+                </div>
+                <div class="form-row node-config-input-googlesmarthome-emails-container-row">
+                    <ol id="node-config-input-googlesmarthome-emails-container"></ol>
+                </div>
             </div>
         </div>
-    </div>
+
+        <div class="form-row" id="useloginpwd" style="background: #fbfbfb">
+            <div class="form-row">
+                <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="googlesmarthome.label.username"></span></label>
+                <input type="text" id="node-config-input-username">
+            </div>
+
+            <div class="form-row">
+                <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="googlesmarthome.label.password"></span></label>
+                <input type="password" id="node-config-input-password">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-accesstokenduration"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.accesstokenduration"></span></label>
+            <input type="text" id="node-config-input-accesstokenduration" data-i18n="[placeholder]googlesmarthome.placeholder.accesstokenduration">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Actions on Google Project Settings</legend>
+
+        <div class="form-row">
+            <label for="node-config-input-clientid"><i class="fa fa-user"></i> <span data-i18n="googlesmarthome.label.clientid"></span></label>
+            <input type="text" id="node-config-input-clientid">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-clientsecret"><i class="fa fa-lock"></i> <span data-i18n="googlesmarthome.label.clientsecret"></span></label>
+            <input type="password" id="node-config-input-clientsecret">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Google HomeGraph Settings</legend>
+
+        <div class="form-row">
+            <label for="node-config-input-jwtkey"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.jwtkey"></span></label>
+            <input type="text" id="node-config-input-jwtkey">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-reportinterval"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.reportinterval"></span></label>
+            <input type="text" id="node-config-input-reportinterval" data-i18n="[placeholder]googlesmarthome.placeholder.reportinterval">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Web Server Settings</legend>
+
+        <div class="form-row">
+            <label for="node-config-input-port"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.port"></span></label>
+            <input type="text" id="node-config-input-port" data-i18n="[placeholder]googlesmarthome.placeholder.port">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-httppath"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.httppath"></span></label>
+            <input type="text" id="node-config-input-httppath">
+        </div>
+
+        <div class="form-row hidden" id="connectioninfo" style="background: #fbfbfb">
+
+            <div class="form-row">
+                <label style="width:auto" for="node-config-input-usehttpnoderoot"><i class="fa fa-arrow-right"></i> <span data-i18n="googlesmarthome.label.usehttpnoderoot"></span></label>
+                <input type="checkbox" id="node-config-input-usehttpnoderoot" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        
+        
+            <div class="form-row">
+                <label style="width:auto" for="node-config-input-ssloffload"><i class="fa fa-arrow-right"></i> <span data-i18n="googlesmarthome.label.ssloffload"></span></label>
+                <input type="checkbox" id="node-config-input-ssloffload" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row hidden" id="ssloffloadkeys" style="background: #fbfbfb">
+
+                <div class="form-row">
+                    <label for="node-config-input-publickey"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.publickey"></span></label>
+                    <input type="text" id="node-config-input-publickey">
+                </div>
+
+                <div class="form-row">
+                    <label for="node-config-input-privatekey"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.privatekey"></span></label>
+                    <input type="text" id="node-config-input-privatekey">
+                </div>
+            </div>
+        </div>
+    </fieldset>
 </script>
 
 <script type="text/x-red" data-help-name="googlesmarthome-client">
