@@ -264,7 +264,7 @@ module.exports = function(RED) {
          * respond to inputs from NodeRED
          *
          */
-        this.on('input', function (msg) {
+        this.onInput = function (msg) {
             RED.log.debug("MgmtNode(input)");
 
             let topicArr = msg.topic.split(node.topicDelim);
@@ -301,7 +301,9 @@ module.exports = function(RED) {
             } catch (err) {
                 RED.log.error(err);
             }
-        });
+        };
+
+        this.on('input', this.onInput);
 
         this.on('close', function(removed, done) {
             if (removed) {
