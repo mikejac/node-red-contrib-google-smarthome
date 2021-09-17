@@ -303,6 +303,16 @@ module.exports = function(RED) {
             }
         };
 
+        this.sendSetState = function () {
+            let states = this.clientConn.app.getStates();
+            if (states) {
+                this.send({
+                    topic: 'set_state',
+                    payload: states
+                });
+            };
+        }
+
         this.on('input', this.onInput);
 
         this.on('close', function(removed, done) {
