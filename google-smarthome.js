@@ -62,6 +62,8 @@ module.exports = function(RED) {
             node.credentials.clientid || '', 
             node.credentials.clientsecret || '',
             config.reportinterval,     // minutes
+            parseInt(config.request_sync_delay || '10'),
+            parseInt(config.set_state_delay || '0'),
             config.enabledebug);
 
         let err = this.app.Start(RED.httpNode || RED.httpAdmin);

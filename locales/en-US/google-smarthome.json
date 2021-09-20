@@ -34,7 +34,10 @@
             "pt-BR": "Portuguese",
             "es": "Spanish",
             "sv": "Swedish",
-            "th": "Thai"
+            "th": "Thai",
+            "advanced_settings": "Advanced settings",
+            "request_sync_delay": "Request sync delay",
+            "set_state_delay": "set_state message delay"
         },
         "placeholder": {
             "name": "Name",
@@ -46,7 +49,9 @@
             "accesstokenduration": "Interval in minutes",
             "port": "Server port. -1 or empty for the Node-RED port",
             "reportinterval": "Interval in minutes. -1 to disable",
-            "emails": "Semicolon separated authorized emails"
+            "emails": "Semicolon separated authorized emails",
+            "request_sync_delay": "Delay for request sync after a deploy",
+            "set_state_delay": "Delay for sending the set_state message after state changes"
         },
         "state": {
             "connected": "Connected to broker: __broker__",

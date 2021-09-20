@@ -164,6 +164,21 @@
             </div>
         </div>
     </fieldset>
+    <fieldset>
+        <legend data-i18n="googlesmarthome.label.advanced_settings"></legend>
+
+        <div class="form-row">
+            <label for="node-config-input-request_sync_delay"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.request_sync_delay"></span></label>
+            <input type="text" id="node-config-input-request_sync_delay" data-i18n="[placeholder]googlesmarthome.placeholder.request_sync_delay">
+        </div>
+
+
+        <div class="form-row">
+            <label for="node-config-input-set_state_delay"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.set_state_delay"></span></label>
+            <input type="text" id="node-config-input-set_state_delay" data-i18n="[placeholder]googlesmarthome.placeholder.set_state_delay">
+        </div>
+
+    </fieldset>
 </script>
 
 <script type="text/x-red" data-help-name="googlesmarthome-client">
@@ -298,6 +313,20 @@
                 value:"", required:true
             }
             */
+            request_sync_delay: {
+                value:10, required:true, validate: function (v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            set_state_delay: {
+                value:30, required:true, validate: function (v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            }
         },
 
         credentials: {
