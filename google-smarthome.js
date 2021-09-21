@@ -141,7 +141,7 @@ module.exports = function(RED) {
         };
 
         this.on('close', function(removed, done) {
-            node.app.Stop(done);
+            node.app.Stop(RED.httpNode || RED.httpAdmin, done);
             
             if (removed) {
                 // this node has been deleted
@@ -278,7 +278,7 @@ module.exports = function(RED) {
                 if (topic.toUpperCase() === 'RESTART_SERVER') {
                     RED.log.debug("MgmtNode(input): RESTART_SERVER");
 
-                    this.clientConn.app.Restart();
+                    this.clientConn.app.Restart(RED.httpNode || RED.httpAdmin);
                 } else if (topic.toUpperCase() === 'REPORT_STATE') {
                     RED.log.debug("MgmtNode(input): REPORT_STATE");
 
