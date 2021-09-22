@@ -234,9 +234,9 @@ module.exports = function (RED) {
             this.available_zones = config.available_zones;
             // StatusReport 
             // TemperatireControl
-            this.tc_min_threshold_celsius = config.tc_min_threshold_celsius;
-            this.tc_max_threshold_celsius = config.tc_max_threshold_celsius;
-            this.tc_temperature_step_celsius = config.tc_temperature_step_celsius;
+            this.tc_min_threshold_celsius = parseInt(config.tc_min_threshold_celsius) || 0;
+            this.tc_max_threshold_celsius = parseInt(config.tc_max_threshold_celsius) || 40;
+            this.tc_temperature_step_celsius = parseInt(config.tc_temperature_step_celsius) || 1;
             this.tc_temperature_unit_for_ux = config.tc_temperature_unit_for_ux;
             this.command_only_temperaturecontrol = config.tc_command_query_temperaturecontrol === 'command';
             this.query_only_temperaturecontrol = config.tc_command_query_temperaturecontrol === 'query';
