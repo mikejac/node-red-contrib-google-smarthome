@@ -254,7 +254,7 @@ module.exports = function (RED) {
             this.target_temp_reached_estimate_unix_timestamp_sec = 360;
             this.thermostat_humidity_ambient = 60;
             // Timer 
-            this.max_timer_limit_sec = parseInt(config.max_timer_limit_sec) || 60;
+            this.max_timer_limit_sec = parseInt(config.max_timer_limit_sec) || 86400;
             this.command_only_timer = config.command_only_timer;
             this.timer_end_timestamp = -1;
             // Toggles
