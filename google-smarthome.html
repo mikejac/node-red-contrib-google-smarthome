@@ -164,35 +164,21 @@
             </div>
         </div>
     </fieldset>
-</script>
+    <fieldset>
+        <legend data-i18n="googlesmarthome.label.advanced_settings"></legend>
 
-<script type="text/x-red" data-help-name="googlesmarthome-client">
-    <b>Local Authentication</b><br>
-    <code>Use Google login</code>: If enabled, use the Google login authentication.<br>
-    <code>Login Client ID</code>: If Google Login is enabled, the client id you gained from the *Google Sign-In* integration.<br>
-    <code>Authorized emails</code>: If Google Login is enabled, The email addresses authorized to log in.<br>
-    <code>Username</code> and <code>Password</code>: A username and password used when you link Google SmartHome to this node.<br>
-    <code>Access Token Duration</code>: The authorization token duration (in minutes) used by Google SmartHome to identify itself to node-red SmartHome plugin. Defaults is 60 minutes.<br>
-    <br>
-    <b>Actions on Google Project Settings</b><br>
-    <code>Client ID</code>: The client id you entered in the <b>Google on Actions</b> project.<br>
-    <code>Client Secret</code>: The client secret you entered in the <b>Google on Actions</b> project.<br>
-    <br>
-    <b>Google HomeGraph Settings</b><br>
-    <code>Jwt Key</code>: Full path to JWT key file.<br>
-    <code>Report Interval (m)</code>: Time, in minutes, between report updates are sent to Google.<br>
-    <br>
-    <b>Web Server Settings</b><br>
-    <code>Use http Node-RED root path</code>: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.<br>
-    <code>Path</code>: Prefix for URLs provided by this module. Default fulfillment URL is https://example.com:3001/smarthome. With a
-          path of "foo" this changes to https://example.com:3001/foo/smarthome. Same for URLs `/oauth` and `/token`.<br>
-    <code>Port</code>: TCP port of your choosing for incoming connections from Google. Must match what you entered in the <b>Google on Actions</b> project.<br>
-    <code>External SSL offload</code>: If enabled, SSL encryption is not used by the node and must be done elsewhere.
-    <code>Public Key</code>: Full path to public key file, e.g. `fullchain.pem` from Let's Encrypt.<br>
-    <code>Private Key</code>: Full path to private key file, e.g. `privkey.pem` from Let's Encrypt.<br>
+        <div class="form-row">
+            <label for="node-config-input-request_sync_delay"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.request_sync_delay"></span></label>
+            <input type="text" id="node-config-input-request_sync_delay" data-i18n="[placeholder]googlesmarthome.placeholder.request_sync_delay">
+        </div>
 
-    <h3>References</h3>
-    <p><a href="https://www.npmjs.com/package/node-red-contrib-google-smarthome" target="_new">Node Information</a>.</p>
+
+        <div class="form-row">
+            <label for="node-config-input-set_state_delay"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.set_state_delay"></span></label>
+            <input type="text" id="node-config-input-set_state_delay" data-i18n="[placeholder]googlesmarthome.placeholder.set_state_delay">
+        </div>
+
+    </fieldset>
 </script>
 
 <script type="text/javascript">
@@ -298,6 +284,20 @@
                 value:"", required:true
             }
             */
+            request_sync_delay: {
+                value:10, required:true, validate: function (v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            set_state_delay: {
+                value:30, required:true, validate: function (v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            }
         },
 
         credentials: {
@@ -342,7 +342,7 @@
                 removable: true,
                 sortable: true
             });
-            let emails = this.emails || this.credentials.emails;
+            let emails = this.credentials.emails;
             if (typeof emails === 'string') {
                 emails = emails.split(";");
             }
@@ -439,66 +439,6 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="googlesmarthome.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]lgooglesmarthome.placeholder.name">
     </div>
-</script>
-
-<script type="text/x-red" data-help-name="google-mgmt">
-    <p>Allows to manage the Google Smart Home service.</p>
-
-    <h3>Inputs</h3>
-        <dl class="message-properties">
-            <dt>topic
-                <span class="property-type">string</span>
-            </dt>
-            <dd>Command to run. Can be restart_server, report_state or request_sync.</dd>
-        </dl>
-
-     <h3>Output</h3>
-        <dl class="message-properties">
-            <dt>payload
-                <span class="property-type">object</span>
-            </dt>
-            <dd>Debug messages from Google Smart Home service.</dd>
-        </dl>
-
-    <h3>Details</h3>
-        <h4>Node Properties - Google SmartHome Settings</h4>
-        <p><code>SmartHome</code> Configuration node.</p>
-        <h4>Node Properties - Node-RED Settings</h4>
-        <p><code>Name</code> Name used by Google Smart Home.</p>
-
-        <h4>Input Messages</h4>
-        <p>If <code>msg.topic</code> is <code>restart_server</code> the built-in webserver will be restarted. Can be used when your SSL certificate has been renewed and needs to be re-read by the webserver.</p>
-        <dl class="message-properties">
-            <dt>topic
-                <span class="property-type">string</span>
-            </dt>
-            <dd>A topic of <code>restart_server</code> restarts the built-in webserver. <code>msg.payload</code> is not used for anything.</dd>
-        </dl>
-
-        <p>If <code>msg.topic</code> is <code>report_state</code> an update of all device states will be sent to Google. Mostly useful for debugging.</p>
-        <dl class="message-properties">
-            <dt>topic
-                <span class="property-type">string</span>
-            </dt>
-            <dd>A topic of <code>report_state</code> will send an update of all states to Google. <code>msg.payload</code> is not used for anything.</dd>
-        </dl>
-
-        <p>If <code>msg.topic</code> is <code>request_sync</code> Google is requested to sync to learn about new or changed devices. This usually happens automatically.</p>
-        <dl class="message-properties">
-            <dt>topic
-                <span class="property-type">string</span>
-            </dt>
-            <dd>A topic of <code>request_sync</code> requests Google to sync to learn about new or changed devices. <code>msg.payload</code> is not used for anything.</dd>
-        </dl>
-
-        <h4>Output Messages</h4>
-        <p>This node will output debug messages if something goes wrong.</p>
-        <dl class="message-properties">
-            <dt>payload
-                <span class="property-type">string|object</span>
-            </dt>
-            <dd>This node will output debug messages if something goes wrong.</dd>
-        </dl>
 </script>
 
 <script type="text/javascript">

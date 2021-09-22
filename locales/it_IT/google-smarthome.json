@@ -34,7 +34,10 @@
 			"pt-BR": "Portughese",
 			"es": "Spagnolo",
 			"sv": "Svedese",
-			"th": "Tailandese"
+			"th": "Tailandese",
+            "advanced_settings": "Impostazioni avanzate",
+            "request_sync_delay": "Ritardo richiesta di sincronizzazione",
+            "set_state_delay": "Ritardo invio del messaggio set_state"
         },
         "placeholder": {
             "name": "Nome",

@@ -62,6 +62,8 @@ module.exports = function(RED) {
             node.credentials.clientid || '', 
             node.credentials.clientsecret || '',
             config.reportinterval,     // minutes
+            parseInt(config.request_sync_delay || '10'),
+            parseInt(config.set_state_delay || '0'),
             config.enabledebug);
 
         let err = this.app.Start(RED.httpNode || RED.httpAdmin);
@@ -139,7 +141,7 @@ module.exports = function(RED) {
         };
 
         this.on('close', function(removed, done) {
-            node.app.Stop(done);
+            node.app.Stop(RED.httpNode || RED.httpAdmin, done);
             
             if (removed) {
                 // this node has been deleted
@@ -264,7 +266,7 @@ module.exports = function(RED) {
          * respond to inputs from NodeRED
          *
          */
-        this.on('input', function (msg) {
+        this.onInput = function (msg) {
             RED.log.debug("MgmtNode(input)");
 
             let topicArr = msg.topic.split(node.topicDelim);
@@ -276,7 +278,7 @@ module.exports = function(RED) {
                 if (topic.toUpperCase() === 'RESTART_SERVER') {
                     RED.log.debug("MgmtNode(input): RESTART_SERVER");
 
-                    this.clientConn.app.Restart();
+                    this.clientConn.app.Restart(RED.httpNode || RED.httpAdmin);
                 } else if (topic.toUpperCase() === 'REPORT_STATE') {
                     RED.log.debug("MgmtNode(input): REPORT_STATE");
 
@@ -301,7 +303,19 @@ module.exports = function(RED) {
             } catch (err) {
                 RED.log.error(err);
             }
-        });
+        };
+
+        this.sendSetState = function () {
+            let states = this.clientConn.app.getStates();
+            if (states) {
+                this.send({
+                    topic: 'set_state',
+                    payload: states
+                });
+            };
+        }
+
+        this.on('input', this.onInput);
 
         this.on('close', function(removed, done) {
             if (removed) {

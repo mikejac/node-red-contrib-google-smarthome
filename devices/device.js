@@ -183,8 +183,8 @@ module.exports = function (RED) {
             this.ordered_inputs = config.ordered_inputs;
             this.current_input_index = -1;
             // LightEffects 
-            this.default_sleep_duration = config.default_sleep_duration;
-            this.default_wake_duration = config.default_wake_duration;
+            this.default_sleep_duration = parseInt(config.default_sleep_duration) || 1800;
+            this.default_wake_duration = parseInt(config.default_wake_duration) || 1800;
             this.supported_effects = config.supported_effects;
             // Locator 
             // LockUnlock 
@@ -234,9 +234,9 @@ module.exports = function (RED) {
             this.available_zones = config.available_zones;
             // StatusReport 
             // TemperatireControl
-            this.tc_min_threshold_celsius = config.tc_min_threshold_celsius;
-            this.tc_max_threshold_celsius = config.tc_max_threshold_celsius;
-            this.tc_temperature_step_celsius = config.tc_temperature_step_celsius;
+            this.tc_min_threshold_celsius = parseInt(config.tc_min_threshold_celsius) || 0;
+            this.tc_max_threshold_celsius = parseInt(config.tc_max_threshold_celsius) || 40;
+            this.tc_temperature_step_celsius = parseInt(config.tc_temperature_step_celsius) || 1;
             this.tc_temperature_unit_for_ux = config.tc_temperature_unit_for_ux;
             this.command_only_temperaturecontrol = config.tc_command_query_temperaturecontrol === 'command';
             this.query_only_temperaturecontrol = config.tc_command_query_temperaturecontrol === 'query';
@@ -254,7 +254,7 @@ module.exports = function (RED) {
             this.target_temp_reached_estimate_unix_timestamp_sec = 360;
             this.thermostat_humidity_ambient = 60;
             // Timer 
-            this.max_timer_limit_sec = config.max_timer_limit_sec;
+            this.max_timer_limit_sec = parseInt(config.max_timer_limit_sec) || 86400;
             this.command_only_timer = config.command_only_timer;
             this.timer_end_timestamp = -1;
             // Toggles
@@ -632,7 +632,7 @@ module.exports = function (RED) {
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
-            this.clientConn.app.ScheduuleRequestSync();
+            this.clientConn.app.ScheduleRequestSync();
         }
 
         _debug(msg) {
@@ -1801,7 +1801,7 @@ module.exports = function (RED) {
                         RED.log.error("Applications disabled");
                     }
                     this.device.properties.attributes.availableApplications = this.available_applications;
-                    this.clientConn.app.ScheduuleRequestSync();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEARMLEVELS') {
                     if (this.trait.armdisarm) {
                         if (typeof msg.payload === 'undefined') {
@@ -1817,7 +1817,7 @@ module.exports = function (RED) {
                         RED.log.error("Arm levels disabled");
                     }
                     this.device.properties.attributes.availableArmLevels.levels = this.available_arm_levels;
-                    this.clientConn.app.ScheduuleRequestSync();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLECHANNELS') {
                     if (this.trait.channel) {
                         if (typeof msg.payload === 'undefined') {
@@ -1833,7 +1833,7 @@ module.exports = function (RED) {
                         RED.log.error("Channels disabled");
                     }
                     this.device.properties.attributes.availableChannels = this.available_channels;
-                    this.clientConn.app.ScheduuleRequestSync();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'SUPPORTEDDISPENSEITEMS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
@@ -1850,7 +1850,7 @@ module.exports = function (RED) {
                     }
                     this.device.properties.attributes.supportedDispenseItems = this.supported_dispense_items;
                     this.states['dispenseItems'] = this.getDispenseNewState();
-                    this.clientConn.app.ScheduuleRequestSync();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'SUPPORTEDDISPENSEPRESETS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
@@ -1867,7 +1867,7 @@ module.exports = function (RED) {
                     }
                     this.device.properties.attributes.supportedDispensePresets = this.supported_dispense_presets;
                     this.states['dispenseItems'] = this.getDispenseNewState();
-                    this.clientConn.app.ScheduuleRequestSync();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEFANSPEEDS') {
                     if (this.trait.fanspeed) {
                         if (typeof msg.payload === 'undefined') {
@@ -1883,7 +1883,7 @@ module.exports = function (RED) {
                         RED.log.error("Fan speeds disabled");
                     }
                     this.device.properties.attributes.availableFanSpeeds.speeds = this.available_fan_speeds;
-                    this.clientConn.app.ScheduuleRequestSync();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEFILLLEVELS') {
                     if (this.trait.dispense) {
                         if (typeof msg.payload === 'undefined') {
@@ -1899,7 +1899,7 @@ module.exports = function (RED) {
                         RED.log.error("Fill levels disabled");
                     }
                     this.device.properties.attributes.availableFillLevels.levels = this.available_fill_levels;
-                    this.clientConn.app.ScheduuleRequestSync();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEFOODPRESETS') {
                     if (this.trait.cook) {
                         if (typeof msg.payload === 'undefined') {
@@ -1915,7 +1915,7 @@ module.exports = function (RED) {
                         RED.log.error("Food presets disabled");
                     }
                     this.device.properties.attributes.foodPresets = this.food_presets;
-                    this.clientConn.app.ScheduuleRequestSync();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEINPUTS') {
                     if (this.trait.inputselector) {
                         if (typeof msg.payload === 'undefined') {
@@ -1931,7 +1931,7 @@ module.exports = function (RED) {
                         RED.log.error("Inputs disabled");
                     }
                     this.device.properties.attributes.availableInputs = this.available_inputs;
-                    this.clientConn.app.ScheduuleRequestSync();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEMODES') {
                     if (this.trait.modes) {
                         if (typeof msg.payload === 'undefined') {
@@ -1949,7 +1949,7 @@ module.exports = function (RED) {
                     }
                     this.device.properties.attributes.availableModes = this.available_modes;
                     this.updateModesState(me, me);
-                    this.clientConn.app.ScheduuleRequestSync();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLETOGGLES') {
                     if (this.trait.toggles) {
                         if (typeof msg.payload === 'undefined') {
@@ -1967,7 +1967,7 @@ module.exports = function (RED) {
                     }
                     this.device.properties.attributes.availableToggles = this.available_toggles;
                     this.updateTogglesState(me, me);
-                    this.clientConn.app.ScheduuleRequestSync();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'CAMERASTREAMAUTHTOKEN') {
                     const auth_token = formats.FormatValue(formats.Formats.STRING, 'cameraStreamAuthToken', msg.payload) || "";
                     if (auth_token != me.auth_token) {
@@ -1976,7 +1976,7 @@ module.exports = function (RED) {
                             let cameraStreamNeedAuthToken = this.device.properties.attributes.cameraStreamNeedAuthToken;
                             if (cameraStreamNeedAuthToken != (auth_token.length > 0)) {
                                 this.device.properties.attributes['cameraStreamNeedAuthToken'] = auth_token.length > 0;
-                                this.clientConn.app.ScheduuleRequestSync();
+                                this.clientConn.app.ScheduleRequestSync();
                             }
                         }
                     }
@@ -2121,6 +2121,7 @@ module.exports = function (RED) {
                     if (me.updateState({ currentStatusReport: new_payload }) || differs) {
                         this.clientConn.setState(this, me.states, true);  // tell Google ...
 
+                        this.clientConn.app.ScheduleGetState();
                         if (this.passthru) {
                             msg.payload = new_payload;
                             this.send(msg);
@@ -2142,6 +2143,7 @@ module.exports = function (RED) {
                         if (differs) {
                             me._debug(".input: " + state_key + ' ' + JSON.stringify(msg.payload));
                             this.clientConn.setState(this, me.states, true);  // tell Google ...
+                            this.clientConn.app.ScheduleGetState();
 
                             if (this.passthru) {
                                 msg.payload = me.states[state_key];
@@ -2155,6 +2157,7 @@ module.exports = function (RED) {
 
                         if (differs) {
                             this.clientConn.setState(this, me.states, true);  // tell Google ...
+                            this.clientConn.app.ScheduleGetState();
 
                             if (this.passthru) {
                                 msg.payload = me.states;
