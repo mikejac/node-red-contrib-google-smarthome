@@ -183,8 +183,8 @@ module.exports = function (RED) {
             this.ordered_inputs = config.ordered_inputs;
             this.current_input_index = -1;
             // LightEffects 
-            this.default_sleep_duration = config.default_sleep_duration;
-            this.default_wake_duration = config.default_wake_duration;
+            this.default_sleep_duration = parseInt(config.default_sleep_duration) || 1800;
+            this.default_wake_duration = parseInt(config.default_wake_duration) || 1800;
             this.supported_effects = config.supported_effects;
             // Locator 
             // LockUnlock 
