@@ -182,240 +182,242 @@
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('googlesmarthome-client', {
-        category: 'config',
-        defaults: {
-            name: {
-                value: ""
-            },
-            enabledebug: {
-                value: false
-            },
-            default_lang: {
-                value: "en", required: true,
-            },
-            usegooglelogin : {
-                value: false
-            },
-            /*
-            loginclientid: {
-                value:"", required:false,
-                validate: function(v) {
-                    let usegoogleloginField = $("#node-config-input-usegooglelogin");
-                    let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
-                    return usegooglelogin ? v.trim().length > 0 : true;
-                }
-            },
-            emails: {
-                value:[], required:false, 
-                validate: function(v) {
-                    let usegoogleloginField = $("#node-config-input-usegooglelogin");
-                    let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
-                    return usegooglelogin ? v.trim().length > 0 : true;
-                }
-            },
-            username: {
-                value:"", required:false,
-                validate: function(v) {
-                    let usegoogleloginField = $("#node-config-input-usegooglelogin");
-                    let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
-                    return !usegooglelogin ? v.trim().length > 0 : true;
-                }
-            },
-            password: {
-                value:"", required:false,
-                validate: function(v) {
-                    let usegoogleloginField = $("#node-config-input-usegooglelogin");
-                    let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
-                    return !usegooglelogin ? v.trim().length > 0 : true;
-                }
-            },
-            */
-            usehttpnoderoot : {
-                value: false
-            },
-            port: {
-                value:3001, required:false, validate:RED.validators.number(true)
-            },
-            httppath: {
-                value:"", required: false
-            },
-            ssloffload: {
-                value: false
-            },
-            /*
-            publickey: {
-                value:"", required:false,
-                validate: function(v) {
-                    let ssloffloadField = $("#node-config-input-ssloffload");
-                    let ssloffload = ssloffloadField.length > 0 ? ssloffloadField.prop('checked') : this.ssloffload;
-                    let portField = $("#node-config-input-port");
-                    let port = portField.length > 0 ? portField.val() : this.port;
-                    port = isNaN(port) ? 0 : +port;
-                    return ssloffload || port <= 0 ? true : v.trim().length > 0;
-                }
-            },
-            privatekey: {
-                value:"", required:false,
-                validate: function(v) {
-                    let ssloffloadField = $("#node-config-input-ssloffload");
-                    let ssloffload = ssloffloadField.length > 0 ? ssloffloadField.prop('checked') : this.ssloffload;
-                    let portField = $("#node-config-input-port");
-                    let port = portField.length > 0 ? portField.val() : this.port;
-                    port = isNaN(port) ? 0 : +port;
-                    return ssloffload || port <= 0 ? true : v.trim().length > 0;
-                }
-            },
-            jwtkey: {
-                value:"", required:true
-            },
-            */
-            accesstokenduration: {
-                value:60, required:true, validate:RED.validators.number(true)
-            },
-            reportinterval: {
-                value:60, required:true, validate:RED.validators.number(true)
-            },
-            /*
-            clientid: {
-                value:"", required:true
-            },
-            clientsecret: {
-                value:"", required:true
-            }
-            */
-            request_sync_delay: {
-                value:10, required:true, validate: function (v) {
-                    const n = parseInt(v);
-                    const f = parseFloat(v);
-                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
-                }
-            },
-            set_state_delay: {
-                value:30, required:true, validate: function (v) {
-                    const n = parseInt(v);
-                    const f = parseFloat(v);
-                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
-                }
-            }
-        },
-
-        credentials: {
-            loginclientid: { type: "text" },
-            emails: { type: "text" },
-            username: { type: "text" },
-            password: { type: "password" },
-            publickey: { type: "text" },
-            privatekey: { type: "text" },
-            jwtkey: { type: "text" },
-            clientid: { type: "text" },
-            clientsecret: { type: "password" },
-        },
-        color:"#3FADB5",
-        icon: "google-smarthome.png",
-        label: function() {
-            return this.name || "googlesmarthome-client";
-        },
-        labelStyle: function() {
-            return this.name ? "node_label_italic" : "";
-        },
-        oneditprepare: function() {
-            // emails
-            $('#node-config-input-googlesmarthome-emails-container').css('min-height', '150px').css('min-width', '250px').editableList({
-                addItem: function (container, i, opt) {
-                    var emails = opt;
-                    if (!emails.hasOwnProperty('name')) {
-                        emails = { name: "" };
-                    }
-                    container.css({
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap'
-                    });
-                    let fragment = document.createDocumentFragment();
-                    var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
-                    var propertyName = $('<input/>', { class: "node-config-input-googlesmarthome-emails-property-name", type: "text", style: "width: 100%" })
-                        .appendTo(row1);
-                    propertyName.val(emails.name);
-
-                    container[0].appendChild(fragment);
-                },
-                removable: true,
-                sortable: true
-            });
-            let emails = this.credentials.emails;
-            if (typeof emails === 'string') {
-                emails = emails.split(";");
-            }
-            if (!emails) {
-                emails = [];
-            }
-            for (var i = 0; i < emails.length; i++) {
-                var email = emails[i];
-                $("#node-config-input-googlesmarthome-emails-container").editableList('addItem', { name: email });
-            }
-            // Use Google login on / off
-            let useGoogleLogin = function() {
-                let usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
-                if (usegooglelogin == false) {
-                    $("#usegooglelogin").hide();
-                    $("#useloginpwd").show();
-                } else {
-                    $("#usegooglelogin").show();
-                    $("#useloginpwd").hide();
-                }
-            };
-            useGoogleLogin();
-            $("#node-config-input-usegooglelogin").change(useGoogleLogin);
-
-            // Use external SSL offload on / off
-            let sslOffLoadKeys = function() {
-                let ssloffload = $("#node-config-input-ssloffload").prop('checked');
-                if (ssloffload == false) {
-                    $("#ssloffloadkeys").show();
-                } else {
-                    $("#ssloffloadkeys").hide();
-                }
-            };
-            sslOffLoadKeys();
-            $("#node-config-input-ssloffload").change(sslOffLoadKeys);
-
-            // Use same NODE-Red port
-            let useNODERedPort = function() {
-                let input_port = $('#node-config-input-port').val();
-                input_port = isNaN(input_port) ? 0 : +input_port;
-                if ((input_port <= 0)) { //  || (RED.settings.uiPort === node)) {
-                    $('#connectioninfo').hide();
-                } else {
-                    $('#connectioninfo').show();
-                }
-            };
-            useNODERedPort();
-            $('#node-config-input-port').change(useNODERedPort);
-        },
-        oneditsave: function () {
-            var node = this;
-             // emails
-             var emails = $("#node-config-input-googlesmarthome-emails-container").editableList('items');
-            node.credentials.emails = [];
-            emails.each(function (i) {
-                var email = $(this);
-                var name = email.find(".node-config-input-googlesmarthome-emails-property-name").val();
-                node.credentials.emails.push(name);
-            });
-        },
-        oneditresize: function (size) {
-            // emails
-            var rows = $("#dialog-form>div:not(node-config-input-googlesmarthome-emails-container-row)");
-            var height = size.height;
-            for (var i = 0; i < rows.length; i++) {
-                height -= $(rows[i]).outerHeight(true);
-            }
-            var editorRow = $("#dialog-form>div.node-config-input-googlesmarthome-emails-container-row");
-            height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
-            height += 16;
-            $("#node-config-input-googlesmarthome-emails-container").editableList('height', height);
+    (function () {
+        function isNonNegativeInteger(v) {
+            const n = parseInt(v);
+            const f = parseFloat(v);
+            return !isNaN(v) && Number.isInteger(f) && n >= 0;
         }
-    });
+        function isOptionalNonNegativeInteger(v) {
+            return v.trim().length == 0 || isNonNegativeInteger(v);
+        }
+        RED.nodes.registerType('googlesmarthome-client', {
+            category: 'config',
+            defaults: {
+                name: {
+                    value: ""
+                },
+                enabledebug: {
+                    value: false
+                },
+                default_lang: {
+                    value: "en", required: true,
+                },
+                usegooglelogin : {
+                    value: false
+                },
+                /*
+                loginclientid: {
+                    value:"", required:false,
+                    validate: function(v) {
+                        let usegoogleloginField = $("#node-config-input-usegooglelogin");
+                        let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
+                        return usegooglelogin ? v.trim().length > 0 : true;
+                    }
+                },
+                emails: {
+                    value:[], required:false, 
+                    validate: function(v) {
+                        let usegoogleloginField = $("#node-config-input-usegooglelogin");
+                        let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
+                        return usegooglelogin ? v.trim().length > 0 : true;
+                    }
+                },
+                username: {
+                    value:"", required:false,
+                    validate: function(v) {
+                        let usegoogleloginField = $("#node-config-input-usegooglelogin");
+                        let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
+                        return !usegooglelogin ? v.trim().length > 0 : true;
+                    }
+                },
+                password: {
+                    value:"", required:false,
+                    validate: function(v) {
+                        let usegoogleloginField = $("#node-config-input-usegooglelogin");
+                        let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
+                        return !usegooglelogin ? v.trim().length > 0 : true;
+                    }
+                },
+                */
+                usehttpnoderoot : {
+                    value: false
+                },
+                port: {
+                    value:3001, required:false, validate:RED.validators.number(true)
+                },
+                httppath: {
+                    value:"", required: false
+                },
+                ssloffload: {
+                    value: false
+                },
+                /*
+                publickey: {
+                    value:"", required:false,
+                    validate: function(v) {
+                        let ssloffloadField = $("#node-config-input-ssloffload");
+                        let ssloffload = ssloffloadField.length > 0 ? ssloffloadField.prop('checked') : this.ssloffload;
+                        let portField = $("#node-config-input-port");
+                        let port = portField.length > 0 ? portField.val() : this.port;
+                        port = isNaN(port) ? 0 : +port;
+                        return ssloffload || port <= 0 ? true : v.trim().length > 0;
+                    }
+                },
+                privatekey: {
+                    value:"", required:false,
+                    validate: function(v) {
+                        let ssloffloadField = $("#node-config-input-ssloffload");
+                        let ssloffload = ssloffloadField.length > 0 ? ssloffloadField.prop('checked') : this.ssloffload;
+                        let portField = $("#node-config-input-port");
+                        let port = portField.length > 0 ? portField.val() : this.port;
+                        port = isNaN(port) ? 0 : +port;
+                        return ssloffload || port <= 0 ? true : v.trim().length > 0;
+                    }
+                },
+                jwtkey: {
+                    value:"", required:true
+                },
+                */
+                accesstokenduration: {
+                    value:60, required:true, validate:RED.validators.number(true)
+                },
+                reportinterval: {
+                    value:60, required:true, validate:RED.validators.number(true)
+                },
+                /*
+                clientid: {
+                    value:"", required:true
+                },
+                clientsecret: {
+                    value:"", required:true
+                }
+                */
+                request_sync_delay: {
+                    value:'', required:false, validate: isOptionalNonNegativeInteger
+                },
+                set_state_delay: {
+                    value:'', required:false, validate: isOptionalNonNegativeInteger
+                }
+            },
+
+            credentials: {
+                loginclientid: { type: "text" },
+                emails: { type: "text" },
+                username: { type: "text" },
+                password: { type: "password" },
+                publickey: { type: "text" },
+                privatekey: { type: "text" },
+                jwtkey: { type: "text" },
+                clientid: { type: "text" },
+                clientsecret: { type: "password" },
+            },
+            color:"#3FADB5",
+            icon: "google-smarthome.png",
+            label: function() {
+                return this.name || "googlesmarthome-client";
+            },
+            labelStyle: function() {
+                return this.name ? "node_label_italic" : "";
+            },
+            oneditprepare: function() {
+                // emails
+                $('#node-config-input-googlesmarthome-emails-container').css('min-height', '150px').css('min-width', '250px').editableList({
+                    addItem: function (container, i, opt) {
+                        var emails = opt;
+                        if (!emails.hasOwnProperty('name')) {
+                            emails = { name: "" };
+                        }
+                        container.css({
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap'
+                        });
+                        let fragment = document.createDocumentFragment();
+                        var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
+                        var propertyName = $('<input/>', { class: "node-config-input-googlesmarthome-emails-property-name", type: "text", style: "width: 100%" })
+                            .appendTo(row1);
+                        propertyName.val(emails.name);
+
+                        container[0].appendChild(fragment);
+                    },
+                    removable: true,
+                    sortable: true
+                });
+                let emails = this.credentials.emails;
+                if (typeof emails === 'string') {
+                    emails = emails.split(";");
+                }
+                if (!emails) {
+                    emails = [];
+                }
+                for (var i = 0; i < emails.length; i++) {
+                    var email = emails[i];
+                    $("#node-config-input-googlesmarthome-emails-container").editableList('addItem', { name: email });
+                }
+                // Use Google login on / off
+                let useGoogleLogin = function() {
+                    let usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
+                    if (usegooglelogin == false) {
+                        $("#usegooglelogin").hide();
+                        $("#useloginpwd").show();
+                    } else {
+                        $("#usegooglelogin").show();
+                        $("#useloginpwd").hide();
+                    }
+                };
+                useGoogleLogin();
+                $("#node-config-input-usegooglelogin").change(useGoogleLogin);
+
+                // Use external SSL offload on / off
+                let sslOffLoadKeys = function() {
+                    let ssloffload = $("#node-config-input-ssloffload").prop('checked');
+                    if (ssloffload == false) {
+                        $("#ssloffloadkeys").show();
+                    } else {
+                        $("#ssloffloadkeys").hide();
+                    }
+                };
+                sslOffLoadKeys();
+                $("#node-config-input-ssloffload").change(sslOffLoadKeys);
+
+                // Use same NODE-Red port
+                let useNODERedPort = function() {
+                    let input_port = $('#node-config-input-port').val();
+                    input_port = isNaN(input_port) ? 0 : +input_port;
+                    if ((input_port <= 0)) { //  || (RED.settings.uiPort === node)) {
+                        $('#connectioninfo').hide();
+                    } else {
+                        $('#connectioninfo').show();
+                    }
+                };
+                useNODERedPort();
+                $('#node-config-input-port').change(useNODERedPort);
+            },
+            oneditsave: function () {
+                var node = this;
+                // emails
+                var emails = $("#node-config-input-googlesmarthome-emails-container").editableList('items');
+                node.credentials.emails = [];
+                emails.each(function (i) {
+                    var email = $(this);
+                    var name = email.find(".node-config-input-googlesmarthome-emails-property-name").val();
+                    node.credentials.emails.push(name);
+                });
+            },
+            oneditresize: function (size) {
+                // emails
+                var rows = $("#dialog-form>div:not(node-config-input-googlesmarthome-emails-container-row)");
+                var height = size.height;
+                for (var i = 0; i < rows.length; i++) {
+                    height -= $(rows[i]).outerHeight(true);
+                }
+                var editorRow = $("#dialog-form>div.node-config-input-googlesmarthome-emails-container-row");
+                height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
+                height += 16;
+                $("#node-config-input-googlesmarthome-emails-container").editableList('height', height);
+            }
+        });
+    })();
 </script>
 
 <!--
