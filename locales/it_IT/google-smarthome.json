@@ -49,7 +49,9 @@
             "accesstokenduration": "Intervallo in minuti",
             "port": "Porta del server. -1 o vuoto per quella di Node-RED",
             "reportinterval": "Intervallo in minuti. -1 per disabilitare",
-            "emails": "Email autorizzate, separate da punto e virgola"
+            "emails": "Email autorizzate, separate da punto e virgola",
+            "request_sync_delay": "Ritardo richiesta di sincronizzazione dopo un deploy",
+            "set_state_delay": "Ritardo invio del messaggio set_state dopo un cambio di stato"
         },
         "state": {
             "connected": "Connesso al broker: __broker__",
