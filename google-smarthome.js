@@ -88,7 +88,7 @@ module.exports = function(RED) {
             let states = device.states;
 
             if (this.app.registerDevice(client, device)) {
-                RED.log.debug('GoogleSmartHomeNode:register(): sucessfully registered device ' + type + ' ' + client.id);
+                RED.log.debug('GoogleSmartHomeNode:register(): successfully registered device ' + type + ' ' + client.id);
                 return JSON.parse(JSON.stringify(states));
             } else {
                 RED.log.debug('GoogleSmartHomeNode:register(): registering device ' + type + ' ' + client.id + ' failed');

@@ -160,7 +160,7 @@
         <p><code>Device Type</code> The device type. See the <a target="_blank" href="https://developers.google.com/assistant/smarthome/guides">online documentation</a>
             for more information on Smart Home Device Types</p>
 
-        <p><code>Pass Through</code> If enabled, incoming messages will be passed onto the output. Be carefull with this setting.</p>
+        <p><code>Pass Through</code> If enabled, incoming messages will be passed onto the output. Be careful with this setting.</p>
 
         <p><code>Language</code> the spoken language used with the Google Smart Home.</p>
 
@@ -170,7 +170,7 @@
 
         <h4>Input Message</h4>
         <p>If the <code>msg.topic</code> is one of the device states name the <code>msg.payload</code> must be the new value telling the new state of the device.</p>
-        <p>If the <code>msg.topic</code> doens't match any of the device state's name the <code>msg.payload</code> must be an object with the new status of the device where every property must match a device state name telling the new state of the device.</p>
+        <p>If the <code>msg.topic</code> doesn't match any of the device state's name the <code>msg.payload</code> must be an object with the new status of the device where every property must match a device state name telling the new state of the device.</p>
 
         <p>E.g: if the <code>msg.topic</code> is <code>on</code> then the <code>msg.payload</code> must be boolean telling the new state of the device.</p>
         <dl class="message-properties">

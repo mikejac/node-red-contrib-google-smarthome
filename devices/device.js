@@ -3383,7 +3383,7 @@ module.exports = function (RED) {
             else if (command.command == 'action.devices.commands.mediaClosedCaptioningOff') {
                 executionStates.push('playbackState');
             }
-            // TempreatureControl
+            // TemperatureControl
             else if (command.command == 'action.devices.commands.SetTemperature') {
                 if (!me.command_only_temperaturecontrol) {
                     const temperature = command.params['temperature'];
@@ -3718,7 +3718,7 @@ module.exports = function (RED) {
                     }
                 }
             }
-            // Brigthness
+            // Brightness
             else if (command.command == 'action.devices.commands.BrightnessAbsolute') {
                 if (!me.command_only_brightness) {
                     const brightness = command.params['brightness'];

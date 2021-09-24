@@ -259,12 +259,12 @@ module.exports = function(RED) {
                 if (params.hasOwnProperty('SupportedStreamProtocols')) {
                     const supported_protocols = params['SupportedStreamProtocols'];
                     let protocol = '';
-                    let stramUrl = '';
+                    let streamUrl = '';
                     supported_protocols.forEach(function (supported_protocol) {
                         let url = me.getStreamUrl(supported_protocol);
                         if (url) {
                             protocol = supported_protocol;
-                            stramUrl = url;
+                            streamUrl = url;
                         }
                     });
                     if (protocol.length > 0) {
@@ -280,7 +280,7 @@ module.exports = function(RED) {
                             status: 'SUCCESS',
                             states: {
                                 online: true,
-                                cameraStreamAccessUrl: stramUrl,
+                                cameraStreamAccessUrl: streamUrl,
                                 cameraStreamReceiverAppId: appId,
                                 cameraStreamAuthToken: me.authToken,
                                 cameraStreamProtocol: protocol
