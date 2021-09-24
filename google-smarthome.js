@@ -126,11 +126,11 @@ module.exports = function(RED) {
 
         this.getIdFromName = function(name) {
             return node.app.GetIdFromName(name);
-        }
+        };
 
         this.getProperties = function(deviceIds) {
             return node.app.getProperties(deviceIds);
-        }
+        };
 
         this._debug = function(msg) {
             if (config.enabledebug) {
@@ -312,8 +312,8 @@ module.exports = function(RED) {
                     topic: 'set_state',
                     payload: states
                 });
-            };
-        }
+            }
+        };
 
         this.on('input', this.onInput);
 

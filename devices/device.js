@@ -1620,7 +1620,7 @@ module.exports = function (RED) {
                         fill = 'blue';
                     }
                 } else {
-                    fill = 'blue'
+                    fill = 'blue';
                 }
                 if (me.trait.brightness && me.states.brightness !== undefined) {
                     text += " bri: " + me.states.brightness;
@@ -1765,7 +1765,6 @@ module.exports = function (RED) {
             const me = this;
             me._debug(".input: topic = " + msg.topic);
 
-            let topic = '';
             let upper_topic = '';
             if (msg.topic) {
                 let topicArr = String(msg.topic).split(this.topicDelim);
@@ -2106,7 +2105,7 @@ module.exports = function (RED) {
                             this.cloneObject(new_report, sr, me.state_types['currentStatusReport'][0]);
                             if (new_report.statusCode) {
                                 new_report.deviceTarget = nodeId;
-                                let cur_reports = new_payload.filter(report => report.deviceTarget === nodeId && report.statusCode === new_report.statusCode)
+                                let cur_reports = new_payload.filter(report => report.deviceTarget === nodeId && report.statusCode === new_report.statusCode);
                                 if (cur_reports.length > 0) {
                                     if (this.cloneObject(cur_reports[0], new_report, me.state_types['currentStatusReport'][0])) {
                                         differs = true;
