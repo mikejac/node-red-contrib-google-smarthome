@@ -1201,6 +1201,14 @@ test_payload ".color.spectrumHsv.value" 3
 test_payload ".color.temperatureK" null
 test_payload ".color.spectrumRgb" null
 
+execute $NODE_ID1 ColorAbsolute 'Bianco Caldo' 2000
+test_payload ".color.temperatureK" 2000
+test_payload ".color.spectrumRgb" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
+
 # Cook
 echo
 echo Cook
