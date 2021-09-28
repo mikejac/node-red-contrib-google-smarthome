@@ -29,7 +29,7 @@
     <code>Client Secret</code>: The client secret you entered in the <b>Google on Actions</b> project.<br>
     <br>
     <b>Google HomeGraph Settings</b><br>
-    <code>Jwt Key</code>: Full path to JWT key file.<br>
+    <code>Jwt Key</code>: Path (absolute or relative to the Node-RED HOME folder) to JWT key file.<br>
     <code>Report Interval (m)</code>: Time, in minutes, between report updates are sent to Google.<br>
     <br>
     <b>Web Server Settings</b><br>
@@ -38,11 +38,11 @@
           path of "foo" this changes to https://example.com:3001/foo/smarthome. Same for URLs `/oauth` and `/token`.<br>
     <code>Port</code>: TCP port of your choosing for incoming connections from Google. Must match what you entered in the <b>Google on Actions</b> project.<br>
     <code>External SSL offload</code>: If enabled, SSL encryption is not used by the node and must be done elsewhere.
-    <code>Public Key</code>: Full path to public key file, e.g. `fullchain.pem` from Let's Encrypt.<br>
-    <code>Private Key</code>: Full path to private key file, e.g. `privkey.pem` from Let's Encrypt.<br>
+    <code>Public Key</code>: Path (absolute or relative to the Node-RED HOME folder) to public key file, e.g. `fullchain.pem` from Let's Encrypt.<br>
+    <code>Private Key</code>: Path (absolute or relative to the Node-RED HOME folder) to private key file, e.g. `privkey.pem` from Let's Encrypt.<br>
     <b>Advanced Settings</b><br>
-    <code>Request sync delay</code>: Delay for request devices sync after a deploy (default value 10).<br>
-    <code>Set state delay</code>: Delay for sending the set_state message after state changes (default value 30).<br>
+    <code>Request sync delay</code>: Delay for request devices sync after a deploy, 0 or empty for disable (default value 0).<br>
+    <code>Set state delay</code>: Delay for sending the set_state message after state changes, 0 or empty for disable (default value 0).<br>
 
     <h3>References</h3>
     <p><a href="https://www.npmjs.com/package/node-red-contrib-google-smarthome" target="_new">Node Information</a>.</p>
@@ -112,7 +112,7 @@
         <p>If <code>msg.topic</code> is <code>set_state</code> the node updates the Google devices states with the states contained on the <code>msg.payload</code>.</p>
         <dl class="message-properties">
             <dt>topic
-                <span class="property-type">string</span>
+                <span class="property-type">object</span>
             </dt>
             <dd>A topic of <code>set_state</code> updates the Google devices states with the value of the <code>msg.payload</code>.</dd>
         </dl>

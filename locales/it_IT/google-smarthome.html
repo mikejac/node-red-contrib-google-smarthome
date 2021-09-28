@@ -1,0 +1,129 @@
+<!--
+ NodeRED Google SmartHome
+ Copyright (C) 2021 Claudio Chimera.
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<script type="text/x-red" data-help-name="googlesmarthome-client">
+    <b>Autenticazione</b><br>
+    <code>Usa Google login</code>: Se abilitato, usa l'autenticazione di Google.<br>
+    <code>ID del client per la login</code>: Se "Usa Google login" è abilitato, l'ID cliente ottenuto dall'integrazione con *Google Sign-In*.<br>
+    <code>Email autorizzate</code>: Se "Usa Google login" è abilitato, gli indirizzi email autorizzati ad entrare.<br>
+    <code>Nome Utente</code> and <code>Password</code>:  Se "Usa Google login" è disabilitato, un nome utente ed una usata quando colleghi la domitica di Google con questo nodo di Node-RED.<br>
+    <code>"Durata del token di accesso</code>: la durata del token di accesso (in minuti) usato dalla domotica di Google per identificarsi a questo nododi  Node-RED. Il valore predefinito è di 60 minuti.<br>
+    <br>
+    <b>Impostazioni di "Actions on Google Project"</b><br>
+    <code>ID del client</code>: L'ID cliente inserito nel progetto <b>Google on Actions</b>.<br>
+    <code>Client Secret</code>: Il segreto cliente inserito nel progetto <b>Google on Actions</b>.<br>
+    <br>
+    <b>Impostazioni "Google HomeGraph"</b><br>
+    <code>Chiave Jwt</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file di chiave JWT.<br>
+    <code>Intervallo tra i report (m)</code>: Intervallo di tempo, in minuti, tra due report di aggiornamento di stato che sono inviati a Google.<br>
+    <br>
+    <b>Impostazioni del server Web</b><br>
+    <code>Usa il percorso radice http di Node-RED</code>: Se abilitato, usa come prefizzo del percorso il perforso configurato per Node-RED, altrimenti usa /.<br>
+    <code>Percorso</code>: Prefisso per gli URL forniti da questo modulo. L'URL predefinito è https://example.com:3001/smarthome. Usando come prefisso il valore "foo" l'URL sarà https://example.com:3001/foo/smarthome. Analogamente saranno modificati gli URL `/oauth` e `/token`.<br>
+    <code>Porta</code>: La porta TCP scelta per le connessioni in ingresso da parte di Google. Deve combaciare con quella inserita nel progetto <b>Google on Actions</b> a meno di non configurare un port forwardint.<br>
+    <code>Usa un server SSL esterno</code>: Se abilitato, la cifratura SSL non sarà gestita da questo nodo e deve essere configurata altrove, ad esempio usando un reverse proxy.
+    <code>Chiave pubblica</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file contenente la chiave pubblica, es:. `fullchain.pem` scaricato da Let's Encrypt.<br>
+    <code>Private Key</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file contenente la chiave privata, es:.  `privkey.pem` scaricato da Let's Encrypt.<br>
+    <b>Impostazioni Avanzate</b><br>
+    <code>Ritardo richiesta di sincronizzazione</code>: Ritardo richiesta di sincronizzazione dopo un deploy, 0 o vuoto per disabilitare (valore predefinito 0).<br>
+    <code>Ritardo invio del messaggio set_state</code>: Ritardo invio del messaggio set_state dopo un cambio di stato, 0 o vuoto per disabilitare  (valore predefinito 0).<br>
+
+    <h3>References</h3>
+    <p><a href="https://www.npmjs.com/package/node-red-contrib-google-smarthome" target="_new">Node Information</a>.</p>
+</script>
+
+<!--
+    Management Interface
+-->
+<script type="text/x-red" data-help-name="google-mgmt">
+    <p>Permette di gestire i servisi della domotica di Google.</p>
+
+    <h3>Messaggi in ingresso</h3>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">stringa</span>
+            </dt>
+            <dd>Comando da eseguire. Può essere restart_server, report_state, request_sync, get_state o set_state.</dd>
+        </dl>
+
+     <h3>Messaggi in uscita</h3>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">ogetto</span>
+            </dt>
+            <dd>Messaggi di debug dalla domotica di Google Smartoppure lo stato di tutti i dispositivi Google (con il payload valorizzato a set_state o get_state topic).</dd>
+        </dl>
+
+    <h3>Dettagli</h3>
+        <h4>Propertà del nodo - Impostazioni domotica di Google</h4>
+        <p><code>SmartHome</code> Node di configurazione.</p>
+        <h4>Propertà del nodo - Impostazioni di Node-RED</h4>
+        <p><code>Nome</code> Nome usato dalla domitica di Google.</p>
+
+        <h4>Messaggi in ingresso</h4>
+        <p>Se il <code>msg.topic</code> è <code>restart_server</code>, il nodo riavvierà il server Web interno. Può essere usato se i certificati SSL sono stati rinnovati ed è necessario che il server WEB li rilegga.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">stringa</span>
+            </dt>
+            <dd>Se un messaggio con topic <code>restart_server</code> è ricevuto, il nodo riavvia il server WEB interno. <code>msg.payload</code> non è usato.</dd>
+        </dl>
+
+        <p>Se il <code>msg.topic</code> è <code>report_state</code>, un aggiornamento dello stato di tutti i dispositivi verrà inviato a Google. Principalmente usato per test.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">stringa</span>
+            </dt>
+            <dd>Se un messaggio con topic <code>report_state</code> è ricevuto, il nodo invierà un aggiornamento dello stato di tutti i dispositivi a Google. <code>msg.payload</code> non è usato.</dd>
+        </dl>
+
+        <p>Se il <code>msg.topic</code> è <code>request_sync</code>, una richiesta di sincronizzazione sarà inviata a  Google. Tale richiesta è inviata periodicamente a Google.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">stringa</span>
+            </dt>
+            <dd>Se un messaggio con topic <code>request_sync</code> è ricevuto, il nodo invierà una richiesta di sincronizzazione dei dispositivi a Google per aggiornare gli attributi. <code>msg.payload</code> non è usato.</dd>
+        </dl>
+
+        <p>Se il <code>msg.topic</code> è <code>get_state</code>, il nodo invierà un messaggio in uscita con lo stato di tutti i dispositivi.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">stringa</span>
+            </dt>
+            <dd>Se un messaggio con topic <code>get_state</code> è ricevuto, il nodo invierà un messaggio in uscita con lo stato di tutti i dispositivi. <code>msg.payload</code> non è usato.</dd>
+        </dl>
+
+        <p>Se il <code>msg.topic</code> è <code>set_state</code>, il nodo aggiorna lo stato di tutti i dispositivi con lo stato contenuto  nel <code>msg.payload</code>. Questo messaggio può essere usato per salvare su un dispositivo di memorizzazione lo stato di tutti i dispositivi.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">oggetto</span>
+            </dt>
+            <dd>Se un messaggio con topic <code>set_state</code> è ricevuto, il nodo aggiorna lo stato di tutti i dispositivi con il nuovo stato contenuto nel <code>msg.payload</code>. Questo messaggio può essere usato per ripristinare lo stato di tutti i dispositivi precedentemente su un dispositivo di memorizzazione.</dd>
+        </dl>
+
+        <h4>Messaggi in uscita</h4>
+        <p>Questo nodo invierà in uscita un messaggio con alcune informazioni in caso qualcosa non funzioni oppure un messaggio con lo stato di tutti i dispositivi configurati (con <code>msg.topic</code> set_state o get_state topic e <code>msg.payload</code> contenente lo stato).</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">stringa|oggetto</span>
+            </dt>
+            <dd>Questo nodo invierà in uscita un messaggio con alcune informazioni in caso qualcosa non funzioni oppure un messaggio con lo stato di tutti i dispositivi configurati (con <code>msg.topic</code> set_state o get_state topic e <code>msg.payload</code> contenente lo stato)</dd>
+        </dl>
+
+        <p>Se lo stato di un dispositivo configurato cambia, questo nodo può inviare in uscita automaticamente un messaggio con <code>msg.topic</code> uguale a <code>set_state</code>, ed il <code>msg.payload</code> contenente lo stato di tutti i dispositivi Google configurato. Questo messaggio può essere salvato se necessario. Il messaggio può essere passato in ingresso per ripristinare lo stato salvato precedentemente.</p>
+</script>

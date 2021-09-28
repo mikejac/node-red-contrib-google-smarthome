@@ -12,13 +12,15 @@
         "name": "",
         "enabledebug": true,
         "default_lang": "it",
-        "usegooglelogin": false,
+        "usegooglelogin": true,
         "usehttpnoderoot": true,
         "port": "",
         "httppath": "smarthome",
         "ssloffload": true,
         "accesstokenduration": "60",
         "reportinterval": "0",
+        "request_sync_delay": "",
+        "set_state_delay": "",
         "info": "username: userrname\npassword: password\njwtkey: google-home.json\nclientid: client_id\nclientsecret: client_secred\n"
     },
     {
@@ -44,10 +46,11 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
+        "complete": "true",
+        "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 510,
+        "x": 490,
         "y": 60,
         "wires": []
     },
@@ -481,7 +484,8 @@
         "wires": [
             [
                 "3b5fad59.292ad2",
-                "8464b1.e8eaab5"
+                "8464b1.e8eaab5",
+                "6cdc9bf4.2a90d4"
             ]
         ]
     },
@@ -1263,7 +1267,8 @@
         "wires": [
             [
                 "b8fbf920.d74d68",
-                "8464b1.e8eaab5"
+                "8464b1.e8eaab5",
+                "6cdc9bf4.2a90d4"
             ]
         ]
     },
@@ -1338,7 +1343,7 @@
         "id": "68a774d1.6dca4c",
         "type": "inject",
         "z": "c0151475.218f98",
-        "name": "report_state",
+        "name": "",
         "props": [
             {
                 "p": "topic",
@@ -1350,7 +1355,6 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "report_state",
-        "payloadType": "str",
         "x": 110,
         "y": 20,
         "wires": [
@@ -1363,7 +1367,7 @@
         "id": "59d2b01f.9c2ca",
         "type": "inject",
         "z": "c0151475.218f98",
-        "name": "request_sync",
+        "name": "",
         "props": [
             {
                 "p": "topic",
@@ -1375,7 +1379,6 @@
         "once": true,
         "onceDelay": "15",
         "topic": "request_sync",
-        "payloadType": "str",
         "x": 120,
         "y": 60,
         "wires": [
@@ -1388,7 +1391,7 @@
         "id": "16cf7c71.0f9f94",
         "type": "inject",
         "z": "c0151475.218f98",
-        "name": "restart_server",
+        "name": "",
         "props": [
             {
                 "p": "topic",
@@ -1416,6 +1419,179 @@
         "info": "",
         "x": 90,
         "y": 820,
+        "wires": []
+    },
+    {
+        "id": "e1bec31a.fe698",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "get_state",
+        "x": 100,
+        "y": 140,
+        "wires": [
+            [
+                "239c652d.105f6a"
+            ]
+        ]
+    },
+    {
+        "id": "291546c1.a68dba",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "set_state",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "set_state",
+        "payload": "{\"a5782b1b.e120f8\":{\"online\":true,\"currentApplication\":\"youtube_application\",\"isArmed\":true,\"currentArmLevel\":\"L1\",\"color\":{\"temperatureK\":4000},\"currentCookingMode\":\"COOK\",\"dispenseItems\":[{\"itemName\":\"water\",\"amountRemaining\":{\"amount\":10,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":11,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"cat_bowl\",\"amountRemaining\":{\"amount\":12,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":13,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"glass_1\",\"amountRemaining\":{\"amount\":14,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":15,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false}],\"descriptiveCapacityRemaining\":\"FULL\",\"isCharging\":false,\"isPluggedIn\":false,\"currentFanSpeedPercent\":50,\"isFilled\":false,\"currentFillLevel\":\"\",\"currentInput\":\"hdmi_2_input\",\"activeLightEffect\":\"wake\",\"currentModeSettings\":{\"load_mode\":\"large_load\",\"temp_mode\":\"cold_temp\"},\"openState\":[{\"openPercent\":50,\"openDirection\":\"UP\"},{\"openPercent\":70,\"openDirection\":\"DOWN\"},{\"openPercent\":60,\"openDirection\":\"LEFT\"},{\"openPercent\":45,\"openDirection\":\"RIGHT\"},{\"openPercent\":20,\"openDirection\":\"IN\"},{\"openPercent\":10,\"openDirection\":\"OUT\"}],\"currentRunCycle\":[{\"currentCycle\":\"Riscaldamento piatto\",\"nextCycle\":\"Riscaldamento ugello\",\"lang\":\"it\"},{\"currentCycle\":\"Riscaldamento ugello\",\"nextCycle\":\"Stampa\",\"lang\":\"it\"}],\"currentTotalRemainingTime\":0,\"currentCycleRemainingTime\":0,\"currentSensorStateData\":[{\"name\":\"AirQuality\",\"currentSensorState\":\"unknown\",\"rawValue\":0},{\"name\":\"CarbonMonoxideLevel\",\"currentSensorState\":\"no carbon monoxide detected\",\"rawValue\":7},{\"name\":\"SmokeLevel\",\"currentSensorState\":\"unknown\",\"rawValue\":0},{\"name\":\"FilterCleanliness\",\"currentSensorState\":\"unknown\"},{\"name\":\"WaterLeak\",\"currentSensorState\":\"unknown\"},{\"name\":\"RainDetection\",\"currentSensorState\":\"unknown\"},{\"name\":\"FilterLifeTime\",\"currentSensorState\":\"unknown\",\"rawValue\":0},{\"name\":\"PreFilterLifeTime\",\"rawValue\":0},{\"name\":\"HEPAFilterLifeTime\",\"rawValue\":0},{\"name\":\"Max2FilterLifeTime\",\"rawValue\":0},{\"name\":\"CarbonDioxideLevel\",\"rawValue\":0},{\"name\":\"PM2.5\",\"rawValue\":0},{\"name\":\"PM10\",\"rawValue\":0},{\"name\":\"VolatileOrganicCompounds\",\"rawValue\":0}],\"lastSoftwareUpdateUnixTimestampSec\":0,\"isRunning\":true,\"temperatureSetpointCelsius\":16.5,\"thermostatMode\":\"eco\",\"thermostatTemperatureAmbient\":1,\"timerRemainingSec\":988,\"currentToggleSettings\":{\"quiet_toggle\":false,\"extra_bass_toggle\":false,\"energy_saving_toggle\":false},\"currentVolume\":40,\"isMuted\":false,\"on\":true,\"currentStatusReport\":[{\"blocking\":true,\"deviceTarget\":\"a5782b1b.e120f8\",\"priority\":1,\"statusCode\":\"lowBattery\"},{\"blocking\":false,\"deviceTarget\":\"a5782b1b.e120f8\",\"priority\":2,\"statusCode\":\"okBattery\"},{\"blocking\":false,\"deviceTarget\":\"bab53c06.fc9c3\",\"priority\":3,\"statusCode\":\"lowBattery\"}],\"capacityRemaining\":[{\"rawValue\":7,\"unit\":\"PERCENTAGE\"}],\"capacityUntilFull\":[{\"rawValue\":60,\"unit\":\"SECONDS\"}],\"activeZones\":[\"Cucina\",\"Salotto\"],\"brightness\":200,\"currentChannel\":\"rai1_hd\",\"currentChannelNumber\":\"501\",\"currentFoodPreset\":\"white_rice\",\"currentFoodQuantity\":2,\"currentFoodUnit\":\"CUPS\",\"isDocked\":true,\"currentFanSpeedSetting\":\"speed_high\",\"humiditySetpointPercent\":30,\"isLocked\":false,\"guestNetworkEnabled\":false,\"rotationPercent\":10,\"rotationDegrees\":30,\"isPaused\":false,\"thermostatTemperatureSetpoint\":15.67,\"timerPaused\":true},\"bab53c06.fc9c3\":{\"online\":true,\"currentApplication\":\"\",\"isArmed\":false,\"currentArmLevel\":\"\",\"color\":{\"spectrumHsv\":{\"hue\":500,\"saturation\":2,\"value\":3}},\"currentCookingMode\":\"NONE\",\"dispenseItems\":[{\"itemName\":\"water\",\"amountRemaining\":{\"amount\":10,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":11,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"cat_bowl\",\"amountRemaining\":{\"amount\":12,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":13,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"glass_1\",\"amountRemaining\":{\"amount\":14,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":15,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false}],\"descriptiveCapacityRemaining\":\"FULL\",\"isPluggedIn\":false,\"currentFanSpeedPercent\":0,\"isFilled\":false,\"currentFillLevel\":\"\",\"currentInput\":\"\",\"activeLightEffect\":\"\",\"currentModeSettings\":{\"load_mode\":\"\",\"temp_mode\":\"\"},\"openState\":[{\"openPercent\":0,\"openDirection\":\"UP\"},{\"openPercent\":0,\"openDirection\":\"DOWN\"},{\"openPercent\":0,\"openDirection\":\"LEFT\"},{\"openPercent\":0,\"openDirection\":\"RIGHT\"},{\"openPercent\":0,\"openDirection\":\"IN\"},{\"openPercent\":0,\"openDirection\":\"OUT\"}],\"currentRunCycle\":[{\"currentCycle\":\"unknown\",\"lang\":\"it\"}],\"currentTotalRemainingTime\":0,\"currentCycleRemainingTime\":0,\"currentSensorStateData\":[{\"name\":\"AirQuality\",\"currentSensorState\":\"unknown\",\"rawValue\":0},{\"name\":\"CarbonMonoxideLevel\",\"currentSensorState\":\"unknown\",\"rawValue\":0},{\"name\":\"SmokeLevel\",\"currentSensorState\":\"unknown\",\"rawValue\":0},{\"name\":\"FilterCleanliness\",\"currentSensorState\":\"unknown\"},{\"name\":\"WaterLeak\",\"currentSensorState\":\"unknown\"},{\"name\":\"RainDetection\",\"currentSensorState\":\"unknown\"},{\"name\":\"FilterLifeTime\",\"currentSensorState\":\"unknown\",\"rawValue\":0},{\"name\":\"PreFilterLifeTime\",\"rawValue\":0},{\"name\":\"HEPAFilterLifeTime\",\"rawValue\":0},{\"name\":\"Max2FilterLifeTime\",\"rawValue\":0},{\"name\":\"CarbonDioxideLevel\",\"rawValue\":0},{\"name\":\"PM2.5\",\"rawValue\":0},{\"name\":\"PM10\",\"rawValue\":0},{\"name\":\"VolatileOrganicCompounds\",\"rawValue\":0}],\"lastSoftwareUpdateUnixTimestampSec\":0,\"isRunning\":false,\"temperatureSetpointCelsius\":0,\"thermostatMode\":\"none\",\"thermostatTemperatureAmbient\":1,\"thermostatTemperatureSetpoint\":1,\"timerRemainingSec\":-1,\"currentToggleSettings\":{\"quiet_toggle\":false,\"extra_bass_toggle\":false,\"energy_saving_toggle\":false},\"currentVolume\":40,\"isMuted\":false}}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 140,
+        "wires": [
+            [
+                "239c652d.105f6a"
+            ]
+        ]
+    },
+    {
+        "id": "f8cf9e55.3b33b",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "inSoftwareUpdate",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "errorCode",
+        "payload": "inSoftwareUpdate",
+        "payloadType": "str",
+        "x": 570,
+        "y": 240,
+        "wires": [
+            [
+                "a5782b1b.e120f8"
+            ]
+        ]
+    },
+    {
+        "id": "6ec779e5.6a9d78",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "no errors",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "errorCode",
+        "x": 600,
+        "y": 280,
+        "wires": [
+            [
+                "a5782b1b.e120f8"
+            ]
+        ]
+    },
+    {
+        "id": "fa97ab95.690508",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "on",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"on\":true}",
+        "payloadType": "json",
+        "x": 550,
+        "y": 340,
+        "wires": [
+            [
+                "a5782b1b.e120f8"
+            ]
+        ]
+    },
+    {
+        "id": "b1eb15bb.158ad8",
+        "type": "inject",
+        "z": "c0151475.218f98",
+        "name": "off",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"on\":false}",
+        "payloadType": "json",
+        "x": 550,
+        "y": 300,
+        "wires": [
+            [
+                "a5782b1b.e120f8"
+            ]
+        ]
+    },
+    {
+        "id": "6cdc9bf4.2a90d4",
+        "type": "debug",
+        "z": "c0151475.218f98",
+        "name": "",
+        "active": true,
+        "tosidebar": false,
+        "console": true,
+        "tostatus": false,
+        "complete": "''",
+        "targetType": "jsonata",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 500,
         "wires": []
     }
 ]
