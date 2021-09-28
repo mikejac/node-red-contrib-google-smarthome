@@ -2515,6 +2515,7 @@ module.exports = function (RED) {
                                 states[key] = {};
                                 old_state = states[key];
                             }
+                            let mandatory_to_delete = [];
                             Object.keys(state_values).forEach(function (ikey) {
                                 if (typeof value[ikey] !== 'undefined' && value[ikey] != null) {
                                     if (typeof old_state[ikey] == 'undefined') {
@@ -2524,6 +2525,26 @@ module.exports = function (RED) {
                                         differs = true;
                                     }
                                 } else if (typeof state_values[ikey] === 'number' && !(state_values[ikey] & formats.MANDATORY)) {
+                                    if (typeof states[ikey] != 'undefined') {
+                                        differs = true;
+                                    }
+                                    delete states[ikey];
+                                } else {
+                                    mandatory_to_delete.push(ikey);
+                                }
+                            });
+                            mandatory_to_delete.forEach(ikey => {
+                                const e_states = exclusive_states[ikey] || [];
+                                let exclusive_state_found = false;
+                                e_states.forEach(e_state => {
+                                    if (typeof states[e_state] !== 'undefined') {
+                                        exclusive_state_found = false;
+                                    }
+                                });
+                                if (!exclusive_state_found) {
+                                    if (typeof states[ikey] != 'undefined') {
+                                        differs = true;
+                                    }
                                     delete states[ikey];
                                 } else {
                                     RED.log.error('key "' + key + '.' + ikey + '" is mandatory.');
