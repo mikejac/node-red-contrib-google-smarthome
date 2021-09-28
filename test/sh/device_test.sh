@@ -886,9 +886,9 @@ test_payload .currentStatusReport[2].priority 3
 test_payload .currentStatusReport[2].statusCode '"lowBattery"'
 test_payload .currentStatusReport[2].deviceTarget "\"$NODE_ID1\""
 
-execute_payload capacityRemaining '[{"unit":"SECONDS","rawValue":60}]'
+execute_payload capacityRemaining '[{"unit":"SECONDS","rawValue":61}]'
 test_payload .capacityRemaining[0].unit '"SECONDS"'
-test_payload .capacityRemaining[0].rawValue 60
+test_payload .capacityRemaining[0].rawValue 61
 
 execute_payload capacityUntilFull '[{"unit":"PERCENTAGE","rawValue":7}]'
 test_payload .capacityUntilFull[0].unit '"PERCENTAGE"'
