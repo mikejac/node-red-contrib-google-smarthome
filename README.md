@@ -249,7 +249,7 @@ and the following Google [traits](https://developers.google.com/assistant/smarth
 * Camera stream
 * Channel
 * Color setting
-* Color remperature
+* Color temperature
 * Cook
 * Dispense
 * Dock
@@ -554,7 +554,7 @@ If `topic` is `online` then `payload` must be boolean and tells the online state
         msg.topic = 'online'
         msg.payload = true
 
-If `topic` is something else then `payload` must be an object and tells the online state, ambient and target temperature of the thermostate.
+If `topic` is something else then `payload` must be an object and tells the online state, ambient and target temperature of the thermostat.
 
         msg.topic = 'set'
         msg.payload = {
@@ -938,7 +938,7 @@ Example flow:
 
 `restart_server` is used to stop then start the built-in webserver. Can be used when your SSL certificate has been renewed and needs to be re-read by the webserver.
 
-`report_state` will force an update of all states to Google. Mostly usefull for debugging.
+`report_state` will force an update of all states to Google. Mostly useful for debugging.
 
 `request_sync` will request Google to sync to learn about new or changed devices. This usually happens automatically.
 
@@ -951,7 +951,7 @@ Example flow:
 
   `Login Client ID`: If Google Login is enabled, The client id you gained from the *Google Sign-In* integration.
 
-  `Authorized emails`: If Google Login is enabled, The email adresses authorized to log in.
+  `Authorized emails`: If Google Login is enabled, The email addresses authorized to log in.
 
   `Username` and `Password`: If Google Login is disabled, a username and password used when you link Google SmartHome to this node.
   
@@ -987,13 +987,13 @@ Example flow:
 ---
 ## Sending spoken notifications
 
-Some devices support sending spoken notifications to your smart speaker. For example you can play a notification on your
+Some devices support sending spoken notifications to your smart speaker. For example, you can play a notification on your
 speaker when somebody rings at the front door or when the washing machine completes its cycle. Unfortunately you can not
 send custom messages, you can only trigger predefined messages.
 
 See https://developers.google.com/assistant/smarthome/develop/notifications.
 
-1. Create a device using the "Google Device" node with one of the supported traits in Node-RED and deploy. Currently
+1. Create a device using the "Google Device" node with one of the supported traits in Node-RED and deploy. Currently,
    only the traits "Object detection", "Run cycle" and "Sensor state" support notifications.
 1. In your Google Home App open your new device and enable "Spoken Notifications".
 1. To trigger the notification send a message with a specific payload into the device node. Payloads are documented
