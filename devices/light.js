@@ -1997,9 +1997,14 @@ module.exports = function(RED) {
                     let brightness  = this.is_dimmable ? this.states.brightness : undefined;
                     let rgb         = this.is_rgb ? this.states.color.spectrumRgb: undefined;
                     let temperature = this.has_temp ? this.states.color.temperatureK : undefined;
-                    let hue         = this.is_hsv ?  this.states.color.spectrumHsv.hue : undefined;
-                    let saturation  = this.is_hsv ?  this.states.color.spectrumHsv.saturation : undefined;
-                    let value       = this.is_hsv ?  this.states.color.spectrumHsv.value : undefined;
+                    let hue         = undefined;
+                    let saturation  = undefined;
+                    let value       = undefined;
+                    if (this.is_hsv && this.states.color.spectrumHsv != null) {
+                        hue = this.states.color.spectrumHsv.hue;
+                        saturation = this.states.color.spectrumHsv.saturation;
+                        value = this.states.color.spectrumHsv.value;
+                    }
 
                     let differs = false;
 
