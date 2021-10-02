@@ -122,6 +122,8 @@ module.exports = function (RED) {
             this.smooth_stream_app_id = config.smooth_stream_app_id.trim();
             this.progressive_mp4 = config.progressive_mp4.trim();
             this.progressive_mp4_app_id = config.progressive_mp4_app_id.trim();
+            this.webrtc = config.webrtc.trim();
+            this.webrtc_app_id = config.webrtc_app_id.trim();
             this.camera_stream_supported_protocols = [];
             if (this.hls) {
                 this.camera_stream_supported_protocols.push('hls');
@@ -134,6 +136,9 @@ module.exports = function (RED) {
             }
             if (this.progressive_mp4) {
                 this.camera_stream_supported_protocols.push('progressive_mp4');
+            }
+            if (this.webrtc) {
+                this.camera_stream_supported_protocols.push('webrtc');
             }
             // Channel 
             this.channel_file = config.channel_file;
@@ -1381,7 +1386,7 @@ module.exports = function (RED) {
                     // states['capacityUntilFull'] = [];
                     states['isCharging'] = false;
                 }
-                states['isPluggedIn'] = false;
+                // states['isPluggedIn'] = false;
             }
             if (me.trait.fanspeed) {
                 // states['currentFanSpeedSetting'] = "";
@@ -2082,7 +2087,7 @@ module.exports = function (RED) {
                     let new_payload = [];
                     if (typeof me.states.currentStatusReport !== 'undefined') {
                         me.states.currentStatusReport.forEach(report => {
-                            let new_report = {};
+                            let new_report = { priority: 0 };
                             this.cloneObject(new_report, report, me.state_types['currentStatusReport'][0]);
                             new_payload.push(new_report);
                         });
@@ -3836,6 +3841,8 @@ module.exports = function (RED) {
                     return this.smooth_stream;
                 case 'progressive_mp4':
                     return this.progressive_mp4;
+                case 'webrtc':
+                    return this.webrtc;
             }
             return '';
         }
@@ -3850,6 +3857,8 @@ module.exports = function (RED) {
                     return this.smooth_stream_app_id;
                 case 'progressive_mp4':
                     return this.progressive_mp4_app_id;
+                case 'webrtc':
+                    return this.webrtc_app_id;
             }
             return '';
         }

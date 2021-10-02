@@ -291,7 +291,17 @@
                 <label style="width:auto" for="node-input-progressive_mp4_app_id"><i class="fa fa-tag"></i> <span data-i18n="device.label.progressive_mp4_app_id"></span></label>
                 <input type="text" id="node-input-progressive_mp4_app_id" data-i18n="[placeholder]device.placeholder.progressive_mp4_app_id">
             </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-webrtc"><i class="fa fa-globe"></i> <span data-i18n="device.label.webrtc"></span></label>
+                <input type="text" id="node-input-webrtc" data-i18n="[placeholder]device.placeholder.webrtc">
+            </div>
         
+            <div class="form-row">
+                <label style="width:auto" for="node-input-webrtc_app_id"><i class="fa fa-tag"></i> <span data-i18n="device.label.webrtc_app_id"></span></label>
+                <input type="text" id="node-input-webrtc_app_id" data-i18n="[placeholder]device.placeholder.webrtc_app_id">
+            </div>
+
             <div class="form-row">
                 <label style="width:auto" for="node-input-auth_token"><i class="fa fa-tag"></i> <span data-i18n="device.label.auth_token"></span></label>
                 <input type="text" id="node-input-auth_token" data-i18n="[placeholder]device.placeholder.auth_token">
@@ -1602,6 +1612,12 @@
                 value: "", required: false
             },
             progressive_mp4_app_id: {
+                value: "", required: false
+            },
+            webrtc: {
+                value: "", required: false
+            },
+			webrtc_app_id: {
                 value: "", required: false
             },
             auth_token: {
