@@ -303,7 +303,7 @@
             </div>
 
             <div class="form-row">
-                <label style="width:auto" for="node-input-webrtc_app_id"><i class="fa fa-tag"></i> <span data-i18n="device.label.webrtc_app_id"></span></label>
+                <label style="width:auto" for="node-input-webrtc_ice_server"><i class="fa fa-tag"></i> <span data-i18n="device.label.webrtc_ice_server"></span></label>
                 <input type="text" id="node-input-webrtc_ice_server" data-i18n="[placeholder]device.placeholder.webrtc_ice_server">
             </div>
 
@@ -1622,7 +1622,10 @@
             webrtc: {
                 value: "", required: false
             },
-			webrtc_app_id: {
+			webrtc_offer: {
+                value: "", required: false
+            },
+			webrtc_ice_server: {
                 value: "", required: false
             },
             auth_token: {
