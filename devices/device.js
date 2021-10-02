@@ -123,7 +123,8 @@ module.exports = function (RED) {
             this.progressive_mp4 = config.progressive_mp4.trim();
             this.progressive_mp4_app_id = config.progressive_mp4_app_id.trim();
             this.webrtc = config.webrtc.trim();
-            this.webrtc_app_id = config.webrtc_app_id.trim();
+            this.webrtc_offer = config.webrtc_offer.trim();
+            this.webrtc_ice_server = config.webrtc_ice_server.trim();
             this.camera_stream_supported_protocols = [];
             if (this.hls) {
                 this.camera_stream_supported_protocols.push('hls');
@@ -3809,21 +3810,35 @@ module.exports = function (RED) {
                         if (me.auth_token.length > 0) {
                             executionStates.push('cameraStreamAuthToken');
                         }
-                        const app_id = this.getAppId(protocol);
-                        if (app_id.length > 0) {
-                            executionStates.push('cameraStreamReceiverAppId');
+                        if (protocol != 'webrtc') {
+                            const app_id = this.getAppId(protocol);
+                            if (app_id.length > 0) {
+                                executionStates.push('cameraStreamReceiverAppId');
+                            }
+                            return {
+                                reportState: false,
+                                states: {
+                                    online: true,
+                                    cameraStreamAccessUrl: stream_url,
+                                    cameraStreamReceiverAppId: app_id,
+                                    cameraStreamAuthToken: me.auth_token,
+                                    cameraStreamProtocol: protocol
+                                },
+                                executionStates: executionStates,
+                            };
+                        } else {
+                            return {
+                                reportState: false,
+                                states: {
+                                    online: true,
+                                    cameraStreamIceServers: me.webrtc_ice_server,
+                                    cameraStreamSignalingUrl: stream_url,
+                                    cameraStreamOffer: me.webrtc_offer,
+                                    cameraStreamProtocol: protocol
+                                },
+                                executionStates: executionStates,
+                            };
                         }
-                        return {
-                            reportState: false,
-                            states: {
-                                online: true,
-                                cameraStreamAccessUrl: stream_url,
-                                cameraStreamReceiverAppId: app_id,
-                                cameraStreamAuthToken: me.auth_token,
-                                cameraStreamProtocol: protocol
-                            },
-                            executionStates: executionStates,
-                        };
                     }
                 }
             }
@@ -3857,8 +3872,6 @@ module.exports = function (RED) {
                     return this.smooth_stream_app_id;
                 case 'progressive_mp4':
                     return this.progressive_mp4_app_id;
-                case 'webrtc':
-                    return this.webrtc_app_id;
             }
             return '';
         }
