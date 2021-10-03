@@ -303,8 +303,8 @@
             </div>
 
             <div class="form-row">
-                <label style="width:auto" for="node-input-webrtc_ice_server"><i class="fa fa-tag"></i> <span data-i18n="device.label.webrtc_ice_server"></span></label>
-                <input type="text" id="node-input-webrtc_ice_server" data-i18n="[placeholder]device.placeholder.webrtc_ice_server">
+                <label style="width:auto" for="node-input-webrtc_ice_servers"><i class="fa fa-tag"></i> <span data-i18n="device.label.webrtc_ice_servers"></span></label>
+                <input type="text" id="node-input-webrtc_ice_servers" data-i18n="[placeholder]device.placeholder.webrtc_ice_servers">
             </div>
 
             <div class="form-row">
@@ -1622,10 +1622,10 @@
             webrtc: {
                 value: "", required: false
             },
-			webrtc_offer: {
+            webrtc_offer: {
                 value: "", required: false
             },
-			webrtc_ice_server: {
+            webrtc_ice_servers: {
                 value: "", required: false
             },
             auth_token: {
@@ -1920,6 +1920,10 @@
             $('#node-input-show_trait').val('selected');
             this.show_trait = 'selected';
             this.advanced_settings = true;
+            $("#node-input-webrtc_ice_servers").typedInput({
+                default: "str", 
+                types: ['str', 'json']
+            });
             // Zones
             $('#node-input-device-zone-container').css('min-height', '150px').css('min-width', '450px').editableList({
                 addItem: function (container, i, opt) {

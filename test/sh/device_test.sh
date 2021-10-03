@@ -98,7 +98,7 @@ execute_payload() {
         PAYLOAD ="$1"
         TOPIC=""
     fi
-    REQUEST="{\"payload\": $PAYLOAD, \"topic\": \"$TOPIC\"}"
+    REQUEST="{\"payload\": $PAYLOAD, \"topic\": \"$TOPIC\", \"test_num\": $TEST_NUM}"
     echo $REQUEST
     mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old" 
     echo "{}" > "$PAYLOAD_FILE" 
@@ -145,7 +145,7 @@ request_sync() {
     echo
     ((TEST_NUM=TEST_NUM+1))
     echo "# $TEST_NUM"
-    echo ./execute request_sync
+    echo ./request_sync
     mv "$SYNC_FILE" "$SYNC_FILE.old" 
     echo "{}" > "$SYNC_FILE" 
     ./request_sync "$@" > "$SYNC_FILE"
@@ -160,6 +160,7 @@ test_sync() {
 execute_no_payload() {
     CMD_EXEC="$@"
     echo
+    ((TEST_NUM=TEST_NUM+1))
     echo ./execute "$@"
     echo "{}" > "$PAYLOAD_FILE" 
     ./execute "$@" > "$OUT_FILE"
@@ -172,6 +173,7 @@ execute_no_payload() {
 execute_error() {
     CMD_EXEC="$@"
     echo
+    ((TEST_NUM=TEST_NUM+1))
     echo ./execute "$@"
     echo "{}" > "$PAYLOAD_FILE" 
     OUT=$(./execute "$@")
@@ -222,8 +224,8 @@ test_sync .payload.devices[0].traits[34] "\""action.devices.traits.TransportCont
 test_sync .payload.devices[0].traits[35] "\""action.devices.traits.Volume"\""
 test_sync .payload.devices[0].traits[36] null
 test_sync .payload.devices[0].name.defaultNames[0] "\""Node-RED\ Television"\""
-test_sync .payload.devices[0].name.name "\""Cucina"\""
-test_sync .payload.devices[0].roomHint "\"""\""
+test_sync .payload.devices[0].name.name "\""MultiDevice\ Cucina"\""
+test_sync .payload.devices[0].roomHint "\"Cucina""\""
 test_sync .payload.devices[0].willReportState  true
 test_sync .payload.devices[0].notificationSupportedByAgent  true
 test_sync .payload.devices[0].deviceInfo.manufacturer "\""Node-RED"\""
@@ -324,7 +326,8 @@ test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[0] "\""h
 test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[1] "\""dash"\""
 test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[2] "\""smooth_stream"\""
 test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[3] "\""progressive_mp4"\""
-test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[4] null
+test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[4] "\""webrtc"\""
+test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[5] null
 test_sync .payload.devices[0].attributes.cameraStreamNeedAuthToken true
 
 test_sync .payload.devices[0].attributes.supportedCookingModes[0] "\""UNKNOWN_COOKING_MODE"\""
@@ -830,19 +833,19 @@ test_payload .currentStatusReport null # '[]'
 execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"Garage","priority":0,"statusCode":"lowBattery"}, {"blocking":false,"deviceTarget":"Ingresso","priority":0,"statusCode":"lowBattery"}]}'
 test_payload .currentStatusReport null # '[]'
 
-execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"Cucina","priority":0,"statusCode":"allBattery"}]}'
+execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"MultiDevice Cucina","priority":0,"statusCode":"allBattery"}]}'
 test_payload .currentStatusReport[0].blocking false
 test_payload .currentStatusReport[0].priority 0
 test_payload .currentStatusReport[0].statusCode '"allBattery"'
 test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
 
-execute_payload currentStatusReport '[{"blocking":true,"deviceTarget":"Cucina","priority":1,"statusCode":"lowBattery"}]'
+execute_payload currentStatusReport '[{"blocking":true,"deviceTarget":"MultiDevice Cucina","priority":1,"statusCode":"lowBattery"}]'
 test_payload .currentStatusReport[0].blocking true
 test_payload .currentStatusReport[0].priority 1
 test_payload .currentStatusReport[0].statusCode '"lowBattery"'
 test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
 
-execute_payload StatusReport '[{"blocking":false,"deviceTarget":"Cucina","priority":2,"statusCode":"okBattery"}]'
+execute_payload StatusReport '[{"blocking":false,"deviceTarget":"MultiDevice Cucina","priority":2,"statusCode":"okBattery"}]'
 test_payload .currentStatusReport[0].blocking true
 test_payload .currentStatusReport[0].priority 1
 test_payload .currentStatusReport[0].statusCode '"lowBattery"'
@@ -852,7 +855,7 @@ test_payload .currentStatusReport[1].priority 2
 test_payload .currentStatusReport[1].statusCode '"okBattery"'
 test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
 
-execute_payload StatusReport '[{"blocking":false,"deviceTarget":"Cucina","priority":2,"statusCode":"okBattery"}]'
+execute_payload StatusReport '[{"blocking":false,"deviceTarget":"MultiDevice Cucina","priority":2,"statusCode":"okBattery"}]'
 test_payload .currentStatusReport[0].blocking true
 test_payload .currentStatusReport[0].priority 1
 test_payload .currentStatusReport[0].statusCode '"lowBattery"'
@@ -872,7 +875,7 @@ test_payload .currentStatusReport[1].priority 2
 test_payload .currentStatusReport[1].statusCode '"okBattery"'
 test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
 
-execute_payload StatusReport '[{"blocking":false,"deviceTarget":"Salotto","priority":3,"statusCode":"lowBattery"}]'
+execute_payload StatusReport '[{"blocking":false,"deviceTarget":"MultiDevice Salotto","priority":3,"statusCode":"lowBattery"}]'
 test_payload .currentStatusReport[0].blocking true
 test_payload .currentStatusReport[0].priority 1
 test_payload .currentStatusReport[0].statusCode '"lowBattery"'
@@ -1130,6 +1133,14 @@ test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://SMOOTH_STR
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"smooth_stream"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"SMOOTH_STREAM_APPID"'
+
+execute $NODE_ID GetCameraStream true '"webrtc"'
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.cameraStreamProtocol" '"webrtc"'
+test_out ".payload.commands[0].states.cameraStreamSignalingUrl" '"http://WEBRTC_SIGNALING"'
+test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
+test_out ".payload.commands[0].states.cameraStreamOffer" '"o=- 4611731400430051336 2 IN IP4 127.0.0.1..."'
+test_out ".payload.commands[0].states.cameraStreamIceServers" '"[{\"urls\":\"stun:stun.l.partner.com:19302\"},{\"urls\":\"turn:192.158.29.39:3478?transport=udp\",\"credential\":\"JZEOEt2V3Qb0y27GRntt2u2PAYA=\",\"username\":\"28224511:1379330808\"},{\"urls\":\"turn:192.158.29.39:3478?transport=tcp\",\"credential\":\"JZEOEt2V3Qb0y27GRntt2u2PAYA=\",\"username\":\"28224511:1379330808\"}]"'
 
 # Channel 
 echo

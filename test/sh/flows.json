@@ -9,7 +9,7 @@
     {
         "id": "85fa874.600d378",
         "type": "googlesmarthome-client",
-        "name": "",
+        "name": "Google",
         "enabledebug": true,
         "default_lang": "it",
         "usegooglelogin": true,
@@ -67,8 +67,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 950,
-        "y": 360,
+        "x": 1070,
+        "y": 340,
         "wires": []
     },
     {
@@ -262,9 +262,9 @@
         "type": "google-device",
         "z": "c0151475.218f98",
         "client": "85fa874.600d378",
-        "name": "Cucina",
-        "topic": "",
-        "room_hint": "",
+        "name": "MultiDevice Cucina",
+        "topic": "cucina",
+        "room_hint": "Cucina",
         "device_type": "TV",
         "trait_appselector": true,
         "trait_channel": true,
@@ -320,6 +320,9 @@
         "smooth_stream_app_id": "SMOOTH_STREAM_APPID",
         "progressive_mp4": "http://PROGRESSIVE_MP4",
         "progressive_mp4_app_id": "PROGRESSIVE_MP4_APPID",
+        "webrtc": "http://WEBRTC_SIGNALING",
+        "webrtc_offer": "o=- 4611731400430051336 2 IN IP4 127.0.0.1...",
+        "webrtc_ice_servers": "[{\"urls\":\"stun:stun.l.partner.com:19302\"},{\"urls\":\"turn:192.158.29.39:3478?transport=udp\",\"credential\":\"JZEOEt2V3Qb0y27GRntt2u2PAYA=\",\"username\":\"28224511:1379330808\"},{\"urls\":\"turn:192.158.29.39:3478?transport=tcp\",\"credential\":\"JZEOEt2V3Qb0y27GRntt2u2PAYA=\",\"username\":\"28224511:1379330808\"}]",
         "auth_token": "Auth Token GUI",
         "passthru": true,
         "trait_scene": true,
@@ -478,8 +481,8 @@
         "supports_network_upload_speedtest": false,
         "trait_objectdetection": true,
         "show_trait": "selected",
-        "advanced_settings": false,
-        "x": 750,
+        "advanced_settings": true,
+        "x": 790,
         "y": 400,
         "wires": [
             [
@@ -499,7 +502,7 @@
         "createDir": false,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 1130,
+        "x": 1270,
         "y": 400,
         "wires": [
             [
@@ -577,7 +580,7 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 960,
+        "x": 1080,
         "y": 400,
         "wires": [
             [
@@ -598,7 +601,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1290,
+        "x": 1430,
         "y": 400,
         "wires": []
     },
@@ -1045,9 +1048,9 @@
         "type": "google-device",
         "z": "c0151475.218f98",
         "client": "85fa874.600d378",
-        "name": "Salotto",
-        "topic": "",
-        "room_hint": "",
+        "name": "MultiDevice Salotto",
+        "topic": "salotto",
+        "room_hint": "Salotto",
         "device_type": "TV",
         "trait_appselector": true,
         "trait_channel": true,
@@ -1103,6 +1106,9 @@
         "smooth_stream_app_id": "SMOOTH_STREAM_APPID",
         "progressive_mp4": "http://PROGRESSIVE_MP4",
         "progressive_mp4_app_id": "PROGRESSIVE_MP4_APPID",
+        "webrtc": "http://WEBRTC_SIGNALING",
+        "webrtc_offer": "o=- 4611731400430051336 2 IN IP4 127.0.0.1...",
+        "webrtc_ice_servers": "[{\"urls\":\"stun:stun.l.partner.com:19302\"},{\"urls\":\"turn:192.158.29.39:3478?transport=udp\",\"credential\":\"JZEOEt2V3Qb0y27GRntt2u2PAYA=\",\"username\":\"28224511:1379330808\"},{\"urls\":\"turn:192.158.29.39:3478?transport=tcp\",\"credential\":\"JZEOEt2V3Qb0y27GRntt2u2PAYA=\",\"username\":\"28224511:1379330808\"}]",
         "auth_token": "Auth Token GUI",
         "passthru": true,
         "trait_scene": true,
@@ -1261,8 +1267,8 @@
         "supports_network_upload_speedtest": false,
         "trait_objectdetection": true,
         "show_trait": "selected",
-        "advanced_settings": false,
-        "x": 750,
+        "advanced_settings": true,
+        "x": 790,
         "y": 460,
         "wires": [
             [
@@ -1335,7 +1341,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 990,
+        "x": 1070,
         "y": 460,
         "wires": []
     },
@@ -1590,8 +1596,8 @@
         "targetType": "jsonata",
         "statusVal": "",
         "statusType": "auto",
-        "x": 970,
-        "y": 500,
+        "x": 1090,
+        "y": 520,
         "wires": []
     }
 ]
