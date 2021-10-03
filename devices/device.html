@@ -305,6 +305,7 @@
             <div class="form-row">
                 <label style="width:auto" for="node-input-webrtc_ice_servers"><i class="fa fa-tag"></i> <span data-i18n="device.label.webrtc_ice_servers"></span></label>
                 <input type="text" id="node-input-webrtc_ice_servers" data-i18n="[placeholder]device.placeholder.webrtc_ice_servers">
+                <input type="hidden" id="node-input-webrtc_ice_servers_type">
             </div>
 
             <div class="form-row">
@@ -1626,7 +1627,10 @@
                 value: "", required: false
             },
             webrtc_ice_servers: {
-                value: "", required: false
+                value: "", required: false, validate: RED.validators.typedInput('webrtc_ice_servers_type')
+            },
+            webrtc_ice_servers_type: {
+                value: "str", required: false
             },
             auth_token: {
                 value: "", required: false
@@ -1920,9 +1924,13 @@
             $('#node-input-show_trait').val('selected');
             this.show_trait = 'selected';
             this.advanced_settings = true;
+            var webrtcIceServersChanged = function (event, type, value) {
+                this.webrtc_ice_servers_type = type;
+            };
             $("#node-input-webrtc_ice_servers").typedInput({
                 default: "str", 
-                types: ['str', 'json']
+                typeField: $("#node-input-webrtc_ice_servers_type"),
+                types: ['str', 'json'],
             });
             // Zones
             $('#node-input-device-zone-container').css('min-height', '150px').css('min-width', '450px').editableList({
