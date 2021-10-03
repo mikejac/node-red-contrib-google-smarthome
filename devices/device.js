@@ -124,9 +124,9 @@ module.exports = function (RED) {
             this.smooth_stream_app_id = config.smooth_stream_app_id.trim();
             this.progressive_mp4 = config.progressive_mp4.trim();
             this.progressive_mp4_app_id = config.progressive_mp4_app_id.trim();
-            this.webrtc = config.webrtc.trim();
-            this.webrtc_offer = config.webrtc_offer.trim();
-            this.webrtc_ice_servers = config.webrtc_ice_servers.trim();
+            this.webrtc = (config.webrtc || '').trim();
+            this.webrtc_offer = (config.webrtc_offer || '').trim();
+            this.webrtc_ice_servers = (config.webrtc_ice_servers || '').trim();
             this.camera_stream_supported_protocols = [];
             if (this.hls) {
                 this.camera_stream_supported_protocols.push('hls');
