@@ -181,6 +181,7 @@
             <div class="form-row">
                 <label style="width:auto" for="node-input-appselector_file"><i class="fa fa-file"></i> <span data-i18n="device.label.appselector_file"></span></label>
                 <input type="text" id="node-input-appselector_file" data-i18n="[placeholder]device.placeholder.appselector_file">
+                <input type="hidden" id="node-input-appselector_type">
             </div>
         </div>
     </div>
@@ -204,6 +205,7 @@
             <div class="form-row">
                 <label style="width:auto" for="node-input-available_arm_levels_file"><i class="fa fa-file"></i> <span data-i18n="device.label.available_arm_levels_file"></span></label>
                 <input type="text" id="node-input-available_arm_levels_file" data-i18n="[placeholder]device.placeholder.available_arm_levels_file">
+                <input type="hidden" id="node-input-available_arm_levels_type">
             </div>
 
             <div class="form-row">
@@ -334,6 +336,7 @@
             <div class="form-row">
                 <label style="width:auto" for="node-input-channel_file"><i class="fa fa-file"></i> <span data-i18n="device.label.channel_file"></span></label>
                 <input type="text" id="node-input-channel_file" data-i18n="[placeholder]device.placeholder.channel_file">
+                <input type="hidden" id="node-input-channel_type">
             </div>
         </div>
     </div>
@@ -439,6 +442,7 @@
             <div class="form-row">
                 <label style="width:auto" for="node-input-food_presets_file"><i class="fa fa-file"></i> <span data-i18n="device.label.food_presets_file"></span></label>
                 <input type="text" id="node-input-food_presets_file" data-i18n="[placeholder]device.placeholder.food_presets_file">
+                <input type="hidden" id="node-input-food_presets_type">
             </div>
         </div>
     </div>
@@ -462,11 +466,13 @@
             <div class="form-row">
                 <label style="width:auto" for="node-input-supported_dispense_items_file"><i class="fa fa-file"></i> <span data-i18n="device.label.supported_dispense_items_file"></span></label>
                 <input type="text" id="node-input-supported_dispense_items_file" data-i18n="[placeholder]device.placeholder.supported_dispense_items_file">
+                <input type="hidden" id="node-input-supported_dispense_items_type">
             </div>
 
             <div class="form-row">
                 <label style="width:auto" for="node-input-supported_dispense_presets_file"><i class="fa fa-file"></i> <span data-i18n="device.label.supported_dispense_presets_file"></span></label>
                 <input type="text" id="node-input-supported_dispense_presets_file" data-i18n="[placeholder]device.placeholder.supported_dispense_presets_file">
+                <input type="hidden" id="node-input-supported_dispense_presets_type">
             </div>
         </div>
     </div>
@@ -562,6 +568,7 @@
             <div class="form-row no_fan_speed_percent">
                 <label style="width:auto" for="node-input-available_fan_speeds_file"><i class="fa fa-file"></i> <span data-i18n="device.label.available_fan_speeds_file"></span></label>
                 <input type="text" id="node-input-available_fan_speeds_file" data-i18n="[placeholder]device.placeholder.available_fan_speeds_file">
+                <input type="hidden" id="node-input-available_fan_speeds_type">
             </div>
 
             <div class="form-row device-advanced">
@@ -590,6 +597,7 @@
             <div class="form-row">
                 <label style="width:auto" for="node-input-available_fill_levels_file"><i class="fa fa-file"></i> <span data-i18n="device.label.available_fill_levels_file"></span></label>
                 <input type="text" id="node-input-available_fill_levels_file" data-i18n="[placeholder]device.placeholder.available_fill_levels_file">
+                <input type="hidden" id="node-input-available_fill_levels_type">
             </div>
 
             <div class="form-row">
@@ -660,6 +668,7 @@
             <div class="form-row">
                 <label style="width:auto" for="node-input-inputselector_file"><i class="fa fa-file"></i> <span data-i18n="device.label.inputselector_file"></span></label>
                 <input type="text" id="node-input-inputselector_file" data-i18n="[placeholder]device.placeholder.inputselector_file">
+                <input type="hidden" id="node-input-inputselector_type">
             </div>
 
             <div class="form-row">
@@ -798,6 +807,7 @@
             <div class="form-row">
                 <label style="width:auto" for="node-input-modes_file"><i class="fa fa-file"></i> <span data-i18n="device.label.modes_file"></span></label>
                 <input type="text" id="node-input-modes_file" data-i18n="[placeholder]device.placeholder.modes_file">
+                <input type="hidden" id="node-input-modes_type">
             </div>
 
             <div class="form-row device-advanced">
@@ -1344,6 +1354,7 @@
             <div class="form-row">
                 <label style="width:auto" for="node-input-toggles_file"><i class="fa fa-file"></i> <span data-i18n="device.label.toggles_file"></span></label>
                 <input type="text" id="node-input-toggles_file" data-i18n="[placeholder]device.placeholder.toggles_file">
+                <input type="hidden" id="node-input-toggles_type">
             </div>
 
             <div class="form-row device-advanced">
@@ -1505,13 +1516,22 @@
                 value: false, required: false
             },
             appselector_file: {
-                value: "applications_<id>.json", required: false
+                value: "applications_<id>.json", required: false, validate: RED.validators.typedInput('appselector_type')
+            },
+            appselector_type: {
+                value: "str", required: false
             },
             channel_file: {
-                value: "channels_<id>.json", required: false
+                value: "channels_<id>.json", required: false, validate: RED.validators.typedInput('channel_type')
+            },
+            channel_type: {
+                value: "str", required: false
             },
             inputselector_file: {
-                value: "inputs_<id>.json", required: false
+                value: "inputs_<id>.json", required: false, validate: RED.validators.typedInput('inputselector_type')
+            },
+            inputselector_type: {
+                value: "str", required: false
             },
             command_only_input_selector: {
                 value: false, required: false
@@ -1582,13 +1602,19 @@
                 }
             },
             modes_file: {
-                value: "modes_<id>.json", required: false
+                value: "modes_<id>.json", required: false, validate: RED.validators.typedInput('modes_type')
+            },
+            modes_type: {
+                value: "str", required: false
             },
             command_query_modes: {
                 value: "", required: false
             },
             toggles_file: {
-                value: "toggles_<id>.json", required: false
+                value: "toggles_<id>.json", required: false, validate: RED.validators.typedInput('toggles_type')
+            },
+            toggles_type: {
+                value: "str", required: false
             },
             command_query_toggles: {
                 value: "", required: false
@@ -1814,7 +1840,10 @@
                 value: [], required: false
             },
             food_presets_file: {
-                value: 'foodPresets_<id>.json', required: false
+                value: 'foodPresets_<id>.json', required: false, validate: RED.validators.typedInput('food_presets_type')
+            },
+            food_presets_type: {
+                value: "str", required: false
             },
             trait_fanspeed: {
                 value: false, required: false
@@ -1832,7 +1861,10 @@
                 value: false, required: false
             },
             available_fan_speeds_file: {
-                value: 'availableFanSpeeds_<id>.json', required: false
+                value: 'availableFanSpeeds_<id>.json', required: false, validate: RED.validators.typedInput('available_fan_speeds_type')
+            },
+            available_fan_speeds_type: {
+                value: "str", required: false
             },
             trait_sensorstate: {
                 value: false, required: false
@@ -1847,7 +1879,10 @@
                 value: false, required: false
             },
             available_fill_levels_file: {
-                value: 'availableFillLevels_<id>.json', required: false
+                value: 'availableFillLevels_<id>.json', required: false, validate: RED.validators.typedInput('available_fill_levels_type')
+            },
+            available_fill_levels_type: {
+                value: "str", required: false
             },
             supports_fill_percent: {
                 value: false, required: false
@@ -1859,7 +1894,10 @@
                 value: false, required: false
             },
             available_arm_levels_file: {
-                value: 'availableArmLevels_<id>.json', required: false
+                value: 'availableArmLevels_<id>.json', required: false, validate: RED.validators.typedInput('available_arm_levels_type')
+            },
+            available_arm_levels_type: {
+                value: "str", required: false
             },
             trait_energystorage: {
                 value: false, required: false
@@ -1877,10 +1915,16 @@
                 value: false, required: false
             },
             supported_dispense_items_file: {
-                value: 'supportedDispenseItems_<id>.json', required: false
+                value: 'supportedDispenseItems_<id>.json', required: false, validate: RED.validators.typedInput('supported_dispense_items_type')
+            },
+            supported_dispense_items_type: {
+                value: "str", required: false
             },
             supported_dispense_presets_file: {
-                value: 'supportedDispensePresets_<id>.json', required: false
+                value: 'supportedDispensePresets_<id>.json', required: false, validate: RED.validators.typedInput('supported_dispense_presets_type')
+            },
+            supported_dispense_presets_type: {
+                value: "str", required: false
             },
             trait_networkcontrol: {
                 value: false, required: false
@@ -1924,11 +1968,63 @@
             $('#node-input-show_trait').val('selected');
             this.show_trait = 'selected';
             this.advanced_settings = true;
-            var webrtcIceServersChanged = function (event, type, value) {
-                this.webrtc_ice_servers_type = type;
-            };
+            $("#node-input-appselector_file").typedInput({
+                default: "str",
+                typeField: $("#node-input-appselector_type"),
+                types: ['str', 'json'],
+            });
+            $("#node-input-channel_file").typedInput({
+                default: "str",
+                typeField: $("#node-input-channel_type"),
+                types: ['str', 'json'],
+            });
+            $("#node-input-inputselector_file").typedInput({
+                default: "str",
+                typeField: $("#node-input-inputselector_type"),
+                types: ['str', 'json'],
+            });
+            $("#node-input-modes_file").typedInput({
+                default: "str",
+                typeField: $("#node-input-modes_type"),
+                types: ['str', 'json'],
+            });
+            $("#node-input-toggles_file").typedInput({
+                default: "str",
+                typeField: $("#node-input-toggles_type"),
+                types: ['str', 'json'],
+            });
+            $("#node-input-food_presets_file").typedInput({
+                default: "str",
+                typeField: $("#node-input-food_presets_type"),
+                types: ['str', 'json'],
+            });
+            $("#node-input-available_fan_speeds_file").typedInput({
+                default: "str",
+                typeField: $("#node-input-available_fan_speeds_type"),
+                types: ['str', 'json'],
+            });
+            $("#node-input-available_fill_levels_file").typedInput({
+                default: "str",
+                typeField: $("#node-input-available_fill_levels_type"),
+                types: ['str', 'json'],
+            });
+            $("#node-input-available_arm_levels_file").typedInput({
+                default: "str",
+                typeField: $("#node-input-available_arm_levels_type"),
+                types: ['str', 'json'],
+            });
+            $("#node-input-supported_dispense_items_file").typedInput({
+                default: "str",
+                typeField: $("#node-input-supported_dispense_items_type"),
+                types: ['str', 'json'],
+            });
+            $("#node-input-supported_dispense_presets_file").typedInput({
+                default: "str",
+                typeField: $("#node-input-supported_dispense_presets_type"),
+                types: ['str', 'json'],
+            });
             $("#node-input-webrtc_ice_servers").typedInput({
-                default: "str", 
+                default: "str",
                 typeField: $("#node-input-webrtc_ice_servers_type"),
                 types: ['str', 'json'],
             });

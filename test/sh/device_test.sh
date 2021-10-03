@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-# node-red -u $HOME/nrsh | awk '{ print; } /HttpActions:reportState..: postData = / { pd=substr($0, 39); print pd > "reportState.json"; close("reportState.json"); }'
+# cd ; node-red -u $HOME/nrsh | awk '{ print; } /HttpActions:reportState..: postData = / { pd=substr($0, 39); print pd > "reportState.json"; close("reportState.json"); }'
 # cd $HOME/nrsh/node_modules/node-red-contrib-google-smarthome/test/sh/ ; ./device_test.sh "a5782b1b.e120f8" "bab53c06.fc9c3"
 #
 
