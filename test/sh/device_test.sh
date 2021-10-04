@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-# node-red -u $HOME/nrsh | awk '{ print; } /HttpActions:reportState..: postData = / { pd=substr($0, 39); print pd > "reportState.json"; close("reportState.json"); }'
+# cd ; node-red -u $HOME/nrsh | awk '{ print; } /HttpActions:reportState..: postData = / { pd=substr($0, 39); print pd > "reportState.json"; close("reportState.json"); }'
 # cd $HOME/nrsh/node_modules/node-red-contrib-google-smarthome/test/sh/ ; ./device_test.sh "a5782b1b.e120f8" "bab53c06.fc9c3"
 #
 
@@ -34,6 +34,8 @@ PAYLOAD_URL=$(dirname $BASE_URL)/payload
 LANG="it"
 TEST_NUM=0
 
+./login_post
+./authorization_code
 ./refresh_token
 
 dos2unix cmd/* 2>/dev/null
@@ -43,7 +45,7 @@ test_json() {
     STR=$2
     JPATH=$3
     VAL=$4
-    V=$(echo $STR | jq $JPATH)
+    V=$(echo $STR | jq "$JPATH")
     if [ "$V" != "$VAL" ] ; then
         echo
         echo "CMD: ./execute $CMD_EXEC"
@@ -98,7 +100,7 @@ execute_payload() {
         PAYLOAD ="$1"
         TOPIC=""
     fi
-    REQUEST="{\"payload\": $PAYLOAD, \"topic\": \"$TOPIC\"}"
+    REQUEST="{\"payload\": $PAYLOAD, \"topic\": \"$TOPIC\", \"test_num\": $TEST_NUM}"
     echo $REQUEST
     mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old" 
     echo "{}" > "$PAYLOAD_FILE" 
@@ -145,7 +147,7 @@ request_sync() {
     echo
     ((TEST_NUM=TEST_NUM+1))
     echo "# $TEST_NUM"
-    echo ./execute request_sync
+    echo ./request_sync
     mv "$SYNC_FILE" "$SYNC_FILE.old" 
     echo "{}" > "$SYNC_FILE" 
     ./request_sync "$@" > "$SYNC_FILE"
@@ -160,6 +162,7 @@ test_sync() {
 execute_no_payload() {
     CMD_EXEC="$@"
     echo
+    ((TEST_NUM=TEST_NUM+1))
     echo ./execute "$@"
     echo "{}" > "$PAYLOAD_FILE" 
     ./execute "$@" > "$OUT_FILE"
@@ -172,6 +175,7 @@ execute_no_payload() {
 execute_error() {
     CMD_EXEC="$@"
     echo
+    ((TEST_NUM=TEST_NUM+1))
     echo ./execute "$@"
     echo "{}" > "$PAYLOAD_FILE" 
     OUT=$(./execute "$@")
@@ -222,8 +226,8 @@ test_sync .payload.devices[0].traits[34] "\""action.devices.traits.TransportCont
 test_sync .payload.devices[0].traits[35] "\""action.devices.traits.Volume"\""
 test_sync .payload.devices[0].traits[36] null
 test_sync .payload.devices[0].name.defaultNames[0] "\""Node-RED\ Television"\""
-test_sync .payload.devices[0].name.name "\""Cucina"\""
-test_sync .payload.devices[0].roomHint "\"""\""
+test_sync .payload.devices[0].name.name "\""MultiDevice\ Cucina"\""
+test_sync .payload.devices[0].roomHint "\"Cucina""\""
 test_sync .payload.devices[0].willReportState  true
 test_sync .payload.devices[0].notificationSupportedByAgent  true
 test_sync .payload.devices[0].deviceInfo.manufacturer "\""Node-RED"\""
@@ -231,20 +235,21 @@ test_sync .payload.devices[0].deviceInfo.model "\""nr-device-television-v1"\""
 test_sync .payload.devices[0].deviceInfo.swVersion "\""1.0"\""
 test_sync .payload.devices[0].deviceInfo.hwVersion "\""1.0"\""
 test_sync .payload.devices[0].id "\""$NODE_ID"\""
+test_sync .payload.devices[1].id "\""$NODE_ID1"\""
 
 # availableApplications
-test_sync .payload.devices[0].attributes.availableApplications[0].key "\""youtube_application"\""
+test_sync .payload.devices[0].attributes.availableApplications[0].key "\""YouTube"\""
 test_sync .payload.devices[0].attributes.availableApplications[0].names[0].lang "\""$LANG"\""
 test_sync .payload.devices[0].attributes.availableApplications[0].names[0].name_synonym[0] "\""YouTube"\""
 test_sync .payload.devices[0].attributes.availableApplications[0].names[0].name_synonym[1] null
 
-test_sync .payload.devices[0].attributes.availableApplications[1].key "\""video_application"\""
+test_sync .payload.devices[0].attributes.availableApplications[1].key "\""video"\""
 test_sync .payload.devices[0].attributes.availableApplications[1].names[0].lang "\""$LANG"\""
 test_sync .payload.devices[0].attributes.availableApplications[1].names[0].name_synonym[0] "\""Google\ Video"\""
 test_sync .payload.devices[0].attributes.availableApplications[1].names[0].name_synonym[1] "\""Video"\""
 test_sync .payload.devices[0].attributes.availableApplications[1].names[0].name_synonym[2] null
 
-test_sync .payload.devices[0].attributes.availableApplications[2].key "\""amazon_prime_video_application"\""
+test_sync .payload.devices[0].attributes.availableApplications[2].key "\""Amazon\ Prime\ Video"\""
 test_sync .payload.devices[0].attributes.availableApplications[2].names[0].lang "\""$LANG"\""
 test_sync .payload.devices[0].attributes.availableApplications[2].names[0].name_synonym[0] "\""Amazon\ Prime\ Video"\""
 test_sync .payload.devices[0].attributes.availableApplications[2].names[0].name_synonym[1] "\""Prime\ Video"\""
@@ -324,7 +329,8 @@ test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[0] "\""h
 test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[1] "\""dash"\""
 test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[2] "\""smooth_stream"\""
 test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[3] "\""progressive_mp4"\""
-test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[4] null
+test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[4] "\""webrtc"\""
+test_sync .payload.devices[0].attributes.cameraStreamSupportedProtocols[5] null
 test_sync .payload.devices[0].attributes.cameraStreamNeedAuthToken true
 
 test_sync .payload.devices[0].attributes.supportedCookingModes[0] "\""UNKNOWN_COOKING_MODE"\""
@@ -421,7 +427,7 @@ test_sync .payload.devices[0].attributes.energyStorageDistanceUnitForUX "\""KILO
 test_sync .payload.devices[0].attributes.isRechargeable true
 test_sync .payload.devices[0].attributes.reversible false
 test_sync .payload.devices[0].attributes.commandOnlyFanSpeed false
-test_sync .payload.devices[0].attributes.supportsFanSpeedPercent true
+test_sync .payload.devices[0].attributes.supportsFanSpeedPercent false
 
 # availableFanSpeeds
 test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_name "\""speed_low"\""
@@ -429,18 +435,30 @@ test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_valu
 test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[0].speed_synonym[0] "\""low"\""
 test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[0].speed_synonym[1] "\""slow"\""
 test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[0].speed_synonym[2] null
-test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[1] null
+
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[1].lang "\""it"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[1].speed_synonym[0] "\""lento"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[1].speed_synonym[1] "\""basso"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[1].speed_synonym[2] null
+
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[0].speed_values[2] null
 
 test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_name "\""speed_high"\""
 test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[0].lang "\""en"\""
 test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[0].speed_synonym[0] "\""high"\""
 test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[0].speed_synonym[1] "\""fast"\""
 test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[0].speed_synonym[2] null
-test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[1] null
+
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[1].lang "\""it"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[1].speed_synonym[0] "\""veloce"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[1].speed_synonym[1] "\""massimo"\""
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[1].speed_synonym[2] null
+
+test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[1].speed_values[2] null
 
 test_sync .payload.devices[0].attributes.availableFanSpeeds.speeds[2] null
-
 test_sync .payload.devices[0].attributes.availableFanSpeeds.ordered true
+
 
 # availableFillLevels
 test_sync .payload.devices[0].attributes.availableFillLevels.levels[0].level_name "\""half_level"\""
@@ -472,13 +490,13 @@ test_sync .payload.devices[0].attributes.queryOnlyHumiditySetting false
 
 
 # availableInputs
-test_sync .payload.devices[0].attributes.availableInputs[0].key "\""hdmi_1_input"\""
+test_sync .payload.devices[0].attributes.availableInputs[0].key "\""hdmi\ 1"\""
 test_sync .payload.devices[0].attributes.availableInputs[0].names[0].lang "\""it"\""
 test_sync .payload.devices[0].attributes.availableInputs[0].names[0].name_synonym[0] "\""hdmi\ 1"\""
 test_sync .payload.devices[0].attributes.availableInputs[0].names[0].name_synonym[1] null
 test_sync .payload.devices[0].attributes.availableInputs[0].names[1] null
 
-test_sync .payload.devices[0].attributes.availableInputs[1].key "\""hdmi_2_input"\""
+test_sync .payload.devices[0].attributes.availableInputs[1].key "\""hdmi_2"\""
 test_sync .payload.devices[0].attributes.availableInputs[1].names[0].lang "\""it"\""
 test_sync .payload.devices[0].attributes.availableInputs[1].names[0].name_synonym[0] "\""hdmi\ 2"\""
 test_sync .payload.devices[0].attributes.availableInputs[1].names[0].name_synonym[1] "\""Second\ HDMI"\""
@@ -487,7 +505,7 @@ test_sync .payload.devices[0].attributes.availableInputs[1].names[0].name_synony
 test_sync .payload.devices[0].attributes.availableInputs[1].names[0].name_synonym[4] null
 test_sync .payload.devices[0].attributes.availableInputs[1].names[1] null
 
-test_sync .payload.devices[0].attributes.availableInputs[2].key "\""hdmi_3_input"\""
+test_sync .payload.devices[0].attributes.availableInputs[2].key "\""hdmi\ 3"\""
 test_sync .payload.devices[0].attributes.availableInputs[2].names[0].lang "\""it"\""
 test_sync .payload.devices[0].attributes.availableInputs[2].names[0].name_synonym[0] "\""hdmi\ 3"\""
 test_sync .payload.devices[0].attributes.availableInputs[2].names[0].name_synonym[1] "\""Third\ HDMI"\""
@@ -646,28 +664,43 @@ test_sync .payload.devices[0].attributes.maxTimerLimitSec 86400
 test_sync .payload.devices[0].attributes.commandOnlyTimer false
 
 # availableToggles
-test_sync .payload.devices[0].attributes.availableToggles[0].name "\""quiet_toggle"\""
-test_sync .payload.devices[0].attributes.availableToggles[0].name_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableToggles[0].name "\""quiet"\""
+test_sync .payload.devices[0].attributes.availableToggles[0].name_values[0].lang "\""it"\""
 test_sync .payload.devices[0].attributes.availableToggles[0].name_values[0].name_synonym[0] "\""quiet"\""
 test_sync .payload.devices[0].attributes.availableToggles[0].name_values[0].name_synonym[1] null
 test_sync .payload.devices[0].attributes.availableToggles[0].name_values[1] null
 
-test_sync .payload.devices[0].attributes.availableToggles[1].name "\""extra_bass_toggle"\""
-test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].lang "\""en"\""
-test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].name_synonym[0] "\""Extra\ bass"\""
-test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].name_synonym[1] "\""Loud\ bass"\""
-test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].name_synonym[2] "\""Powerful\ bass"\""
-test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].name_synonym[3] null
+test_sync .payload.devices[0].attributes.availableToggles[1].name "\""Silenzio"\""
+test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].lang "\""it"\""
+test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].name_synonym[0] "\""Silenzio"\""
+test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].name_synonym[1] "\""Basso"\""
+test_sync .payload.devices[0].attributes.availableToggles[1].name_values[0].name_synonym[2] null
 test_sync .payload.devices[0].attributes.availableToggles[1].name_values[1] null
 
-test_sync .payload.devices[0].attributes.availableToggles[2].name "\""energy_saving_toggle"\""
-test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].lang "\""en"\""
-test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].name_synonym[0] "\""Energy\ Saving"\""
-test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].name_synonym[1] "\""Low\ Energy"\""
-test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].name_synonym[2] null
+test_sync .payload.devices[0].attributes.availableToggles[2].name "\""extra_bass"\""
+test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].lang "\""it"\""
+test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].name_synonym[0] "\""Extra\ bass"\""
+test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].name_synonym[1] "\""Loud\ bass"\""
+test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].name_synonym[2] "\""Powerful\ bass"\""
+test_sync .payload.devices[0].attributes.availableToggles[2].name_values[0].name_synonym[3] null
 test_sync .payload.devices[0].attributes.availableToggles[2].name_values[1] null
 
-test_sync .payload.devices[0].attributes.availableToggles[3] null
+test_sync .payload.devices[0].attributes.availableToggles[3].name "\""Energy\ Saving"\""
+test_sync .payload.devices[0].attributes.availableToggles[3].name_values[0].lang "\""it"\""
+test_sync .payload.devices[0].attributes.availableToggles[3].name_values[0].name_synonym[0] "\""Energy\ Saving"\""
+test_sync .payload.devices[0].attributes.availableToggles[3].name_values[0].name_synonym[1] "\""Low\ Energy"\""
+test_sync .payload.devices[0].attributes.availableToggles[3].name_values[0].name_synonym[2] null
+test_sync .payload.devices[0].attributes.availableToggles[3].name_values[1] null
+
+test_sync .payload.devices[0].attributes.availableToggles[4].name "\""extra_bass1"\""
+test_sync .payload.devices[0].attributes.availableToggles[4].name_values[0].lang "\""en"\""
+test_sync .payload.devices[0].attributes.availableToggles[4].name_values[0].name_synonym[0] "\""Extra\ bass"\""
+test_sync .payload.devices[0].attributes.availableToggles[4].name_values[0].name_synonym[1] "\""Loud\ bass"\""
+test_sync .payload.devices[0].attributes.availableToggles[4].name_values[0].name_synonym[2] "\""Powerful\ bass"\""
+test_sync .payload.devices[0].attributes.availableToggles[4].name_values[0].name_synonym[3] null
+test_sync .payload.devices[0].attributes.availableToggles[4].name_values[1] null
+
+test_sync .payload.devices[0].attributes.availableToggles[5] null
 
 test_sync .payload.devices[0].attributes.commandOnlyToggles false
 test_sync .payload.devices[0].attributes.queryOnlyToggles false
@@ -693,9 +726,9 @@ test_sync .payload.devices[0].attributes.commandOnlyVolume false
 echo
 
 
-execute_payload topic '{"online":false,"isArmed":false,"currentArmLevel":"","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"","currentInput":"","activeLightEffect":"","currentModeSettings":{"load_mode":"","temp_mode":""},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet_toggle":false,"extra_bass_toggle":false,"energy_saving_toggle":false},"currentVolume":40,"on":true,"isDocked":false}'
+execute_payload topic '{"online":false,"isArmed":false,"currentArmLevel":"","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"","currentInput":"","activeLightEffect":"","currentModeSettings":{"load_mode":"","temp_mode":""},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet":false,"extra_bass":false,"Energy Saving":false},"currentVolume":40,"on":true,"isDocked":false}'
 
-execute_payload topic '{"online":true,"isArmed":false,"currentArmLevel":"","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"","currentInput":"","activeLightEffect":"","currentModeSettings":{"load_mode":"","temp_mode":""},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet_toggle":false,"extra_bass_toggle":false,"energy_saving_toggle":false},"currentVolume":40,"on":true,"isDocked":false}'
+execute_payload topic '{"online":true,"isArmed":false,"currentArmLevel":"","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"","currentInput":"","activeLightEffect":"","currentModeSettings":{"load_mode":"","temp_mode":""},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet":false,"extra_bass":false,"Energy Saving":false},"currentVolume":40,"on":true,"isDocked":false}'
 test_payload .online true
 test_payload .isArmed false
 test_payload .currentArmLevel '""'
@@ -798,9 +831,11 @@ test_payload .thermostatMode '"off"'
 test_payload .thermostatTemperatureAmbient 1
 test_payload .thermostatTemperatureSetpoint 1
 test_payload .timerRemainingSec -1
-test_payload .currentToggleSettings.quiet_toggle false
-test_payload .currentToggleSettings.extra_bass_toggle false
-test_payload .currentToggleSettings.energy_saving_toggle false
+test_payload .currentToggleSettings.quiet false
+test_payload .currentToggleSettings.extra_bass false
+test_payload '.currentToggleSettings."Energy Saving"' false
+test_payload .currentToggleSettings.Silenzio false
+test_payload .currentToggleSettings.extra_bass1 false
 test_payload .currentVolume 40
 test_payload .on true
 test_payload .isDocked false
@@ -830,19 +865,19 @@ test_payload .currentStatusReport null # '[]'
 execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"Garage","priority":0,"statusCode":"lowBattery"}, {"blocking":false,"deviceTarget":"Ingresso","priority":0,"statusCode":"lowBattery"}]}'
 test_payload .currentStatusReport null # '[]'
 
-execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"Cucina","priority":0,"statusCode":"allBattery"}]}'
+execute_payload null '{"currentStatusReport":[{"blocking":false,"deviceTarget":"MultiDevice Cucina","priority":0,"statusCode":"allBattery"}]}'
 test_payload .currentStatusReport[0].blocking false
 test_payload .currentStatusReport[0].priority 0
 test_payload .currentStatusReport[0].statusCode '"allBattery"'
 test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
 
-execute_payload currentStatusReport '[{"blocking":true,"deviceTarget":"Cucina","priority":1,"statusCode":"lowBattery"}]'
+execute_payload currentStatusReport '[{"blocking":true,"deviceTarget":"MultiDevice Cucina","priority":1,"statusCode":"lowBattery"}]'
 test_payload .currentStatusReport[0].blocking true
 test_payload .currentStatusReport[0].priority 1
 test_payload .currentStatusReport[0].statusCode '"lowBattery"'
 test_payload .currentStatusReport[0].deviceTarget "\"$NODE_ID\""
 
-execute_payload StatusReport '[{"blocking":false,"deviceTarget":"Cucina","priority":2,"statusCode":"okBattery"}]'
+execute_payload StatusReport '[{"blocking":false,"deviceTarget":"MultiDevice Cucina","priority":2,"statusCode":"okBattery"}]'
 test_payload .currentStatusReport[0].blocking true
 test_payload .currentStatusReport[0].priority 1
 test_payload .currentStatusReport[0].statusCode '"lowBattery"'
@@ -852,7 +887,7 @@ test_payload .currentStatusReport[1].priority 2
 test_payload .currentStatusReport[1].statusCode '"okBattery"'
 test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
 
-execute_payload StatusReport '[{"blocking":false,"deviceTarget":"Cucina","priority":2,"statusCode":"okBattery"}]'
+execute_payload StatusReport '[{"blocking":false,"deviceTarget":"MultiDevice Cucina","priority":2,"statusCode":"okBattery"}]'
 test_payload .currentStatusReport[0].blocking true
 test_payload .currentStatusReport[0].priority 1
 test_payload .currentStatusReport[0].statusCode '"lowBattery"'
@@ -872,7 +907,7 @@ test_payload .currentStatusReport[1].priority 2
 test_payload .currentStatusReport[1].statusCode '"okBattery"'
 test_payload .currentStatusReport[1].deviceTarget "\"$NODE_ID\""
 
-execute_payload StatusReport '[{"blocking":false,"deviceTarget":"Salotto","priority":3,"statusCode":"lowBattery"}]'
+execute_payload StatusReport '[{"blocking":false,"deviceTarget":"MultiDevice Salotto","priority":3,"statusCode":"lowBattery"}]'
 test_payload .currentStatusReport[0].blocking true
 test_payload .currentStatusReport[0].priority 1
 test_payload .currentStatusReport[0].statusCode '"lowBattery"'
@@ -1015,7 +1050,7 @@ test_payload .activeZones[0] '"Bagno"'
 test_payload .activeZones[1] null
 
 execute_payload errorCode '"inSoftwareUpdate"'
-execute_error $NODE_ID appInstall youtube_application
+execute_error $NODE_ID appInstall YouTube
 test_out ".payload.commands[0].errorCode" '"inSoftwareUpdate"'
 
 execute_payload errorCode '""'
@@ -1029,13 +1064,13 @@ test_payload ".params.newApplication" '"mia_application"'
 
 execute $NODE_ID appInstall_name mia_application
 
-execute_error $NODE_ID appInstall youtube_application
+execute_error $NODE_ID appInstall YouTube
 test_out ".payload.commands[0].errorCode" '"alreadyInstalledApp"'
 
 execute_error $NODE_ID appInstall_name YouTube
 test_out ".payload.commands[0].errorCode" '"alreadyInstalledApp"'
 
-execute $NODE_ID appSearch youtube_application
+execute $NODE_ID appSearch YouTube
 
 execute $NODE_ID appSearch_name YouTube
 
@@ -1046,17 +1081,17 @@ execute_error $NODE_ID appSearch_name no_installed_app1
 test_out ".payload.commands[0].errorCode" '"noAvailableApp"'
 
 execute $NODE_ID appSelect_name "Prime Video"
-test_payload .currentApplication '"amazon_prime_video_application"'
+test_payload .currentApplication '"Amazon Prime Video"'
 test_payload .params.newApplicationName '"Prime Video"'
 
-execute $NODE_ID appSelect youtube_application
-test_payload .params.newApplication '"youtube_application"'
+execute $NODE_ID appSelect YouTube
+test_payload .params.newApplication '"YouTube"'
 
-execute $NODE_ID appSelect amazon_prime_video_application
-test_payload .params.newApplication '"amazon_prime_video_application"'
+execute $NODE_ID appSelect "Amazon\ Prime\ Video"
+test_payload .params.newApplication '"Amazon Prime Video"'
 
 execute $NODE_ID appSelect_name YouTube
-test_payload .currentApplication '"youtube_application"'
+test_payload .currentApplication '"YouTube"'
 test_payload .params.newApplicationName '"YouTube"'
 
 execute_error $NODE_ID appSelect no_installed_app2
@@ -1130,6 +1165,14 @@ test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://SMOOTH_STR
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"smooth_stream"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"SMOOTH_STREAM_APPID"'
+
+execute $NODE_ID GetCameraStream true '"webrtc"'
+test_out ".payload.commands[0].states.online" true
+test_out ".payload.commands[0].states.cameraStreamProtocol" '"webrtc"'
+test_out ".payload.commands[0].states.cameraStreamSignalingUrl" '"http://WEBRTC_SIGNALING"'
+test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
+test_out ".payload.commands[0].states.cameraStreamOffer" '"o=- 4611731400430051336 2 IN IP4 127.0.0.1..."'
+test_out ".payload.commands[0].states.cameraStreamIceServers" '"[{\"urls\":\"stun:stun.l.partner.com:19302\"},{\"urls\":\"turn:192.158.29.39:3478?transport=udp\",\"credential\":\"JZEOEt2V3Qb0y27GRntt2u2PAYA=\",\"username\":\"28224511:1379330808\"},{\"urls\":\"turn:192.158.29.39:3478?transport=tcp\",\"credential\":\"JZEOEt2V3Qb0y27GRntt2u2PAYA=\",\"username\":\"28224511:1379330808\"}]"'
 
 # Channel 
 echo
@@ -1339,14 +1382,14 @@ echo InputSelector
 execute_error $NODE_ID SetInput "usb_1" 
 test_out ".payload.commands[0].errorCode" '"unsupportedInput"'
 
-execute $NODE_ID SetInput "hdmi_2_input" 
-test_payload ".currentInput" '"hdmi_2_input"'
+execute $NODE_ID SetInput "hdmi_2" 
+test_payload ".currentInput" '"hdmi_2"'
 
 execute $NODE_ID NextInput 
-test_payload ".currentInput" '"hdmi_3_input"'
+test_payload ".currentInput" '"hdmi 3"'
 
 execute $NODE_ID PreviousInput 
-test_payload ".currentInput" '"hdmi_2_input"'
+test_payload ".currentInput" '"hdmi_2"'
 
 # LightEffects 
 echo
@@ -1857,15 +1900,15 @@ execute $NODE_ID TimerCancel
 # Toggle
 echo
 echo Toggle
-execute $NODE_ID SetToggles quiet_toggle true
-test_payload ".currentToggleSettings.quiet_toggle" true
+execute $NODE_ID SetToggles quiet true
+test_payload ".currentToggleSettings.quiet" true
 
-execute $NODE_ID SetToggles quiet_toggle false
-test_payload ".currentToggleSettings.quiet_toggle" false
+execute $NODE_ID SetToggles quiet false
+test_payload ".currentToggleSettings.quiet" false
 
-execute $NODE_ID SetToggles_all '"extra_bass_toggle": true,"energy_saving_toggle": false'
-test_payload ".currentToggleSettings.extra_bass_toggle" true
-test_payload ".currentToggleSettings.energy_saving_toggle" false
+execute $NODE_ID SetToggles_all '"extra_bass": true,"Energy Saving": false'
+test_payload ".currentToggleSettings.extra_bass" true
+test_payload '.currentToggleSettings."Energy Saving"' false
 
 # TransportControl 
 echo

@@ -41,6 +41,14 @@ module.exports = function(RED) {
         var node = this;
         this.default_lang = config.default_lang || 'en';
 
+        this._debug = function(msg) {
+            if (config.enabledebug) {
+                console.log(msg)
+            } else {
+                RED.log.debug(msg);
+            }
+        };
+
         this.app = new GoogleSmartHome(
             this,
             config.id,
@@ -64,7 +72,7 @@ module.exports = function(RED) {
             config.reportinterval,     // minutes
             parseInt(config.request_sync_delay || '0'),
             parseInt(config.set_state_delay || '0'),
-            config.enabledebug);
+            config.enabledebug, node._debug);
 
         let err = this.app.Start(RED.httpNode || RED.httpAdmin);
         if (err !== true) {
@@ -130,14 +138,6 @@ module.exports = function(RED) {
 
         this.getProperties = function(deviceIds) {
             return node.app.getProperties(deviceIds);
-        };
-
-        this._debug = function(msg) {
-            if (config.enabledebug) {
-                console.log(msg)
-            } else {
-                RED.log.debug(msg);
-            }
         };
 
         this.on('close', function(removed, done) {
