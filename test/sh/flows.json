@@ -12,7 +12,7 @@
         "name": "Google",
         "enabledebug": true,
         "default_lang": "it",
-        "usegooglelogin": true,
+        "usegooglelogin": false,
         "usehttpnoderoot": true,
         "port": "",
         "httppath": "smarthome",
@@ -58,7 +58,7 @@
         "id": "3b5fad59.292ad2",
         "type": "debug",
         "z": "c0151475.218f98",
-        "name": "",
+        "name": "msg1",
         "active": false,
         "tosidebar": true,
         "console": false,
@@ -70,45 +70,6 @@
         "x": 1070,
         "y": 340,
         "wires": []
-    },
-    {
-        "id": "1a88512b.3271af",
-        "type": "function",
-        "z": "c0151475.218f98",
-        "name": "",
-        "func": "let msg1={\"topic\": msg.topic};\nlet lang=msg.lang || 'en';\nlet toggles = [];\nmsg1.payload = toggles;\nmsg.payload.forEach(toggle => {\n    if (typeof toggle == \"string\") {\n        let new_toggle = {};\n        let key = toggle.replace(/ /g, '_');\n        if (!key.toLowerCase().endsWith(\"toggle\")) {\n            key = key + \"_toggle\";\n        }\n        new_toggle['name'] = key.toLowerCase();\n        new_toggle['name_values'] = [{\n            \"lang\": lang,\n            \"name_synonym\": [ toggle ]\n        }];\n        toggles.push(new_toggle);\n    } else if (typeof toggle == \"object\") {\n        let key = toggle['key'];\n        let names = toggle['names'];\n        if (key == undefined) {\n            key = names[0].replace(/ /g, '_');\n        }\n        if (!key.toLowerCase().endsWith(\"toggle\")) {\n            key = key + \"_toggle\";\n        }\n        let new_toggle = {};\n        new_toggle['name'] = key.toLowerCase();\n        new_toggle['name_values'] = [{\n            \"lang\": lang,\n            \"name_synonym\": names\n        }];\n        toggles.push(new_toggle);\n    }\n});\n\nreturn msg1;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 340,
-        "y": 660,
-        "wires": [
-            [
-                "a5782b1b.e120f8",
-                "bab53c06.fc9c3"
-            ]
-        ]
-    },
-    {
-        "id": "b1733921.983838",
-        "type": "function",
-        "z": "c0151475.218f98",
-        "name": "",
-        "func": "const topic = msg.topic.toLowerCase().slice(0, -1);\nlet msg1={\"topic\": msg.topic};\nlet key_suffix = topic.startsWith(\"available\") ? topic.substring(9) : topic;\nlet lang=msg.lang || undefined;\nlet objs = [];\nmsg1.payload = objs;\nmsg.payload.forEach(obj => {\n    if (typeof obj == \"string\") {\n        let new_obj = {};\n        let key = obj.replace(/ /g, '_').toLowerCase();\n        if (!key.endsWith(topic)) {\n            key = key + \"_\" + key_suffix;\n        }\n        new_obj['key'] = key;\n        new_obj['names'] = [{\n            \"lang\": lang,\n            \"name_synonym\": [ obj ]\n        }];\n        objs.push(new_obj);\n    } else if (typeof obj == \"object\") {\n        let new_obj = {};\n        let key = obj['key'];\n        let names = obj['names'];\n        if (key == undefined) {\n            key = names[0];\n        }\n        key = key.replace(/ /g, '_').toLowerCase();\n        if (!key.endsWith(topic)) {\n            key = key + \"_\" + key_suffix;\n        }\n        new_obj['key'] = key;\n        let new_objt = {};\n        new_obj['key'] = key;\n        new_obj['names'] = [{\n            \"lang\": lang,\n            \"name_synonym\": names\n        }];\n        objs.push(new_obj);\n    }\n});\n\nreturn msg1;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 380,
-        "y": 280,
-        "wires": [
-            [
-                "a5782b1b.e120f8",
-                "bab53c06.fc9c3"
-            ]
-        ]
     },
     {
         "id": "d1f484f4.4d7dc8",
@@ -131,11 +92,10 @@
         "topic": "AvailableChannels",
         "payload": "[{\"key\":\"rai1\",\"names\":[\"Rai 1\"],\"number\":\"1\"},{\"key\":\"rai1_hd\",\"names\":[\"Rai 1 HD\"],\"number\":\"501\"},{\"key\":\"rai2\",\"names\":[\"Rai 2\"],\"number\":\"2\"},{\"key\":\"rai2_hd\",\"names\":[\"Rai 2 HD\"],\"number\":\"502\"},{\"key\":\"rai3\",\"names\":[\"Rai 3\"],\"number\":\"3\"},{\"key\":\"rai3_hd\",\"names\":[\"Rai 3 HD\"],\"number\":\"503\"},{\"key\":\"realtime\",\"names\":[\"Realtime\"],\"number\":\"31\"}]",
         "payloadType": "json",
-        "x": 130,
-        "y": 340,
+        "x": 190,
+        "y": 380,
         "wires": [
             [
-                "a5782b1b.e120f8",
                 "bab53c06.fc9c3"
             ]
         ]
@@ -161,11 +121,10 @@
         "topic": "AvailableModes",
         "payload": "[{\"name\":\"load_mode\",\"name_values\":[{\"name_synonym\":[\"load\",\"size\",\"load size\"],\"lang\":\"en\"}],\"settings\":[{\"setting_name\":\"small_load\",\"setting_values\":[{\"setting_synonym\":[\"small\",\"half\"],\"lang\":\"en\"}]},{\"setting_name\":\"medium_load\",\"setting_values\":[{\"setting_synonym\":[\"medium\",\"normal\"],\"lang\":\"en\"}]},{\"setting_name\":\"large_load\",\"setting_values\":[{\"setting_synonym\":[\"large\",\"full\"],\"lang\":\"en\"}]}],\"ordered\":true},{\"name\":\"temp_mode\",\"name_values\":[{\"name_synonym\":[\"temperature\",\"temp\"],\"lang\":\"en\"}],\"settings\":[{\"setting_name\":\"hot_temp\",\"setting_values\":[{\"setting_synonym\":[\"hot\",\"white\"],\"lang\":\"en\"}]},{\"setting_name\":\"warm_temp\",\"setting_values\":[{\"setting_synonym\":[\"warm\",\"color\"],\"lang\":\"en\"}]},{\"setting_name\":\"cold_temp\",\"setting_values\":[{\"setting_synonym\":[\"cold\",\"delicate\"],\"lang\":\"en\"}]}],\"ordered\":false}]",
         "payloadType": "json",
-        "x": 120,
+        "x": 200,
         "y": 620,
         "wires": [
             [
-                "a5782b1b.e120f8",
                 "bab53c06.fc9c3"
             ]
         ]
@@ -189,13 +148,13 @@
         "once": true,
         "onceDelay": "5",
         "topic": "AvailableToggles",
-        "payload": "[\"quiet\",{\"key\":\"extra_bass\",\"names\":[\"Extra bass\",\"Loud bass\",\"Powerful bass\"]},{\"names\":[\"Energy Saving\",\"Low Energy\"]}]",
+        "payload": "[\"quiet\",[\"Silenzio\",\"Basso\"],{\"name\":\"extra_bass\",\"name_values\":[\"Extra bass\",\"Loud bass\",\"Powerful bass\"]},{\"lang\":\"en\",\"name_values\":[\"Energy Saving\",\"Low Energy\"]},{\"name\":\"extra_bass1\",\"name_values\":[{\"lang\":\"en\",\"name_synonym\":[\"Extra bass\",\"Loud bass\",\"Powerful bass\"]}]}]",
         "payloadType": "json",
-        "x": 130,
+        "x": 190,
         "y": 660,
         "wires": [
             [
-                "1a88512b.3271af"
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -220,11 +179,11 @@
         "topic": "AvailableInputs",
         "payload": "[\"hdmi 1\",{\"key\":\"hdmi_2\",\"names\":[\"hdmi 2\",\"Second HDMI\",\"DVD Reader\",\"DVD\"]},{\"names\":[\"hdmi 3\",\"Third HDMI\",\"Playstation 5\",\"PS5\"]}]",
         "payloadType": "json",
-        "x": 120,
-        "y": 260,
+        "x": 200,
+        "y": 300,
         "wires": [
             [
-                "b1733921.983838"
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -249,11 +208,11 @@
         "topic": "AvailableApplications",
         "payload": "[\"YouTube\",{\"key\":\"video\",\"names\":[\"Google Video\",\"Video\"]},{\"names\":[\"Amazon Prime Video\",\"Prime Video\"]}]",
         "payloadType": "json",
-        "x": 140,
-        "y": 300,
+        "x": 180,
+        "y": 340,
         "wires": [
             [
-                "b1733921.983838"
+                "bab53c06.fc9c3"
             ]
         ]
     },
@@ -277,12 +236,12 @@
         "trait_toggles": true,
         "trait_brightness": true,
         "trait_colorsetting": true,
-        "appselector_file": "applications_<id>.json",
-        "appselector_type": "str",
-        "channel_file": "channels_<id>.json",
-        "channel_type": "str",
-        "inputselector_file": "inputs_<id>.json",
-        "inputselector_type": "str",
+        "appselector_file": "[\"YouTube\",{\"key\":\"video\",\"names\":[\"Google Video\",\"Video\"]},{\"names\":[\"Amazon Prime Video\",\"Prime Video\"]}]",
+        "appselector_type": "json",
+        "channel_file": "[{\"key\":\"rai1\",\"names\":[\"Rai 1\"],\"number\":\"1\"},{\"key\":\"rai1_hd\",\"names\":[\"Rai 1 HD\"],\"number\":\"501\"},{\"key\":\"rai2\",\"names\":[\"Rai 2\"],\"number\":\"2\"},{\"key\":\"rai2_hd\",\"names\":[\"Rai 2 HD\"],\"number\":\"502\"},{\"key\":\"rai3\",\"names\":[\"Rai 3\"],\"number\":\"3\"},{\"key\":\"rai3_hd\",\"names\":[\"Rai 3 HD\"],\"number\":\"503\"},{\"key\":\"realtime\",\"names\":[\"Realtime\"],\"number\":\"31\"}]",
+        "channel_type": "json",
+        "inputselector_file": "[\"hdmi 1\",{\"key\":\"hdmi_2\",\"names\":[\"hdmi 2\",\"Second HDMI\",\"DVD Reader\",\"DVD\"]},{\"names\":[\"hdmi 3\",\"Third HDMI\",\"Playstation 5\",\"PS5\"]}]",
+        "inputselector_type": "json",
         "command_only_input_selector": false,
         "ordered_inputs": false,
         "support_activity_state": false,
@@ -310,11 +269,11 @@
         "color_model": "rgb_temp",
         "temperature_min_k": 2000,
         "temperature_max_k": 9000,
-        "modes_file": "modes_<id>.json",
-        "modes_type": "str",
+        "modes_file": "[{\"name\":\"load_mode\",\"name_values\":[{\"name_synonym\":[\"load\",\"size\",\"load size\"],\"lang\":\"en\"}],\"settings\":[{\"setting_name\":\"small_load\",\"setting_values\":[{\"setting_synonym\":[\"small\",\"half\"],\"lang\":\"en\"}]},{\"setting_name\":\"medium_load\",\"setting_values\":[{\"setting_synonym\":[\"medium\",\"normal\"],\"lang\":\"en\"}]},{\"setting_name\":\"large_load\",\"setting_values\":[{\"setting_synonym\":[\"large\",\"full\"],\"lang\":\"en\"}]}],\"ordered\":true},{\"name\":\"temp_mode\",\"name_values\":[{\"name_synonym\":[\"temperature\",\"temp\"],\"lang\":\"en\"}],\"settings\":[{\"setting_name\":\"hot_temp\",\"setting_values\":[{\"setting_synonym\":[\"hot\",\"white\"],\"lang\":\"en\"}]},{\"setting_name\":\"warm_temp\",\"setting_values\":[{\"setting_synonym\":[\"warm\",\"color\"],\"lang\":\"en\"}]},{\"setting_name\":\"cold_temp\",\"setting_values\":[{\"setting_synonym\":[\"cold\",\"delicate\"],\"lang\":\"en\"}]}],\"ordered\":false}]",
+        "modes_type": "json",
         "command_query_modes": "",
-        "toggles_file": "toggles_<id>.json",
-        "toggles_type": "str",
+        "toggles_file": "[\"quiet\",[\"Silenzio\",\"Basso\"],{\"name\":\"extra_bass\",\"name_values\":[\"Extra bass\",\"Loud bass\",\"Powerful bass\"]},{\"lang\":\"en\",\"name_values\":[\"Energy Saving\",\"Low Energy\"]},{\"name\":\"extra_bass1\",\"name_values\":[{\"lang\":\"en\",\"name_synonym\":[\"Extra bass\",\"Loud bass\",\"Powerful bass\"]}]}]",
+        "toggles_type": "json",
         "command_query_toggles": "",
         "trait_camerastream": true,
         "hls": "http://HLS",
@@ -436,15 +395,15 @@
             "WARM",
             "WHIP"
         ],
-        "food_presets_file": "foodPresets_<id>.json",
-        "food_presets_type": "str",
+        "food_presets_file": "[{\"food_preset_name\":\"white_rice\",\"supported_units\":[\"CUPS\"],\"food_synonyms\":[{\"synonym\":[\"White Rice\",\"Rice\"],\"lang\":\"en\"}]},{\"food_preset_name\":\"brown_rice\",\"supported_units\":[\"CUPS\"],\"food_synonyms\":[{\"synonym\":[\"Brown Rice\"],\"lang\":\"en\"}]}]",
+        "food_presets_type": "json",
         "trait_fanspeed": true,
         "reversible": false,
-        "supports_fan_speed_percent": true,
+        "supports_fan_speed_percent": false,
         "fan_speeds_ordered": true,
         "command_only_fanspeed": false,
-        "available_fan_speeds_file": "availableFanSpeeds_<id>.json",
-        "available_fan_speeds_type": "str",
+        "available_fan_speeds_file": "[{\"speed_name\":\"speed_low\",\"speed_values\":[{\"speed_synonym\":[\"low\",\"slow\"],\"lang\":\"en\"},{\"speed_synonym\":[\"lento\",\"basso\"]}]},{\"speed_name\":\"speed_high\",\"speed_values\":[{\"speed_synonym\":[\"high\",\"fast\"],\"lang\":\"en\"},{\"speed_synonym\":[\"veloce\",\"massimo\"]}]}]",
+        "available_fan_speeds_type": "json",
         "trait_sensorstate": true,
         "sensor_states_supported": [
             "AirQuality",
@@ -464,22 +423,22 @@
         ],
         "arm_levels_ordered": true,
         "trait_fill": true,
-        "available_fill_levels_file": "availableFillLevels_<id>.json",
-        "available_fill_levels_type": "str",
+        "available_fill_levels_file": "[{\"level_name\":\"half_level\",\"level_values\":[{\"level_synonym\":[\"half\",\"half way\",\"one half\"],\"lang\":\"en\"}]},{\"level_name\":\"full_level\",\"level_values\":[{\"level_synonym\":[\"full\",\"all the way\",\"complete\"],\"lang\":\"en\"}]}]",
+        "available_fill_levels_type": "json",
         "supports_fill_percent": false,
         "ordered_fill_levels": true,
         "trait_armdisarm": true,
-        "available_arm_levels_file": "availableArmLevels_<id>.json",
-        "available_arm_levels_type": "str",
+        "available_arm_levels_file": "[{\"level_name\":\"L1\",\"level_values\":[{\"level_synonym\":[\"home and guarding\",\"SL1\"],\"lang\":\"en\"},{\"level_synonym\":[\"Allarme in casa\",\"SL1\"],\"lang\":\"it\"}]},{\"level_name\":\"L2\",\"level_values\":[{\"level_synonym\":[\"away and guarding\",\"SL2\"],\"lang\":\"en\"},{\"level_synonym\":[\"Allarme fuori casa\",\"SL2\"]}]}]",
+        "available_arm_levels_type": "json",
         "trait_energystorage": true,
         "is_rechargeable": true,
         "query_only_energy_storage": false,
         "energy_storage_distance_unit_for_ux": "KILOMETERS",
         "trait_dispense": true,
-        "supported_dispense_items_file": "supportedDispenseItems_<id>.json",
-        "supported_dispense_items_type": "str",
-        "supported_dispense_presets_file": "supportedDispensePresets_<id>.json",
-        "supported_dispense_presets_type": "str",
+        "supported_dispense_items_file": "[{\"item_name\":\"water\",\"item_name_synonyms\":[{\"lang\":\"en\",\"synonyms\":[\"water\"]}],\"supported_units\":[\"TEASPOONS\",\"TABLESPOONS\",\"FLUID_OUNCES\",\"CUPS\",\"PINTS\",\"QUARTS\",\"GALLONS\",\"MILLILITERS\",\"LITERS\",\"DECILITERS\"],\"default_portion\":{\"amount\":2,\"unit\":\"CUPS\"}}]",
+        "supported_dispense_items_type": "json",
+        "supported_dispense_presets_file": "[{\"preset_name\":\"cat_bowl\",\"preset_name_synonyms\":[{\"lang\":\"en\",\"synonyms\":[\"cat water bowl\",\"cat water dish\",\"cat water cup\"]}]},{\"preset_name\":\"glass_1\",\"preset_name_synonyms\":[{\"lang\":\"en\",\"synonyms\":[\"glass of water\",\"glass\"]}]}]",
+        "supported_dispense_presets_type": "json",
         "trait_networkcontrol": true,
         "supports_enabling_guest_network": false,
         "supports_disabling_guest_network": false,
@@ -543,11 +502,10 @@
         "topic": "AvailableFanSpeeds",
         "payload": "[{\"speed_name\":\"speed_low\",\"speed_values\":[{\"speed_synonym\":[\"low\",\"slow\"],\"lang\":\"en\"}]},{\"speed_name\":\"speed_high\",\"speed_values\":[{\"speed_synonym\":[\"high\",\"fast\"],\"lang\":\"en\"}]}]",
         "payloadType": "json",
-        "x": 140,
-        "y": 460,
+        "x": 180,
+        "y": 500,
         "wires": [
             [
-                "a5782b1b.e120f8",
                 "bab53c06.fc9c3"
             ]
         ]
@@ -573,11 +531,10 @@
         "topic": "AvailableFillLevels",
         "payload": "[{\"level_name\":\"half_level\",\"level_values\":[{\"level_synonym\":[\"half\",\"half way\",\"one half\"],\"lang\":\"en\"}]},{\"level_name\":\"full_level\",\"level_values\":[{\"level_synonym\":[\"full\",\"all the way\",\"complete\"],\"lang\":\"en\"}]}]",
         "payloadType": "json",
-        "x": 130,
-        "y": 500,
+        "x": 190,
+        "y": 540,
         "wires": [
             [
-                "a5782b1b.e120f8",
                 "bab53c06.fc9c3"
             ]
         ]
@@ -638,11 +595,10 @@
         "topic": "AvailableFoodPresets",
         "payload": "[{\"food_preset_name\":\"white_rice\",\"supported_units\":[\"CUPS\"],\"food_synonyms\":[{\"synonym\":[\"White Rice\",\"Rice\"],\"lang\":\"en\"}]},{\"food_preset_name\":\"brown_rice\",\"supported_units\":[\"CUPS\"],\"food_synonyms\":[{\"synonym\":[\"Brown Rice\"],\"lang\":\"en\"}]}]",
         "payloadType": "json",
-        "x": 140,
-        "y": 540,
+        "x": 180,
+        "y": 580,
         "wires": [
             [
-                "a5782b1b.e120f8",
                 "bab53c06.fc9c3"
             ]
         ]
@@ -668,7 +624,7 @@
         "topic": "GuestNetworkPassword",
         "payload": "1234567890",
         "payloadType": "str",
-        "x": 150,
+        "x": 170,
         "y": 740,
         "wires": [
             [
@@ -698,11 +654,10 @@
         "topic": "SupportedDispenseItems",
         "payload": "[{\"item_name\":\"water\",\"item_name_synonyms\":[{\"lang\":\"en\",\"synonyms\":[\"water\"]}],\"supported_units\":[\"TEASPOONS\",\"TABLESPOONS\",\"FLUID_OUNCES\",\"CUPS\",\"PINTS\",\"QUARTS\",\"GALLONS\",\"MILLILITERS\",\"LITERS\",\"DECILITERS\"],\"default_portion\":{\"amount\":2,\"unit\":\"CUPS\"}}]",
         "payloadType": "json",
-        "x": 150,
-        "y": 380,
+        "x": 170,
+        "y": 420,
         "wires": [
             [
-                "a5782b1b.e120f8",
                 "bab53c06.fc9c3"
             ]
         ]
@@ -729,10 +684,9 @@
         "payload": "[{\"preset_name\":\"cat_bowl\",\"preset_name_synonyms\":[{\"lang\":\"en\",\"synonyms\":[\"cat water bowl\",\"cat water dish\",\"cat water cup\"]}]},{\"preset_name\":\"glass_1\",\"preset_name_synonyms\":[{\"lang\":\"en\",\"synonyms\":[\"glass of water\",\"glass\"]}]}]",
         "payloadType": "json",
         "x": 160,
-        "y": 420,
+        "y": 460,
         "wires": [
             [
-                "a5782b1b.e120f8",
                 "bab53c06.fc9c3"
             ]
         ]
@@ -758,12 +712,12 @@
         "topic": "DispenseItems",
         "payload": "[{\"itemName\":\"water\",\"amountRemaining\":{\"amount\":10,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":11,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"cat_bowl\",\"amountRemaining\":{\"amount\":12,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":13,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false},{\"itemName\":\"glass_1\",\"amountRemaining\":{\"amount\":14,\"unit\":\"NO_UNITS\"},\"amountLastDispensed\":{\"amount\":15,\"unit\":\"NO_UNITS\"},\"isCurrentlyDispensing\":false}]",
         "payloadType": "json",
-        "x": 120,
+        "x": 200,
         "y": 780,
         "wires": [
             [
-                "a5782b1b.e120f8",
-                "bab53c06.fc9c3"
+                "bab53c06.fc9c3",
+                "a5782b1b.e120f8"
             ]
         ]
     },
@@ -788,7 +742,7 @@
         "topic": "ObjectDetection",
         "payload": "{\"named\":\"Alice\"}",
         "payloadType": "json",
-        "x": 130,
+        "x": 190,
         "y": 860,
         "wires": [
             [
@@ -820,7 +774,8 @@
         "y": 180,
         "wires": [
             [
-                "9edf3963.39cb08"
+                "9edf3963.39cb08",
+                "5dab6f5e.77034"
             ]
         ]
     },
@@ -867,11 +822,10 @@
         "topic": "AvailableArmLevels",
         "payload": "[{\"level_name\":\"L1\",\"level_values\":[{\"level_synonym\":[\"home and guarding\",\"SL1\"],\"lang\":\"en\"},{\"level_synonym\":[\"Allarme in casa\",\"SL1\"],\"lang\":\"it\"}]},{\"level_name\":\"L2\",\"level_values\":[{\"level_synonym\":[\"away and guarding\",\"SL2\"],\"lang\":\"en\"},{\"level_synonym\":[\"Allarme fuori casa\",\"SL2\"]}]}]",
         "payloadType": "json",
-        "x": 140,
+        "x": 180,
         "y": 700,
         "wires": [
             [
-                "a5782b1b.e120f8",
                 "bab53c06.fc9c3"
             ]
         ]
@@ -897,7 +851,7 @@
         "topic": "CameraStreamAuthToken",
         "payload": "Auth Token",
         "payloadType": "str",
-        "x": 150,
+        "x": 170,
         "y": 900,
         "wires": [
             [
@@ -955,7 +909,7 @@
         "topic": "StatusReport",
         "payload": "{\"blocking\":true,\"deviceTarget\":\"Cucina\",\"priority\":0,\"statusCode\":\"needsSoftwareUpdate\"}",
         "payloadType": "json",
-        "x": 110,
+        "x": 210,
         "y": 980,
         "wires": [
             [
@@ -984,7 +938,7 @@
         "topic": "StatusReport",
         "payload": "[]",
         "payloadType": "json",
-        "x": 130,
+        "x": 190,
         "y": 1020,
         "wires": [
             [
@@ -1319,8 +1273,8 @@
         "onceDelay": 0.1,
         "topic": "getState",
         "payloadType": "str",
-        "x": 100,
-        "y": 180,
+        "x": 220,
+        "y": 220,
         "wires": [
             [
                 "a5782b1b.e120f8"
@@ -1344,8 +1298,8 @@
         "onceDelay": 0.1,
         "topic": "getState",
         "payloadType": "str",
-        "x": 100,
-        "y": 220,
+        "x": 220,
+        "y": 260,
         "wires": [
             [
                 "bab53c06.fc9c3"
@@ -1356,7 +1310,7 @@
         "id": "b8fbf920.d74d68",
         "type": "debug",
         "z": "c0151475.218f98",
-        "name": "",
+        "name": "msg2",
         "active": false,
         "tosidebar": true,
         "console": false,
@@ -1525,7 +1479,7 @@
         "topic": "errorCode",
         "payload": "inSoftwareUpdate",
         "payloadType": "str",
-        "x": 570,
+        "x": 510,
         "y": 240,
         "wires": [
             [
@@ -1549,7 +1503,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "errorCode",
-        "x": 600,
+        "x": 540,
         "y": 280,
         "wires": [
             [
@@ -1575,7 +1529,7 @@
         "payload": "{\"on\":true}",
         "payloadType": "json",
         "x": 550,
-        "y": 340,
+        "y": 360,
         "wires": [
             [
                 "a5782b1b.e120f8"
@@ -1600,7 +1554,7 @@
         "payload": "{\"on\":false}",
         "payloadType": "json",
         "x": 550,
-        "y": 300,
+        "y": 320,
         "wires": [
             [
                 "a5782b1b.e120f8"
@@ -1622,6 +1576,40 @@
         "statusType": "auto",
         "x": 1090,
         "y": 520,
+        "wires": []
+    },
+    {
+        "id": "77e0ccbc.6ea9b4",
+        "type": "function",
+        "z": "c0151475.218f98",
+        "name": "",
+        "func": "const topic = msg.topic.toLowerCase().slice(0, -1);\nlet msg1={\"topic\": msg.topic};\nlet key_suffix = topic.startsWith(\"available\") ? topic.substring(9) : topic;\nlet lang=msg.lang || undefined;\nlet objs = [];\nmsg1.payload = objs;\nmsg.payload.forEach(obj => {\n    if (typeof obj == \"string\") {\n        let new_obj = {};\n        let key = obj.replace(/ /g, '_').toLowerCase();\n        if (!key.endsWith(topic)) {\n            key = key + \"_\" + key_suffix;\n        }\n        new_obj['key'] = key;\n        new_obj['names'] = [{\n            \"lang\": lang,\n            \"name_synonym\": [ obj ]\n        }];\n        objs.push(new_obj);\n    } else if (typeof obj == \"object\") {\n        let new_obj = {};\n        let key = obj['key'];\n        let names = obj['names'];\n        if (key == undefined) {\n            key = names[0];\n        }\n        key = key.replace(/ /g, '_').toLowerCase();\n        if (!key.endsWith(topic)) {\n            key = key + \"_\" + key_suffix;\n        }\n        new_obj['key'] = key;\n        let new_objt = {};\n        new_obj['key'] = key;\n        new_obj['names'] = [{\n            \"lang\": lang,\n            \"name_synonym\": names\n        }];\n        objs.push(new_obj);\n    }\n});\n\nreturn msg1;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5dab6f5e.77034",
+        "type": "debug",
+        "z": "c0151475.218f98",
+        "name": "imsg",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 120,
         "wires": []
     }
 ]
