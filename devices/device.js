@@ -45,6 +45,7 @@ module.exports = function (RED) {
 
             this.device = {};
             this.client = config.client;
+            this.name = config.name || config.id;
             this.clientConn = RED.nodes.getNode(this.client);
             this._debug(".constructor config " + JSON.stringify(config));
 
@@ -590,7 +591,7 @@ module.exports = function (RED) {
                 if (this.food_presets_type !== 'json') {
                     this.food_presets = this.to_food_presets(this.loadJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), []));
                 } else {
-                    this.food_presets = this.to_food_presets(this.loadJson('Food presets', this.food_presets_file, []));
+                    this.food_presets = this.to_food_presets(this.parseJson('Food presets', this.food_presets_file, []));
                 }
             } else {
                 this.food_presets = [];
@@ -601,12 +602,12 @@ module.exports = function (RED) {
                 if (this.supported_dispense_items_type !== 'json') {
                     this.supported_dispense_items = this.to_supported_dispense_items(this.loadJson('Supported dispense', this.supported_dispense_items_file.replace(/<id>/g, this.id), []));
                 } else {
-                    this.supported_dispense_items = this.to_supported_dispense_items(this.loadJson('Supported dispense', this.supported_dispense_items_file, []));
+                    this.supported_dispense_items = this.to_supported_dispense_items(this.parseJson('Supported dispense', this.supported_dispense_items_file, []));
                 }
                 if (this.supported_dispense_presets_type !== 'json') {
                     this.supported_dispense_presets = this.to_supported_dispense_presets(this.loadJson('Supported dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), []));
                 } else {
-                    this.supported_dispense_presets = this.to_supported_dispense_presets(this.loadJson('Supported dispense presets', this.supported_dispense_presets_file, []));
+                    this.supported_dispense_presets = this.to_supported_dispense_presets(this.parseJson('Supported dispense presets', this.supported_dispense_presets_file, []));
                 }
             } else {
                 this.supported_dispense_items = [];
@@ -618,7 +619,7 @@ module.exports = function (RED) {
                 if (this.available_fan_speeds_type !== 'json') {
                     this.available_fan_speeds = this.to_available_fan_speeds(this.loadJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), []));
                 } else {
-                    this.available_fan_speeds = this.to_available_fan_speeds(this.loadJson('Fan speeds', this.available_fan_speeds_file, []));
+                    this.available_fan_speeds = this.to_available_fan_speeds(this.parseJson('Fan speeds', this.available_fan_speeds_file, []));
                 }
             } else {
                 this.available_fan_speeds = [];
@@ -629,7 +630,7 @@ module.exports = function (RED) {
                 if (this.available_fill_levels_type !== 'json') {
                     this.available_fill_levels = this.to_available_fill_levels(this.loadJson('Available fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), []));
                 } else {
-                    this.available_fill_levels = this.to_available_fill_levels(this.loadJson('Available fill levels', this.available_fill_levels_file, []));
+                    this.available_fill_levels = this.to_available_fill_levels(this.parseJson('Available fill levels', this.available_fill_levels_file, []));
                 }
             } else {
                 this.available_fill_levels = [];
@@ -640,7 +641,7 @@ module.exports = function (RED) {
                 if (this.inputselector_type !== 'json') {
                     this.available_inputs = this.to_available_inputs(this.loadJson('Available inputs', this.inputselector_file.replace(/<id>/g, this.id), []));
                 } else {
-                    this.available_inputs = this.to_available_inputs(this.loadJson('Available inputs', this.inputselector_file, []));
+                    this.available_inputs = this.to_available_inputs(this.parseJson('Available inputs', this.inputselector_file, []));
                 }
             } else {
                 this.available_inputs = [];
@@ -651,7 +652,7 @@ module.exports = function (RED) {
                 if (this.modes_type !== 'json') {
                     this.available_modes = this.to_available_modes(this.loadJson('Modes', this.modes_file.replace(/<id>/g, this.id), []));
                 } else {
-                    this.available_modes = this.to_available_modes(this.loadJson('Modes', this.modes_file, []));
+                    this.available_modes = this.to_available_modes(this.parseJson('Modes', this.modes_file, []));
                 }
             } else {
                 this.available_modes = [];
@@ -662,7 +663,7 @@ module.exports = function (RED) {
                 if (this.toggles_type !== 'json') {
                     this.available_toggles = this.to_available_toggles(this.loadJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), []));
                 } else {
-                    this.available_toggles = this.to_available_toggles(this.loadJson('Toggles', this.toggles_file, []));
+                    this.available_toggles = this.to_available_toggles(this.parseJson('Toggles', this.toggles_file, []));
                 }
             } else {
                 this.available_toggles = [];
@@ -697,7 +698,7 @@ module.exports = function (RED) {
         }
 
         _debug(msg) {
-            msg = 'google-smarthome:DeviceNode' + msg;
+            msg = 'google-smarthome:DeviceNode[' + this.name + '] ' + msg;
             if (this.clientConn && typeof this.clientConn._debug === 'function') {
                 this.clientConn._debug(msg);
             } else {
@@ -1848,12 +1849,14 @@ module.exports = function (RED) {
                     }
                 } else if (upper_topic === 'AVAILABLEAPPLICATIONS') {
                     if (this.trait.appselector) {
-                        if (typeof msg.payload === 'undefined') {
-                            this.available_applications = this.to_available_applications(this.loadJson('Applications', this.appselector_file.replace(/<id>/g, this.id), []));
-                        } else if (this.appselector_type !== 'json') {
-                            this.available_applications = this.to_available_applications(msg.payload);
-                            if (!this.writeJson('Applications', this.appselector_file.replace(/<id>/g, this.id), this.available_applications)) {
-                                RED.log.error("Error saving Applications to file " + this.appselector_file.replace(/<id>/g, this.id));
+                        if (this.appselector_type !== 'json') {
+                            if (typeof msg.payload === 'undefined') {
+                                this.available_applications = this.to_available_applications(this.loadJson('Applications', this.appselector_file.replace(/<id>/g, this.id), []));
+                            } else {
+                                this.available_applications = this.to_available_applications(msg.payload);
+                                if (!this.writeJson('Applications', this.appselector_file.replace(/<id>/g, this.id), this.available_applications)) {
+                                    RED.log.error("Error saving Applications to file " + this.appselector_file.replace(/<id>/g, this.id));
+                                }
                             }
                         }
                     } else {
@@ -1864,12 +1867,14 @@ module.exports = function (RED) {
                     this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEARMLEVELS') {
                     if (this.trait.armdisarm) {
-                        if (typeof msg.payload === 'undefined') {
-                            this.available_arm_levels = this.to_available_arm_levels(this.loadJson('Arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []));
-                        } else if (this.available_arm_levels_type != 'json') {
-                            this.available_arm_levels = this.to_available_arm_levels(msg.payload);
-                            if (!this.writeJson('Arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), this.available_arm_levels)) {
-                                RED.log.error("Error saving Arm levels to file " + this.available_arm_levels_file.replace(/<id>/g, this.id));
+                        if (this.available_arm_levels_type !== 'json') {
+                            if (typeof msg.payload === 'undefined') {
+                                this.available_arm_levels = this.to_available_arm_levels(this.loadJson('Arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []));
+                            } else {
+                                this.available_arm_levels = this.to_available_arm_levels(msg.payload);
+                                if (!this.writeJson('Arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), this.available_arm_levels)) {
+                                    RED.log.error("Error saving Arm levels to file " + this.available_arm_levels_file.replace(/<id>/g, this.id));
+                                }
                             }
                         }
                     } else {
@@ -1880,12 +1885,14 @@ module.exports = function (RED) {
                     this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLECHANNELS') {
                     if (this.trait.channel) {
-                        if (typeof msg.payload === 'undefined') {
-                            this.available_channels = this.to_available_channels(this.loadJson('Channels', this.channel_file.replace(/<id>/g, this.id), []));
-                        } else if (this.channel_type != 'json')  {
-                            this.available_channels = this.to_available_channels(msg.payload);
-                            if (!this.writeJson('Channels', this.channel_file.replace(/<id>/g, this.id), this.available_channels)) {
-                                RED.log.error("Error saving Channels to file " + this.channel_file.replace(/<id>/g, this.id));
+                        if (this.channel_type !== 'json') {
+                            if (typeof msg.payload === 'undefined') {
+                                this.available_channels = this.to_available_channels(this.loadJson('Channels', this.channel_file.replace(/<id>/g, this.id), []));
+                            } else {
+                                this.available_channels = this.to_available_channels(msg.payload);
+                                if (!this.writeJson('Channels', this.channel_file.replace(/<id>/g, this.id), this.available_channels)) {
+                                    RED.log.error("Error saving Channels to file " + this.channel_file.replace(/<id>/g, this.id));
+                                }
                             }
                         }
                     } else {
@@ -1896,12 +1903,14 @@ module.exports = function (RED) {
                     this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'SUPPORTEDDISPENSEITEMS') {
                     if (this.trait.dispense) {
-                        if (typeof msg.payload === 'undefined') {
-                            this.supported_dispense_items = this.to_supported_dispense_items(this.loadJson('Dispense items', this.supported_dispense_items_file.replace(/<id>/g, this.id), []));
-                        } else if (this.supported_dispense_items_type != 'json')  {
-                            this.supported_dispense_items = this.to_supported_dispense_items(msg.payload);
-                            if (!this.writeJson('Dispense items', this.supported_dispense_items_file.replace(/<id>/g, this.id), this.supported_dispense_items)) {
-                                RED.log.error("Error saving Dispense items to file " + this.supported_dispense_items_file.replace(/<id>/g, this.id));
+                        if (this.supported_dispense_items_type !== 'json') {
+                            if (typeof msg.payload === 'undefined') {
+                                this.supported_dispense_items = this.to_supported_dispense_items(this.loadJson('Dispense items', this.supported_dispense_items_file.replace(/<id>/g, this.id), []));
+                            } else {
+                                this.supported_dispense_items = this.to_supported_dispense_items(msg.payload);
+                                if (!this.writeJson('Dispense items', this.supported_dispense_items_file.replace(/<id>/g, this.id), this.supported_dispense_items)) {
+                                    RED.log.error("Error saving Dispense items to file " + this.supported_dispense_items_file.replace(/<id>/g, this.id));
+                                }
                             }
                         }
                     } else {
@@ -1913,12 +1922,14 @@ module.exports = function (RED) {
                     this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'SUPPORTEDDISPENSEPRESETS') {
                     if (this.trait.dispense) {
-                        if (typeof msg.payload === 'undefined') {
-                            this.supported_dispense_presets = this.to_supported_dispense_presets(this.loadJson('Dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), []));
-                        } else if (this.supported_dispense_presets_type != 'json')  {
-                            this.supported_dispense_presets = this.to_supported_dispense_presets(msg.payload);
-                            if (!this.writeJson('Dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), this.supported_dispense_presets)) {
-                                RED.log.error("Error saving Dispense presets to file " + this.supported_dispense_presets_file.replace(/<id>/g, this.id));
+                        if (this.supported_dispense_presets_type !== 'json') {
+                            if (typeof msg.payload === 'undefined') {
+                                this.supported_dispense_presets = this.to_supported_dispense_presets(this.loadJson('Dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), []));
+                            } else {
+                                this.supported_dispense_presets = this.to_supported_dispense_presets(msg.payload);
+                                if (!this.writeJson('Dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), this.supported_dispense_presets)) {
+                                    RED.log.error("Error saving Dispense presets to file " + this.supported_dispense_presets_file.replace(/<id>/g, this.id));
+                                }
                             }
                         }
                     } else {
@@ -1930,12 +1941,14 @@ module.exports = function (RED) {
                     this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEFANSPEEDS') {
                     if (this.trait.fanspeed) {
-                        if (typeof msg.payload === 'undefined') {
-                            this.available_fan_speeds = this.to_available_fan_speeds(this.loadJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), []));
-                        } else if (this.available_fan_speeds_type != 'json')  {
-                            this.available_fan_speeds = this.to_available_fan_speeds(msg.payload);
-                            if (!this.writeJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), this.available_fan_speeds)) {
-                                RED.log.error("Error saving Fan speeds to file " + this.available_fan_speeds_file.replace(/<id>/g, this.id));
+                        if (this.available_fan_speeds_type !== 'json') {
+                            if (typeof msg.payload === 'undefined') {
+                                this.available_fan_speeds = this.to_available_fan_speeds(this.loadJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), []));
+                            } else {
+                                this.available_fan_speeds = this.to_available_fan_speeds(msg.payload);
+                                if (!this.writeJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), this.available_fan_speeds)) {
+                                    RED.log.error("Error saving Fan speeds to file " + this.available_fan_speeds_file.replace(/<id>/g, this.id));
+                                }
                             }
                         }
                     } else {
@@ -1946,12 +1959,14 @@ module.exports = function (RED) {
                     this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEFILLLEVELS') {
                     if (this.trait.dispense) {
-                        if (typeof msg.payload === 'undefined') {
-                            this.available_fill_levels = this.to_available_fill_levels(this.loadJson(' Fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), []));
-                        } else if (this.available_fill_levels_type != 'json')  {
-                            this.available_fill_levels = this.to_available_fill_levels(msg.payload);
-                            if (!this.writeJson(' Fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), this.available_fill_levels)) {
-                                RED.log.error("Error saving Fill levels to file " + this.available_fill_levels_file.replace(/<id>/g, this.id));
+                        if (this.available_fill_levels_type !== 'json') {
+                            if (typeof msg.payload === 'undefined') {
+                                this.available_fill_levels = this.to_available_fill_levels(this.loadJson(' Fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), []));
+                            } else {
+                                this.available_fill_levels = this.to_available_fill_levels(msg.payload);
+                                if (!this.writeJson(' Fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), this.available_fill_levels)) {
+                                    RED.log.error("Error saving Fill levels to file " + this.available_fill_levels_file.replace(/<id>/g, this.id));
+                                }
                             }
                         }
                     } else {
@@ -1962,12 +1977,14 @@ module.exports = function (RED) {
                     this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEFOODPRESETS') {
                     if (this.trait.cook) {
-                        if (typeof msg.payload === 'undefined') {
-                            this.food_presets = this.to_food_presets(this.loadJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), []));
-                        } else if (this.food_presets_type != 'json')  {
-                            this.food_presets = this.to_food_presets(msg.payload);
-                            if (!this.writeJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), this.food_presets)) {
-                                RED.log.error("Error saving Food presets to file " + this.food_presets_file.replace(/<id>/g, this.id));
+                        if (this.food_presets_type !== 'json') {
+                            if (typeof msg.payload === 'undefined') {
+                                this.food_presets = this.to_food_presets(this.loadJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), []));
+                            } else {
+                                this.food_presets = this.to_food_presets(msg.payload);
+                                if (!this.writeJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), this.food_presets)) {
+                                    RED.log.error("Error saving Food presets to file " + this.food_presets_file.replace(/<id>/g, this.id));
+                                }
                             }
                         }
                     } else {
@@ -1978,12 +1995,14 @@ module.exports = function (RED) {
                     this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEINPUTS') {
                     if (this.trait.inputselector) {
-                        if (typeof msg.payload === 'undefined') {
-                            this.available_inputs = this.to_available_inputs(this.loadJson('Inputs', this.inputselector_file.replace(/<id>/g, this.id), []));
-                        } else if (this.inputselector_type != 'json')  {
-                            this.available_inputs = this.to_available_inputs(msg.payload);
-                            if (!this.writeJson('Inputs', this.inputselector_file.replace(/<id>/g, this.id), this.available_inputs)) {
-                                RED.log.error("Error saving Inputs to file " + this.inputselector_file.replace(/<id>/g, this.id));
+                        if (this.inputselector_type !== 'json') {
+                            if (typeof msg.payload === 'undefined') {
+                                this.available_inputs = this.to_available_inputs(this.loadJson('Inputs', this.inputselector_file.replace(/<id>/g, this.id), []));
+                            } else {
+                                this.available_inputs = this.to_available_inputs(msg.payload);
+                                if (!this.writeJson('Inputs', this.inputselector_file.replace(/<id>/g, this.id), this.available_inputs)) {
+                                    RED.log.error("Error saving Inputs to file " + this.inputselector_file.replace(/<id>/g, this.id));
+                                }
                             }
                         }
                     } else {
@@ -1994,13 +2013,15 @@ module.exports = function (RED) {
                     this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEMODES') {
                     if (this.trait.modes) {
-                        if (typeof msg.payload === 'undefined') {
-                            this.available_modes = this.to_available_modes(this.loadJson('Modes', this.modes_file.replace(/<id>/g, this.id), []));
-                            this.updateModesState(me, me);
-                        } else if (this.modes_type != 'json')  {
-                            this.available_modes = this.to_available_modes(msg.payload);
-                            if (!this.writeJson('Modes', this.modes_file.replace(/<id>/g, this.id), this.available_modes)) {
-                                RED.log.error("Error saving Modes to file " + this.modes_file.replace(/<id>/g, this.id));
+                        if (this.modes_type !== 'json') {
+                            if (typeof msg.payload === 'undefined') {
+                                this.available_modes = this.to_available_modes(this.loadJson('Modes', this.modes_file.replace(/<id>/g, this.id), []));
+                                this.updateModesState(me, me);
+                            } else {
+                                this.available_modes = this.to_available_modes(msg.payload);
+                                if (!this.writeJson('Modes', this.modes_file.replace(/<id>/g, this.id), this.available_modes)) {
+                                    RED.log.error("Error saving Modes to file " + this.modes_file.replace(/<id>/g, this.id));
+                                }
                             }
                         }
                     } else {
@@ -2012,13 +2033,15 @@ module.exports = function (RED) {
                     this.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLETOGGLES') {
                     if (this.trait.toggles) {
-                        if (typeof msg.payload === 'undefined') {
-                            this.available_toggles = this.to_available_toggles(this.loadJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), []));
-                            this.updateTogglesState(me, me);
-                        } else if (this.toggles_type != 'json')  {
-                            this.available_toggles = this.to_available_toggles(msg.payload);
-                            if (!this.writeJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), this.available_toggles)) {
-                                RED.log.error("Error saving Toggles to file " + this.toggles_file.replace(/<id>/g, this.id));
+                        if (this.toggles_type !== 'json') {
+                            if (typeof msg.payload === 'undefined') {
+                                this.available_toggles = this.to_available_toggles(this.loadJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), []));
+                                this.updateTogglesState(me, me);
+                            } else {
+                                this.available_toggles = this.to_available_toggles(msg.payload);
+                                if (!this.writeJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), this.available_toggles)) {
+                                    RED.log.error("Error saving Toggles to file " + this.toggles_file.replace(/<id>/g, this.id));
+                                }
                             }
                         }
                     } else {
@@ -2661,11 +2684,11 @@ module.exports = function (RED) {
         }
 
         to_available_applications(json_data) {
-            return this.key_name_synonym(json_data, 'key', 'names', 'name_synonym');
+            return this.key_name_synonym("Applications", json_data, 'key', 'names', 'name_synonym');
         }
 
         to_available_arm_levels(json_data) {
-            return this.key_name_synonym(json_data, 'level_name', 'level_values', 'level_synonym');
+            return this.key_name_synonym("Arm levels", json_data, 'level_name', 'level_values', 'level_synonym');
         }
 
         to_available_channels(json_data) {
@@ -2675,7 +2698,7 @@ module.exports = function (RED) {
                 }
                 return true;
             };
-            return this.key_name_synonym(json_data, 'key', 'names', undefined, f);
+            return this.key_name_synonym("Channels", json_data, 'key', 'names', undefined, f);
         }
 
         to_food_presets(json_data) {
@@ -2691,7 +2714,7 @@ module.exports = function (RED) {
                 }
                 return false;
             };
-            return this.key_name_synonym(json_data, 'food_preset_name', 'food_synonyms', 'synonym', f);
+            return this.key_name_synonym("Food presets", json_data, 'food_preset_name', 'food_synonyms', 'synonym', f);
         }
 
         to_supported_dispense_items(json_data) {
@@ -2713,30 +2736,33 @@ module.exports = function (RED) {
                 }
                 return false;
             };
-            return this.key_name_synonym(json_data, 'item_name', 'item_name_synonyms', 'synonyms', f);
+            return this.key_name_synonym("Dispense items", json_data, 'item_name', 'item_name_synonyms', 'synonyms', f);
         }
 
         to_supported_dispense_presets(json_data) {
-            return this.key_name_synonym(json_data, 'preset_name', 'preset_name_synonyms', 'synonyms');
+            return this.key_name_synonym("Dispense presets", json_data, 'preset_name', 'preset_name_synonyms', 'synonyms');
         }
 
         to_available_fan_speeds(json_data) {
-            return this.key_name_synonym(json_data, 'speed_name', 'speed_values', 'speed_synonym');
+            return this.key_name_synonym("Fan speeds", json_data, 'speed_name', 'speed_values', 'speed_synonym');
         }
 
         to_available_fill_levels(json_data) {
-            return this.key_name_synonym(json_data, 'level_name', 'level_values', 'level_synonym');
+            return this.key_name_synonym("Fill levels", json_data, 'level_name', 'level_values', 'level_synonym');
         }
 
         to_available_inputs(json_data) {
-            return this.key_name_synonym(json_data, 'key', 'names', 'name_synonym');
+            return this.key_name_synonym("Inputs", json_data, 'key', 'names', 'name_synonym');
         }
 
         to_available_modes(json_data) {
-            let key_name_synonym = this.key_name_synonym;
+            let me = this;
+            let key_name_synonym = function (type, json_data, key1, key2, key3, manage_other_fields) {
+                return me.key_name_synonym(type, json_data, key1, key2, key3, manage_other_fields);
+            }
             let f = function (data_in, data_out) {
                 if (Array.isArray(data_in.settings)) {
-                    data_out.settings = key_name_synonym(data_in.settings, 'setting_name', 'setting_values', 'setting_synonym');
+                    data_out.settings = key_name_synonym("Modes settings", data_in.settings, 'setting_name', 'setting_values', 'setting_synonym');
                     if (typeof data_in.ordered === 'boolean') {
                         data_out.ordered = data_in.ordered;
                     }
@@ -2744,29 +2770,93 @@ module.exports = function (RED) {
                 }
                 return false;
             };
-            return this.key_name_synonym(json_data, 'name', 'name_values', 'name_synonym', f);
+            return this.key_name_synonym("Modes", json_data, 'name', 'name_values', 'name_synonym', f);
         }
 
         to_available_toggles(json_data) {
-            return this.key_name_synonym(json_data, 'name', 'name_values', 'name_synonym');
+            return this.key_name_synonym("Toggles", json_data, 'name', 'name_values', 'name_synonym');
         }
 
-        key_name_synonym(json_data, key1, key2, key3, manage_other_fields) {
+        key_name_synonym(type, json_data, key1, key2, key3, manage_other_fields) {
             const me = this;
+            me._debug(".key_name_synonym: Parsing " + type);
             let new_data = [];
             if (Array.isArray(json_data)) {
                 if (typeof manage_other_fields !== 'function') {
                     manage_other_fields = function (data_in, data_out) { return true; }
                 }
-                json_data.forEach(rec => {
+                json_data.forEach((rec, pos) => {
+                    if (typeof rec === 'string') {
+                        let val = rec;
+                        rec = {};
+                        rec[key1] = val;
+                    } else if (Array.isArray(rec)) {
+                        if (rec.length > 0) {
+                            let arr = rec.filter(element => typeof element === 'string' && element.trim().length > 0);
+                            if (arr.length > 0) {
+                                rec = {};
+                                rec[key1] = arr[0];
+                                if (key3) {
+                                    rec[key2] = [{}];
+                                    rec[key2][0][key3] = arr;
+                                } else {
+                                    rec[key2] = arr;
+                                }
+                            }
+                        }
+                    } else if (typeof rec[key2] !== 'undefined') {
+                        let val2 = rec[key2];
+                        if (typeof val2 === 'string') {
+                            val2 = [val2];
+                        }
+                        if (Array.isArray(val2)) {
+                            let arr = val2.filter(element => typeof element === 'string' && element.trim().length > 0);
+                            if (arr.length > 0) {
+                                if (key3) {
+                                    rec[key2] = [{}];
+                                    rec[key2][0][key3] =arr;
+                                } else {
+                                    rec[key2] = arr;
+                                }
+                                if (typeof rec[key1] === 'undefined') {
+                                    rec[key1] = arr[0];
+                                }
+                            }
+                        }
+                    }
                     if (typeof rec[key1] === 'string' && rec[key1].trim()) {
                         let new_rec = {};
                         new_rec[key1] = rec[key1].trim();
                         let found = new_data.filter(element => element[key1] === new_rec[key1]);
-                        if (found.length === 0 && Array.isArray(rec[key2])) {
+                        if (found.length === 0) {
+                            let val3;
+                            if (typeof rec[key2] === 'string') {
+                                val3 = rec[key2];
+                                if (key3) {
+                                    rec[key2] = [{}];
+                                    rec[key2][0][key3] = [val3];
+
+                                } else {
+                                    rec[key2] = [val3];
+                                }
+                            } else if (!Array.isArray(rec[key2])) {
+                                val3 = new_rec[key1];
+                                if (key3) {
+                                    rec[key2] = [{}];
+                                    rec[key2][0][key3] = [val3];
+
+                                } else {
+                                    rec[key2] = [val3];
+                                }
+                            }
                             new_rec[key2] = [];
                             rec[key2].forEach(names => {
                                 if (key3) {
+                                    if (typeof names === 'string') {
+                                        let val2 = names;
+                                        names = {};
+                                        names[key3] = [val2];
+                                    }
                                     let lang = typeof names.lang === 'string' ? names.lang.trim() : '';
                                     if (lang.length === 0) {
                                         lang = me.lang;
@@ -2786,10 +2876,14 @@ module.exports = function (RED) {
                                                 new_rec[key2].push(new_key2);
                                             }
                                         }
+                                    } else {
+                                        me.error("key_name_synonym error " + type + ": missing array key " + key3 + " for " + rec[key1]);
                                     }
                                 } else {
                                     if (typeof names === 'string' && names.trim() && !new_rec[key2].includes(names.trim())) {
                                         new_rec[key2].push(names.trim());
+                                    } else {
+                                        me.error("key_name_synonym error " + type + ": missing array key " + key2 + " for " + rec[key1]);
                                     }
                                 }
                             });
@@ -2797,15 +2891,25 @@ module.exports = function (RED) {
                                 let ok = true;
                                 if (!key3) {
                                     ok = manage_other_fields(rec, new_rec);
+                                    if (!ok) {
+                                        me.error("key_name_synonym error " + type + ": manage_other_fields error for " + rec[key1]);
+                                    }
                                 }
                                 if (ok) {
                                     new_data.push(new_rec);
                                 }
+                            } else {
+                                me.error("key_name_synonym error " + type + ": " + key2 + " empty for " + rec[key1]);
                             }
+                        } else {
+                            me.error("key_name_synonym error " + type + ": " + new_rec[key1] + " already exists");
                         }
+                    } else {
+                        me.error("key_name_synonym error " + type + ": missing key " + key1 + " at position " + pos);
                     }
                 });
             }
+            me._debug(".key_name_synonym parser " + type + " : " + JSON.stringify(new_data));
             return new_data;
         }
 
@@ -2853,15 +2957,14 @@ module.exports = function (RED) {
         parseJson(text, json_text, defaultValue) {
             let json = '';
             this._debug('.parseJson: ' + text);
-            try {
-                json = JSON.parse(json_text);
-            } catch (e) {
-                RED.log.error('Error on parsing ' + text + ': ' + err.toString());
+            if (json_text.trim().length > 0) {
+                try {
+                    return JSON.parse(json_text);
+                } catch (e) {
+                    RED.log.error('Error on parsing ' + text + ': ' + err.toString());
+                }
             }
-            if (json.trim().length === 0) {
-                return defaultValue;
-            }
-            return json;
+            return defaultValue;
         }
 
         loadJson(text, filename, defaultValue) {
