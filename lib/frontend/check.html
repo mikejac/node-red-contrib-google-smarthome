@@ -31,7 +31,7 @@
             let client_id = $('#client_id').val();
             $.ajax({
                 type: 'GET',
-                url: url + "oauth?state=state&response_type=code&client_id=" + client_id,
+                url: url + "oauth?state=state&response_type=code&client_id=" + encodeURIComponent(client_id),
                 success: function (data) {
                     test_success('oauth_get', 'OK ');
                     if (go_on) test_oauth_post(url);
@@ -46,7 +46,7 @@
             let client_id = $('#client_id').val();
             let username = $('#username').val();
             let password = $('#password').val();
-            let redirect_uri = url + "oauth?response_type=code&client_id=" + client_id + "&state=state&ac=";
+            let redirect_uri = url + "oauth?response_type=code&client_id=" + encodeURIComponent(client_id) + "&state=state&ac=";
             $.ajax({
                 type: 'POST',
                 url: url + "oauth?state=state",
@@ -74,7 +74,7 @@
             // TOKEN OAUTH
             let client_id = $('#client_id').val();
             let client_secret = $('#client_secret').val();
-            let redirect_uri = url + "oauth?response_type=code&client_id=" + client_id + "&state=state";
+            let redirect_uri = url + "oauth?response_type=code&client_id=" + encodeURIComponent(client_id) + "&state=state";
             $.ajax({
                 type: 'POST',
                 url: url + "token",
