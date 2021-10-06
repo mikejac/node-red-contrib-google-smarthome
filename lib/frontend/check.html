@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Google SmartHome Node-RED interface module">
+    <meta name="author" content="Claudio Chimera">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <title>Test</title>
+
+    <script>
+        var url = '';
+        var xhr = new XMLHttpRequest();
+        function test_success(elmId, data) {
+            if (typeof data !== "string") {
+                data = JSON.stringify(data);
+            }
+            document.getElementById(elmId).innerHTML = data;
+        }
+        function test_oauth_get(url, go_on) {
+            // GET OAUTH
+            test_success('oauth_get', "Waiting");
+            test_success('oauth_post', "Pending");
+            test_success('token_post', "Pending");
+            test_success('smarthome_post', "Pending");
+            let client_id = $('#client_id').val();
+            $.ajax({
+                type: 'GET',
+                url: url + "oauth?state=state&response_type=code&client_id=" + client_id,
+                success: function (data) {
+                    test_success('oauth_get', 'OK ');
+                    if (go_on) test_oauth_post(url);
+                },
+                error: function (xhr, status) {
+                    test_success('oauth_get', "ERROR: " + xhr.responseText);
+                }
+            });
+        }
+        function test_oauth_post(url) {
+            // POST OAUTH
+            let client_id = $('#client_id').val();
+            let username = $('#username').val();
+            let password = $('#password').val();
+            let redirect_uri = url + "oauth?response_type=code&client_id=" + client_id + "&state=state&ac=";
+            $.ajax({
+                type: 'POST',
+                url: url + "oauth?state=state",
+                data: { client_id: client_id, redirect_uri: redirect_uri, username: username, password: password },
+                xhr: function () {
+                    return xhr;
+                },
+                success: function (data, status, xhr1) {
+                    const params = new URLSearchParams(xhr.responseURL);
+                    const ac = params.get('ac');
+                    const code = ac && ac.indexOf('=') > 0 ? ac.split("=")[1] : '';
+                    if (code) {
+                        test_success('oauth_post', 'OK ');
+                        test_token_post(url, code);
+                    } else {
+                        test_success('oauth_post', 'ERROR invalid login and password');
+                    }
+                },
+                error: function (xhr1, status, errorThrown) {
+                    test_success('oauth_post', "ERROR: " + xhr.responseText || 'Unknown');
+                }
+            });
+        }
+        function test_token_post(url, code) {
+            // TOKEN OAUTH
+            let client_id = $('#client_id').val();
+            let client_secret = $('#client_secret').val();
+            let redirect_uri = url + "oauth?response_type=code&client_id=" + client_id + "&state=state";
+            $.ajax({
+                type: 'POST',
+                url: url + "token",
+                data: { client_id: client_id, client_secret: client_secret, grant_type: "authorization_code", code: code, redirect_uri: redirect_uri },
+                success: function (data) {
+                    let access_token = data['access_token'];
+                    if (access_token) {
+                        test_success('token_post', 'OK ');
+                        test_smarthome_post(url, access_token);
+                    } else {
+                        test_success('token_post', 'ERROR: missin access token ');
+                    }
+                },
+                error: function (xhr, status) {
+                    test_success('token_post', "ERROR: " + xhr.responseText);
+                }
+            });
+        }
+        function test_smarthome_post(url, code) {
+            // SMARTHOME OAUTH
+            $.ajax({
+                type: 'POST',
+                url: url + "smarthome",
+                data: JSON.stringify({ inputs: [ { intent: "action.devices.SYNC" }] }),
+                headers: { authorization: "Bearer " + code },
+                success: function (data) {
+                    test_success('smarthome_post', 'OK ');
+                    test_success('smarthome_result', JSON.stringify(data));
+                },
+                error: function (xhr, status) {
+                    test_success('smarthome_post', "ERROR: " + xhr.responseText);
+                },
+                contentType: "application/json",
+                dataType: 'json'
+            });
+        }
+        function startTest() {
+            test_oauth_get(url, true);
+        }
+
+        document.addEventListener("DOMContentLoaded", function (event) {
+            url = window.location.href.split('?')[0];
+            let i = url.lastIndexOf("/");
+            if (i > 0) {
+                url = url.substring(0, i + 1);
+            }
+            test_success('check_get', 'OK');
+            test_success('url_res', url);
+        });
+    </script>
+</head>
+
+<body>
+    <div class="content">
+        <div>
+            <h2>Google SmartHome test page</h2>
+        </div>
+        <b>Url: </b><span id="url_res">Waiting</span><BR />
+
+        <br />
+        <form action="javascript:startTest()">
+
+            <div class="field">
+                <input type="text" name="client_id" id="client_id" autocomplete="off" autocapitalize="none"
+                    value="client_id" placeholder=" ">
+                <label for="client_id">Client ID</label>
+            </div>
+
+            <div class="field">
+                <input type="text" name="client_secret" id="client_secret" autocomplete="off" autocapitalize="none"
+                    value="client_secret" placeholder=" ">
+                <label for="client_secret">Client Secret</label>
+            </div>
+
+            <div class="field">
+                <input type="text" name="username" id="username" autocomplete="off" autocapitalize="none"
+                    value="username" placeholder=" ">
+                <label for="username">Username</label>
+            </div>
+
+            <div class="field">
+                <input type="password" name="password" id="password" placeholder=" " value="password">
+                <label for="password">Password</label>
+            </div>
+
+            <button id="login-button">Test</button>
+        </form>
+
+        <br />
+        <b>GET check: </b><span id="check_get">Waiting</span><BR />
+        <b>GET oauth: </b><span id="oauth_get">Not started</span><BR />
+        <b>POST oauth: </b><span id="oauth_post">Not started</span><BR />
+        <b>POST token: </b><span id="token_post">Not started</span><BR />
+        <b>POST smarthome: </b><span id="smarthome_post">Not started</span><BR />
+        <BR /><span id="smarthome_result"></span><BR />
+    </div>
+</body>
+
+</html>
