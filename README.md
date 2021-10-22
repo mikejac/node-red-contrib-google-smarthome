@@ -985,6 +985,12 @@ Example flow:
 
   `Private Key`: Full path to private key file, e.g. `privkey.pem` from Let's Encrypt.
 
+**Advanced Settings**
+
+  `Request sync delay (s)`: Delay, in seconds, for request devices sync after a deploy, 0 or empty for disable (default value 0).
+
+  `Set state delay (s)`: Delay, in seconds, for sending the set_state message after state changes, 0 or empty for disable (default value 0).
+
 ---
 ## Sending spoken notifications
 
