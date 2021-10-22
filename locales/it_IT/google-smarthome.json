@@ -36,8 +36,8 @@
 			"sv": "Svedese",
 			"th": "Tailandese",
             "advanced_settings": "Impostazioni avanzate",
-            "request_sync_delay": "Ritardo richiesta di sincronizzazione",
-            "set_state_delay": "Ritardo invio del messaggio set_state"
+            "request_sync_delay": "Ritardo richiesta di sincronizzazione (s)",
+            "set_state_delay": "Ritardo invio del messaggio set_state (s)"
         },
         "placeholder": {
             "name": "Nome",

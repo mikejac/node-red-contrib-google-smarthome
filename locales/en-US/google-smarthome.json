@@ -36,8 +36,8 @@
             "sv": "Swedish",
             "th": "Thai",
             "advanced_settings": "Advanced settings",
-            "request_sync_delay": "Request sync delay",
-            "set_state_delay": "set_state message delay"
+            "request_sync_delay": "Request sync delay (s)",
+            "set_state_delay": "set_state message delay (s)"
         },
         "placeholder": {
             "name": "Name",
