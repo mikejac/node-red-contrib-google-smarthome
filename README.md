@@ -72,20 +72,20 @@ only the functions needed by Google.
 See the developer guide and release notes at https://developers.google.com/assistant/smarthome/overview for more details.
 
 1. Go to [Actions on Google Console](https://console.actions.google.com).
-1. Click on *New project* to add a new project with a name and language of your choice and click *Create Project*. 
-1. Choose type *Smart Home*, then click *Start Building*.
-1. From the top menu under *Develop*, click on *Invocation*.
-1. Enter your App's name. Click *Save*.
-1. On the *Develop* tab, choose *Actions* on the left menu. Enter the URL for fulfillment, e.g. https://example.com:3001/smarthome. Leave all other fields empty. Click *Save*.
-1. Still on the *Develop* tab, choose *Account linking* on the left menu. Fill out the fields as following:
+2. Click on *New project* to add a new project with a name and language of your choice and click *Create Project*. 
+3. Choose type *Smart Home*, then click *Start Building*.
+4. From the top menu under *Develop*, click on *Invocation*.
+5. Enter your App's name. Click *Save*.
+6. On the *Develop* tab, choose *Actions* on the left menu. Enter the URL for fulfillment, e.g. https://example.com:3001/smarthome. Leave all other fields empty. Click *Save*.
+7. Still on the *Develop* tab, choose *Account linking* on the left menu. Fill out the fields as following:
     * Client ID and secret: Credentials, with which Google will authenticate against your app. Use a password generator tool
       to generate two strings of reasonable length and complexity. Copy both strings, you'll need them later.
     * Authorization URL: is the hosted URL of your app with '/oauth' as the path, e.g. https://example.com:3001/oauth.
     * Token URL: is the hosted URL of your app with '/token' as the path, e.g. https://example.com:3001/token.
     * Leave all other fields empty.
-1. Click *Save*.
-1. You don't need to fill in anything on the *Deploy* tab.
-1. On tab *Test*, click *Reset Test*.
+8. Click *Save*.
+9. You don't need to fill in anything on the *Deploy* tab.
+10. On tab *Test*, click *Reset Test*.
 
 *Note:* Adjust the URLs like https://example.com:3001/smarthome to your own hostname, port and settings.
 
@@ -94,16 +94,16 @@ See the developer guide and release notes at https://developers.google.com/assis
 The HomeGraph API is used to report the state of your devices to Google and to request a SYNC to inform Google about new or updated devices.
 
 1. Go to the [Home Graph API on Google Cloud Console API Manager](https://console.cloud.google.com/apis/api/homegraph.googleapis.com/overview).
-1. In the header bar select your project from the project chooser.
-1. Enable the [HomeGraph API].
-1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials).
-1. Again, select your project in the header bar.
-1. Select *Create Credentials* and create a *Service account key*.
-1. Enter a name for your service account and click *Create*.
-1. You don't need to add roles or user in the next steps.
-1. Your new service account is listed on the Credentials page. Click on it.
-1. Click on *Add Key* to create a new key of type JSON.
-1. Download the JSON Web Token keyfile (jwt Key) and copy it to your Node-RED server, in a location where the Node-RED service can read it.
+2. In the header bar select your project from the project chooser.
+3. Enable the [HomeGraph API].
+4. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials).
+5. Again, select your project in the header bar.
+6. Select *Create Credentials* and create a *Service account key*.
+7. Enter a name for your service account and click *Create*.
+8. You don't need to add roles or user in the next steps.
+9. Your new service account is listed on the Credentials page. Click on it.
+10. Click on *Add Key* to create a new key of type JSON.
+11. Download the JSON Web Token keyfile (jwt Key) and copy it to your Node-RED server, in a location where the Node-RED service can read it.
 
 #### Integrating Google Sign-In
 
@@ -111,22 +111,22 @@ The Google Sign-In feature allows to login using your Google credentials. See [I
 If you want to use login with username/password instead, skip this section.
 
 1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
-1. From the project drop-down, select your project.
-1. In the sidebar under "APIs & Services", select Credentials, then click Configure consent screen.
-1. Choose an Email Address, specify a Product Name, and press Save.
-1. In the Credentials tab, select the Create credentials drop-down list, and choose OAuth client ID.
-1. Under Application type, select Web application.
-1. Register the origins from which your app is allowed to access the Google APIs, as follows.
+2. From the project drop-down, select your project.
+3. In the sidebar under "APIs & Services", select Credentials, then click Configure consent screen.
+4. Choose an Email Address, specify a Product Name, and press Save.
+5. In the Credentials tab, select the Create credentials drop-down list, and choose OAuth client ID.
+6. Under Application type, select Web application.
+7. Register the origins from which your app is allowed to access the Google APIs, as follows.
     * In the Authorized JavaScript origins field, enter the hosted URL of your app, e.g. https://example.com:3001
     * The Authorized redirect URI field does not require a value.
     * Press the Create button.
-1. From the resulting OAuth client dialog box, copy the Client ID. You will need it later.
+8. From the resulting OAuth client dialog box, copy the Client ID. You will need it later.
 
 #### Install and configure Node-RED module
 
 1. Install `node-red-contrib-google-smarthome` from Node-RED's palette and restart Node-RED.
-1. Place the Management node from the section "Google Smart Home" on a flow.
-1. Edit the management node and open its config. Fill in the fields as following:
+2. Place the Management node from the section "Google Smart Home" on a flow.
+3. Edit the management node and open its config. Fill in the fields as following:
     * Name: A name for your config node.
     * Use Google Login: Check, if you want to use authentication via Google Sign-In.
     * Login Client ID: If Google Login is enabled, the client id you gained from the *Google Sign-In* integration.
@@ -138,18 +138,18 @@ If you want to use login with username/password instead, skip this section.
     * Path: URL path on which the service will run. If left empty, https://example.com:3001/smarthome will be used. If set, it will be https://example.com:3001/<yourpath>/smarthome.
     * Use external SSL offload: Check, if you want to do SSL decryption on an external load balancer.
     * Public and Private Key: Path to public and private key of your SSL certificate (if you do not use external SSL decryption).
-1. Deploy the flow.
-1. Check if your service is reachable from the internet. Use a tool like https://reqbin.com to send a GET request to https://example.com:3001/check (using your domain name and port). It must answer with status 200 and the message "SUCCESS".
+4. Deploy the flow.
+5. Check if your service is reachable from the internet. Use a tool like https://reqbin.com to send a GET request to https://example.com:3001/check (using your domain name and port). It must answer with status 200 and the message "SUCCESS".
 
 #### Setup Account linking
 
 1. Open the Google Home App on a device logged into the same account used to create the project in the Actions Console.
-1. Click the '+' sign to add a device.
-1. Click *Set up device*.
-1. Click *Have something already set up*.
-1. Find your app in the list of providers. It will be `[test]` and then your app name.
-1. Log in to your service. Username and password are the ones you specified in the configuration node.
-1. Start using the Google Assistant.
+2. Click the '+' sign to add a device. 
+3. Click *Set up device*.
+4. Click *Have something already set up*.
+5. Find your app in the list of providers. It will be `[test]` and then your app name.
+6. Log in to your service. Username and password are the ones you specified in the configuration node.
+7. Start using the Google Assistant.
 
 ---
 ## Nodes in this package
@@ -995,8 +995,8 @@ See https://developers.google.com/assistant/smarthome/develop/notifications.
 
 1. Create a device using the "Google Device" node with one of the supported traits in Node-RED and deploy. Currently,
    only the traits "Object detection", "Run cycle" and "Sensor state" support notifications.
-1. In your Google Home App open your new device and enable "Spoken Notifications".
-1. To trigger the notification send a message with a specific payload into the device node. Payloads are documented
+2. In your Google Home App open your new device and enable "Spoken Notifications".
+3. To trigger the notification send a message with a specific payload into the device node. Payloads are documented
    [here](https://developers.google.com/assistant/smarthome/develop/notifications#events).
 
 Example flow:
