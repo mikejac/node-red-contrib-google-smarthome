@@ -2955,7 +2955,6 @@ module.exports = function (RED) {
         }
 
         parseJson(text, json_text, defaultValue) {
-            let json = '';
             this._debug('.parseJson: ' + text);
             if (json_text.trim().length > 0) {
                 try {
