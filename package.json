@@ -51,7 +51,6 @@
     "express": "^4.17.x",
     "helmet": "^4.2.0",
     "stoppable": "^1.1.x",
-    "body-parser": "^1.19.x",
     "morgan": "^1.10.x",
     "cors": "^2.8.x",
     "google-auth-library": "^6.1.1",
