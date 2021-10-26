@@ -960,9 +960,9 @@ Example flow:
 
 **Actions on Google Project Settings**
 
-  `Client ID`: The client id you entered in the *Google on Actions* project.
+  `Client ID`: The client id you entered in the *Actions on Google* project.
 
-  `Client Secret`: The client secret you entered in the *Google on Actions* project.
+  `Client Secret`: The client secret you entered in the *Actions on Google* project.
 
 **Google HomeGraph Settings**
 
@@ -977,8 +977,8 @@ Example flow:
   `Path`: Prefix for URLs provided by this module. Default fulfillment URL is https://example.com:3001/smarthome. With a
           path of "foo" this changes to https://example.com:3001/foo/smarthome. Same for URLs `/oauth` and `/token`.
 
-  `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the *Google on
-            Actions* project. If empty, it will use the same port as Node-RED.
+  `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the
+          *Actions on Google* project. If empty, it will use the same port as Node-RED.
 
   `Use external SSL offload`: If enabled, SSL encryption is not used by the node and must be done elsewhere.
 

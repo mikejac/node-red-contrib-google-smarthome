@@ -25,8 +25,8 @@
     <code>"Durata del token di accesso</code>: la durata del token di accesso (in minuti) usato dalla domotica di Google per identificarsi a questo nododi  Node-RED. Il valore predefinito è di 60 minuti.<br>
     <br>
     <b>Impostazioni di "Actions on Google Project"</b><br>
-    <code>ID del client</code>: L'ID cliente inserito nel progetto <b>Google on Actions</b>.<br>
-    <code>Client Secret</code>: Il segreto cliente inserito nel progetto <b>Google on Actions</b>.<br>
+    <code>ID del client</code>: L'ID cliente inserito nel progetto <b>Actions on Google</b>.<br>
+    <code>Client Secret</code>: Il segreto cliente inserito nel progetto <b>Actions on Google</b>.<br>
     <br>
     <b>Impostazioni "Google HomeGraph"</b><br>
     <code>Chiave Jwt</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file di chiave JWT.<br>
@@ -35,7 +35,7 @@
     <b>Impostazioni del server Web</b><br>
     <code>Usa il percorso radice http di Node-RED</code>: Se abilitato, usa come prefizzo del percorso il perforso configurato per Node-RED, altrimenti usa /.<br>
     <code>Percorso</code>: Prefisso per gli URL forniti da questo modulo. L'URL predefinito è https://example.com:3001/smarthome. Usando come prefisso il valore "foo" l'URL sarà https://example.com:3001/foo/smarthome. Analogamente saranno modificati gli URL `/oauth` e `/token`.<br>
-    <code>Porta</code>: La porta TCP scelta per le connessioni in ingresso da parte di Google. Deve combaciare con quella inserita nel progetto <b>Google on Actions</b> a meno di non configurare un port forwardint.<br>
+    <code>Porta</code>: La porta TCP scelta per le connessioni in ingresso da parte di Google. Deve combaciare con quella inserita nel progetto <b>Actions on Google</b> a meno di non configurare un port forwardint.<br>
     <code>Usa un server SSL esterno</code>: Se abilitato, la cifratura SSL non sarà gestita da questo nodo e deve essere configurata altrove, ad esempio usando un reverse proxy.
     <code>Chiave pubblica</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file contenente la chiave pubblica, es:. `fullchain.pem` scaricato da Let's Encrypt.<br>
     <code>Private Key</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file contenente la chiave privata, es:.  `privkey.pem` scaricato da Let's Encrypt.<br>
