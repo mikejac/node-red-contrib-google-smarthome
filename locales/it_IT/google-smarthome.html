@@ -22,7 +22,6 @@
     <code>ID del client per la login</code>: Se "Usa Google login" è abilitato, l'ID cliente ottenuto dall'integrazione con *Google Sign-In*.<br>
     <code>Email autorizzate</code>: Se "Usa Google login" è abilitato, gli indirizzi email autorizzati ad entrare.<br>
     <code>Nome Utente</code> and <code>Password</code>:  Se "Usa Google login" è disabilitato, un nome utente ed una usata quando colleghi la domitica di Google con questo nodo di Node-RED.<br>
-    <code>"Durata del token di accesso</code>: la durata del token di accesso (in minuti) usato dalla domotica di Google per identificarsi a questo nododi  Node-RED. Il valore predefinito è di 60 minuti.<br>
     <br>
     <b>Impostazioni di "Actions on Google Project"</b><br>
     <code>ID del client</code>: L'ID cliente inserito nel progetto <b>Actions on Google</b>.<br>
@@ -30,7 +29,6 @@
     <br>
     <b>Impostazioni "Google HomeGraph"</b><br>
     <code>Chiave Jwt</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file di chiave JWT.<br>
-    <code>Intervallo tra i report (m)</code>: Intervallo di tempo, in minuti, tra due report di aggiornamento di stato che sono inviati a Google.<br>
     <br>
     <b>Impostazioni del server Web</b><br>
     <code>Usa il percorso radice http di Node-RED</code>: Se abilitato, usa come prefizzo del percorso il perforso configurato per Node-RED, altrimenti usa /.<br>
@@ -40,6 +38,8 @@
     <code>Chiave pubblica</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file contenente la chiave pubblica, es:. `fullchain.pem` scaricato da Let's Encrypt.<br>
     <code>Private Key</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file contenente la chiave privata, es:.  `privkey.pem` scaricato da Let's Encrypt.<br>
     <b>Impostazioni Avanzate</b><br>
+    <code>"Durata del token di accesso</code>: la durata del token di accesso (in minuti) usato dalla domotica di Google per identificarsi a questo nododi  Node-RED. Il valore predefinito è di 60 minuti.<br>
+    <code>Intervallo tra i report (m)</code>: Intervallo di tempo, in minuti, tra due report di aggiornamento di stato che sono inviati a Google.<br>
     <code>Ritardo richiesta di sincronizzazione (s)</code>: Ritardo richiesta di sincronizzazione dopo un deploy, 0 o vuoto per disabilitare (valore predefinito 0).<br>
     <code>Ritardo invio del messaggio set_state (s)</code>: Ritardo invio del messaggio set_state dopo un cambio di stato, 0 o vuoto per disabilitare  (valore predefinito 0).<br>
 

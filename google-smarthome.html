@@ -89,11 +89,6 @@
                 <input type="password" id="node-config-input-password">
             </div>
         </div>
-
-        <div class="form-row">
-            <label for="node-config-input-accesstokenduration"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.accesstokenduration"></span></label>
-            <input type="text" id="node-config-input-accesstokenduration" data-i18n="[placeholder]googlesmarthome.placeholder.accesstokenduration">
-        </div>
     </fieldset>
 
     <fieldset>
@@ -116,11 +111,6 @@
         <div class="form-row">
             <label for="node-config-input-jwtkey"><i class="fa fa-folder"></i> <span data-i18n="googlesmarthome.label.jwtkey"></span></label>
             <input type="text" id="node-config-input-jwtkey">
-        </div>
-
-        <div class="form-row">
-            <label for="node-config-input-reportinterval"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.reportinterval"></span></label>
-            <input type="text" id="node-config-input-reportinterval" data-i18n="[placeholder]googlesmarthome.placeholder.reportinterval">
         </div>
     </fieldset>
 
@@ -168,10 +158,19 @@
         <legend data-i18n="googlesmarthome.label.advanced_settings"></legend>
 
         <div class="form-row">
+            <label for="node-config-input-accesstokenduration"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.accesstokenduration"></span></label>
+            <input type="text" id="node-config-input-accesstokenduration" data-i18n="[placeholder]googlesmarthome.placeholder.accesstokenduration">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-reportinterval"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.reportinterval"></span></label>
+            <input type="text" id="node-config-input-reportinterval" data-i18n="[placeholder]googlesmarthome.placeholder.reportinterval">
+        </div>
+
+        <div class="form-row">
             <label for="node-config-input-request_sync_delay"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.request_sync_delay"></span></label>
             <input type="text" id="node-config-input-request_sync_delay" data-i18n="[placeholder]googlesmarthome.placeholder.request_sync_delay">
         </div>
-
 
         <div class="form-row">
             <label for="node-config-input-set_state_delay"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.set_state_delay"></span></label>
@@ -278,14 +277,6 @@
                 jwtkey: {
                     value:"", required:true
                 },
-                */
-                accesstokenduration: {
-                    value:60, required:true, validate:RED.validators.number(true)
-                },
-                reportinterval: {
-                    value:60, required:true, validate:RED.validators.number(true)
-                },
-                /*
                 clientid: {
                     value:"", required:true
                 },
@@ -293,6 +284,12 @@
                     value:"", required:true
                 }
                 */
+                accesstokenduration: {
+                    value:60, required:true, validate:RED.validators.number(true)
+                },
+                reportinterval: {
+                    value:60, required:true, validate:RED.validators.number(true)
+                },
                 request_sync_delay: {
                     value:'', required:false, validate: isOptionalNonNegativeInteger
                 },

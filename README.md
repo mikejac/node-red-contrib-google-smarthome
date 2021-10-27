@@ -956,8 +956,6 @@ Example flow:
 
   `Username` and `Password`: If Google Login is disabled, a username and password used when you link Google SmartHome to this node.
   
-  `Token Duration`: The authorization token duration used by Google SmartHome to identify itself to node-red SmartHome plugin. Default is 60 minutes.
-
 **Actions on Google Project Settings**
 
   `Client ID`: The client id you entered in the *Actions on Google* project.
@@ -967,8 +965,6 @@ Example flow:
 **Google HomeGraph Settings**
 
   `Jwt Key`: Full or relative to the Node-RED config folder path to JWT key file (the one downloaded in the *Add Report State* section).
-
-  `Report Interval (m)`: Time, in minutes, between report updates are sent to Google.
 
 **Web Server Settings**
 
@@ -987,6 +983,10 @@ Example flow:
   `Private Key`: Full path to private key file, e.g. `privkey.pem` from Let's Encrypt.
 
 **Advanced Settings**
+
+  `Token Duration`: The authorization token duration used by Google SmartHome to identify itself to node-red SmartHome plugin. Default is 60 minutes.
+
+  `Report Interval (m)`: Time, in minutes, between report updates are sent to Google (default value 60 m).
 
   `Request sync delay (s)`: Delay, in seconds, for request devices sync after a deploy, 0 or empty for disable (default value 0).
 
