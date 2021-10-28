@@ -140,7 +140,9 @@ Google Sign-In later.
     * Use external SSL offload: Check, if you want to do SSL decryption on an external load balancer.
     * Public and Private Key: Path to public and private key of your SSL certificate (if you do not use external SSL decryption).
 4. Deploy the flow.
-5. Check if your service is reachable from the internet. Use a tool like https://reqbin.com to send a GET request to https://example.com:3001/check (using your domain name and port). It must answer with status 200 and the message "SUCCESS".
+5. Check if your service is reachable from the internet. Use a tool like https://reqbin.com to send a GET request to
+   https://example.com:3001/check (using your domain name and port). It must answer with status 200 and the message
+   "SUCCESS: Smart Home service is reachable!" as one of the first lines.
 
 #### Setup Account linking
 
@@ -1045,7 +1047,8 @@ own phone.
 - Go to [Actions on Google Console](https://console.actions.google.com), in tab *Test* choose *View logs in Google Cloud Platform*.
 - Check if your service is reachable from the outside. Use [reqbin.com](https://reqbin.com/) or a similar tool to
   send a GET request to https://example.com:3001/check (with your hostname and port). It must answer with status
-  200 (OK) and the message "SUCCESS". Use https://www.ssllabs.com/ssltest/ to check your SSL certificate.
+  200 (OK) and the message "SUCCESS: Smart Home service is reachable!" as one of the first lines. Use
+  https://www.ssllabs.com/ssltest/ to check your SSL certificate.
 - Check Node-RED's log output. Where you find this depends on how you installed Node-Red. Usually something like
   `journalctl -u nodered`, `docker logs <container>` or a file in `/var/log`. 
 - Toggle "Enable Node debug" in the configuration node, connect a debug node to the output of the management node and
