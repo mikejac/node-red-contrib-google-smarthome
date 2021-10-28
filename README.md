@@ -106,10 +106,10 @@ The HomeGraph API is used to report the state of your devices to Google and to r
 10. Click on *Add Key* to create a new key of type JSON.
 11. Download the JSON Web Token keyfile (jwt Key) and copy it to your Node-RED server, in a location where the Node-RED service can read it.
 
-#### Integrating Google Sign-In
+#### Integrating Google Sign-In (optional)
 
-The Google Sign-In feature allows to login using your Google credentials. See [Integrating Google Sign-In into your web app](https://developers.google.com/identity/sign-in/web/sign-in) for more details.
-If you want to use login with username/password instead, skip this section.
+The Google Sign-In feature allows to log in using your Google credentials. If you are new to this topic, it is recommended to skip this section and start with username/password based authentication instead. You can always switch to
+Google Sign-In later.
 
 1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
 2. From the project drop-down, select your project.
