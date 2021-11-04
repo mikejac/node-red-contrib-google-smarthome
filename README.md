@@ -1,4 +1,4 @@
-# WARNING: Beta code! (But we're getting there :-)
+**WARNING: Beta code! (But we're getting there :-)**
 
 **Breaking change:** On upgrade to v0.1.0 you have to re-enter your credentials. See the [release notes](https://github.com/mikejac/node-red-contrib-google-smarthome/releases/tag/v0.1.0).
 
