@@ -54,7 +54,10 @@ This is done by implementing a smart home provider that runs on your own host. S
 third-party services (except Google) that may go offline, become chargeable or may leak your data.
 
 What this module does NOT:
-It does not directly interface with devices made by Google, for example Nest thermostats.
+- It does not talk to your physical devices. It only provides virtual devices in Node-RED. It's up to you to forward
+  commands from the virtual to the physical device.
+- It is not an interface to Google devices (like Nest Thermostats, Nest Cams, etc.).
+- It is only for controlling devices. It does not let you implement your own conversations with Google Assistant.
 
 ---
 ## Prerequisites
@@ -89,6 +92,7 @@ See the developer guide and release notes at https://developers.google.com/assis
 10. On tab *Test*, click *Reset Test*.
 
 *Note:* Adjust the URLs like https://example.com:3001/smarthome to your own hostname, port and settings.
+*Note:* You can't test your project in the Action Console's simulator. It only works on real devices.
 
 #### Enable HomeGraph API
 
@@ -952,7 +956,7 @@ Example flow:
 
   `Use Google Login`: If enabled, use the Google login authentication.
 
-  `Login Client ID`: If Google Login is enabled, The client id you gained from the *Google Sign-In* integration.
+  `Login Client ID`: If Google Login is enabled, the client id you gained from the *Google Sign-In* integration.
 
   `Authorized emails`: If Google Login is enabled, The email addresses authorized to log in.
 
@@ -1042,9 +1046,10 @@ own phone.
   [Possible errors](https://github.com/mikejac/node-red-contrib-google-smarthome/wiki/Possible-errors).
 - Look at Node-Red's debug panel for error messages.
 - Unlink and relink your account in the Google Home app. Meanwhile, look for errors in the debug panel.
+- If you have problems during account linking, disable "Use Google Login" and try try login with username/password first. You can switch back to Google Login later.
 - Restart your flows (using the `Restart Flows` option in the dropdown menu of the deploy button) while the debug panel
   is open to see error messages during initialization.
-- Go to [Actions on Google Console](https://console.actions.google.com), in tab *Test* choose *View logs in Google Cloud Platform*.
+- Go to [Actions on Google Console](https://console.actions.google.com), in tab *Test* choose *logs in Google Cloud*.
 - Check if your service is reachable from the outside. Use [reqbin.com](https://reqbin.com/) or a similar tool to
   send a GET request to https://example.com:3001/check (with your hostname and port). It must answer with status
   200 (OK) and the message "SUCCESS: Smart Home service is reachable!" as one of the first lines. Use
@@ -1055,7 +1060,8 @@ own phone.
   look for debug messages. In Node-Red UI choose 'Restart Flows' on the 'Deploy' button to see messages during
   initialization.
 - Go to [Actions on Google Console](https://console.actions.google.com), on tab *Test* click *Reset Test*. If this
-  doesn't do anything, click the *Settings* button, disable "On device testing", then enable it again.
+  doesn't do anything, click the *Settings* button, disable "On device testing", then click "Start testing" to enable it again. This is
+  especially important after making changes in the Google Actions Console.
 - Google might say that it cannot reach your device if that device did not update its state at least once after creation.
 
 ---
