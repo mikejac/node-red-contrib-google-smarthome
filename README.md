@@ -1020,8 +1020,11 @@ Example flow:
 ---
 ## Inviting other users
 
-You can share access to your project with other users, so they can control your home with the Google Home App on their
-own phone.
+You can invite other people into your smart home in the app by following
+[these steps](https://support.google.com/googlenest/answer/9155535?hl=en#zippy=%2Cinvite-members-to-a-home).
+
+Inviting people does not work in all cases. For example it won't work if you or the other person has a commercial
+Google Workspace account. If this is the case, you can share access to your smart home project like this:
 
 1. If you are currently using username/password authentication, switch to Google Sign-In by following the instructions
    on [Integrating Google Sign-In](#integrating-google-sign-in-optional). Only continue if you successfully unlinked and
