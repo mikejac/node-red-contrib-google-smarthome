@@ -141,7 +141,8 @@ Google Sign-In later.
     * Jwt Key: The JSON file you downloaded earlier. Can be an absolute path or a path relative to Node-REDs user dir.
     * Port: The port on which the service should run. If left empty, it will run on the same port as Node-RED.
     * Path: URL path on which the service will run. If left empty, https://example.com:3001/smarthome will be used. If set, it will be https://example.com:3001/<yourpath>/smarthome.
-    * Use external SSL offload: Check, if you want to do SSL decryption on an external load balancer.
+    * Use external SSL offload: If enabled, the smarthome service will use HTTP instead of HTTPS. Check if you want to
+      do SSL termination on a reverse proxy.
     * Public and Private Key: Path to public and private key of your SSL certificate (if you do not use external SSL decryption).
 4. Deploy the flow.
 5. Check if your service is reachable from the internet. Use a tool like https://reqbin.com to send a GET request to
@@ -982,7 +983,8 @@ Example flow:
   `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the
           *Actions on Google* project. If empty, it will use the same port as Node-RED.
 
-  `Use external SSL offload`: If enabled, SSL encryption is not used by the node and must be done elsewhere.
+  `Use external SSL offload`: If enabled, the smarthome service will use HTTP instead of HTTPS. Check if you want to
+                              do SSL termination on a reverse proxy.
 
   `Public Key`: Full path to public key file, e.g. `fullchain.pem` from Let's Encrypt.
 
