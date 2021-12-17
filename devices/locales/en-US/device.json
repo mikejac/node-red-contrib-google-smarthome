@@ -226,7 +226,12 @@
             "recommended": "Recommended",
             "all": "All",
             "advanced_settings": "Advanced settings",
-			"room_hint": "Room hint"
+			"room_hint": "Room hint",
+            "challenge_type": "Challenge type",
+            "no_challenge": "No challenge",
+            "ackNeeded": "Ack needed",
+            "pinNeeded": "PIN needed",
+            "pin": "PIN"
         },
         "placeholder": {
             "name": "Name",
@@ -276,7 +281,8 @@
             "energy_storage_distance_unit_for_ux": "Energy storage distance unit for UX",
             "supported_dispense_items_file": "Supported dispense items file",
             "supported_dispense_presets_file": "Supported dispense presets file",
-			"room_hint": "Room hint"
+			"room_hint": "Room hint",
+            "pin": "PIN"
         },
         "trait": {
             "appselector": "App selector",
