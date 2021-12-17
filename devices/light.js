@@ -168,7 +168,6 @@ module.exports = function(RED) {
             this.updateStatusIcon();
 
             let msg = {
-                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
@@ -178,6 +177,9 @@ module.exports = function(RED) {
                     temperature: states.color.temperature,
                 },
             };
+
+            if(this.topicOut)
+                msg.topic = this.topicOut;
 
             this.send(msg);
         };
@@ -436,7 +438,6 @@ module.exports = function(RED) {
             this.updateStatusIcon();
 
             let msg = {
-                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
@@ -449,6 +450,9 @@ module.exports = function(RED) {
                     brightness: states.brightness,
                 },
             };
+
+            if(this.topicOut)
+                msg.topic = this.topicOut;
 
             this.send(msg);
         };
@@ -749,7 +753,6 @@ module.exports = function(RED) {
             this.updateStatusIcon();
 
             let msg = {
-                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
@@ -760,6 +763,9 @@ module.exports = function(RED) {
                     brightness: states.brightness,
                 },
             };
+
+            if(this.topicOut)
+                msg.topic = this.topicOut;
 
             this.send(msg);
         };
@@ -1020,7 +1026,6 @@ module.exports = function(RED) {
             this.updateStatusIcon();
 
             let msg = {
-                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
@@ -1032,6 +1037,9 @@ module.exports = function(RED) {
                     brightness: states.brightness,
                 },
             };
+
+            if(this.topicOut)
+                msg.topic = this.topicOut;
 
             this.send(msg);
         };
@@ -1394,7 +1402,6 @@ module.exports = function(RED) {
             this.updateStatusIcon();
 
             let msg = {
-                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
@@ -1402,6 +1409,9 @@ module.exports = function(RED) {
                     on: this.states.on,
                 },
             };
+
+            if(this.topicOut)
+                msg.topic = this.topicOut;
 
             if (this.is_dimmable) {
                 msg.payload['brightness'] = this.states.brightness;

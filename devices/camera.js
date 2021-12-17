@@ -136,13 +136,15 @@ module.exports = function(RED) {
             this.updateStatusIcon();
 
             let msg = {
-                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
                     online: states.online
                 },
             };
+
+            if(this.topicOut)
+                msg.topic = this.topicOut;
 
             this.send(msg);
         };

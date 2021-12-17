@@ -383,13 +383,15 @@ module.exports = function(RED) {
             this.updateStatusIcon();
 
             let msg = {
-                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
                     online: states.online
                 },
             };
+
+            if(this.topicOut)
+                msg.topic = this.topicOut;
 
             Object.keys(states).forEach(function (key) {
                 msg.payload[key] = states[key];

@@ -118,7 +118,6 @@ module.exports = function(RED) {
             Object.assign(this.states, states);
 
             let msg = {
-                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
@@ -126,6 +125,9 @@ module.exports = function(RED) {
                     temperatureSetpointCelsius: states.temperatureSetpointCelsius,
                 },
             };
+
+            if(this.topicOut)
+                msg.topic = this.topicOut;
 
             this.send(msg);
         };

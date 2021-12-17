@@ -1853,7 +1853,6 @@ class BaseDevice {
         this.updateStatusIcon();
 
         let msg = {
-            topic: this.topicOut,
             device_name: device.properties.name.name,
             command: command,
             params: original_params,
@@ -1861,6 +1860,9 @@ class BaseDevice {
                 online: states.online
             },
         };
+
+        if(this.topicOut)
+            msg.topic = this.topicOut;
 
         // Copy the device state to the payload
         Object.keys(me.states).forEach(function (key) {
@@ -1890,10 +1892,20 @@ class BaseDevice {
             }
         });*/
 
-        // this._debug(".updated: msg = " + JSON.stringify(msg));
+        // Allow subclasses to modify the message
+        msg = this.modifyUpdateMessage(msg);
 
         this.send(msg);
     };
+
+    /******************************************************************************************************************
+     * Modify update message. Can be overridden by subclasses to modify output messages.
+     *
+     */
+    modifyUpdateMessage(msg) {
+        console.log("modifyUpdateMessage Basisklasse: " + JSON.stringify(msg));
+        return msg;
+    }
 
     /******************************************************************************************************************
      * respond to inputs from NodeRED

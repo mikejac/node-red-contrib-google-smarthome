@@ -172,7 +172,6 @@ module.exports = function(RED) {
             this.updateStatusIcon();
 
             let msg = {
-                topic: this.topicOut,
                 device_name: device.properties.name.name,
                 command: command,
                 payload: {
@@ -188,6 +187,9 @@ module.exports = function(RED) {
                     isCharging:true,
                 },
             };
+
+            if(this.topicOut)
+                msg.topic = this.topicOut;
 
             this.send(msg);
         };
