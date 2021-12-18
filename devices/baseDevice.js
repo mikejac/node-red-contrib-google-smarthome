@@ -103,6 +103,7 @@ class BaseDevice {
             volume: config.trait_volume || false,
         };
         this.topicOut = config.topic;
+        this.passthru = config.passthru;
         this.room_hint = config.room_hint;
         this.device_type = config.device_type;
 
@@ -1822,6 +1823,11 @@ class BaseDevice {
             if (me.trait.energystorage) {
                 text += ' ' + me.states.descriptiveCapacityRemaining;
             }
+            if (me.trait.armdisarm) {
+                if (me.states.currentArmLevel) {
+                    text += ' ' + me.states.currentArmLevel;
+                }
+            }
         } else {
             shape = 'ring';
             text = "offline";
@@ -1861,7 +1867,7 @@ class BaseDevice {
             },
         };
 
-        if(this.topicOut)
+        if (this.topicOut)
             msg.topic = this.topicOut;
 
         // Copy the device state to the payload
@@ -1911,8 +1917,9 @@ class BaseDevice {
      * respond to inputs from NodeRED
      *
      */
-    onInput(msg) {
+    onInput(msgi) {
         const me = this;
+        let msg = msgi;
         me._debug(".input: topic = " + msg.topic);
 
         let upper_topic = '';
@@ -2310,32 +2317,24 @@ class BaseDevice {
                 if (state_key !== '') {
                     let payload = {};
                     payload[state_key] = msg.payload;
-                    const differs = me.updateState(payload);
-                    if (differs) {
-                        me._debug(".input: " + state_key + ' ' + JSON.stringify(msg.payload));
-                        this.clientConn.setState(this, me.states, true);  // tell Google ...
-                        this.clientConn.app.ScheduleGetState();
-
-                        if (this.passthru) {
-                            msg.payload = me.states[state_key];
-                            this.send(msg);
-                        }
-                    }
-                    this.updateStatusIcon();
+                    msg = {
+                        payload: payload
+                    };
                 } else {
                     me._debug(".input: some other topic");
-                    const differs = me.updateState(msg.payload);
+                }
+                const differs = me.updateState(msg.payload);
 
-                    if (differs) {
-                        this.clientConn.setState(this, me.states, true);  // tell Google ...
-                        this.clientConn.app.ScheduleGetState();
-
-                        if (this.passthru) {
-                            msg.payload = me.states;
-                            this.send(msg);
-                        }
+                if (differs) {
+                    if (!this.passthru) {
+                        this.send({ topic: this.topicOut, payload: me.states });
                     }
+                    this.clientConn.setState(this, me.states, true);  // tell Google ...
+                    this.clientConn.app.ScheduleGetState();
                     this.updateStatusIcon();
+                }
+                if (this.passthru) {
+                    this.send(msgi);
                 }
             }
         } catch (err) {
