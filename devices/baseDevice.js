@@ -3475,12 +3475,12 @@ class BaseDevice {
             }
             if (challenge.pin === undefined) {
                 me.send({
-                    topic: me.topicOut,
-                    type: 'ChallengePin',
+                    topic: 'ChallengePin',
                     payload: {
                         name: this.name,
                         pin: challenge_pin,
-                        command: command.command
+                        command: command.command,
+                        topic: me.topicOut,
                     }
                 });
                 // ackNeeded with trait states
