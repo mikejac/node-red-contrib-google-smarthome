@@ -103,6 +103,7 @@ class BaseDevice {
             volume: config.trait_volume || false,
         };
         this.topicOut = config.topic;
+        this.passthru = config.passthru;
         this.room_hint = config.room_hint;
         this.device_type = config.device_type;
 
@@ -1822,6 +1823,11 @@ class BaseDevice {
             if (me.trait.energystorage) {
                 text += ' ' + me.states.descriptiveCapacityRemaining;
             }
+            if (me.trait.armdisarm) {
+                if (me.states.currentArmLevel) {
+                    text += ' ' + me.states.currentArmLevel;
+                }
+            }
         } else {
             shape = 'ring';
             text = "offline";
@@ -1861,7 +1867,7 @@ class BaseDevice {
             },
         };
 
-        if(this.topicOut)
+        if (this.topicOut)
             msg.topic = this.topicOut;
 
         // Copy the device state to the payload
@@ -1911,23 +1917,24 @@ class BaseDevice {
      * respond to inputs from NodeRED
      *
      */
-    onInput(msg) {
+    onInput(msgi) {
         const me = this;
+        let msg = msgi;
         me._debug(".input: topic = " + msg.topic);
 
         let upper_topic = '';
         if (msg.topic) {
-            let topicArr = String(msg.topic).split(this.topicDelim);
+            let topicArr = String(msg.topic).split(me.topicDelim);
             let topic = topicArr[topicArr.length - 1].trim();   // get last part of topic
             upper_topic = topic.toUpperCase();
         }
 
         try {
             if (upper_topic === 'GETSTATE') {
-                this.send({
+                me.send({
                     topic: msg.topic,
                     payload: me.states,
-                    device_id: this.device.id
+                    device_id: me.device.id
                 });
             } else if (upper_topic === 'ERRORCODE') {
                 if (typeof msg.payload === 'string' && msg.payload.trim()) {
@@ -1936,218 +1943,218 @@ class BaseDevice {
                     me.errorCode = undefined;
                 }
             } else if (upper_topic === 'AVAILABLEAPPLICATIONS') {
-                if (this.trait.appselector) {
-                    if (this.appselector_type !== 'json') {
+                if (me.trait.appselector) {
+                    if (me.appselector_type !== 'json') {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_applications = this.to_available_applications(this.loadJson('Applications', this.appselector_file.replace(/<id>/g, this.id), []));
+                            me.available_applications = me.to_available_applications(me.loadJson('Applications', me.appselector_file.replace(/<id>/g, me.id), []));
                         } else {
-                            this.available_applications = this.to_available_applications(msg.payload);
-                            if (!this.writeJson('Applications', this.appselector_file.replace(/<id>/g, this.id), this.available_applications)) {
-                                this.RED.log.error("Error saving Applications to file " + this.appselector_file.replace(/<id>/g, this.id));
+                            me.available_applications = me.to_available_applications(msg.payload);
+                            if (!me.writeJson('Applications', me.appselector_file.replace(/<id>/g, me.id), me.available_applications)) {
+                                me.RED.log.error("Error saving Applications to file " + me.appselector_file.replace(/<id>/g, me.id));
                             }
                         }
                     }
                 } else {
-                    this.available_applications = [];
-                    this.RED.log.error("Applications disabled");
+                    me.available_applications = [];
+                    me.RED.log.error("Applications disabled");
                 }
-                this.device.properties.attributes.availableApplications = this.available_applications;
-                this.clientConn.app.ScheduleRequestSync();
+                me.device.properties.attributes.availableApplications = me.available_applications;
+                me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'AVAILABLEARMLEVELS') {
-                if (this.trait.armdisarm) {
-                    if (this.available_arm_levels_type !== 'json') {
+                if (me.trait.armdisarm) {
+                    if (me.available_arm_levels_type !== 'json') {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_arm_levels = this.to_available_arm_levels(this.loadJson('Arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []));
+                            me.available_arm_levels = me.to_available_arm_levels(me.loadJson('Arm levels', me.available_arm_levels_file.replace(/<id>/g, me.id), []));
                         } else {
-                            this.available_arm_levels = this.to_available_arm_levels(msg.payload);
-                            if (!this.writeJson('Arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), this.available_arm_levels)) {
-                                this.RED.log.error("Error saving Arm levels to file " + this.available_arm_levels_file.replace(/<id>/g, this.id));
+                            me.available_arm_levels = me.to_available_arm_levels(msg.payload);
+                            if (!me.writeJson('Arm levels', me.available_arm_levels_file.replace(/<id>/g, me.id), me.available_arm_levels)) {
+                                me.RED.log.error("Error saving Arm levels to file " + me.available_arm_levels_file.replace(/<id>/g, me.id));
                             }
                         }
                     }
                 } else {
-                    this.available_arm_levels = [];
-                    this.RED.log.error("Arm levels disabled");
+                    me.available_arm_levels = [];
+                    me.RED.log.error("Arm levels disabled");
                 }
-                this.device.properties.attributes.availableArmLevels.levels = this.available_arm_levels;
-                this.clientConn.app.ScheduleRequestSync();
+                me.device.properties.attributes.availableArmLevels.levels = me.available_arm_levels;
+                me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'AVAILABLECHANNELS') {
-                if (this.trait.channel) {
-                    if (this.channel_type !== 'json') {
+                if (me.trait.channel) {
+                    if (me.channel_type !== 'json') {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_channels = this.to_available_channels(this.loadJson('Channels', this.channel_file.replace(/<id>/g, this.id), []));
+                            me.available_channels = me.to_available_channels(me.loadJson('Channels', me.channel_file.replace(/<id>/g, me.id), []));
                         } else {
-                            this.available_channels = this.to_available_channels(msg.payload);
-                            if (!this.writeJson('Channels', this.channel_file.replace(/<id>/g, this.id), this.available_channels)) {
-                                this.RED.log.error("Error saving Channels to file " + this.channel_file.replace(/<id>/g, this.id));
+                            me.available_channels = me.to_available_channels(msg.payload);
+                            if (!me.writeJson('Channels', me.channel_file.replace(/<id>/g, me.id), me.available_channels)) {
+                                me.RED.log.error("Error saving Channels to file " + me.channel_file.replace(/<id>/g, me.id));
                             }
                         }
                     }
                 } else {
-                    this.available_channels = [];
-                    this.RED.log.error("Channels disabled");
+                    me.available_channels = [];
+                    me.RED.log.error("Channels disabled");
                 }
-                this.device.properties.attributes.availableChannels = this.available_channels;
-                this.clientConn.app.ScheduleRequestSync();
+                me.device.properties.attributes.availableChannels = me.available_channels;
+                me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'SUPPORTEDDISPENSEITEMS') {
-                if (this.trait.dispense) {
-                    if (this.supported_dispense_items_type !== 'json') {
+                if (me.trait.dispense) {
+                    if (me.supported_dispense_items_type !== 'json') {
                         if (typeof msg.payload === 'undefined') {
-                            this.supported_dispense_items = this.to_supported_dispense_items(this.loadJson('Dispense items', this.supported_dispense_items_file.replace(/<id>/g, this.id), []));
+                            me.supported_dispense_items = me.to_supported_dispense_items(me.loadJson('Dispense items', me.supported_dispense_items_file.replace(/<id>/g, me.id), []));
                         } else {
-                            this.supported_dispense_items = this.to_supported_dispense_items(msg.payload);
-                            if (!this.writeJson('Dispense items', this.supported_dispense_items_file.replace(/<id>/g, this.id), this.supported_dispense_items)) {
-                                this.RED.log.error("Error saving Dispense items to file " + this.supported_dispense_items_file.replace(/<id>/g, this.id));
+                            me.supported_dispense_items = me.to_supported_dispense_items(msg.payload);
+                            if (!me.writeJson('Dispense items', me.supported_dispense_items_file.replace(/<id>/g, me.id), me.supported_dispense_items)) {
+                                me.RED.log.error("Error saving Dispense items to file " + me.supported_dispense_items_file.replace(/<id>/g, me.id));
                             }
                         }
                     }
                 } else {
-                    this.supported_dispense_items = [];
-                    this.RED.log.error("Dispense items disabled");
+                    me.supported_dispense_items = [];
+                    me.RED.log.error("Dispense items disabled");
                 }
-                this.device.properties.attributes.supportedDispenseItems = this.supported_dispense_items;
-                this.states['dispenseItems'] = this.getDispenseNewState();
-                this.clientConn.app.ScheduleRequestSync();
+                me.device.properties.attributes.supportedDispenseItems = me.supported_dispense_items;
+                me.states['dispenseItems'] = me.getDispenseNewState();
+                me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'SUPPORTEDDISPENSEPRESETS') {
-                if (this.trait.dispense) {
-                    if (this.supported_dispense_presets_type !== 'json') {
+                if (me.trait.dispense) {
+                    if (me.supported_dispense_presets_type !== 'json') {
                         if (typeof msg.payload === 'undefined') {
-                            this.supported_dispense_presets = this.to_supported_dispense_presets(this.loadJson('Dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), []));
+                            me.supported_dispense_presets = me.to_supported_dispense_presets(me.loadJson('Dispense presets', me.supported_dispense_presets_file.replace(/<id>/g, me.id), []));
                         } else {
-                            this.supported_dispense_presets = this.to_supported_dispense_presets(msg.payload);
-                            if (!this.writeJson('Dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), this.supported_dispense_presets)) {
-                                this.RED.log.error("Error saving Dispense presets to file " + this.supported_dispense_presets_file.replace(/<id>/g, this.id));
+                            me.supported_dispense_presets = me.to_supported_dispense_presets(msg.payload);
+                            if (!me.writeJson('Dispense presets', me.supported_dispense_presets_file.replace(/<id>/g, me.id), me.supported_dispense_presets)) {
+                                me.RED.log.error("Error saving Dispense presets to file " + me.supported_dispense_presets_file.replace(/<id>/g, me.id));
                             }
                         }
                     }
                 } else {
-                    this.supported_dispense_presets = [];
-                    this.RED.log.error("Dispense presets disabled");
+                    me.supported_dispense_presets = [];
+                    me.RED.log.error("Dispense presets disabled");
                 }
-                this.device.properties.attributes.supportedDispensePresets = this.supported_dispense_presets;
-                this.states['dispenseItems'] = this.getDispenseNewState();
-                this.clientConn.app.ScheduleRequestSync();
+                me.device.properties.attributes.supportedDispensePresets = me.supported_dispense_presets;
+                me.states['dispenseItems'] = me.getDispenseNewState();
+                me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'AVAILABLEFANSPEEDS') {
-                if (this.trait.fanspeed) {
-                    if (this.available_fan_speeds_type !== 'json') {
+                if (me.trait.fanspeed) {
+                    if (me.available_fan_speeds_type !== 'json') {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_fan_speeds = this.to_available_fan_speeds(this.loadJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), []));
+                            me.available_fan_speeds = me.to_available_fan_speeds(me.loadJson('Fan speeds', me.available_fan_speeds_file.replace(/<id>/g, me.id), []));
                         } else {
-                            this.available_fan_speeds = this.to_available_fan_speeds(msg.payload);
-                            if (!this.writeJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), this.available_fan_speeds)) {
-                                this.RED.log.error("Error saving Fan speeds to file " + this.available_fan_speeds_file.replace(/<id>/g, this.id));
+                            me.available_fan_speeds = me.to_available_fan_speeds(msg.payload);
+                            if (!me.writeJson('Fan speeds', me.available_fan_speeds_file.replace(/<id>/g, me.id), me.available_fan_speeds)) {
+                                me.RED.log.error("Error saving Fan speeds to file " + me.available_fan_speeds_file.replace(/<id>/g, me.id));
                             }
                         }
                     }
                 } else {
-                    this.available_fan_speeds = [];
-                    this.RED.log.error("Fan speeds disabled");
+                    me.available_fan_speeds = [];
+                    me.RED.log.error("Fan speeds disabled");
                 }
-                this.device.properties.attributes.availableFanSpeeds.speeds = this.available_fan_speeds;
-                this.clientConn.app.ScheduleRequestSync();
+                me.device.properties.attributes.availableFanSpeeds.speeds = me.available_fan_speeds;
+                me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'AVAILABLEFILLLEVELS') {
-                if (this.trait.dispense) {
-                    if (this.available_fill_levels_type !== 'json') {
+                if (me.trait.dispense) {
+                    if (me.available_fill_levels_type !== 'json') {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_fill_levels = this.to_available_fill_levels(this.loadJson(' Fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), []));
+                            me.available_fill_levels = me.to_available_fill_levels(me.loadJson(' Fill levels', me.available_fill_levels_file.replace(/<id>/g, me.id), []));
                         } else {
-                            this.available_fill_levels = this.to_available_fill_levels(msg.payload);
-                            if (!this.writeJson(' Fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), this.available_fill_levels)) {
-                                this.RED.log.error("Error saving Fill levels to file " + this.available_fill_levels_file.replace(/<id>/g, this.id));
+                            me.available_fill_levels = me.to_available_fill_levels(msg.payload);
+                            if (!me.writeJson(' Fill levels', me.available_fill_levels_file.replace(/<id>/g, me.id), me.available_fill_levels)) {
+                                me.RED.log.error("Error saving Fill levels to file " + me.available_fill_levels_file.replace(/<id>/g, me.id));
                             }
                         }
                     }
                 } else {
-                    this.available_fill_levels = [];
-                    this.RED.log.error("Fill levels disabled");
+                    me.available_fill_levels = [];
+                    me.RED.log.error("Fill levels disabled");
                 }
-                this.device.properties.attributes.availableFillLevels.levels = this.available_fill_levels;
-                this.clientConn.app.ScheduleRequestSync();
+                me.device.properties.attributes.availableFillLevels.levels = me.available_fill_levels;
+                me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'AVAILABLEFOODPRESETS') {
-                if (this.trait.cook) {
-                    if (this.food_presets_type !== 'json') {
+                if (me.trait.cook) {
+                    if (me.food_presets_type !== 'json') {
                         if (typeof msg.payload === 'undefined') {
-                            this.food_presets = this.to_food_presets(this.loadJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), []));
+                            me.food_presets = me.to_food_presets(me.loadJson('Food presets', me.food_presets_file.replace(/<id>/g, me.id), []));
                         } else {
-                            this.food_presets = this.to_food_presets(msg.payload);
-                            if (!this.writeJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), this.food_presets)) {
-                                this.RED.log.error("Error saving Food presets to file " + this.food_presets_file.replace(/<id>/g, this.id));
+                            me.food_presets = me.to_food_presets(msg.payload);
+                            if (!me.writeJson('Food presets', me.food_presets_file.replace(/<id>/g, me.id), me.food_presets)) {
+                                me.RED.log.error("Error saving Food presets to file " + me.food_presets_file.replace(/<id>/g, me.id));
                             }
                         }
                     }
                 } else {
-                    this.food_presets = [];
-                    this.RED.log.error("Food presets disabled");
+                    me.food_presets = [];
+                    me.RED.log.error("Food presets disabled");
                 }
-                this.device.properties.attributes.foodPresets = this.food_presets;
-                this.clientConn.app.ScheduleRequestSync();
+                me.device.properties.attributes.foodPresets = me.food_presets;
+                me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'AVAILABLEINPUTS') {
-                if (this.trait.inputselector) {
-                    if (this.inputselector_type !== 'json') {
+                if (me.trait.inputselector) {
+                    if (me.inputselector_type !== 'json') {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_inputs = this.to_available_inputs(this.loadJson('Inputs', this.inputselector_file.replace(/<id>/g, this.id), []));
+                            me.available_inputs = me.to_available_inputs(me.loadJson('Inputs', me.inputselector_file.replace(/<id>/g, me.id), []));
                         } else {
-                            this.available_inputs = this.to_available_inputs(msg.payload);
-                            if (!this.writeJson('Inputs', this.inputselector_file.replace(/<id>/g, this.id), this.available_inputs)) {
-                                this.RED.log.error("Error saving Inputs to file " + this.inputselector_file.replace(/<id>/g, this.id));
+                            me.available_inputs = me.to_available_inputs(msg.payload);
+                            if (!me.writeJson('Inputs', me.inputselector_file.replace(/<id>/g, me.id), me.available_inputs)) {
+                                me.RED.log.error("Error saving Inputs to file " + me.inputselector_file.replace(/<id>/g, me.id));
                             }
                         }
                     }
                 } else {
-                    this.available_inputs = [];
-                    this.RED.log.error("Inputs disabled");
+                    me.available_inputs = [];
+                    me.RED.log.error("Inputs disabled");
                 }
-                this.device.properties.attributes.availableInputs = this.available_inputs;
-                this.clientConn.app.ScheduleRequestSync();
+                me.device.properties.attributes.availableInputs = me.available_inputs;
+                me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'AVAILABLEMODES') {
-                if (this.trait.modes) {
-                    if (this.modes_type !== 'json') {
+                if (me.trait.modes) {
+                    if (me.modes_type !== 'json') {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_modes = this.to_available_modes(this.loadJson('Modes', this.modes_file.replace(/<id>/g, this.id), []));
-                            this.updateModesState(me, me);
+                            me.available_modes = me.to_available_modes(me.loadJson('Modes', me.modes_file.replace(/<id>/g, me.id), []));
+                            me.updateModesState(me, me);
                         } else {
-                            this.available_modes = this.to_available_modes(msg.payload);
-                            if (!this.writeJson('Modes', this.modes_file.replace(/<id>/g, this.id), this.available_modes)) {
-                                this.RED.log.error("Error saving Modes to file " + this.modes_file.replace(/<id>/g, this.id));
+                            me.available_modes = me.to_available_modes(msg.payload);
+                            if (!me.writeJson('Modes', me.modes_file.replace(/<id>/g, me.id), me.available_modes)) {
+                                me.RED.log.error("Error saving Modes to file " + me.modes_file.replace(/<id>/g, me.id));
                             }
                         }
                     }
                 } else {
-                    this.available_modes = [];
-                    this.RED.log.error("Modes disabled");
+                    me.available_modes = [];
+                    me.RED.log.error("Modes disabled");
                 }
-                this.device.properties.attributes.availableModes = this.available_modes;
-                this.updateModesState(me, me);
-                this.clientConn.app.ScheduleRequestSync();
+                me.device.properties.attributes.availableModes = me.available_modes;
+                me.updateModesState(me, me);
+                me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'AVAILABLETOGGLES') {
-                if (this.trait.toggles) {
-                    if (this.toggles_type !== 'json') {
+                if (me.trait.toggles) {
+                    if (me.toggles_type !== 'json') {
                         if (typeof msg.payload === 'undefined') {
-                            this.available_toggles = this.to_available_toggles(this.loadJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), []));
-                            this.updateTogglesState(me, me);
+                            me.available_toggles = me.to_available_toggles(me.loadJson('Toggles', me.toggles_file.replace(/<id>/g, me.id), []));
+                            me.updateTogglesState(me, me);
                         } else {
-                            this.available_toggles = this.to_available_toggles(msg.payload);
-                            if (!this.writeJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), this.available_toggles)) {
-                                this.RED.log.error("Error saving Toggles to file " + this.toggles_file.replace(/<id>/g, this.id));
+                            me.available_toggles = me.to_available_toggles(msg.payload);
+                            if (!me.writeJson('Toggles', me.toggles_file.replace(/<id>/g, me.id), me.available_toggles)) {
+                                me.RED.log.error("Error saving Toggles to file " + me.toggles_file.replace(/<id>/g, me.id));
                             }
                         }
                     }
                 } else {
-                    this.available_toggles = [];
-                    this.RED.log.error("Toggles disabled");
+                    me.available_toggles = [];
+                    me.RED.log.error("Toggles disabled");
                 }
-                this.device.properties.attributes.availableToggles = this.available_toggles;
-                this.updateTogglesState(me, me);
-                this.clientConn.app.ScheduleRequestSync();
+                me.device.properties.attributes.availableToggles = me.available_toggles;
+                me.updateTogglesState(me, me);
+                me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'CAMERASTREAMAUTHTOKEN') {
                 const auth_token = formats.FormatValue(formats.Formats.STRING, 'cameraStreamAuthToken', msg.payload) || "";
                 if (auth_token != me.auth_token) {
                     me.auth_token = auth_token;
-                    if (this.device.properties.attributes.hasOwnProperty("cameraStreamNeedAuthToken")) {
-                        let cameraStreamNeedAuthToken = this.device.properties.attributes.cameraStreamNeedAuthToken;
+                    if (me.device.properties.attributes.hasOwnProperty("cameraStreamNeedAuthToken")) {
+                        let cameraStreamNeedAuthToken = me.device.properties.attributes.cameraStreamNeedAuthToken;
                         if (cameraStreamNeedAuthToken != (auth_token.length > 0)) {
-                            this.device.properties.attributes['cameraStreamNeedAuthToken'] = auth_token.length > 0;
-                            this.clientConn.app.ScheduleRequestSync();
+                            me.device.properties.attributes['cameraStreamNeedAuthToken'] = auth_token.length > 0;
+                            me.clientConn.app.ScheduleRequestSync();
                         }
                     }
                 }
@@ -2169,7 +2176,7 @@ class BaseDevice {
                 } else if (Array.isArray(msg.payload.named)) {
                     payload.named = msg.payload.named;
                 }
-                this.clientConn.sendNotifications(this, {
+                me.clientConn.sendNotifications(me, {
                     ObjectDetection: {
                         objects: payload,
                         priority: 0,
@@ -2187,7 +2194,7 @@ class BaseDevice {
                 if (typeof msg.payload.errorCode === 'string') {
                     payload.errorCode = msg.payload.errorCode;
                 }
-                this.clientConn.sendNotifications(this, {
+                me.clientConn.sendNotifications(me, {
                     RunCycle: payload
                 });  // tell Google ...
             } else if (me.trait.sensorstate && upper_topic === 'SENSORSTATE') {
@@ -2196,7 +2203,7 @@ class BaseDevice {
                     payload.name = msg.payload.name.trim();
                     if (typeof msg.payload.currentSensorState === 'string' && msg.payload.currentSensorState.trim()) {
                         payload.currentSensorState = msg.payload.currentSensorState.trim();
-                        this.clientConn.sendNotifications(this, {
+                        me.clientConn.sendNotifications(me, {
                             SensorState: payload
                         });  // tell Google ...
                     }
@@ -2215,14 +2222,14 @@ class BaseDevice {
                 if (typeof msg.payload.errorCode === 'string') {
                     payload.errorCode = msg.payload.errorCode;
                 }
-                this.clientConn.sendNotifications(this, {
+                me.clientConn.sendNotifications(me, {
                     LockUnlock: {
                         priority: 0,
                         followUpResponse: payload
                     }
                 });  // tell Google ...
             } else if (me.trait.networkcontrol && upper_topic === 'NETWORKCONTROL') {
-                this.clientConn.sendNotifications(this, {
+                me.clientConn.sendNotifications(me, {
                     NetworkControl: {
                         priority: 0,
                         followUpResponse: msg.payload
@@ -2242,7 +2249,7 @@ class BaseDevice {
                 if (typeof msg.payload.errorCode === 'string') {
                     payload.errorCode = msg.payload.errorCode;
                 }
-                this.clientConn.sendNotifications(this, {
+                me.clientConn.sendNotifications(me, {
                     OpenClose: {
                         priority: 0,
                         followUpResponse: payload
@@ -2255,7 +2262,7 @@ class BaseDevice {
                 if (typeof me.states.currentStatusReport !== 'undefined') {
                     me.states.currentStatusReport.forEach(report => {
                         let new_report = { priority: 0 };
-                        this.cloneObject(new_report, report, me.state_types['currentStatusReport'][0]);
+                        me.cloneObject(new_report, report, me.state_types['currentStatusReport'][0]);
                         new_payload.push(new_report);
                     });
                 }
@@ -2263,23 +2270,23 @@ class BaseDevice {
                 payload.forEach(sr => {
                     let nodeId;
                     if (sr.deviceTarget) {
-                        let properties = this.clientConn.getProperties([sr.deviceTarget]);
+                        let properties = me.clientConn.getProperties([sr.deviceTarget]);
                         if (Object.keys(properties).length > 0) {
                             nodeId = sr.deviceTarget;
                         } else {
-                            nodeId = this.clientConn.getIdFromName(sr.deviceTarget);
+                            nodeId = me.clientConn.getIdFromName(sr.deviceTarget);
                         }
                     } else {
-                        nodeId = this.device.id;
+                        nodeId = me.device.id;
                     }
                     if (nodeId) {
                         let new_report = {};
-                        this.cloneObject(new_report, sr, me.state_types['currentStatusReport'][0]);
+                        me.cloneObject(new_report, sr, me.state_types['currentStatusReport'][0]);
                         if (new_report.statusCode) {
                             new_report.deviceTarget = nodeId;
                             let cur_reports = new_payload.filter(report => report.deviceTarget === nodeId && report.statusCode === new_report.statusCode);
                             if (cur_reports.length > 0) {
-                                if (this.cloneObject(cur_reports[0], new_report, me.state_types['currentStatusReport'][0])) {
+                                if (me.cloneObject(cur_reports[0], new_report, me.state_types['currentStatusReport'][0])) {
                                     differs = true;
                                 }
                             } else {
@@ -2290,13 +2297,150 @@ class BaseDevice {
                     }
                 });
                 if (me.updateState({ currentStatusReport: new_payload }) || differs) {
-                    this.clientConn.setState(this, me.states, true);  // tell Google ...
+                    me.clientConn.setState(me, me.states, true);  // tell Google ...
 
-                    this.clientConn.app.ScheduleGetState();
-                    if (this.passthru) {
+                    me.clientConn.app.ScheduleGetState();
+                    if (me.passthru) {
                         msg.payload = new_payload;
-                        this.send(msg);
+                        me.send(msg);
                     }
+                }
+            } else if (upper_topic === 'SETCHALLENGEPIN') {
+                const pin = String(msg.payload.pin || '');
+                switch (msg.payload.command) {
+                    case 'action.devices.commands.appInstall':
+                    case 'action.devices.commands.appSearch':
+                    case 'action.devices.commands.appSelect':
+                        me.pin_appselector = pin;
+                        break;
+                    case 'action.devices.commands.ArmDisarm':
+                        me.pin_armdisarm = pin;
+                        break;
+                    case 'action.devices.commands.BrightnessAbsolute':
+                    case 'action.devices.commands.BrightnessRelative':
+                        me.pin_brightness = pin;
+                        break;
+                    case 'action.devices.commands.GetCameraStream':
+                        me.pin_camerastream = pin;
+                        break;
+                    case 'action.devices.commands.selectChannel':
+                    case 'action.devices.commands.relativeChannel':
+                    case 'action.devices.commands.returnChannel':
+                        me.pin_channel = pin;
+                        break;
+                    case 'action.devices.commands.ColorAbsolute':
+                        me.pin_colorsetting = pin;
+                        break;
+                    case 'action.devices.commands.Cook':
+                        me.pin_cook = pin;
+                        break;
+                    case 'action.devices.commands.Dispense':
+                        me.pin_dispense = pin;
+                        break;
+                    case 'action.devices.commands.Dock':
+                        me.pin_dock = pin;
+                        break;
+                    case 'action.devices.commands.Charge':
+                        me.pin_energystorage = pin;
+                        break;
+                    case 'action.devices.commands.SetFanSpeed':
+                    case 'action.devices.commands.SetFanSpeedRelative':
+                    case 'action.devices.commands.Reverse':
+                        me.pin_fanspeed = pin;
+                        break;
+                    case 'action.devices.commands.Fill':
+                        me.pin_fill = pin;
+                        break;
+                    case 'action.devices.commands.SetHumidity':
+                    case 'action.devices.commands.HumidityRelative':
+                        me.pin_humiditysetting = pin;
+                        break;
+                    case 'action.devices.commands.SetInput':
+                    case 'action.devices.commands.NextInput':
+                    case 'action.devices.commands.PreviousInput':
+                        me.pin_inputselector = pin;
+                        break;
+                    case 'action.devices.commands.ColorLoop':
+                    case 'action.devices.commands.Sleep':
+                    case 'action.devices.commands.StopEffect':
+                    case 'action.devices.commands.Wake':
+                        me.pin_colorsetting = pin;
+                        break;
+                    case 'action.devices.commands.Locate':
+                        me.pin_locator = pin;
+                        break;
+                    case 'action.devices.commands.LockUnlock':
+                        me.pin_lockunlock = pin;
+                        break;
+                    case 'action.devices.commands.SetModes':
+                        me.pin_modes = pin;
+                        break;
+                    case 'action.devices.commands.EnableDisableGuestNetwork':
+                    case 'action.devices.commands.EnableDisableNetworkProfile':
+                    case 'action.devices.commands.GetGuestNetworkPassword':
+                    case 'action.devices.commands.TestNetworkSpeed':
+                        me.pin_networkcontrol = pin;
+                        break;
+                    case 'action.devices.commands.OnOff':
+                        me.pin_onoff = pin;
+                        break;
+                    case 'action.devices.commands.OpenClose':
+                    case 'action.devices.commands.OpenCloseRelative':
+                        me.pin_openclose = pin;
+                        break;
+                    case 'action.devices.commands.Reboot':
+                        me.pin_reboot = pin;
+                        break;
+                    case 'action.devices.commands.RotateAbsolute':
+                        me.pin_rotation = pin;
+                        break;
+                    case 'action.devices.commands.ActivateScene':
+                        me.pin_scene = pin;
+                        break;
+                    case 'action.devices.commands.SoftwareUpdate':
+                        me.pin_softwareupdate = pin;
+                        break;
+                    case 'action.devices.commands.StartStop':
+                    case 'action.devices.commands.PauseUnpause':
+                        me.pin_startstop = pin;
+                        break;
+                    case 'action.devices.commands.SetTemperature':
+                        me.pin_temperaturecontrol = pin;
+                        break;
+                    case 'action.devices.commands.ThermostatTemperatureSetpoint':
+                    case 'action.devices.commands.ThermostatTemperatureSetRange':
+                    case 'action.devices.commands.ThermostatSetMode':
+                    case 'action.devices.commands.TemperatureRelative':
+                        me.pin_temperaturesetting = pin;
+                        break;
+                    case 'action.devices.commands.TimerStart':
+                    case 'action.devices.commands.TimerAdjust':
+                    case 'action.devices.commands.TimerPause':
+                    case 'action.devices.commands.TimerResume':
+                    case 'action.devices.commands.TimerCancel':
+                        me.pin_timer = pin;
+                        break;
+                    case 'action.devices.commands.SetToggles':
+                        me.pin_toggles = pin;
+                        break;
+                    case 'action.devices.commands.mediaStop':
+                    case 'action.devices.commands.mediaNext':
+                    case 'action.devices.commands.mediaPrevious':
+                    case 'action.devices.commands.mediaPause':
+                    case 'action.devices.commands.mediaResume':
+                    case 'action.devices.commands.mediaSeekRelative':
+                    case 'action.devices.commands.mediaSeekToPosition':
+                    case 'action.devices.commands.mediaRepeatMode':
+                    case 'action.devices.commands.mediaShuffle':
+                    case 'action.devices.commands.mediaClosedCaptioningOn':
+                    case 'action.devices.commands.mediaClosedCaptioningOff':
+                        me.pin_transportcontrol = pin;
+                        break;
+                    case 'action.devices.commands.mute':
+                    case 'action.devices.commands.setVolume':
+                    case 'action.devices.commands.volumeRelative':
+                        me.pin_volume = pin;
+                        break;
                 }
             } else {
                 let state_key = '';
@@ -2310,36 +2454,28 @@ class BaseDevice {
                 if (state_key !== '') {
                     let payload = {};
                     payload[state_key] = msg.payload;
-                    const differs = me.updateState(payload);
-                    if (differs) {
-                        me._debug(".input: " + state_key + ' ' + JSON.stringify(msg.payload));
-                        this.clientConn.setState(this, me.states, true);  // tell Google ...
-                        this.clientConn.app.ScheduleGetState();
-
-                        if (this.passthru) {
-                            msg.payload = me.states[state_key];
-                            this.send(msg);
-                        }
-                    }
-                    this.updateStatusIcon();
+                    msg = {
+                        payload: payload
+                    };
                 } else {
                     me._debug(".input: some other topic");
-                    const differs = me.updateState(msg.payload);
+                }
+                const differs = me.updateState(msg.payload);
 
-                    if (differs) {
-                        this.clientConn.setState(this, me.states, true);  // tell Google ...
-                        this.clientConn.app.ScheduleGetState();
-
-                        if (this.passthru) {
-                            msg.payload = me.states;
-                            this.send(msg);
-                        }
+                if (differs) {
+                    if (!me.passthru) {
+                        me.send({ topic: me.topicOut, payload: me.states });
                     }
-                    this.updateStatusIcon();
+                    me.clientConn.setState(me, me.states, true);  // tell Google ...
+                    me.clientConn.app.ScheduleGetState();
+                    me.updateStatusIcon();
+                }
+                if (me.passthru) {
+                    me.send(msgi);
                 }
             }
         } catch (err) {
-            this.RED.log.error(err);
+            me.RED.log.error(err);
         }
     }
 
@@ -3317,6 +3453,7 @@ class BaseDevice {
                 break;
         }
         const challenge = command.challenge || {};
+        challenge_pin = challenge_pin.trim();
         if (challenge_type === 'ackNeeded') {
             if (challenge.ack !== true) {
                 // ackNeeded with trait states
@@ -3329,7 +3466,23 @@ class BaseDevice {
                 };
             }
         } else if (challenge_type === 'pinNeeded') {
+            if (challenge_pin.length === 0) {
+                // challengeFailedNotSetup with trait states
+                return {
+                    status: 'ERROR',
+                    errorCode: "challengeFailedNotSetup"
+                };
+            }
             if (challenge.pin === undefined) {
+                me.send({
+                    topic: 'ChallengePin',
+                    payload: {
+                        name: this.name,
+                        pin: challenge_pin,
+                        command: command.command,
+                        topic: me.topicOut,
+                    }
+                });
                 // ackNeeded with trait states
                 return {
                     status: 'ERROR',
