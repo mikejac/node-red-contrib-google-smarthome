@@ -1803,7 +1803,7 @@ class BaseDevice {
             }
             if (me.trait.temperaturesetting) {
                 const thermostat_mode = me.states.thermostatMode;
-                const st = " T: " + me.states.thermostatTemperatureAmbient + " °C | S: " + me.thermostat_temperature_setpoint + "\xB0C";
+                const st = " T: " + (me.states.thermostatTemperatureAmbient || '?') + " °C | S: " + (me.states.thermostatTemperatureSetpoint || '?') + "\xB0C";
                 if (thermostat_mode === "off") {
                     text = "OFF " + st;
                 } else if (thermostat_mode === "heat" || thermostat_mode === "cool") {
@@ -1811,7 +1811,7 @@ class BaseDevice {
                     text = thermostat_mode.substr(0, 1).toUpperCase() + st;
                 } else if (thermostat_mode === "heatcool") {
                     fill = "green";
-                    text = "H/C T: " + me.states.thermostatTemperatureAmbient + " °C | S: [" + me.thermostat_temperature_setpoint + " - " + me.states.thermostatTemperatureSetpointHigh + "] \xB0C";
+                    text = "H/C T: " + (me.states.thermostatTemperatureAmbient || '?') + " °C | S: [" + (me.states.thermostatTemperatureSetpointLow || '') + " - " + (me.states.thermostatTemperatureSetpointHigh || '')+ "] \xB0C";
                 } else {
                     fill = "green";
                     text = thermostat_mode.substr(0, 1).toUpperCase() + st;
