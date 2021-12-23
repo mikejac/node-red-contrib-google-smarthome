@@ -20,11 +20,11 @@
   "node-red": {
     "nodes": {
       "google-smarthome": "google-smarthome.js",
+      "device": "devices/device.js",
       "light": "devices/light.js",
       "outlet": "devices/outlet.js",
       "camera": "devices/camera.js",
       "media": "devices/media.js",
-      "device": "devices/device.js",
       "scene": "devices/scene.js",
       "shutter": "devices/shutter.js",
       "thermostat": "devices/thermostat.js",
