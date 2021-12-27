@@ -48,7 +48,7 @@ module.exports = function(RED) {
 
             this.states = this.clientConn.register(this, 'sensor', config.name);
 
-            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+            this.status({fill: "red", shape: "ring", text: "DEPRECATED!"});
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
@@ -96,14 +96,7 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            let txt = "";
-            if (this.states.temperatureAmbientCelsius !== undefined)
-                txt += this.states.temperatureAmbientCelsius + "\xB0C ";
-
-            if (this.states.humidityAmbientPercent !== undefined)
-                txt += this.states.humidityAmbientPercent + "% ";
-
-            this.status({fill: "green", shape: "dot", text: txt});
+            this.status({fill: 'red', shape: 'ring', text: 'DEPRECATED!'});
         }
 
         /******************************************************************************************************************

@@ -34,6 +34,10 @@ module.exports = function(RED) {
 
             super(config, RED);
         }
+
+        updateStatusIcon() {
+            this.status({fill: 'red', shape: 'ring', text: 'DEPRECATED!'});
+        }
     }
 
     RED.nodes.registerType("google-window", WindowNode);

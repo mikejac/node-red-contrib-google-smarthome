@@ -69,7 +69,7 @@ module.exports = function(RED) {
 
             this.states = this.clientConn.register(this, 'camera', config.name);
 
-            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+            this.status({fill: "red", shape: "ring", text: "DEPRECATED!"});
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
@@ -115,11 +115,7 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            if (this.states.online) {
-                this.status({fill: "green", shape: "dot", text: "ON"});
-            } else {
-                this.status({fill: "red", shape: "dot", text: "OFF"});
-            }
+            this.status({fill: 'red', shape: 'ring', text: 'DEPRECATED!'});
         }
 
         /******************************************************************************************************************

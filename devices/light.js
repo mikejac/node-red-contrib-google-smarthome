@@ -34,6 +34,10 @@ module.exports = function(RED) {
 
             super(config, RED);
         }
+
+        updateStatusIcon() {
+            this.status({fill: 'red', shape: 'ring', text: 'DEPRECATED!'});
+        }
     }
 
     RED.nodes.registerType("google-light-onoff", LightOnOffNode);
@@ -56,6 +60,10 @@ module.exports = function(RED) {
             config.command_only_brightness = false;
 
             super(config, RED);
+        }
+
+        updateStatusIcon() {
+            this.status({fill: 'red', shape: 'ring', text: 'DEPRECATED!'});
         }
     }
 
@@ -88,7 +96,7 @@ module.exports = function(RED) {
 
             this.states = this.clientConn.register(this, 'light-temperature', config.name);
 
-            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+            this.status({fill: "red", shape: "ring", text: "DEPRECATED!"});
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
@@ -147,11 +155,7 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            if (this.states.on) {
-                this.status({fill: "green", shape: "dot", text: "ON"});
-            } else {
-                this.status({fill: "red", shape: "dot", text: "OFF"});
-            }
+            this.status({fill: 'red', shape: 'ring', text: 'DEPRECATED!'});
         }
 
         /******************************************************************************************************************
@@ -358,7 +362,7 @@ module.exports = function(RED) {
 
             this.states = this.clientConn.register(this, 'light-hsv', config.name);
 
-            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+            this.status({fill: "red", shape: "ring", text: "DEPRECATED!"});
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
@@ -417,11 +421,7 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            if (this.states.on) {
-                this.status({fill: "green", shape: "dot", text: "ON"});
-            } else {
-                this.status({fill: "red", shape: "dot", text: "OFF"});
-            }
+            this.status({fill: 'red', shape: 'ring', text: 'DEPRECATED!'});
         }
 
         /******************************************************************************************************************
@@ -676,7 +676,7 @@ module.exports = function(RED) {
 
             this.states = this.clientConn.register(this, 'light-rgb', config.name);
 
-            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+            this.status({fill: "red", shape: "ring", text: "DEPRECATED!"});
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
@@ -732,11 +732,7 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            if (this.states.on) {
-                this.status({fill: "green", shape: "dot", text: "ON"});
-            } else {
-                this.status({fill: "red", shape: "dot", text: "OFF"});
-            }
+            this.status({fill: 'red', shape: 'ring', text: 'DEPRECATED!'});
         }
 
         /******************************************************************************************************************
@@ -944,7 +940,7 @@ module.exports = function(RED) {
 
             this.states = this.clientConn.register(this, 'light-rgb-temp', config.name);
 
-            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+            this.status({fill: "red", shape: "ring", text: "DEPRECATED!"});
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
@@ -1005,11 +1001,7 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            if (this.states.on) {
-                this.status({fill: "green", shape: "dot", text: "ON"});
-            } else {
-                this.status({fill: "red", shape: "dot", text: "OFF"});
-            }
+            this.status({fill: 'red', shape: 'ring', text: 'DEPRECATED!'});
         }
 
         /******************************************************************************************************************
@@ -1245,7 +1237,7 @@ module.exports = function(RED) {
 
             this.states = this.clientConn.register(this, 'light', config.name);
 
-            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+            this.status({fill: "red", shape: "ring", text: "DEPRECATED!"});
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
@@ -1309,35 +1301,7 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            let text;
-            let fill = 'red';
-            let shape = 'dot';
-            if (this.states.online) {
-                if (this.states.on) {
-                    text = 'ON';
-                    fill = 'green';
-                } else {
-                    text = 'OFF';
-                }
-            } else {
-                shape = 'ring';
-                text = "offline";
-            }
-            if (this.is_dimmable && this.states.brightness != undefined) {
-                text += " bri: " + this.states.brightness;
-            }
-            if (this.has_temp && this.states.color.temperatureK != undefined) {
-                text += ' temp: ' + this.states.color.temperatureK;
-            }
-            if (this.is_rgb && this.states.color.spectrumRgb != undefined) {
-                text += ' RGB: ' + this.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0');
-            }
-            if (this.is_hsv && this.states.color.spectrumHsv != undefined) {
-                text += ' H: ' + this.states.color.spectrumHsv.hue + 
-                        ' S: ' + this.states.color.spectrumHsv.saturation + 
-                        ' V: ' + this.states.color.spectrumHsv.value;
-            }
-            this.status({fill: fill, shape: shape, text: text});
+            this.status({fill: 'red', shape: 'ring', text: 'DEPRECATED!'});
         }
 
         //

@@ -216,7 +216,7 @@ module.exports = function(RED) {
             this.states = this.clientConn.register(this, 'media', config.name);
 
             if (error_msg.length == 0) {
-                this.status({fill: "yellow", shape: "dot", text: "Ready"});
+                this.status({fill: "red", shape: "ring", text: "DEPRECATED!"});
             } else {
                 this.status({fill: "red", shape: "dot", text: error_msg});
             }
@@ -360,11 +360,7 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            if (this.states.on) {
-                this.status({fill: "green", shape: "dot", text: "ON"});
-            } else {
-                this.status({fill: "red", shape: "dot", text: "OFF"});
-            }
+            this.status({fill: 'red', shape: 'ring', text: 'DEPRECATED!'});
         }
 
         /******************************************************************************************************************

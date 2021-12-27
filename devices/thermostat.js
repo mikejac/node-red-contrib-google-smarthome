@@ -38,17 +38,17 @@ module.exports = function(RED) {
 
             if (!this.clientConn) {
                 this.error(RED._("thermostat.errors.missing-config"));
-                this.status({fill: "red", shape: "dot", text: "Missing config"});
+                this.status({fill: "red", shape: "dot", text: "(DEPRECATED) Missing config"});
                 return;
             } else if (typeof this.clientConn.register !== 'function') {
                 this.error(RED._("thermostat.errors.missing-bridge"));
-                this.status({fill: "red", shape: "dot", text: "Missing SmartHome"});
+                this.status({fill: "red", shape: "dot", text: "(DEPRECATED) Missing SmartHome"});
                 return;
             }
 
             this.states = this.clientConn.register(this, 'thermostat', config.name);
 
-            this.status({fill: "yellow", shape: "dot", text: "Ready"});
+            this.status({fill: "red", shape: "ring", text: "DEPRECATED!"});
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
@@ -92,7 +92,7 @@ module.exports = function(RED) {
         }
 
         updateStatusIcon() {
-            this.status({fill: "green", shape: "dot", text: "T: " + this.states.thermostatTemperatureAmbient + " °C | S: " + this.states.thermostatTemperatureSetpoint + " °C"});
+            this.status({fill: 'red', shape: 'ring', text: 'DEPRECATED!'});
         }
 
         /******************************************************************************************************************
