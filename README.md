@@ -91,16 +91,22 @@ The Google Sign-In feature allows to log in using your Google credentials. If yo
 Google Sign-In later.
 
 1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
-2. From the project drop-down, select your project.
-3. In the sidebar under "APIs & Services", select Credentials, then click Configure consent screen.
-4. Choose an Email Address, specify a Product Name, and press Save.
-5. In the Credentials tab, select the Create credentials drop-down list, and choose OAuth client ID.
-6. Under Application type, select Web application.
-7. Register the origins from which your app is allowed to access the Google APIs, as follows.
-    * In the Authorized JavaScript origins field, enter the hosted URL of your app, e.g. https://example.com:3001
-    * The Authorized redirect URI field does not require a value.
-    * Press the Create button.
-8. From the resulting OAuth client dialog box, copy the Client ID. You will need it later.
+2. Select your project from the drop-down on top of the page.
+3. Select "OAuth consent screen" in the sidebar.
+4. If you haven't configured the OAuth consent screen yet, you will be asked for the user type. Choose "External" and 
+   click "Create".
+5. Specify the app name and an email address. Enter your domain "https://example.com" as "Applicatione home page",
+   "Application privacy policy link" and "Application terms of service link".
+6. Add your domain "example.com" (without protocol and port) as authorized domain.
+7. Enter your email address again as developer contact.
+8. Click "Save and continue". Leave all other steps empty.
+9. Select "Credentials" on the left sidebar.
+10. Click "Create credentials" and choose OAuth client ID.
+11. Choose "Web application" as appltcation type.
+12. In "Authorized JavaScript origin", add the URL of your app, e.g. https://example.com:3001.
+13. As "Authorized redirect URIs", add the URL of your app followed by "/oauth", e.g. https://example.com:3001/oauth.
+14. Click "Save".
+15. Click the Download button next to your newly created entry and copy the Client ID. You will need it later.
 
 #### Install and configure Node-RED module
 
