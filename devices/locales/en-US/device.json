@@ -408,7 +408,8 @@
         },
         "errors": {
             "missing-config": "Missing SmartHome configuration",
-            "missing-bridge": "Missing SmartHome"
+            "missing-bridge": "Missing SmartHome",
+            "no-trait-selected": "No trait selected"
         }
     }
 }

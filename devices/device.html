@@ -1975,6 +1975,13 @@
         </div>
     </div>
     
+    <!-- No Trait -->
+    <div class="form-row red-ui-editableList-border" id="no_trait" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <b><label style="width:auto"><i class="fa fa-exclamation-triangle"></i> <span data-i18n="device.errors.no-trait-selected"></span></label></b>
+        </div>
+    </div>
+    
 </script>
 
 <script type="text/javascript">
@@ -2900,17 +2907,17 @@
             });
             $("#node-input-supports_fan_speed_percent").change();
 
-            var setTraitRecomended = function (name, recommended, show_Trait) {
+            var setTraitRecomended = function (name, recommended, show_traits) {
                 $("#node-input-trait_" + name).show();
                 $("#label_trait_" + name).hide();
                 $("#cb_trait_" + name).show();
                 /*if (typeof recommended === "boolean") {
                     $("#node-input-trait_" + name).prop('checked', recommended);
                 }*/
-                let show_trait = show_Trait == "all";
-                if (show_Trait === "selected") {
+                let show_trait = show_traits == "all";
+                if (show_traits === "selected") {
                     show_trait = $("#node-input-trait_" + name).prop('checked');
-                } else if (show_Trait === "recommended") {
+                } else if (show_traits === "recommended") {
                     show_trait = recommended;
                 }
                 if (show_trait) {
@@ -2925,6 +2932,7 @@
                     $("#trait_" + name).hide();
                     $("#" + name).find(".oc_trait").removeClass('fa-caret-down').addClass('fa-caret-right');
                 }
+                return show_trait;
             };
 
             var setTraitRequired = function (name) {
@@ -3260,22 +3268,30 @@
                         required_traits = ["onoff"];
                         break;
                 }
+                let trait_shown = false;
                 $(".div_trait").each(function () {
                     let div_id = $(this).attr('id');
                     if (required_traits.includes(div_id)) {
                         setTraitRequired(div_id);
+                        trait_shown = true;
                     } else {
-                        setTraitRecomended(div_id,
-                            device_type === 'SCENE' ? false : recommended_traits.includes(div_id),
-                            device_type === 'SCENE' ? 'none' : (div_id === 'scene' ? false : show_trait));
-                        //setTraitRecomended(div_id);
+                        if (setTraitRecomended(div_id,
+                            recommended_traits.includes(div_id),
+                            device_type === 'SCENE' ? 'none' : (div_id === 'scene' ? false : show_trait))) {
+                            trait_shown = true;
+                        }
                     }
                 });
+                if (trait_shown) {
+                    $("#no_trait").hide();
+                } else {
+                    $("#no_trait").show();
+                }
             };
             deviceTypeChanged();
             $("#node-input-device_type").change(deviceTypeChanged);
             $("#node-input-show_trait").change(deviceTypeChanged);
-            var challenge_type_change = function() {
+            var challenge_type_change = function () {
                 let _this = $(this);
                 let show = _this.val() === 'pinNeeded';
                 if (show) {

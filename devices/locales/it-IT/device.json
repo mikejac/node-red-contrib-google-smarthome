@@ -309,7 +309,8 @@
 		},
 		"errors": {
 			"missing-config": "La configurazione di SmartHome non è disponibile",
-			"missing-bridge": "SmartHome non disponibile"
+			"missing-bridge": "SmartHome non disponibile",
+			"no-trait-selected": "Nessun tratto selezionato"
 		},
 		"trait": {
 			"appselector": "Applicazioni",
