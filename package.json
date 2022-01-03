@@ -49,7 +49,7 @@
   "dependencies": {
     "https": "^1.0.x",
     "express": "^4.17.x",
-    "helmet": "^4.2.0",
+    "helmet": "^5.0.0",
     "stoppable": "^1.1.x",
     "morgan": "^1.10.x",
     "cors": "^2.8.x",
