@@ -1803,7 +1803,7 @@ class BaseDevice {
             }
             if (me.trait.temperaturesetting) {
                 const thermostat_mode = me.states.thermostatMode;
-                const st = " T: " + (me.states.thermostatTemperatureAmbient || '?') + " °C | S: " + (me.states.thermostatTemperatureSetpoint || '?') + "\xB0C";
+                const st = " T: " + (me.states.thermostatTemperatureAmbient || '?') + "°C | S: " + (me.states.thermostatTemperatureSetpoint || '?') + "\xB0C";
                 if (thermostat_mode === "off") {
                     text = "OFF " + st;
                 } else if (thermostat_mode === "heat" || thermostat_mode === "cool") {
@@ -1811,7 +1811,7 @@ class BaseDevice {
                     text = thermostat_mode.substr(0, 1).toUpperCase() + st;
                 } else if (thermostat_mode === "heatcool") {
                     fill = "green";
-                    text = "H/C T: " + (me.states.thermostatTemperatureAmbient || '?') + " °C | S: [" + (me.states.thermostatTemperatureSetpointLow || '') + " - " + (me.states.thermostatTemperatureSetpointHigh || '')+ "] \xB0C";
+                    text = "H/C T: " + (me.states.thermostatTemperatureAmbient || '?') + "°C | S: [" + (me.states.thermostatTemperatureSetpointLow || '') + " - " + (me.states.thermostatTemperatureSetpointHigh || '')+ "]\xB0C";
                 } else {
                     fill = "green";
                     text = thermostat_mode.substr(0, 1).toUpperCase() + st;
@@ -2300,10 +2300,10 @@ class BaseDevice {
                     me.clientConn.setState(me, me.states, true);  // tell Google ...
 
                     me.clientConn.app.ScheduleGetState();
-                    if (me.passthru) {
-                        msg.payload = new_payload;
-                        me.send(msg);
-                    }
+                    // if (me.passthru) {
+                    //     msg.payload = new_payload;
+                    //     me.send(msg);
+                    // }
                 }
             } else if (upper_topic === 'SETCHALLENGEPIN') {
                 const pin = String(msg.payload.pin || '');
@@ -2463,9 +2463,9 @@ class BaseDevice {
                 const differs = me.updateState(msg.payload);
 
                 if (differs) {
-                    if (!me.passthru) {
-                        me.send({ topic: me.topicOut, payload: me.states });
-                    }
+                    // if (!me.passthru) {
+                    //     me.send({ topic: me.topicOut, payload: me.states });
+                    // }
                     me.clientConn.setState(me, me.states, true);  // tell Google ...
                     me.clientConn.app.ScheduleGetState();
                     me.updateStatusIcon();
@@ -2647,15 +2647,45 @@ class BaseDevice {
 
     updateState(new_states) {
         const me = this;
-        let modified = false;
+        let modified = [];
         Object.keys(me.state_types).forEach(function (key) {
             if (new_states.hasOwnProperty(key)) {
                 if (me.setState(key, new_states[key], me.states, me.state_types[key], me.exclusive_states[key] || {})) {
                     me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
-                    modified = true;
+                    modified.push(key);
                 }
             }
         });
+        if (modified.includes("thermostatTemperatureSetpoint")) {
+            me.thermostat_temperature_setpoint = me.states.thermostatTemperatureSetpoint;
+        }
+        if (modified.includes("thermostatTemperatureSetpointLow")) {
+            me.thermostat_temperature_setpoint_low = me.states.thermostatTemperatureSetpointLow;
+        }
+        if (modified.includes("thermostatTemperatureSetpointHigh")) {
+            me.thermostat_temperature_setpoint_hight = me.states.thermostatTemperatureSetpointHigh;
+        }
+        if (modified.includes("thermostatMode")) {
+            let keys_to_update = [];
+            if (me.states.thermostatMode === 'heatcool') {
+                keys_to_update = ['thermostatTemperatureSetpointLow', 'thermostatTemperatureSetpointHigh'];
+                new_states = {
+                    thermostatTemperatureSetpointLow: me.thermostat_temperature_setpoint_low,
+                    thermostatTemperatureSetpointHigh: me.thermostat_temperature_setpoint_hight
+                };
+            } else {
+                keys_to_update = ['thermostatTemperatureSetpoint'];
+                new_states = {
+                    thermostatTemperatureSetpoint: me.thermostat_temperature_setpoint
+                };
+            }
+            keys_to_update.forEach(key => {
+                if (me.setState(key, new_states[key], me.states, me.state_types[key], me.exclusive_states[key] || {})) {
+                    me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
+                    modified.push(key);
+                }
+            });
+        }
         me._debug('.updateState: new State ' + modified + ' ' + JSON.stringify(me.states));
         return modified;
     }
