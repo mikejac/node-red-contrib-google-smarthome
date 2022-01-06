@@ -288,7 +288,7 @@ module.exports = function(RED) {
 
                     this.clientConn.app.RequestSync();
                 } else if (topic.toUpperCase() === 'GET_STATE') {
-                    let states = this.clientConn.app.getStates();
+                    let states = this.clientConn.app.getStates(undefined, msg.payload || false, RED);
                     if (states) {
                         this.send({
                             topic: topic,
@@ -306,7 +306,7 @@ module.exports = function(RED) {
         };
 
         this.sendSetState = function () {
-            let states = this.clientConn.app.getStates();
+            let states = this.clientConn.app.getStates(undefined, true, RED);
             if (states) {
                 this.send({
                     topic: 'set_state',

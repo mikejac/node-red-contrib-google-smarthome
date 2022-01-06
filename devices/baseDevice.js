@@ -104,6 +104,7 @@ class BaseDevice {
         };
         this.topicOut = config.topic;
         this.passthru = config.passthru;
+        this.persistent_state = config.persistent_state || false;
         this.room_hint = config.room_hint;
         this.device_type = config.device_type;
 

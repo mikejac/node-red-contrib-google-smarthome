@@ -231,7 +231,8 @@
             "no_challenge": "No challenge",
             "ackNeeded": "Ack needed",
             "pinNeeded": "PIN needed",
-            "pin": "PIN"
+            "pin": "PIN",
+            "persistent_state": "Persistent state"
         },
         "placeholder": {
             "name": "Name",

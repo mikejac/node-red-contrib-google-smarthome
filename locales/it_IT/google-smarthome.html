@@ -105,7 +105,7 @@
             <dt>topic
                 <span class="property-type">stringa</span>
             </dt>
-            <dd>Se un messaggio con topic <code>get_state</code> è ricevuto, il nodo invierà un messaggio in uscita con lo stato di tutti i dispositivi. <code>msg.payload</code> non è usato.</dd>
+            <dd>Se un messaggio con topic <code>get_state</code> è ricevuto, il nodo invierà un messaggio in uscita con lo stato di tutti i dispositivi, se <code>msg.payload</code> non è valorizzato a true, altrimenti il nodo invierà un messaggio in uscita con lo stato di tutti i dispositivi che hanno il campo "Stato persistente" abilitato.</dd>
         </dl>
 
         <p>Se il <code>msg.topic</code> è <code>set_state</code>, il nodo aggiorna lo stato di tutti i dispositivi con lo stato contenuto  nel <code>msg.payload</code>. Questo messaggio può essere usato per salvare su un dispositivo di memorizzazione lo stato di tutti i dispositivi.</p>

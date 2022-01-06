@@ -250,7 +250,8 @@
             "no_challenge": "Nessuna",
             "ackNeeded": "Si/No",
             "pinNeeded": "PIN",
-            "pin": "PIN"
+            "pin": "PIN",
+            "persistent_state": "Stato persistente"
 		},
 		"placeholder": {
 			"name": "Nome",
