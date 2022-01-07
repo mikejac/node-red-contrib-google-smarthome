@@ -1818,15 +1818,19 @@ class BaseDevice {
                     text = thermostat_mode.substr(0, 1).toUpperCase() + st;
                 }
                 if (me.states.thermostatHumidityAmbient !== undefined) {
-                    text += ' ' + me.states.thermostatHumidityAmbient + "% ";
+                    text += ' ' + me.states.thermostatHumidityAmbient + "%";
                 }
             }
             if (me.trait.energystorage) {
                 text += ' ' + me.states.descriptiveCapacityRemaining;
             }
             if (me.trait.armdisarm) {
-                if (me.states.currentArmLevel) {
-                    text += ' ' + me.states.currentArmLevel;
+                if (me.states.isArmed)  {
+                    if (me.states.currentArmLevel) {
+                        text += ' ' + me.states.currentArmLevel;
+                    }
+                } else {
+                    text += ' DISARMED';
                 }
             }
         } else {
