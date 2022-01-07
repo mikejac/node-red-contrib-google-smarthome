@@ -269,33 +269,50 @@ module.exports = function(RED) {
         this.onInput = function (msg) {
             RED.log.debug("MgmtNode(input)");
 
-            let topicArr = msg.topic.split(node.topicDelim);
+            let topicArr = (msg.topic || '').split(node.topicDelim);
             let topic    = topicArr[topicArr.length - 1];   // get last part of topic
+            const topic_upper = topic.toUpperCase();
 
             RED.log.debug("MgmtNode(input): topic = " + topic);
 
             try {
-                if (topic.toUpperCase() === 'RESTART_SERVER') {
+                if (topic_upper === 'RESTART_SERVER') {
                     RED.log.debug("MgmtNode(input): RESTART_SERVER");
 
                     this.clientConn.app.Restart(RED.httpNode || RED.httpAdmin);
-                } else if (topic.toUpperCase() === 'REPORT_STATE') {
+                } else if (topic_upper === 'REPORT_STATE') {
                     RED.log.debug("MgmtNode(input): REPORT_STATE");
 
                     this.clientConn.app.ReportAllStates();
-                } else if (topic.toUpperCase() === 'REQUEST_SYNC') {
+                } else if (topic_upper === 'REQUEST_SYNC') {
                     RED.log.debug("MgmtNode(input): REQUEST_SYNC");
 
                     this.clientConn.app.RequestSync();
-                } else if (topic.toUpperCase() === 'GET_STATE') {
-                    let states = this.clientConn.app.getStates(undefined, msg.payload || false, RED);
+                } else if (topic_upper === 'GET_STATE' || topic_upper === 'GETSTATE') {
+                    let onlyPersistent = false;
+                    let useNames = false;
+                    let deviceIds = undefined;
+                    if (typeof msg.payload === 'boolean') {
+                        onlyPersistent = msg.payload;
+                    } else if (typeof msg.payload === 'string') {
+                        deviceIds = [ msg.payload ];
+                    } else if (typeof msg.payload === 'object') {
+                        onlyPersistent = msg.payload.onlyPersistent || false;
+                        useNames = msg.payload.useNames || false;
+                        if (typeof msg.payload.devices === 'string') {
+                            deviceIds = [ msg.payload.devices ];
+                        } else if (Array.isArray(msg.payload.devices)) {
+                            deviceIds = msg.payload.devices;
+                        }
+                    }
+                    let states = this.clientConn.app.getStates(deviceIds, onlyPersistent, useNames, RED);
                     if (states) {
                         this.send({
                             topic: topic,
                             payload: states
                         });
                     }
-                } else if (topic.toUpperCase() === 'SET_STATE') {
+                } else if (topic_upper === 'SET_STATE' || topic_upper === 'SETSTATE') {
                     if (typeof msg.payload === 'object') {
                         this.clientConn.app.setStates(msg.payload);
                     }
@@ -306,7 +323,7 @@ module.exports = function(RED) {
         };
 
         this.sendSetState = function () {
-            let states = this.clientConn.app.getStates(undefined, true, RED);
+            let states = this.clientConn.app.getStates(undefined, true, false, RED);
             if (states) {
                 this.send({
                     topic: 'set_state',
