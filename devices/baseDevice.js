@@ -2299,8 +2299,9 @@ class BaseDevice {
                 });
                 if (me.updateState({ currentStatusReport: new_payload }) || differs) {
                     me.clientConn.setState(me, me.states, true);  // tell Google ...
-
-                    me.clientConn.app.ScheduleGetState();
+                    if (me.persistent_state) {
+                        me.clientConn.app.ScheduleGetState();
+                    }
                     // if (me.passthru) {
                     //     msg.payload = new_payload;
                     //     me.send(msg);
@@ -2468,7 +2469,9 @@ class BaseDevice {
                     //     me.send({ topic: me.topicOut, payload: me.states });
                     // }
                     me.clientConn.setState(me, me.states, true);  // tell Google ...
-                    me.clientConn.app.ScheduleGetState();
+                    if (me.persistent_state) {
+                        me.clientConn.app.ScheduleGetState();
+                    }
                     me.updateStatusIcon();
                 }
                 if (me.passthru) {
