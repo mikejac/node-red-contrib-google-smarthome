@@ -22,14 +22,20 @@ const formats = require('../formatvalues.js');
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
-const COOK_SUPPORTED_UNIT = ["UNKNOWN_UNITS", "NO_UNITS", "CENTIMETERS", "CUPS", "DECILITERS", "FEET", "FLUID_OUNCES", "GALLONS", "GRAMS", "INCHES", "KILOGRAMS", "LITERS", "METERS", "MILLIGRAMS", "MILLILITERS", "MILLIMETERS", "OUNCES", "PINCH", "PINTS", "PORTION", "POUNDS", "QUARTS", "TABLESPOONS", "TEASPOONS"];
-const DISPENSE_SUPPORTED_UNIT = ["CENTIMETERS", "CUPS", "DECILITERS", "FLUID_OUNCES", "GALLONS", "GRAMS", "KILOGRAMS", "LITERS", "MILLIGRAMS", "MILLILITERS", "MILLIMETERS", "NO_UNITS", "OUNCES", "PINCH", "PINTS", "PORTION", "POUNDS", "QUARTS", "TABLESPOONS", "TEASPOONS"];
+const COOK_SUPPORTED_UNITS = ["UNKNOWN_UNITS", "NO_UNITS", "CENTIMETERS", "CUPS", "DECILITERS", "FEET", "FLUID_OUNCES", "GALLONS", "GRAMS", "INCHES", "KILOGRAMS", "LITERS", "METERS", "MILLIGRAMS", "MILLILITERS", "MILLIMETERS", "OUNCES", "PINCH", "PINTS", "PORTION", "POUNDS", "QUARTS", "TABLESPOONS", "TEASPOONS"];
+const DISPENSE_SUPPORTED_UNITS = ["CENTIMETERS", "CUPS", "DECILITERS", "FLUID_OUNCES", "GALLONS", "GRAMS", "KILOGRAMS", "LITERS", "MILLIGRAMS", "MILLILITERS", "MILLIMETERS", "NO_UNITS", "OUNCES", "PINCH", "PINTS", "PORTION", "POUNDS", "QUARTS", "TABLESPOONS", "TEASPOONS"];
+const ENERGY_STORAGE_UNITS = ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'];
+const LANGUAGES = ["da", "nl", "en", "fr", "de", "hi", "id", "it", "ja", "ko", "no", "pt-BR", "es", "sv", "th", "zh-TW"];
 
 const Formats = {
     BOOL: 1,
     INT: 2,
     FLOAT: 4,
     STRING: 8,
+    DATETIME: 16,
+    PRIMITIVE: 31,
+    OBJECT: 32,
+    ARRAY: 64,
     MANDATORY: 128,
     COPY_OBJECT: 256,
 };
@@ -750,17 +756,6 @@ class BaseDevice {
 
         this.updateStateTypesForTraits();
 
-        this.exclusive_states = {
-            color: {
-                temperatureK: ['spectrumRgb', 'spectrumHsv'],
-                spectrumRgb: ['temperatureK', 'spectrumHsv'],
-                spectrumHsv: ['temperatureK', 'spectrumRgb'],
-            },
-            thermostatTemperatureSetpointLow: ['thermostatTemperatureSetpoint'],
-            thermostatTemperatureSetpointHigh: ['thermostatTemperatureSetpoint'],
-            thermostatTemperatureSetpoint: ['thermostatTemperatureSetpointLow', 'thermostatTemperatureSetpointHigh'],
-        };
-
         // GoogleSmartHomeNode -> (client.registerDevice -> DeviceNode.registerDevice), app.registerDevice
         this.states = this.clientConn.register(this, 'device', config.name);
 
@@ -836,94 +831,185 @@ class BaseDevice {
         state_types['online'] = Formats.BOOL + Formats.MANDATORY;
 
         if (me.trait.appselector) {
-            state_types['currentApplication'] = Formats.STRING + Formats.MANDATORY;
+            let values = [];
+            me.available_applications.forEach(application => {
+                values.push(application.key);
+            });
+            state_types['currentApplication'] = {
+                type: Formats.STRING + Formats.MANDATORY,
+                values: values
+            };
         }
         if (me.trait.armdisarm) {
             state_types['isArmed'] = Formats.BOOL + Formats.MANDATORY;
-            state_types['currentArmLevel'] = Formats.STRING + Formats.MANDATORY;
+            let available = [];
+            me.available_arm_levels.forEach(function (al) {
+                available.push(al.level_name);
+            });
+            state_types['currentArmLevel'] = {
+                type: Formats.STRING + Formats.MANDATORY,
+                available: available
+            };
             state_types['exitAllowance'] = Formats.INT;
         }
         if (me.trait.brightness && !me.command_only_brightness) {
-            state_types['brightness'] = Formats.INT;
+            state_types['brightness'] = {
+                type: Formats.INT,
+                min: 0,
+                max: 100,
+            };
         }
         if (me.trait.colorsetting) {
             if (!me.command_only_colorsetting) {
                 if ((me.color_model === "rgb") || (me.color_model === 'rgb_temp')) {
                     state_types['color'] = {
-                        spectrumRgb: Formats.INT + Formats.MANDATORY
+                        type: Formats.OBJECT,
+                        attributes: {
+                            spectrumRgb: {
+                                type: Formats.INT + Formats.MANDATORY,
+                                exclusiveStates: ['temperatureK', 'spectrumHsv']
+                            },
+                        }
                     };
                 } else if ((me.color_model === "hsv") || (me.color_model === "hsv_temp")) {
                     state_types['color'] = {
-                        spectrumHsv: {
-                            hue: Formats.FLOAT + Formats.MANDATORY,           // float, representing hue as positive degrees in the range of [0.0, 360.0)
-                            saturation: Formats.FLOAT + Formats.MANDATORY,    // float, representing saturation as a percentage in the range [0.0, 1.0]
-                            value: Formats.FLOAT + Formats.MANDATORY          // float, representing value as a percentage in the range [0.0, 1.0]
+                        type: Formats.OBJECT,
+                        attributes: {
+                            spectrumHsv: {
+                                type: Formats.OBJECT,
+                                attributes: {
+                                    hue: {
+                                        type: Formats.FLOAT + Formats.MANDATORY,    // float, representing hue as positive degrees in the range of [0.0, 360.0)
+                                        min: 0.0,
+                                        max: 360.0,
+                                    },
+                                    saturation: {
+                                        type: Formats.FLOAT + Formats.MANDATORY,    // float, representing saturation as a percentage in the range [0.0, 1.0]
+                                        min: 0.0,
+                                        max: 1.0,
+                                    },
+                                    value: {
+                                        type: Formats.FLOAT + Formats.MANDATORY,    // float, representing value as a percentage in the range [0.0, 1.0]
+                                        min: 0.0,
+                                        max: 1.0,
+                                    },
+                                },
+                                exclusiveStates: ['temperatureK', 'spectrumRgb']
+                            },
                         }
                     };
                 } else {
                     state_types['color'] = {};
                 }
                 if (me.color_model !== "rgb" && me.color_model !== "hsv") {
-                    state_types.color.temperatureK = Formats.INT + Formats.MANDATORY;
+                    state_types.color.attributes.temperatureK = {
+                        type: {
+                            type: Formats.INT + Formats.MANDATORY,
+                            min: me.temperature_min_k,
+                            max: me.temperature_max_k,
+                        },
+                        exclusiveStates: ['spectrumRgb', 'spectrumHsv']
+                    }
                 }
             }
         }
         if (me.trait.cook) {
-            state_types['currentCookingMode'] = Formats.STRING + Formats.MANDATORY;
-            state_types['currentFoodPreset'] = Formats.STRING;
+            let cooking_mode_values = ['NONE'];
+            cooking_mode_values.push(...me.supported_cooking_modes);
+            state_types['currentCookingMode'] = {
+                type: Formats.STRING + Formats.MANDATORY,
+                values: cooking_mode_values,
+            };
+            let food_preset_values = ['NONE'];
+            food_preset_values.push(...me.food_presets.map(food_preset => food_preset.food_preset_name));
+            state_types['currentFoodPreset'] = {
+                type: Formats.STRING + Formats.MANDATORY,
+                values: food_preset_values,
+            };
             state_types['currentFoodQuantity'] = Formats.FLOAT;
-            state_types['currentFoodUnit'] = Formats.STRING;
+            state_types['currentFoodUnit'] = {
+                type: Formats.STRING,
+                values: COOK_SUPPORTED_UNITS,
+            };
         }
         if (me.trait.dispense) {
-            state_types['dispenseItems'] = [
-                {
-                    itemName: Formats.STRING,
+            let dispense_items_values = [];
+            me.supported_dispense_items.forEach(function (item) {
+                dispense_items_values.push(item.item_name);
+            });
+            state_types['dispenseItems'] = {
+                type: Formats.OBJECT + Formats.ARRAY,
+                attributes: {
+                    itemName: {
+                        type: Formats.STRING,
+                        value: dispense_items_values,
+                    },
                     amountRemaining: {
-                        amount: Formats.FLOAT,
-                        unit: Formats.STRING,
+                        type: Formats.OBJECT,
+                        attributes: {
+                            amount: Formats.FLOAT,
+                            unit: {
+                                type: Formats.STRING,
+                                values: DISPENSE_SUPPORTED_UNITS,
+                            },
+                        }
                     },
                     amountLastDispensed: {
-                        amount: Formats.FLOAT,
-                        unit: Formats.STRING,
+                        type: Formats.OBJECT,
+                        attributes: {
+                            amount: Formats.FLOAT,
+                            unit: {
+                                type: Formats.STRING,
+                                values: DISPENSE_SUPPORTED_UNITS,
+                            },
+                        }
                     },
                     isCurrentlyDispensing: Formats.BOOL,
                 },
-                {
-                    keyId: 'itemName',
-                    removeIfNoData: true,
-                }
-            ];
+                keyId: 'itemName',
+                removeIfNoData: true,
+            };
         }
         if (me.trait.dock) {
             state_types['isDocked'] = Formats.BOOL;
         }
         if (me.trait.energystorage) {
             state_types['descriptiveCapacityRemaining'] = Formats.STRING + Formats.MANDATORY;
-            state_types['capacityRemaining'] = [
-                {
+            state_types['capacityRemaining'] = {
+                type: Formats.OBJECT + Formats.ARRAY,
+                attributes: {
                     rawValue: Formats.INT + Formats.MANDATORY,
-                    unit: Formats.STRING + Formats.MANDATORY,
+                    unit: {
+                        type: Formats.STRING + Formats.MANDATORY,
+                        values: ENERGY_STORAGE_UNITS,
+                        toUpperCase: true,
+                        replaceAll: true,
+                    },
                 },
-                {
+                keyId: "unit",
+                addIfMissing: true,
+                removeIfNoData: true,
+                replaceAll: true,
+                isValidKey: unit => ENERGY_STORAGE_UNITS.includes(unit)
+            };
+            if (me.is_rechargeable) {
+                state_types['capacityUntilFull'] = {
+                    type: Formats.OBJECT + Formats.ARRAY,
+                    attributes: {
+                        rawValue: Formats.INT + Formats.MANDATORY,
+                        unit: {
+                            type: Formats.STRING + Formats.MANDATORY,
+                            values: ENERGY_STORAGE_UNITS,
+                            toUpperCase: true,
+                            replaceAll: true,
+                        }
+                    },
                     keyId: "unit",
                     addIfMissing: true,
                     removeIfNoData: true,
-                    isValidKey: unit => ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'].includes(unit)
-                }
-            ];
-            if (me.is_rechargeable) {
-                state_types['capacityUntilFull'] = [
-                    {
-                        rawValue: Formats.INT + Formats.MANDATORY,
-                        unit: Formats.STRING + Formats.MANDATORY,
-                    },
-                    {
-                        keyId: "unit",
-                        addIfMissing: true,
-                        removeIfNoData: true,
-                        isValidKey: unit => ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'].includes(unit)
-                    }
-                ];
+                    replaceAll: true,
+                    isValidKey: unit => ENERGY_STORAGE_UNITS.includes(unit)
+                };
                 state_types['isCharging'] = Formats.BOOL;
             }
             state_types['isPluggedIn'] = Formats.BOOL;
@@ -936,16 +1022,30 @@ class BaseDevice {
                     state_types['currentFanSpeedPercent'] = Formats.INT;
                 }
                 if (me.available_fan_speeds.length > 0) {
-                    state_types['currentFanSpeedSetting'] = Formats.STRING;
+                    let values = [];
+                    this.available_fan_speeds.forEach(function (fanspeed) {
+                        values.push(fanspeed.speed_name);
+                    });
+                    state_types['currentFanSpeedSetting'] = {
+                        type: Formats.STRING,
+                        values: values,
+                    };
                 }
             }
         }
         if (me.trait.fill) {
+            let fill_level_values = me.available_fill_levels.map(fl => fl.level_name);
             state_types['isFilled'] = Formats.BOOL + Formats.MANDATORY;
             if (me.available_fill_levels.length > 0) {
-                state_types['currentFillLevel'] = Formats.STRING + Formats.MANDATORY;
+                state_types['currentFillLevel'] = {
+                    type: Formats.STRING + Formats.MANDATORY,
+                    values: fill_level_values,
+                };
             } else {
-                state_types['currentFillLevel'] = Formats.STRING;
+                state_types['currentFillLevel'] = {
+                    type: Formats.STRING,
+                    values: fill_level_values,
+                };
             }
             if (me.supports_fill_percent) {
                 state_types['currentFillPercent'] = Formats.FLOAT + Formats.MANDATORY;
@@ -961,11 +1061,23 @@ class BaseDevice {
         }
         if (me.trait.inputselector) {
             if (!me.command_only_input_selector) {
-                state_types['currentInput'] = Formats.STRING + Formats.MANDATORY;
+                let values = [];
+                me.available_inputs.forEach(function (input) {
+                    values.push(input.key);
+                });
+                state_types['currentInput'] = {
+                    type: Formats.STRING + Formats.MANDATORY,
+                    values: values,
+                };
             }
         }
         if (me.trait.lighteffects) {
-            state_types['activeLightEffect'] = Formats.STRING + Formats.MANDATORY;
+            let light_effect_value = [''];
+            light_effect_value.push(...me.supported_effects);
+            state_types['activeLightEffect'] = {
+                type: Formats.STRING + Formats.MANDATORY,
+                values: light_effect_value,
+            };
             state_types['lightEffectEndUnixTimestampSec'] = Formats.INT;
         }
         // Locator
@@ -974,38 +1086,76 @@ class BaseDevice {
             state_types['isJammed'] = Formats.BOOL;
         }
         if (me.trait.mediastate) {
-            // INACTIVE STANDBY ACTIVE
-            state_types['activityState'] = Formats.STRING;
-            // PAUSED PLAYING FAST_FORWARDING REWINDING BUFFERING STOPPED
-            state_types['playbackState'] = Formats.STRING;
+            state_types['activityState'] = {
+                type: Formats.STRING,
+                values: ["INACTIVE", "STANDBY", "ACTIVE"],
+                upperCase: true,
+            };
+            state_types['playbackState'] = {
+                type: Formats.STRING,
+                values: ["PAUSED", "PLAYING", "FAST_FORWARDING", "REWINDING", "BUFFERING", "STOPPED"],
+                upperCase: true,
+            };
         }
         if (me.trait.modes) {
             if (!me.command_only_modes) {
-                state_types['currentModeSettings'] = Formats.COPY_OBJECT + Formats.STRING; // Mode keys are not defined in advance, See the docs
+                let attributes = {};
+                me.available_modes.forEach(function (mode) {
+                    let values = [];
+                    mode.settings.forEach(function (setting) {
+                        values.push(setting.setting_name);
+                    });
+                    attributes[mode.name] = {
+                        type: Formats.STRING + Formats.MANDATORY,
+                        values: values,
+                    };
+                });
+                state_types['currentModeSettings'] = {
+                    type: Formats.OBJECT,
+                    attributes: attributes,
+                }
             }
         }
         if (me.trait.networkcontrol) {
             state_types['networkEnabled'] = Formats.BOOL;
             state_types['networkSettings'] = {
-                ssid: Formats.STRING + Formats.MANDATORY
+                type: Formats.OBJECT,
+                attributes: {
+                    ssid: Formats.STRING + Formats.MANDATORY
+                }
             };
             state_types['guestNetworkEnabled'] = Formats.BOOL;
             state_types['guestNetworkSettings'] = {
-                ssid: Formats.STRING + Formats.MANDATORY
+                type: Formats.OBJECT,
+                attributes: {
+                    ssid: Formats.STRING + Formats.MANDATORY
+                }
             };
             state_types['numConnectedDevices'] = Formats.INT;
             state_types['networkUsageMB'] = Formats.FLOAT;
             state_types['networkUsageLimitMB'] = Formats.FLOAT;
             state_types['networkUsageUnlimited'] = Formats.BOOL;
             state_types['lastNetworkDownloadSpeedTest'] = {
-                downloadSpeedMbps: Formats.FLOAT,
-                unixTimestampSec: Formats.INT,
-                status: Formats.STRING
+                type: Formats.OBJECT,
+                attributes: {
+                    downloadSpeedMbps: Formats.FLOAT,
+                    unixTimestampSec: Formats.INT,
+                    status: {
+                        type: Formats.STRING,
+                        values: ['SUCCESS', 'FAILURE'],
+                    },
+                }
             };
             state_types['lastNetworkUploadSpeedTest'] = {
-                uploadSpeedMbps: Formats.FLOAT,
-                unixTimestampSec: Formats.INT,
-                status: Formats.STRING
+                type: Formats.OBJECT,
+                attributes: {
+                    uploadSpeedMbps: Formats.FLOAT,
+                    unixTimestampSec: Formats.INT,
+                    status: {
+                        type: Formats.STRING,
+                        values: ['SUCCESS', 'FAILURE'],
+                    },
+                }
             };
             state_types['networkSpeedTestInProgress'] = Formats.BOOL;
         }
@@ -1020,18 +1170,21 @@ class BaseDevice {
                 if (me.open_direction.length < 2) {
                     state_types['openPercent'] = Formats.FLOAT + Formats.MANDATORY;
                 } else {
-                    state_types['openState'] = [
-                        {
+                    state_types['openState'] = {
+                        type: Formats.OBJECT + Formats.ARRAY,
+                        attributes: {
                             openPercent: Formats.FLOAT + Formats.MANDATORY,
-                            openDirection: Formats.STRING + Formats.MANDATORY
+                            openDirection: {
+                                type: Formats.STRING + Formats.MANDATORY,
+                                values: me.open_direction,
+                                upperCase: true,
+                            },
                         },
-                        {
-                            keyId: 'openDirection',
-                            removeIfNoData: true,
-                            replaceAll: false,
-                            isValidKey: direction => me.open_direction.includes(direction.trim()) ? direction.trim() : undefined
-                        }
-                    ];
+                        keyId: 'openDirection',
+                        removeIfNoData: true,
+                        replaceAll: false,
+                        isValidKey: direction => me.open_direction.includes(direction.trim()) ? direction.trim() : undefined
+                    };
                 }
             }
         }
@@ -1047,38 +1200,43 @@ class BaseDevice {
             }
         }
         if (me.trait.runcycle) {
-            state_types['currentRunCycle'] = [
-                {
+            state_types['currentRunCycle'] = {
+                type: Formats.OBJECT + Formats.ARRAY,
+                attributes: {
                     currentCycle: Formats.STRING + Formats.MANDATORY,
                     nextCycle: Formats.STRING,
-                    lang: Formats.STRING + Formats.MANDATORY
+                    lang: {
+                        type: Formats.STRING + Formats.MANDATORY,
+                        defaultValue: me.lang,
+                        values: LANGUAGES,
+                    }
                 },
-                {
-                    keyId: 'currentCycle',
-                    addIfMissing: true,
-                    removeIfNoData: true,
-                    isValidKey: cycle => cycle.trim().length > 0 ? cycle.trim() : undefined
-                }
-            ];
+                keyId: 'lang',
+                addIfMissing: true,
+                removeIfNoData: true,
+                replaceAll: true,
+            };
             state_types['currentTotalRemainingTime'] = Formats.INT + Formats.MANDATORY;
             state_types['currentCycleRemainingTime'] = Formats.INT + Formats.MANDATORY;
         }
         // Scene
         if (me.trait.sensorstate) {
-            state_types['currentSensorStateData'] = [
-                {
-                    name: Formats.STRING + Formats.MANDATORY,
+            state_types['currentSensorStateData'] = {
+                type: Formats.OBJECT + Formats.ARRAY,
+                attributes: {
+                    name: {
+                        type: Formats.STRING + Formats.MANDATORY,
+                        values: me.sensor_states_supported,
+                    },
                     currentSensorState: Formats.STRING,
                     rawValue: Formats.FLOAT
                 },
-                {
-                    keyId: 'name',
-                    addIfMissing: true,
-                    removeIfNoData: true,
-                    replaceAll: false,
-                    isValidKey: name => me.sensor_states_supported.includes(name.trim()) ? name.trim() : undefined
-                }
-            ];
+                keyId: 'name',
+                addIfMissing: true,
+                removeIfNoData: true,
+                replaceAll: false,
+                isValidKey: name => me.sensor_states_supported.includes(name.trim()) ? name.trim() : undefined
+            };
         }
         if (me.trait.softwareupdate) {
             state_types['lastSoftwareUpdateUnixTimestampSec'] = Formats.INT + Formats.MANDATORY;
@@ -1086,30 +1244,30 @@ class BaseDevice {
         if (me.trait.startstop) {
             state_types['isRunning'] = Formats.BOOL + Formats.MANDATORY;
             state_types['isPaused'] = Formats.BOOL;
-            state_types['activeZones'] = [
-                Formats.STRING,
-                {
-                    addIfMissing: true,
-                    removeIfNoData: true,
-                    isValidKey: zone => me.available_zones.includes(zone.trim()) ? zone.trim() : undefined
-                }
-            ];
+            state_types['activeZones'] = {
+                type: Formats.STRING + Formats.ARRAY,
+                values: me.available_zones,
+                addIfMissing: true,
+                removeIfNoData: true,
+                replaceAll: true,
+                isValidKey: zone => me.available_zones.includes(zone.trim()) ? zone.trim() : undefined
+            };
         }
         if (me.trait.statusreport) {
-            state_types['currentStatusReport'] = [
-                {
+            state_types['currentStatusReport'] = {
+                type: Formats.OBJECT + Formats.ARRAY,
+                attributes: {
                     blocking: Formats.BOOL,
                     deviceTarget: Formats.STRING,
                     priority: Formats.INT,
                     statusCode: Formats.STRING
                 },
-                {
-                    keyId: ['deviceTarget', 'statusCode'],
-                    addIfMissing: true,
-                    removeIfNoData: true,
-                    isValidKey: nodeId => Object.keys(me.clientConn.getProperties([nodeId])).length > 0 ? nodeId : me.clientConn.getIdFromName(nodeId)
-                }
-            ];
+                keyId: ['deviceTarget', 'statusCode'],
+                addIfMissing: true,
+                removeIfNoData: true,
+                replaceAll: true,
+                isValidKey: nodeId => Object.keys(me.clientConn.getProperties([nodeId])).length > 0 ? nodeId : me.clientConn.getIdFromName(nodeId)
+            };
         }
         if (me.trait.temperaturecontrol) {
             if (!me.command_only_temperaturecontrol) {
@@ -1126,11 +1284,23 @@ class BaseDevice {
                 state_types['activeThermostatMode'] = Formats.STRING;
                 state_types['targetTempReachedEstimateUnixTimestampSec'] = Formats.INT;
                 state_types['thermostatHumidityAmbient'] = Formats.FLOAT;
-                state_types['thermostatMode'] = Formats.STRING + Formats.MANDATORY;
+                state_types['thermostatMode'] = {
+                    type: Formats.STRING + Formats.MANDATORY,
+                    values: me.available_thermostat_modes,
+                };
                 state_types['thermostatTemperatureAmbient'] = Formats.FLOAT + Formats.MANDATORY;
-                state_types['thermostatTemperatureSetpoint'] = Formats.FLOAT + Formats.MANDATORY;       // 0 One of
-                state_types['thermostatTemperatureSetpointHigh'] = Formats.FLOAT + Formats.MANDATORY;   // 1 One of
-                state_types['thermostatTemperatureSetpointLow'] = Formats.FLOAT + Formats.MANDATORY;    // 1 One of
+                state_types['thermostatTemperatureSetpoint'] = {       // 0 One of
+                    type: Formats.FLOAT + Formats.MANDATORY,
+                    exclusiveStates: ['thermostatTemperatureSetpointLow', 'thermostatTemperatureSetpointHigh'],
+                };
+                state_types['thermostatTemperatureSetpointHigh'] = {   // 1 One of
+                    type: Formats.FLOAT + Formats.MANDATORY,
+                    exclusiveStates: ['thermostatTemperatureSetpoint'],
+                };
+                state_types['thermostatTemperatureSetpointLow'] = {   // 1 One of
+                    type: Formats.FLOAT + Formats.MANDATORY,
+                    exclusiveStates: ['thermostatTemperatureSetpoint'],
+                };
             }
         }
         if (me.trait.timer) {
@@ -1141,7 +1311,14 @@ class BaseDevice {
         }
         if (me.trait.toggles) {
             if (!me.command_only_toggles) {
-                state_types['currentToggleSettings'] = Formats.COPY_OBJECT + Formats.BOOL; // Toggles keys are not defined in advance, See the docs
+                let attributes = {};
+                me.available_toggles.forEach(function (toggle) {
+                    attributes[toggle.name] = Formats.BOOL + Formats.MANDATORY;
+                });
+                state_types['currentToggleSettings'] = {
+                    type: Formats.OBJECT,
+                    attributes: attributes,
+                };
             }
         }
         // TransportControl
@@ -1455,16 +1632,16 @@ class BaseDevice {
         });
         me.supported_dispense_presets.forEach(function (item) {
             dispense.push({
-                "itemName": item.preset_name,
-                "amountRemaining": {
-                    "amount": 0,
-                    "unit": "NO_UNITS"
+                itemName: item.preset_name,
+                amountRemaining: {
+                    amount: 0,
+                    unit: "NO_UNITS"
                 },
-                "amountLastDispensed": {
-                    "amount": 0,
-                    "unit": "NO_UNITS"
+                amountLastDispensed: {
+                    amount: 0,
+                    unit: "NO_UNITS"
                 },
-                "isCurrentlyDispensing": false
+                isCurrentlyDispensing: false
             })
         });
         return dispense;
@@ -1504,7 +1681,7 @@ class BaseDevice {
         }
         if (me.trait.cook) {
             states['currentCookingMode'] = "NONE";
-            // states['currentFoodPreset'] = "NONE";
+            states['currentFoodPreset'] = "NONE";
             // states['currentFoodQuantity'] = 0;
             // states['currentFoodUnit'] = "UNKNOWN_UNITS";
         }
@@ -1711,7 +1888,7 @@ class BaseDevice {
                 // states['activeThermostatMode'] = "none";
                 // states['targetTempReachedEstimateUnixTimestampSec'] = me.target_temp_reached_estimate_unix_timestamp_sec;
                 // states['thermostatHumidityAmbient'] = me.thermostat_humidity_ambient;
-                states['thermostatMode'] = "none";
+                states['thermostatMode'] = me.available_thermostat_modes.length > 0 ? me.available_thermostat_modes[0] : "";
                 states['thermostatTemperatureAmbient'] = me.thermostat_temperature_setpoint;
                 // 0
                 states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
@@ -1812,7 +1989,7 @@ class BaseDevice {
                     text = thermostat_mode.substr(0, 1).toUpperCase() + st;
                 } else if (thermostat_mode === "heatcool") {
                     fill = "green";
-                    text = "H/C T: " + (me.states.thermostatTemperatureAmbient || '?') + "°C | S: [" + (me.states.thermostatTemperatureSetpointLow || '') + " - " + (me.states.thermostatTemperatureSetpointHigh || '')+ "]\xB0C";
+                    text = "H/C T: " + (me.states.thermostatTemperatureAmbient || '?') + "°C | S: [" + (me.states.thermostatTemperatureSetpointLow || '') + " - " + (me.states.thermostatTemperatureSetpointHigh || '') + "]\xB0C";
                 } else {
                     fill = "green";
                     text = thermostat_mode.substr(0, 1).toUpperCase() + st;
@@ -1825,7 +2002,7 @@ class BaseDevice {
                 text += ' ' + me.states.descriptiveCapacityRemaining;
             }
             if (me.trait.armdisarm) {
-                if (me.states.isArmed)  {
+                if (me.states.isArmed) {
                     if (me.states.currentArmLevel) {
                         text += ' ' + me.states.currentArmLevel;
                     }
@@ -1848,7 +2025,7 @@ class BaseDevice {
      *
      */
     updated(device, params, original_params) {
-        let me = this;
+        const me = this;
         let states = device.states;
         let command = device.command.startsWith('action.devices.commands.') ? device.command.substr(24) : device.command;
         this._debug(".updated: device.command = " + JSON.stringify(command));
@@ -1856,9 +2033,9 @@ class BaseDevice {
         this._debug(".updated: params = " + JSON.stringify(params));
         this._debug(".updated: original_params = " + JSON.stringify(original_params));
 
-        const modified = me.updateState(params || states);
+        const modified = me.updateState(params || states, me.states, me.state_types);
         if (modified) {
-            this.cloneObject(states, me.states, me.state_types, me.exclusive_states);
+            this.cloneObject(states, me.states, me.state_types);
         }
 
         this.updateStatusIcon();
@@ -2264,10 +2441,11 @@ class BaseDevice {
                 // Update or Add reports based on deviceTarget and statusCode
                 let payload = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
                 let new_payload = [];
+                const status_report_type = me.state_types['currentStatusReport'].attributes;
                 if (typeof me.states.currentStatusReport !== 'undefined') {
                     me.states.currentStatusReport.forEach(report => {
                         let new_report = { priority: 0 };
-                        me.cloneObject(new_report, report, me.state_types['currentStatusReport'][0]);
+                        me.cloneObject(new_report, report, status_report_type);
                         new_payload.push(new_report);
                     });
                 }
@@ -2286,12 +2464,12 @@ class BaseDevice {
                     }
                     if (nodeId) {
                         let new_report = {};
-                        me.cloneObject(new_report, sr, me.state_types['currentStatusReport'][0]);
+                        me.cloneObject(new_report, sr, status_report_type);
                         if (new_report.statusCode) {
                             new_report.deviceTarget = nodeId;
                             let cur_reports = new_payload.filter(report => report.deviceTarget === nodeId && report.statusCode === new_report.statusCode);
                             if (cur_reports.length > 0) {
-                                if (me.cloneObject(cur_reports[0], new_report, me.state_types['currentStatusReport'][0])) {
+                                if (me.cloneObject(cur_reports[0], new_report, status_report_type)) {
                                     differs = true;
                                 }
                             } else {
@@ -2301,7 +2479,7 @@ class BaseDevice {
                         }
                     }
                 });
-                if (me.updateState({ currentStatusReport: new_payload }) || differs) {
+                if (me.updateState({ currentStatusReport: new_payload }, me.states, me.state_types) || differs) {
                     me.clientConn.setState(me, me.states, true);  // tell Google ...
                     if (me.persistent_state) {
                         me.clientConn.app.ScheduleGetState();
@@ -2466,12 +2644,12 @@ class BaseDevice {
                 } else {
                     me._debug(".input: some other topic");
                 }
-                const differs = me.updateState(msg.payload);
+                const differs = me.updateState(msg.payload, me.states, me.state_types);
 
                 if (differs) {
-                    // if (!me.passthru) {
-                    //     me.send({ topic: me.topicOut, payload: me.states });
-                    // }
+                    if (msg.stateOutput || false) {
+                        me.send({ topic: me.topicOut, payload: me.states });
+                    }
                     me.clientConn.setState(me, me.states, true);  // tell Google ...
                     if (me.persistent_state) {
                         me.clientConn.app.ScheduleGetState();
@@ -2653,27 +2831,41 @@ class BaseDevice {
         return traits;
     }
 
-    updateState(new_states) {
+    //
+    //
+    //
+    //
+    updateState(new_states, current_state, state_types) {
         const me = this;
         let modified = [];
-        Object.keys(me.state_types).forEach(function (key) {
+        me._debug("CCHI updateState state_types " + JSON.stringify(state_types));
+        me._debug('updateState current state ' + JSON.stringify(current_state));
+        Object.keys(state_types).forEach(key => {
             if (new_states.hasOwnProperty(key)) {
-                if (me.setState(key, new_states[key], me.states, me.state_types[key], me.exclusive_states[key] || {})) {
-                    me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
-                    modified.push(key);
+                // console.log("CCHI found key " + key);
+                let o_modified = me.setState(key, new_states[key], current_state, state_types[key]);
+                if (o_modified) {
+                    me._debug('.updateState set "' + key + '" to ' + JSON.stringify(new_states[key]));
+                    modified.push(o_modified);
                 }
+                // console.log("CCHI set " + key + " val " + JSON.stringify(current_state[key]));
             }
+            // else console.log("CCHI NOT found key " + key);
         });
+        let thermostat_modified = false;
         if (modified.includes("thermostatTemperatureSetpoint")) {
             me.thermostat_temperature_setpoint = me.states.thermostatTemperatureSetpoint;
+            thermostat_modified = true;
         }
         if (modified.includes("thermostatTemperatureSetpointLow")) {
             me.thermostat_temperature_setpoint_low = me.states.thermostatTemperatureSetpointLow;
+            thermostat_modified = true;
         }
         if (modified.includes("thermostatTemperatureSetpointHigh")) {
             me.thermostat_temperature_setpoint_hight = me.states.thermostatTemperatureSetpointHigh;
+            thermostat_modified = true;
         }
-        if (modified.includes("thermostatMode")) {
+        if (thermostat_modified | modified.includes("thermostatMode")) {
             let keys_to_update = [];
             if (me.states.thermostatMode === 'heatcool') {
                 keys_to_update = ['thermostatTemperatureSetpointLow', 'thermostatTemperatureSetpointHigh'];
@@ -2688,259 +2880,354 @@ class BaseDevice {
                 };
             }
             keys_to_update.forEach(key => {
-                if (me.setState(key, new_states[key], me.states, me.state_types[key], me.exclusive_states[key] || {})) {
+                if (me.setState(key, new_states[key], me.states, me.state_types[key])) {
                     me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
                     modified.push(key);
                 }
             });
         }
-        me._debug('.updateState: new State ' + modified + ' ' + JSON.stringify(me.states));
+        me._debug('.updateState: new State ' + JSON.stringify(modified) + ' ' + JSON.stringify(me.states));
         return modified;
     }
 
-    cloneObject(cur_obj, new_obj, state_values, exclusive_states) {
+    //
+    //
+    //
+    //
+    cloneObject(cur_obj, new_obj, state_values) {
         const me = this;
         let differs = false;
-        if (exclusive_states === undefined) {
-            exclusive_states = {};
-        }
         Object.keys(state_values).forEach(function (key) {
-            if (typeof new_obj[key] !== 'undefined' && new_obj[key] != null) {
-                if (me.setState(key, new_obj[key], cur_obj, state_values[key] || {}, exclusive_states[key] || {})) {
+            const dvd = typeof state_values[key].defaultValue !== 'undefined';
+            const new_value = typeof new_obj[key] !== 'undefined' ? new_obj[key] : state_values[key].defaultValue;
+            if ((typeof new_obj[key] !== 'undefined' && new_obj[key] != null) || dvd) {
+                if (me.setState(key, new_value, cur_obj, state_values[key] || {})) {
                     differs = true;
                 }
-            } else if (typeof state_values[key] === 'number' && !(state_values[key] & formats.MANDATORY)) {
+            } else if (!(state_values[key].type & Formats.MANDATORY)) {
                 delete cur_obj[key];
             }
         });
         return differs;
     }
 
-    formatValue(key, value, type) {
-        let new_state;
-        if (type & Formats.FLOAT) {
-            new_state = formats.FormatValue(formats.Formats.FLOAT, key, value);
-        } else if (type & Formats.INT) {
-            new_state = formats.FormatValue(formats.Formats.INT, key, value);
-        } else if (type & Formats.STRING) {
-            new_state = formats.FormatValue(formats.Formats.STRING, key, value);
-        } else if (type & Formats.BOOL) {
-            new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
+    //
+    //
+    //
+    //
+    formatValue(key, value, format, default_value) {
+        if (typeof value === 'undefined') {
+            value = default_value;
         }
-        return new_state;
+
+        if (typeof value === 'string') {
+            switch (format) {
+                case Formats.BOOL:
+                    let t = value.toUpperCase()
+
+                    if (t == "TRUE" || t == "ON" || t == "YES" || t == "1") {
+                        return true;
+                    } else if (t == "FALSE" || t == "OFF" || t == "NO" || t == "0") {
+                        return false;
+                    } else {
+                        throw new Error('Type of ' + key + ' is string but it cannot be converted to a boolean');
+                    }
+
+                case Formats.STRING:
+                    return value;
+
+                case Formats.FLOAT:
+                    let fval = parseFloat(value);
+
+                    if (isNaN(fval)) {
+                        throw new Error('Type of ' + key + ' is string but it cannot be converted to a float');
+                    }
+
+                    return fval;
+
+                case Formats.DATETIME:
+                    return value;
+
+                default:
+                    let val = parseInt(value)
+
+                    if (isNaN(val)) {
+                        throw new Error('Type of ' + key + ' is string but it cannot be converted to a integer');
+                    }
+
+                    return val;
+            }
+        } else if (typeof value === 'number') {
+            switch (format) {
+                case Formats.BOOL:
+                    let val = (value != 0)
+                    return val;
+
+                case Formats.STRING:
+                    return value.toString();
+
+                case Formats.DATETIME:
+                    let dval = new Date(value);
+                    return dval.toISOString();
+
+                default:
+                    return value;
+            }
+        } else if (typeof value === 'boolean') {
+            switch (format) {
+                case Formats.BOOL:
+                    return value;
+
+                case Formats.STRING:
+                    if (value) {
+                        return "true";
+                    } else {
+                        return "false";
+                    }
+
+                default:
+                    if (value) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+            }
+        } else if (typeof value === 'object') {
+            if (value.hasOwnProperty(key)) {
+                return FormatValue(format, key, value[key]);
+            } else {
+                throw new Error('Type of ' + key + ' is object but it does not have matching property');
+            }
+        } else {
+            throw new Error('Type of ' + key + ' is not compatible; typeof = ' + typeof value + "; value = " + JSON.stringify(value));
+        }
     }
 
-    setState(key, value, states, state_values, exclusive_states) {
+    //
+    //
+    //
+    //
+    setState(key, value, state, state_type) {
         const me = this;
         let differs = false;
-        let old_state = typeof states === 'object' ? states[key] : {};
+        let old_state = typeof state === 'object' ? state[key] : {};
         let new_state = undefined;
-        let exclusive_states_arr = [];
-        if (Array.isArray(exclusive_states)) {
-            exclusive_states_arr = exclusive_states;
-            exclusive_states = {};
+        if (typeof state_type === 'number') {
+            state_type = {
+                type: state_type
+            };
         }
-        if (typeof state_values === 'object') {
-            if (typeof value === "object") {
-                if (Array.isArray(state_values)) {
-                    if (Array.isArray(value)) {
-                        /*
-                        if (JSON.stringify(states[key]) != JSON.stringify(value)) {
-                            differs = true;
-                        }
-                        states[key] = value;
-                        */
-                        // checks array
-                        const ar_state_values = state_values[0];
-                        if (typeof ar_state_values === 'number') {
-                            let new_arr = [];
-                            let old_arr = Array.isArray(old_state) ? old_state : [];
-                            value.forEach((elm, idx) => {
-                                let new_val = me.formatValue(key + '[' + idx + ']', elm, ar_state_values);
-                                if (new_val !== undefined && new_val != null) {
-                                    new_arr.push(new_val);
-                                    if (old_arr.length > idx) {
-                                        if (old_arr[idx] != new_val) {
-                                            differs = true;
-                                        }
-                                    } else {
-                                        differs = true;
-                                    }
-                                } else {
-                                    differs = true;
-                                }
-                            });
-                            states[key] = new_arr;
+        let exclusive_states = state_type.exclusiveStates || [];
+        // console.log("CCHI ---> setState key " + JSON.stringify(key) + " v " + JSON.stringify(value) + " ov " + JSON.stringify(old_state) + " st " + JSON.stringify(state_type) + " ex " + JSON.stringify(exclusive_states));
+
+        if (value == null) {
+            if (state_type.type & Formats.MANDATORY) {
+                me.RED.log.error("key " + key + " is mandatory.");
+            } else if (state.hasOwnProperty(key)) {
+                delete state[key];
+                differs = key;
+            }
+        } else if (state_type.type & Formats.ARRAY) {
+            if (!Array.isArray(value)) {
+                value = [value];
+            }
+            // checks array
+            if (!(state_type.type & Formats.OBJECT)) {
+                let new_arr = [];
+                let old_arr = Array.isArray(old_state) ? old_state : [];
+                const allowed_values = state_type.values;
+                value.forEach((elm, idx) => {
+                    let new_val = me.formatValue(key + '[' + idx + ']', elm, state_type.type & Formats.PRIMITIVE);
+                    if (state_type.upperCase && new_val) {
+                        new_val = new_val.toUpperCase();
+                    }
+                    if (new_val !== undefined && new_val !== null && (allowed_values === undefined || allowed_values.includes(new_val))) {
+                        new_arr.push(new_val);
+                        if (old_arr.length > idx) {
+                            if (old_arr[idx] != new_val) {
+                                differs = key;
+                            }
                         } else {
-                            // structure check
-                            let new_arr = [];
-                            let old_arr = Array.isArray(old_state) ? old_state : [];
-                            let key_id = state_values.length > 1 ? state_values[1] : undefined;
-                            let add_if_missing = false;
-                            let remove_if_no_data = false;
-                            let is_valid_key = key => true;
-                            let replace_all = false;
-                            if (typeof key_id === 'object') {
-                                add_if_missing = key_id.addIfMissing || false;
-                                remove_if_no_data = key_id.removeIfNoData || false;
-                                if (typeof key_id.isValidKey === 'function') {
-                                    is_valid_key = key_id.isValidKey;
-                                }
-                                if (typeof key_id.replaceAll === 'boolean') {
-                                    replace_all = key_id.replaceAll;
-                                } else {
-                                    replace_all = true;
-                                }
-                                key_id = key_id.keyId;
-                            }
-                            value.forEach((new_obj, idx) => {
-                                let cur_obj;
-                                if (key_id) {
-                                    let f_arr;
-                                    if (typeof key_id === 'string') {
-                                        f_arr = old_arr.filter(obj => { return obj[key_id] === new_obj[key_id] });
-                                    } else {
-                                        f_arr = old_arr.filter(obj => {
-                                            let obj_equal = true;
-                                            key_id.forEach(key_idi => {
-                                                if (obj[key_idi] !== new_obj[key_idi]) {
-                                                    obj_equal = false;
-                                                }
-                                            });
-                                            return obj_equal;
-                                        });
-                                    }
-                                    if (f_arr.length > 1) {
-                                        this.RED.log.error('More than one "' + key + '" for "' + key_id + '" "' + new_obj[key_id] + '"');
-                                    } else if (f_arr.length > 0) {
-                                        cur_obj = f_arr[0];
-                                    } else if (add_if_missing) {
-                                        let key_id0 = typeof key_id === 'string' ? key_id : key_id[0];
-                                        let key1 = is_valid_key(new_obj[key_id0]);
-                                        if (key1) {
-                                            cur_obj = {};
-                                            if (typeof key1 === 'string') {
-                                                new_obj[key_id0] = key1;
-                                            }
-                                            old_arr.push(cur_obj);
-                                        }
-                                    }
-                                } else {
-                                    cur_obj = old_arr[idx];
-                                    if (cur_obj === undefined && add_if_missing) {
-                                        cur_obj = {};
-                                    }
-                                }
-                                if (cur_obj !== undefined) {
-                                    if (me.cloneObject(cur_obj, new_obj, ar_state_values, exclusive_states)) {
-                                        differs = true;
-                                    }
-                                    if (Object.keys(cur_obj).length > 0) {
-                                        new_arr.push(cur_obj);
-                                    } else {
-                                        differs = true; // ??
-                                    }
-                                }
-                            });
-                            if (replace_all && new_arr.length != old_arr.length) {
-                                differs = true;
-                            }
-                            states[key] = replace_all ? new_arr : old_arr;
-                            if (remove_if_no_data && states[key].length === 0) {
-                                delete states[key];
-                            }
+                            differs = key;
                         }
                     } else {
-                        this.RED.log.error('key "' + key + '" must be an array.');
+                        differs = key;
                     }
-                } else {
-                    if (Array.isArray(value)) {
-                        this.RED.log.error('key "' + key + '" must be an object.');
-                    } else {
-                        if (states[key] === undefined) {
-                            states[key] = {};
-                            old_state = states[key];
-                        }
-                        let mandatory_to_delete = [];
-                        Object.keys(state_values).forEach(function (ikey) {
-                            if (typeof value[ikey] !== 'undefined' && value[ikey] != null) {
-                                if (typeof old_state[ikey] == 'undefined') {
-                                    old_state[ikey] = {};
-                                }
-                                if (me.setState(ikey, value[ikey], old_state, state_values[ikey], exclusive_states[ikey] || {})) {
-                                    differs = true;
-                                }
-                            } else if (typeof state_values[ikey] === 'number' && !(state_values[ikey] & formats.MANDATORY)) {
-                                if (typeof states[ikey] != 'undefined') {
-                                    differs = true;
-                                }
-                                delete states[ikey];
-                            } else {
-                                mandatory_to_delete.push(ikey);
-                            }
-                        });
-                        mandatory_to_delete.forEach(ikey => {
-                            const e_states = exclusive_states[ikey] || [];
-                            let exclusive_state_found = false;
-                            e_states.forEach(e_state => {
-                                if (typeof states[e_state] !== 'undefined') {
-                                    exclusive_state_found = false;
-                                }
-                            });
-                            if (!exclusive_state_found) {
-                                if (typeof states[ikey] != 'undefined') {
-                                    differs = true;
-                                }
-                                delete states[ikey];
-                            } else {
-                                this.RED.log.error('key "' + key + '.' + ikey + '" is mandatory.');
-                            }
-                        });
-                    }
-                }
+                });
+                state[key] = new_arr;
             } else {
-                if (Array.isArray(old_state)) {
-                    this.RED.log.error('key "' + key + '" must be an array.');
+                // structure check
+                let new_arr = [];
+                let old_arr = Array.isArray(old_state) ? old_state : [];
+                let key_id = state_type.keyId || undefined;
+                let add_if_missing = typeof state_type.addIfMissing === 'boolean' ? state_type.addIfMissing : true;
+                let remove_if_no_data;
+                if (typeof state_type.removeIfNoData === 'boolean') {
+                    remove_if_no_data = state_type.removeIfNoData;
                 } else {
-                    this.RED.log.error('key "' + key + '" must be an object.');
+                    remove_if_no_data = !(state_type.type & Formats.MANDATORY);
+                }
+                let is_valid_key;
+                let replace_all = state_type.replaceAll || key_id === undefined;
+                if (typeof state_type.isValidKey === 'function') {
+                    is_valid_key = state_type.isValidKey;
+                } else {
+                    is_valid_key = key => true;
+                }
+                value.forEach((new_obj, idx) => {
+                    let cur_obj;
+                    if (key_id) {
+                        let f_arr;
+                        let cloned_net_obj = {};
+                        me.cloneObject(cloned_net_obj, new_obj, state_type.attributes);
+                        if (typeof key_id === 'string') {
+                            f_arr = old_arr.filter(obj => { return obj[key_id] === cloned_net_obj[key_id] });
+                        } else {
+                            f_arr = old_arr.filter(obj => {
+                                let obj_equal = true;
+                                key_id.forEach(key_idi => {
+                                    if (obj[key_idi] !== cloned_net_obj[key_idi]) {
+                                        obj_equal = false;
+                                    }
+                                });
+                                return obj_equal;
+                            });
+                        }
+                        if (f_arr.length > 1) {
+                            me.RED.log.error('More than one "' + key + '" for "' + key_id + '" "' + cloned_net_obj[key_id] + '"');
+                        } else if (f_arr.length > 0) {
+                            cur_obj = f_arr[0];
+                        } else if (add_if_missing) {
+                            let key_id0 = typeof key_id === 'string' ? key_id : key_id[0];
+                            let key1 = is_valid_key(cloned_net_obj[key_id0]);
+                            if (key1) {
+                                cur_obj = {};
+                                if (typeof key1 === 'string') {
+                                    new_obj[key_id0] = key1;
+                                }
+                                old_arr.push(cur_obj);
+                            }
+                        }
+                    } else {
+                        cur_obj = old_arr[idx];
+                        if (cur_obj === undefined && add_if_missing) {
+                            cur_obj = {};
+                        }
+                    }
+                    if (cur_obj !== undefined) {
+                        if (me.cloneObject(cur_obj, new_obj, state_type.attributes)) {
+                            differs = key;
+                        }
+                        if (Object.keys(cur_obj).length > 0) {
+                            new_arr.push(cur_obj);
+                        } else {
+                            differs = key; // ??
+                        }
+                    }
+                });
+                if (replace_all && new_arr.length != old_arr.length) {
+                    differs = key;
+                }
+                state[key] = replace_all ? new_arr : old_arr;
+                if (remove_if_no_data && state[key].length === 0) {
+                    delete state[key];
                 }
             }
-        } else if (state_values & Formats.COPY_OBJECT) {
-            if (typeof value !== 'object' || Array.isArray(value)) {
-                this.RED.log.error('key "' + key + '" must be an object.');
+        } else if (state_type.type & Formats.OBJECT) {
+            if (Array.isArray(value)) {
+                me.RED.log.error('key "' + key + '" must be an object.');
             } else {
-                Object.keys(old_state).forEach(function (key) {
-                    if (typeof value[key] !== 'undefined') {
-                        if (me.setState(key, value[key], old_state, state_values - Formats.COPY_OBJECT, {})) {
-                            differs = true;
+                if (state[key] === undefined) {
+                    state[key] = {};
+                    old_state = state[key];
+                }
+                let mandatory_to_delete = [];
+                let o_differs = [];
+                Object.keys(state_type.attributes).forEach(function (ikey) {
+                    // console.log("---> Attributes key " + ikey + " " + JSON.stringify(value[ikey]));
+                    if (typeof value[ikey] !== 'undefined' && value[ikey] != null) {
+                        if (typeof old_state[ikey] == 'undefined') {
+                            old_state[ikey] = {};
+                        }
+                        if (me.setState(ikey, value[ikey], old_state, state_type.attributes[ikey])) {
+                            o_differs.push(ikey);
+                            differs = o_differs;
+                        }
+                    } else {
+                        const a_state_type = typeof state_type.attributes[ikey] === 'number' ? state_type.attributes[ikey] : state_type.attributes[ikey].type;
+                        // console.log("a_state " + JSON.stringify(a_state_type));
+                        if (a_state_type & Formats.MANDATORY) {
+                            mandatory_to_delete.push(ikey);
+                        } else {
+                            if (typeof state[ikey] != 'undefined') {
+                                o_differs.push(ikey);
+                                differs = o_differs;
+                            }
+                            delete state[key][ikey];
+                            // console.log("Deleted " + ikey + " " + JSON.stringify(state[key]));
+                        }
+                    }
+                });
+                mandatory_to_delete.forEach(ikey => {
+                    // console.log("try removing " + ikey);
+                    let exclusive_state_found = false;
+                    exclusive_states.forEach(e_state => {
+                        if (typeof state[e_state] !== 'undefined') {
+                            exclusive_state_found = false;
+                        }
+                    });
+                    if (!exclusive_state_found) {
+                        if (typeof state[ikey] != 'undefined') {
+                            o_differs.push(ikey);
+                            differs = o_differs;
+                        }
+                        delete state[ikey];
+                    } else {
+                        me.RED.log.error('key "' + key + '.' + ikey + '" is mandatory.');
+                    }
+                });
+            }
+        } else if (state_type.type & Formats.COPY_OBJECT) {
+            if (typeof value !== 'object' || Array.isArray(value)) {
+                me.RED.log.error('key "' + key + '" must be an object.');
+            } else {
+                Object.keys(old_state).forEach(function (ikey) {
+                    if (typeof value[ikey] !== 'undefined') {
+                        if (me.setState(ikey, value[ikey], old_state, state_type.type - Formats.COPY_OBJECT)) {
+                            differs = key;
                         }
                     }
                 });
             }
-        } else if (value == null) {
-            if (state_values & Formats.MANDATORY) {
-                this.RED.log.error("key " + key + " is mandatory.");
-            } else if (states.hasOwnProperty(key)) {
-                delete states[key];
-                differs = true;
-            }
-        } else if (state_values & Formats.FLOAT) {
-            new_state = formats.FormatValue(formats.Formats.FLOAT, key, value);
-        } else if (state_values & Formats.INT) {
-            new_state = formats.FormatValue(formats.Formats.INT, key, value);
-        } else if (state_values & Formats.STRING) {
-            new_state = formats.FormatValue(formats.Formats.STRING, key, value);
-        } else if (state_values & Formats.BOOL) {
-            new_state = formats.FormatValue(formats.Formats.BOOL, key, value);
-        }
-        if (typeof state_values !== 'object') {
-            if (new_state !== undefined) {
-                differs = old_state !== new_state;
-                states[key] = new_state;
+        } else {
+            new_state = me.formatValue(key, value, state_type.type & Formats.PRIMITIVE, state_type.defaultValue);
+            // console.log("CCHI checking new_state " + key + " " + new_state + " type " + JSON.stringify(state_type));
+            if (state_type.min !== undefined && new_state < state_type.min) {
+                me.RED.log.error('key "' + key + '" must be greather or equal than ' + state_type.min);
+                new_state = undefined;
+            } else if (state_type.max !== undefined && new_state > state_type.max) {
+                me.RED.log.error('key "' + key + '" must be lower or equal than ' + state_type.max);
+                new_state = undefined;
+            } else if (Array.isArray(state_type.values) && !state_type.values.includes(new_state)) {
+                me.RED.log.error('key "' + key + '" must be one of ' + JSON.stringify(state_type.values));
+                new_state = undefined;
             }
         }
-        if (differs) {
-            exclusive_states_arr.forEach(rkey => delete states[rkey]);
+        if (new_state !== undefined && !(state_type.type & (Formats.OBJECT | Formats.ARRAY))) {
+            // console.log("CCHI Update state for " + key + " to " + new_state);
+            if (old_state !== new_state) {
+                differs = key;
+            }
+            state[key] = new_state;
+        }
+        if (exclusive_states.length > 0) {
+            exclusive_states.forEach(rkey => delete state[rkey]);
+        }
+        // console.log("CCHI END ----> " + key + " = " + JSON.stringify(state[key]));
+        if (Array.isArray(differs)) {
+            let o_differs = {};
+            o_differs[key] = differs;
+            return o_differs;
         }
         return differs;
     }
@@ -2968,7 +3255,7 @@ class BaseDevice {
             if (Array.isArray(data_in.supported_units)) {
                 data_out.supported_units = [];
                 data_in.supported_units.forEach(unit => {
-                    if (typeof unit === 'string' && !data_out.supported_units.includes(unit.trim().toUpperCase()) && COOK_SUPPORTED_UNIT.includes(unit.trim().toUpperCase())) {
+                    if (typeof unit === 'string' && !data_out.supported_units.includes(unit.trim().toUpperCase()) && COOK_SUPPORTED_UNITS.includes(unit.trim().toUpperCase())) {
                         data_out.supported_units.push(unit.trim().toUpperCase());
                     }
                 });
@@ -2984,7 +3271,7 @@ class BaseDevice {
             if (Array.isArray(data_in.supported_units)) {
                 data_out.supported_units = [];
                 data_in.supported_units.forEach(unit => {
-                    if (typeof unit === 'string' && !data_out.supported_units.includes(unit.trim().toUpperCase()) && DISPENSE_SUPPORTED_UNIT.includes(unit.trim().toUpperCase())) {
+                    if (typeof unit === 'string' && !data_out.supported_units.includes(unit.trim().toUpperCase()) && DISPENSE_SUPPORTED_UNITS.includes(unit.trim().toUpperCase())) {
                         data_out.supported_units.push(unit.trim().toUpperCase());
                     }
                 });
@@ -3084,6 +3371,16 @@ class BaseDevice {
                                 rec[key1] = arr[0];
                             }
                         }
+                    }
+                }
+                if (typeof rec[key1] == undefined && typeof rec[key2] !== undefined && Array.isArray(rec[key2])) {
+                    let val2 = rec[key2];
+                    if (typeof val2 === 'string') {
+                        val2 = [val2];
+                    }
+                    let arr = val2.filter(element => typeof element === 'string' && element.trim().length > 0);
+                    if (arr.length > 0 && arr[0]) {
+                        rec[rec1] = arr[0];
                     }
                 }
                 if (typeof rec[key1] === 'string' && rec[key1].trim()) {
@@ -4100,7 +4397,7 @@ class BaseDevice {
                     params['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
                     params['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
                     executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
-                } else if (thermostatMode === "heat" || thermostatMode === "cool") {
+                } else {
                     params['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
                     executionStates.push('thermostatTemperatureSetpoint');
                 }
