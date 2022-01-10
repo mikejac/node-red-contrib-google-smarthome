@@ -104,6 +104,7 @@ class BaseDevice {
         };
         this.topicOut = config.topic;
         this.passthru = config.passthru;
+        this.persistent_state = config.persistent_state || false;
         this.room_hint = config.room_hint;
         this.device_type = config.device_type;
 
@@ -1817,15 +1818,19 @@ class BaseDevice {
                     text = thermostat_mode.substr(0, 1).toUpperCase() + st;
                 }
                 if (me.states.thermostatHumidityAmbient !== undefined) {
-                    text += ' ' + me.states.thermostatHumidityAmbient + "% ";
+                    text += ' ' + me.states.thermostatHumidityAmbient + "%";
                 }
             }
             if (me.trait.energystorage) {
                 text += ' ' + me.states.descriptiveCapacityRemaining;
             }
             if (me.trait.armdisarm) {
-                if (me.states.currentArmLevel) {
-                    text += ' ' + me.states.currentArmLevel;
+                if (me.states.isArmed)  {
+                    if (me.states.currentArmLevel) {
+                        text += ' ' + me.states.currentArmLevel;
+                    }
+                } else {
+                    text += ' DISARMED';
                 }
             }
         } else {
@@ -2298,8 +2303,9 @@ class BaseDevice {
                 });
                 if (me.updateState({ currentStatusReport: new_payload }) || differs) {
                     me.clientConn.setState(me, me.states, true);  // tell Google ...
-
-                    me.clientConn.app.ScheduleGetState();
+                    if (me.persistent_state) {
+                        me.clientConn.app.ScheduleGetState();
+                    }
                     // if (me.passthru) {
                     //     msg.payload = new_payload;
                     //     me.send(msg);
@@ -2467,7 +2473,9 @@ class BaseDevice {
                     //     me.send({ topic: me.topicOut, payload: me.states });
                     // }
                     me.clientConn.setState(me, me.states, true);  // tell Google ...
-                    me.clientConn.app.ScheduleGetState();
+                    if (me.persistent_state) {
+                        me.clientConn.app.ScheduleGetState();
+                    }
                     me.updateStatusIcon();
                 }
                 if (me.passthru) {

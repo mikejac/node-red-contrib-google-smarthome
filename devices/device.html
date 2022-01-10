@@ -62,6 +62,11 @@
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.passthru"></span></label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-persistent_state"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.persistent_state"></span></label>
+        <input type="checkbox" checked id="node-input-persistent_state" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
     
     <div class="form-row" id="device_type">
         <label style="width:auto" for="node-input-device_type"><i class="fa fa-tag"></i> <span data-i18n="device.label.device_type"></span></label>
@@ -2199,6 +2204,9 @@
                 value: "", required: false
             },
             passthru: {
+                value: false, required: false
+            },
+            persistent_state: {
                 value: false, required: false
             },
             trait_scene: {

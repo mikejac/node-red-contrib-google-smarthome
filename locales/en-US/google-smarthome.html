@@ -106,7 +106,7 @@
             <dt>topic
                 <span class="property-type">string</span>
             </dt>
-            <dd>A topic of <code>get_state</code> requests to send to the output the state of all Google devices. <code>msg.payload</code> is not used for anything.</dd>
+            <dd>A topic of <code>get_state</code> requests to send to the output the state of all Google devices, if the <code>msg.payload</code> is not true, otherwise sends to the output the state of all Google devices with the "Persistent State" enabled.</dd>
         </dl>
 
         <p>If <code>msg.topic</code> is <code>set_state</code> the node updates the Google devices states with the states contained on the <code>msg.payload</code>.</p>
