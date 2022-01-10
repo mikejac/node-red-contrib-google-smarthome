@@ -853,7 +853,11 @@ class BaseDevice {
             state_types['exitAllowance'] = Formats.INT;
         }
         if (me.trait.brightness && !me.command_only_brightness) {
-            state_types['brightness'] = Formats.INT;
+            state_types['brightness'] = {
+                type: Formats.INT,
+                min: 0,
+                max: 100,
+            };
         }
         if (me.trait.colorsetting) {
             if (!me.command_only_colorsetting) {
