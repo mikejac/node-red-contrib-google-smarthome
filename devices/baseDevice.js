@@ -842,13 +842,13 @@ class BaseDevice {
         }
         if (me.trait.armdisarm) {
             state_types['isArmed'] = Formats.BOOL + Formats.MANDATORY;
-            let available = [];
+            let values = [];
             me.available_arm_levels.forEach(function (al) {
-                available.push(al.level_name);
+                values.push(al.level_name);
             });
             state_types['currentArmLevel'] = {
                 type: Formats.STRING + Formats.MANDATORY,
-                available: available
+                values: values
             };
             state_types['exitAllowance'] = Formats.INT;
         }
