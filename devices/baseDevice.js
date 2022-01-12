@@ -899,7 +899,9 @@ class BaseDevice {
                         }
                     };
                 } else {
-                    state_types['color'] = {};
+                    state_types['color'] = {
+                        attributes: {}
+                    };
                 }
                 if (me.color_model !== "rgb" && me.color_model !== "hsv") {
                     state_types.color.attributes.temperatureK = {
