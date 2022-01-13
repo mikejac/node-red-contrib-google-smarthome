@@ -784,7 +784,7 @@
         "type": "function",
         "z": "c0151475.218f98",
         "name": "",
-        "func": "msg1 = msg.payload;\nmsg.payload = \"OK\";\nconsole.log(\"\\nNew message \" + JSON.stringify(msg1));\nreturn [msg, [msg1, { \"topic\" : \"getState\"}]];\n",
+        "func": "msg1 = msg.payload;\nmsg.payload = \"OK\";\nconsole.log(\"\\n\\nNew message \" + JSON.stringify(msg1));\nreturn [msg, [msg1, { \"topic\" : \"getState\"}]];\n",
         "outputs": 2,
         "noerr": 0,
         "initialize": "",
