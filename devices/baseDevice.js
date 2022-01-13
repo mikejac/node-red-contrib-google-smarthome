@@ -2012,6 +2012,14 @@ class BaseDevice {
                     text += ' DISARMED';
                 }
             }
+            if (me.trait.fanspeed) {
+                if (typeof me.states.currentFanSpeedPercent === 'number') {
+                    text += ' ' + me.states.currentFanSpeedPercent + '%';
+                }
+                if (typeof me.states.currentFanSpeedSetting === 'string') {
+                    text += ' ' + me.states.currentFanSpeedSetting;
+                }
+            }
         } else {
             shape = 'ring';
             text = "offline";

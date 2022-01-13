@@ -70,7 +70,7 @@ test_payload() {
     test_json Payload "$PAYLOAD" "$@"
     # if [ "$1" != ".command" ] ; then
     Q=$1
-    if [[ "$Q" != ".command" && $Q != .params.* ]] ; then
+    if [[ -n "$REPORT_STATE" && "$Q" != ".command" && $Q != .params.* ]] ; then
         test_json ReportState "$REPORT_STATE" ".payload.devices.states.\"$LAST_NODE_ID\"$1" "$2"
     fi
 }
@@ -125,6 +125,12 @@ execute_payload() {
 }
 
 execute() {
+    execute_no_report_state "$@"
+    while [ ! -f "$REPORT_STATE_FILE" ] ; do sleep 1 ; done
+    REPORT_STATE=$(cat "$REPORT_STATE_FILE")
+}
+
+execute_no_report_state() {
     CMD_EXEC="$@"
     echo
     ((TEST_NUM=TEST_NUM+1))
@@ -132,15 +138,15 @@ execute() {
     CMD_=$2
     CMD="${CMD_%%_*}"
     echo ./execute "$@"
-    mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old" 
+    mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old"
+    mv "$REPORT_STATE_FILE" "$REPORT_STATE_FILE.old"
+    REPORT_STATE=''
     # echo "{}" > "$PAYLOAD_FILE" 
     # echo "{}" > "$REPORT_STATE_FILE" 
     ./execute "$@" > "$OUT_FILE"
     OUT=$(cat "$OUT_FILE")
     while [ ! -f "$PAYLOAD_FILE" ] ; do sleep 1 ; done
-    sleep 1
     PAYLOAD=$(cat "$PAYLOAD_FILE")
-    REPORT_STATE=$(cat "$REPORT_STATE_FILE")
     LAST_NODE_ID="$1"
     test_out ".payload.commands[0].status" '"SUCCESS"'
     test_payload .online true
@@ -1197,42 +1203,42 @@ test_payload ".brightness" 64
 # CameraStream
 echo
 echo CameraStream
-execute $NODE_ID GetCameraStream true '"progressive_mp4"'
+execute_no_report_state $NODE_ID GetCameraStream true '"progressive_mp4"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://PROGRESSIVE_MP4"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"progressive_mp4"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_APPID"'
 
-execute $NODE_ID GetCameraStream true '"hls","dash","smooth_stream","progressive_mp4"'
+execute_no_report_state $NODE_ID GetCameraStream true '"hls","dash","smooth_stream","progressive_mp4"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://PROGRESSIVE_MP4"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"progressive_mp4"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_APPID"'
 
-execute $NODE_ID GetCameraStream true '"hls"'
+execute_no_report_state $NODE_ID GetCameraStream true '"hls"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://HLS"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"hls"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"HLS_APPID"'
 
-execute $NODE_ID GetCameraStream true '"dash"'
+execute_no_report_state $NODE_ID GetCameraStream true '"dash"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://DASH"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"dash"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"DASH_APPID"'
 
-execute $NODE_ID GetCameraStream true '"smooth_stream"'
+execute_no_report_state $NODE_ID GetCameraStream true '"smooth_stream"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://SMOOTH_STREAM"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"smooth_stream"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"SMOOTH_STREAM_APPID"'
 
-execute $NODE_ID GetCameraStream true '"webrtc"'
+execute_no_report_state $NODE_ID GetCameraStream true '"webrtc"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"webrtc"'
 test_out ".payload.commands[0].states.cameraStreamSignalingUrl" '"http://WEBRTC_SIGNALING"'
@@ -1278,16 +1284,16 @@ test_payload ".color.spectrumHsv.saturation" null
 test_payload ".color.spectrumHsv.value" null
 test_out ".payload.commands[0].states.online" true
 
-execute $NODE_ID ColorAbsolute 'Bianco Caldo' 4000
-test_payload ".color.temperatureK" 4000
+execute $NODE_ID ColorAbsolute 'Bianco Caldo' 4001
+test_payload ".color.temperatureK" 4001
 test_payload ".color.spectrumRgb" null
 test_payload ".color.spectrumHsv.hue" null
 test_payload ".color.spectrumHsv.saturation" null
 test_payload ".color.spectrumHsv.value" null
 test_out ".payload.commands[0].states.online" true
 
-execute $NODE_ID1 ColorAbsolute 'Bianco Caldo' 4000
-test_payload ".color.temperatureK" 4000
+execute $NODE_ID1 ColorAbsolute 'Bianco Caldo' 4002
+test_payload ".color.temperatureK" 4002
 test_payload ".color.spectrumRgb" null
 test_payload ".color.spectrumHsv.hue" null
 test_payload ".color.spectrumHsv.saturation" null
@@ -1358,8 +1364,8 @@ test_payload ".color.spectrumHsv.saturation" null
 test_payload ".color.spectrumHsv.value" null
 test_out ".payload.commands[0].states.online" true
 
-execute $NODE_ID2 ColorAbsolute 'Bianco Caldo' 2000
-test_payload ".color.temperatureK" 2000
+execute $NODE_ID2 ColorAbsolute 'Bianco Caldo' 2001
+test_payload ".color.temperatureK" 2001
 test_payload ".color.spectrumRgb" null
 test_payload ".color.spectrumHsv.hue" null
 test_payload ".color.spectrumHsv.saturation" null
