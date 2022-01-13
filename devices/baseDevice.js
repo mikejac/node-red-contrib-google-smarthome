@@ -2837,17 +2837,17 @@ class BaseDevice {
     //
     //
     //
-    updateState(new_states, current_state, state_types) {
+    updateState(from_states, to_state, state_types) {
         const me = this;
         let modified = [];
         me._debug("CCHI updateState state_types " + JSON.stringify(state_types));
-        me._debug('updateState current state ' + JSON.stringify(current_state));
+        me._debug('updateState current state ' + JSON.stringify(to_state));
         Object.keys(state_types).forEach(key => {
-            if (new_states.hasOwnProperty(key)) {
+            if (from_states.hasOwnProperty(key)) {
                 // console.log("CCHI found key " + key);
-                let o_modified = me.setState(key, new_states[key], current_state, state_types[key]);
+                let o_modified = me.setState(key, from_states[key], to_state, state_types[key]);
                 if (o_modified) {
-                    me._debug('.updateState set "' + key + '" to ' + JSON.stringify(new_states[key]));
+                    me._debug('.updateState set "' + key + '" to ' + JSON.stringify(from_states[key]));
                     modified.push(o_modified);
                 }
                 // console.log("CCHI set " + key + " val " + JSON.stringify(current_state[key]));
@@ -2856,39 +2856,39 @@ class BaseDevice {
         });
         let thermostat_modified = false;
         if (modified.includes("thermostatTemperatureSetpoint")) {
-            me.thermostat_temperature_setpoint = new_states.thermostatTemperatureSetpoint;
+            me.thermostat_temperature_setpoint = to_state.thermostatTemperatureSetpoint;
             thermostat_modified = true;
         }
         if (modified.includes("thermostatTemperatureSetpointLow")) {
-            me.thermostat_temperature_setpoint_low = new_states.thermostatTemperatureSetpointLow;
+            me.thermostat_temperature_setpoint_low = to_state.thermostatTemperatureSetpointLow;
             thermostat_modified = true;
         }
         if (modified.includes("thermostatTemperatureSetpointHigh")) {
-            me.thermostat_temperature_setpoint_hight = new_states.thermostatTemperatureSetpointHigh;
+            me.thermostat_temperature_setpoint_hight = to_state.thermostatTemperatureSetpointHigh;
             thermostat_modified = true;
         }
         if (thermostat_modified | modified.includes("thermostatMode")) {
             let keys_to_update = [];
-            if (new_states.thermostatMode === 'heatcool') {
+            if (to_state.thermostatMode === 'heatcool') {
                 keys_to_update = ['thermostatTemperatureSetpointLow', 'thermostatTemperatureSetpointHigh'];
-                new_states = {
+                from_states = {
                     thermostatTemperatureSetpointLow: me.thermostat_temperature_setpoint_low,
                     thermostatTemperatureSetpointHigh: me.thermostat_temperature_setpoint_hight
                 };
             } else {
                 keys_to_update = ['thermostatTemperatureSetpoint'];
-                new_states = {
+                from_states = {
                     thermostatTemperatureSetpoint: me.thermostat_temperature_setpoint
                 };
             }
             keys_to_update.forEach(key => {
-                if (me.setState(key, new_states[key], new_states, me.state_types[key])) {
-                    me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
+                if (me.setState(key, from_states[key], to_state, me.state_types[key])) {
+                    me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(to_state[key]));
                     modified.push(key);
                 }
             });
         }
-        me._debug('.updateState: new State ' + JSON.stringify(modified) + ' ' + JSON.stringify(new_states));
+        me._debug('.updateState: new State ' + JSON.stringify(modified) + ' = ' + JSON.stringify(to_state));
         return modified;
     }
 
@@ -2896,18 +2896,19 @@ class BaseDevice {
     //
     //
     //
-    cloneObject(cur_obj, new_obj, state_values) {
+    cloneObject(to_obj, from_obj, state_values) {
         const me = this;
         let differs = false;
         Object.keys(state_values).forEach(function (key) {
-            const dvd = typeof state_values[key].defaultValue !== 'undefined';
-            const new_value = typeof new_obj[key] !== 'undefined' ? new_obj[key] : state_values[key].defaultValue;
-            if ((typeof new_obj[key] !== 'undefined' && new_obj[key] != null) || dvd) {
-                if (me.setState(key, new_value, cur_obj, state_values[key] || {})) {
+            const value_type = typeof state_values[key] === 'number' ? state_values[key] : state_values[key].type;
+            const default_value_defined = typeof state_values[key].defaultValue !== 'undefined';
+            const new_value = typeof from_obj[key] !== 'undefined' ? from_obj[key] : state_values[key].defaultValue;
+            if ((typeof from_obj[key] !== 'undefined' && from_obj[key] != null) || default_value_defined) {
+                if (me.setState(key, new_value, to_obj, state_values[key] || {})) {
                     differs = true;
                 }
-            } else if (!(state_values[key].type & Formats.MANDATORY)) {
-                delete cur_obj[key];
+            } else if (!(value_type & Formats.MANDATORY)) {
+                delete to_obj[key];
             }
         });
         return differs;
@@ -3188,6 +3189,9 @@ class BaseDevice {
                         me.RED.log.error('key "' + key + '.' + ikey + '" is mandatory.');
                     }
                 });
+                if (Object.keys(differs).length > 0) {
+                    new_state = state[key];
+                }
             }
         } else if (state_type.type & Formats.COPY_OBJECT) {
             if (typeof value !== 'object' || Array.isArray(value)) {
