@@ -38,6 +38,7 @@ const Formats = {
     ARRAY: 64,
     MANDATORY: 128,
     COPY_OBJECT: 256,
+    DELETE_MISSING: 512,
 };
 
 /******************************************************************************************************************
@@ -863,7 +864,7 @@ class BaseDevice {
             if (!me.command_only_colorsetting) {
                 if ((me.color_model === "rgb") || (me.color_model === 'rgb_temp')) {
                     state_types['color'] = {
-                        type: Formats.OBJECT,
+                        type: Formats.OBJECT + Formats.DELETE_MISSING,
                         attributes: {
                             spectrumRgb: {
                                 type: Formats.INT + Formats.MANDATORY,
@@ -900,16 +901,15 @@ class BaseDevice {
                     };
                 } else {
                     state_types['color'] = {
+                        type: Formats.OBJECT,
                         attributes: {}
                     };
                 }
                 if (me.color_model !== "rgb" && me.color_model !== "hsv") {
                     state_types.color.attributes.temperatureK = {
-                        type: {
-                            type: Formats.INT + Formats.MANDATORY,
-                            min: me.temperature_min_k,
-                            max: me.temperature_max_k,
-                        },
+                        type: Formats.INT + Formats.MANDATORY,
+                        min: me.temperature_min_k,
+                        max: me.temperature_max_k,
                         exclusiveStates: ['spectrumRgb', 'spectrumHsv']
                     }
                 }
@@ -2012,6 +2012,14 @@ class BaseDevice {
                     text += ' DISARMED';
                 }
             }
+            if (me.trait.fanspeed) {
+                if (typeof me.states.currentFanSpeedPercent === 'number') {
+                    text += ' ' + me.states.currentFanSpeedPercent + '%';
+                }
+                if (typeof me.states.currentFanSpeedSetting === 'string') {
+                    text += ' ' + me.states.currentFanSpeedSetting;
+                }
+            }
         } else {
             shape = 'ring';
             text = "offline";
@@ -2646,7 +2654,7 @@ class BaseDevice {
                 } else {
                     me._debug(".input: some other topic");
                 }
-                const differs = me.updateState(msg.payload, me.states, me.state_types);
+                const differs = me.updateState(msg.payload || {}, me.states, me.state_types);
 
                 if (differs) {
                     if (msg.stateOutput || false) {
@@ -2837,17 +2845,17 @@ class BaseDevice {
     //
     //
     //
-    updateState(new_states, current_state, state_types) {
+    updateState(from_states, to_state, state_types) {
         const me = this;
         let modified = [];
         me._debug("CCHI updateState state_types " + JSON.stringify(state_types));
-        me._debug('updateState current state ' + JSON.stringify(current_state));
+        me._debug('updateState current state ' + JSON.stringify(to_state));
         Object.keys(state_types).forEach(key => {
-            if (new_states.hasOwnProperty(key)) {
+            if (from_states.hasOwnProperty(key)) {
                 // console.log("CCHI found key " + key);
-                let o_modified = me.setState(key, new_states[key], current_state, state_types[key]);
+                let o_modified = me.setState(key, from_states[key], to_state, state_types[key]);
                 if (o_modified) {
-                    me._debug('.updateState set "' + key + '" to ' + JSON.stringify(new_states[key]));
+                    me._debug('.updateState set "' + key + '" to ' + JSON.stringify(from_states[key]));
                     modified.push(o_modified);
                 }
                 // console.log("CCHI set " + key + " val " + JSON.stringify(current_state[key]));
@@ -2856,39 +2864,39 @@ class BaseDevice {
         });
         let thermostat_modified = false;
         if (modified.includes("thermostatTemperatureSetpoint")) {
-            me.thermostat_temperature_setpoint = me.states.thermostatTemperatureSetpoint;
+            me.thermostat_temperature_setpoint = to_state.thermostatTemperatureSetpoint;
             thermostat_modified = true;
         }
         if (modified.includes("thermostatTemperatureSetpointLow")) {
-            me.thermostat_temperature_setpoint_low = me.states.thermostatTemperatureSetpointLow;
+            me.thermostat_temperature_setpoint_low = to_state.thermostatTemperatureSetpointLow;
             thermostat_modified = true;
         }
         if (modified.includes("thermostatTemperatureSetpointHigh")) {
-            me.thermostat_temperature_setpoint_hight = me.states.thermostatTemperatureSetpointHigh;
+            me.thermostat_temperature_setpoint_hight = to_state.thermostatTemperatureSetpointHigh;
             thermostat_modified = true;
         }
         if (thermostat_modified | modified.includes("thermostatMode")) {
             let keys_to_update = [];
-            if (me.states.thermostatMode === 'heatcool') {
+            if (to_state.thermostatMode === 'heatcool') {
                 keys_to_update = ['thermostatTemperatureSetpointLow', 'thermostatTemperatureSetpointHigh'];
-                new_states = {
+                from_states = {
                     thermostatTemperatureSetpointLow: me.thermostat_temperature_setpoint_low,
                     thermostatTemperatureSetpointHigh: me.thermostat_temperature_setpoint_hight
                 };
             } else {
                 keys_to_update = ['thermostatTemperatureSetpoint'];
-                new_states = {
+                from_states = {
                     thermostatTemperatureSetpoint: me.thermostat_temperature_setpoint
                 };
             }
             keys_to_update.forEach(key => {
-                if (me.setState(key, new_states[key], me.states, me.state_types[key])) {
-                    me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
+                if (me.setState(key, from_states[key], to_state, me.state_types[key])) {
+                    me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(to_state[key]));
                     modified.push(key);
                 }
             });
         }
-        me._debug('.updateState: new State ' + JSON.stringify(modified) + ' ' + JSON.stringify(me.states));
+        me._debug('.updateState: new State ' + JSON.stringify(modified) + ' = ' + JSON.stringify(to_state));
         return modified;
     }
 
@@ -2896,18 +2904,19 @@ class BaseDevice {
     //
     //
     //
-    cloneObject(cur_obj, new_obj, state_values) {
+    cloneObject(to_obj, from_obj, state_values) {
         const me = this;
         let differs = false;
         Object.keys(state_values).forEach(function (key) {
-            const dvd = typeof state_values[key].defaultValue !== 'undefined';
-            const new_value = typeof new_obj[key] !== 'undefined' ? new_obj[key] : state_values[key].defaultValue;
-            if ((typeof new_obj[key] !== 'undefined' && new_obj[key] != null) || dvd) {
-                if (me.setState(key, new_value, cur_obj, state_values[key] || {})) {
+            const value_type = typeof state_values[key] === 'number' ? state_values[key] : state_values[key].type;
+            const default_value_defined = typeof state_values[key].defaultValue !== 'undefined';
+            const new_value = typeof from_obj[key] !== 'undefined' ? from_obj[key] : state_values[key].defaultValue;
+            if ((typeof from_obj[key] !== 'undefined' && from_obj[key] != null) || default_value_defined) {
+                if (me.setState(key, new_value, to_obj, state_values[key] || {})) {
                     differs = true;
                 }
-            } else if (!(state_values[key].type & Formats.MANDATORY)) {
-                delete cur_obj[key];
+            } else if (!(value_type & Formats.MANDATORY)) {
+                delete to_obj[key];
             }
         });
         return differs;
@@ -3019,7 +3028,7 @@ class BaseDevice {
                 type: state_type
             };
         }
-        let exclusive_states = state_type.exclusiveStates || [];
+        const exclusive_states = state_type.exclusiveStates || [];
         // console.log("CCHI ---> setState key " + JSON.stringify(key) + " v " + JSON.stringify(value) + " ov " + JSON.stringify(old_state) + " st " + JSON.stringify(state_type) + " ex " + JSON.stringify(exclusive_states));
 
         if (value == null) {
@@ -3155,7 +3164,7 @@ class BaseDevice {
                             o_differs.push(ikey);
                             differs = o_differs;
                         }
-                    } else {
+                    } else if (state_type.type & Formats.DELETE_MISSING) {
                         const a_state_type = typeof state_type.attributes[ikey] === 'number' ? state_type.attributes[ikey] : state_type.attributes[ikey].type;
                         // console.log("a_state " + JSON.stringify(a_state_type));
                         if (a_state_type & Formats.MANDATORY) {
@@ -3171,7 +3180,7 @@ class BaseDevice {
                     }
                 });
                 mandatory_to_delete.forEach(ikey => {
-                    // console.log("try removing " + ikey);
+                    // console.log("CCHI try removing " + ikey);
                     let exclusive_state_found = false;
                     exclusive_states.forEach(e_state => {
                         if (typeof state[e_state] !== 'undefined') {
@@ -3183,11 +3192,14 @@ class BaseDevice {
                             o_differs.push(ikey);
                             differs = o_differs;
                         }
-                        delete state[ikey];
+                        delete state[key][ikey];
                     } else {
                         me.RED.log.error('key "' + key + '.' + ikey + '" is mandatory.');
                     }
                 });
+                if (Object.keys(differs).length > 0) {
+                    new_state = state[key];
+                }
             }
         } else if (state_type.type & Formats.COPY_OBJECT) {
             if (typeof value !== 'object' || Array.isArray(value)) {
@@ -3207,10 +3219,12 @@ class BaseDevice {
             if (state_type.min !== undefined && new_state < state_type.min) {
                 me.RED.log.error('key "' + key + '" must be greather or equal than ' + state_type.min);
                 new_state = undefined;
-            } else if (state_type.max !== undefined && new_state > state_type.max) {
+            }
+            if (new_state !== undefined && state_type.max !== undefined && new_state > state_type.max) {
                 me.RED.log.error('key "' + key + '" must be lower or equal than ' + state_type.max);
                 new_state = undefined;
-            } else if (Array.isArray(state_type.values) && !state_type.values.includes(new_state)) {
+            }
+            if (new_state !== undefined && Array.isArray(state_type.values) && !state_type.values.includes(new_state)) {
                 me.RED.log.error('key "' + key + '" must be one of ' + JSON.stringify(state_type.values));
                 new_state = undefined;
             }
@@ -3222,7 +3236,7 @@ class BaseDevice {
             }
             state[key] = new_state;
         }
-        if (exclusive_states.length > 0) {
+        if (new_state !== undefined && exclusive_states.length > 0) {
             exclusive_states.forEach(rkey => delete state[rkey]);
         }
         // console.log("CCHI END ----> " + key + " = " + JSON.stringify(state[key]));

@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # cd ; node-red -u $HOME/nrsh | awk '{ print; } /HttpActions:reportState..: postData = / { pd=substr($0, 39); print pd > "reportState.json"; close("reportState.json"); }'
-# cd $HOME/nrsh/node_modules/node-red-contrib-google-smarthome/test/sh/ ; ./device_test.sh "a5782b1b.e120f8" "bab53c06.fc9c3"
+# cd $HOME/nrsh/node_modules/node-red-contrib-google-smarthome/test/sh/ ; ./device_test.sh "a5782b1b.e120f8" "bab53c06.fc9c3" "d06e999d.718b68"
 #
 
 . ./data
@@ -26,6 +26,7 @@
 
 NODE_ID=$1 || "a5782b1b.e120f8"
 NODE_ID1=$2 || "bab53c06.fc9c3"
+NODE_ID2=$3 || "d06e999d.718b68"
 PAYLOAD_FILE="$HOME/payload.json"
 REPORT_STATE_FILE="$HOME/reportState.json"
 OUT_FILE="$HOME/out.json"
@@ -69,7 +70,7 @@ test_payload() {
     test_json Payload "$PAYLOAD" "$@"
     # if [ "$1" != ".command" ] ; then
     Q=$1
-    if [[ "$Q" != ".command" && $Q != .params.* ]] ; then
+    if [[ -n "$REPORT_STATE" && "$Q" != ".command" && $Q != .params.* ]] ; then
         test_json ReportState "$REPORT_STATE" ".payload.devices.states.\"$LAST_NODE_ID\"$1" "$2"
     fi
 }
@@ -124,6 +125,12 @@ execute_payload() {
 }
 
 execute() {
+    execute_no_report_state "$@"
+    while [ ! -f "$REPORT_STATE_FILE" ] ; do sleep 1 ; done
+    REPORT_STATE=$(cat "$REPORT_STATE_FILE")
+}
+
+execute_no_report_state() {
     CMD_EXEC="$@"
     echo
     ((TEST_NUM=TEST_NUM+1))
@@ -131,15 +138,15 @@ execute() {
     CMD_=$2
     CMD="${CMD_%%_*}"
     echo ./execute "$@"
-    mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old" 
-    echo "{}" > "$PAYLOAD_FILE" 
+    mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old"
+    mv "$REPORT_STATE_FILE" "$REPORT_STATE_FILE.old"
+    REPORT_STATE=''
+    # echo "{}" > "$PAYLOAD_FILE" 
     # echo "{}" > "$REPORT_STATE_FILE" 
     ./execute "$@" > "$OUT_FILE"
     OUT=$(cat "$OUT_FILE")
     while [ ! -f "$PAYLOAD_FILE" ] ; do sleep 1 ; done
-    sleep 1
     PAYLOAD=$(cat "$PAYLOAD_FILE")
-    REPORT_STATE=$(cat "$REPORT_STATE_FILE")
     LAST_NODE_ID="$1"
     test_out ".payload.commands[0].status" '"SUCCESS"'
     test_payload .online true
@@ -239,25 +246,29 @@ test_sync .payload.devices[0].deviceInfo.swVersion "\""1.0"\""
 test_sync .payload.devices[0].deviceInfo.hwVersion "\""1.0"\""
 test_sync .payload.devices[0].id "\""$NODE_ID"\""
 test_sync .payload.devices[1].id "\""$NODE_ID1"\""
-test_sync .payload.devices[2] null
+test_sync .payload.devices[2].id "\""$NODE_ID2"\""
+test_sync .payload.devices[3] null
 
 # availableApplications
 test_sync .payload.devices[0].attributes.availableApplications[0].key "\""YouTube"\""
 test_sync .payload.devices[0].attributes.availableApplications[0].names[0].lang "\""$LANG"\""
 test_sync .payload.devices[0].attributes.availableApplications[0].names[0].name_synonym[0] "\""YouTube"\""
 test_sync .payload.devices[0].attributes.availableApplications[0].names[0].name_synonym[1] null
+test_sync .payload.devices[0].attributes.availableApplications[0].names[1] null
 
 test_sync .payload.devices[0].attributes.availableApplications[1].key "\""video"\""
 test_sync .payload.devices[0].attributes.availableApplications[1].names[0].lang "\""$LANG"\""
 test_sync .payload.devices[0].attributes.availableApplications[1].names[0].name_synonym[0] "\""Google\ Video"\""
 test_sync .payload.devices[0].attributes.availableApplications[1].names[0].name_synonym[1] "\""Video"\""
 test_sync .payload.devices[0].attributes.availableApplications[1].names[0].name_synonym[2] null
+test_sync .payload.devices[0].attributes.availableApplications[1].names[1] null
 
 test_sync .payload.devices[0].attributes.availableApplications[2].key "\""Amazon\ Prime\ Video"\""
 test_sync .payload.devices[0].attributes.availableApplications[2].names[0].lang "\""$LANG"\""
 test_sync .payload.devices[0].attributes.availableApplications[2].names[0].name_synonym[0] "\""Amazon\ Prime\ Video"\""
 test_sync .payload.devices[0].attributes.availableApplications[2].names[0].name_synonym[1] "\""Prime\ Video"\""
 test_sync .payload.devices[0].attributes.availableApplications[2].names[0].name_synonym[2] null
+test_sync .payload.devices[0].attributes.availableApplications[2].names[1] null
 
 test_sync .payload.devices[0].attributes.availableApplications[3] null
 
@@ -627,7 +638,22 @@ test_sync .payload.devices[0].attributes.supportsContinuousRotation false
 test_sync .payload.devices[0].attributes.commandOnlyRotation false
 
 # sensorStatesSupported
-# TODO 
+# TODO descriptiveCapabilities numericCapabilities
+test_sync .payload.devices[0].attributes.sensorStatesSupported[0].name "\""AirQuality"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[1].name "\""CarbonMonoxideLevel"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[2].name "\""SmokeLevel"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[3].name "\""FilterCleanliness"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[4].name "\""WaterLeak"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[5].name "\""RainDetection"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[6].name "\""FilterLifeTime"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[7].name "\""PreFilterLifeTime"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[8].name "\""HEPAFilterLifeTime"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[9].name "\""Max2FilterLifeTime"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[10].name "\""CarbonDioxideLevel"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[11].name "\""PM2.5"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[12].name "\""PM10"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[13].name "\""VolatileOrganicCompounds"\""
+test_sync .payload.devices[0].attributes.sensorStatesSupported[14] null
 
 test_sync .payload.devices[0].attributes.pausable false
 
@@ -1177,42 +1203,42 @@ test_payload ".brightness" 64
 # CameraStream
 echo
 echo CameraStream
-execute $NODE_ID GetCameraStream true '"progressive_mp4"'
+execute_no_report_state $NODE_ID GetCameraStream true '"progressive_mp4"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://PROGRESSIVE_MP4"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"progressive_mp4"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_APPID"'
 
-execute $NODE_ID GetCameraStream true '"hls","dash","smooth_stream","progressive_mp4"'
+execute_no_report_state $NODE_ID GetCameraStream true '"hls","dash","smooth_stream","progressive_mp4"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://PROGRESSIVE_MP4"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"progressive_mp4"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"PROGRESSIVE_MP4_APPID"'
 
-execute $NODE_ID GetCameraStream true '"hls"'
+execute_no_report_state $NODE_ID GetCameraStream true '"hls"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://HLS"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"hls"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"HLS_APPID"'
 
-execute $NODE_ID GetCameraStream true '"dash"'
+execute_no_report_state $NODE_ID GetCameraStream true '"dash"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://DASH"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"dash"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"DASH_APPID"'
 
-execute $NODE_ID GetCameraStream true '"smooth_stream"'
+execute_no_report_state $NODE_ID GetCameraStream true '"smooth_stream"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamAccessUrl" '"http://SMOOTH_STREAM"'
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"smooth_stream"'
 test_out ".payload.commands[0].states.cameraStreamAuthToken" '"Auth Token"'
 test_out ".payload.commands[0].states.cameraStreamReceiverAppId" '"SMOOTH_STREAM_APPID"'
 
-execute $NODE_ID GetCameraStream true '"webrtc"'
+execute_no_report_state $NODE_ID GetCameraStream true '"webrtc"'
 test_out ".payload.commands[0].states.online" true
 test_out ".payload.commands[0].states.cameraStreamProtocol" '"webrtc"'
 test_out ".payload.commands[0].states.cameraStreamSignalingUrl" '"http://WEBRTC_SIGNALING"'
@@ -1258,8 +1284,16 @@ test_payload ".color.spectrumHsv.saturation" null
 test_payload ".color.spectrumHsv.value" null
 test_out ".payload.commands[0].states.online" true
 
-execute $NODE_ID ColorAbsolute 'Bianco Caldo' 4000
-test_payload ".color.temperatureK" 4000
+execute $NODE_ID ColorAbsolute 'Bianco Caldo' 4001
+test_payload ".color.temperatureK" 4001
+test_payload ".color.spectrumRgb" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
+
+execute $NODE_ID1 ColorAbsolute 'Bianco Caldo' 4002
+test_payload ".color.temperatureK" 4002
 test_payload ".color.spectrumRgb" null
 test_payload ".color.spectrumHsv.hue" null
 test_payload ".color.spectrumHsv.saturation" null
@@ -1292,6 +1326,46 @@ test_payload ".color.spectrumRgb" null
 
 execute $NODE_ID1 ColorAbsolute 'Bianco Caldo' 2000
 test_payload ".color.temperatureK" 2000
+test_payload ".color.spectrumRgb" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
+
+execute $NODE_ID2 ColorAbsolute 'Bianco Freddo' 7000
+test_payload ".color.temperatureK" 7000
+test_payload ".color.spectrumRgb" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
+
+execute $NODE_ID2 ColorAbsolute_hsv 'Blu' 360 0.5 0.5
+test_payload ".color.temperatureK" 7000
+test_payload ".color.spectrumRgb" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
+
+execute $NODE_ID2 ColorAbsolute 'Bianco Medio' 4000
+test_payload ".color.temperatureK" 4000
+test_payload ".color.spectrumRgb" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
+
+execute $NODE_ID2 ColorAbsolute_rgb 'Magenta' 16711935
+test_payload ".color.temperatureK" 4000
+test_payload ".color.spectrumRgb" null
+test_payload ".color.spectrumHsv.hue" null
+test_payload ".color.spectrumHsv.saturation" null
+test_payload ".color.spectrumHsv.value" null
+test_out ".payload.commands[0].states.online" true
+
+execute $NODE_ID2 ColorAbsolute 'Bianco Caldo' 2001
+test_payload ".color.temperatureK" 2001
 test_payload ".color.spectrumRgb" null
 test_payload ".color.spectrumHsv.hue" null
 test_payload ".color.spectrumHsv.saturation" null
