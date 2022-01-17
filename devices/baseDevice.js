@@ -813,7 +813,9 @@ class BaseDevice {
                     model: 'nr-device-' + default_name_type + '-v1',
                     swVersion: '1.0',
                     hwVersion: '1.0'
-                }
+                },
+                otherDeviceIds: [{deviceId: client.id}],
+                customData: this.clientConn.app.getCustomData()
             }
         };
 
