@@ -110,7 +110,7 @@ const identifyHandler = async (request) => {
         console.error(request.requestId, "No usable mdns scan data");
         return createResponse(request, {});
     }
-    if (deviceToIdentify.mdnsScanData.type != "node-red-google-smarthome") {
+    if (deviceToIdentify.mdnsScanData.type != "nodered-google") {
         console.error(request.requestId, "Not Node Red Google Smarthome type");
         return createResponse(request, {});
     }
