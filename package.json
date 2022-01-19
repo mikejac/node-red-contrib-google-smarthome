@@ -58,7 +58,7 @@
     "uuid-token-generator": "^1.0.x",
     "util": "^0.12.x",
     "path": "^0.12.x",
-    "netaddr": "^1.1.x",
+    "ip-range-check": "^0.2.x",
     "@gravitysoftware/dnssd": "^0.5.x"
   },
   "devDependencies": {
