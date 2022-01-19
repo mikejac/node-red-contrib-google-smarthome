@@ -12,15 +12,16 @@ var Execute = smarthome.Execute;
 var Intents = smarthome.Intents; 
 var IntentFlow = smarthome.IntentFlow;
 
-const findNodeRedDeviceDataByMdnsData = (requestId, devices) => {
+const findNodeRedDeviceDataByMdnsData = (requestId, devices, mdnsScanData) => {
     let device;
     device = devices.find((dev) => {
-        return dev.customData;
+        const customData = dev.customData;
+        return (customData && (!mdnsScanData.clientId || customData.clientId === mdnsScanData.clientId));
     });
 
     if (!device) {
-        console.log(requestId, "Unable to find Node Red connection info.", devices);
-        throw new IntentFlow.HandlerError(requestId, "invalidRequest", "Unable to find Node Red connection info.");
+        console.log(requestId, "Unable to find Node Red Google Smarthome connection info.", devices);
+        throw new IntentFlow.HandlerError(requestId, "invalidRequest", "Unable to find Node Red Google Smarthome connection info.");
     }
 
     return device.customData;
@@ -29,12 +30,12 @@ const findNodeRedDeviceDataByDeviceId = (requestId, devices, deviceId) => {
     let device;
     device = devices.find((dev) => {
         const customData = dev.customData;
-        return (customData && customData.proxyDeviceId === deviceId);
+        return (customData && customData.clientId === deviceId);
     });
 
     if (!device) {
-        console.log(requestId, "Unable to find Node Red connection info.", devices);
-        throw new IntentFlow.HandlerError(requestId, "invalidRequest", "Unable to find Node Red connection info.");
+        console.log(requestId, "Unable to find Node Red Google Smarthome connection info.", devices);
+        throw new IntentFlow.HandlerError(requestId, "invalidRequest", "Unable to find Node Red Google Smarthome connection info.");
     }
     return device.customData;
 };
@@ -60,7 +61,7 @@ const forwardRequest = async (nodeRedData, targetDeviceId, request) => {
     command.deviceId = targetDeviceId;
     command.isSecure = !nodeRedData.httpSSLOffload;
     command.port = nodeRedData.httpPort;
-    command.path = `/smarthome`;
+    command.path = `{$nodeRedData.httpPathPrefix}local_smarthome`;
     command.data = JSON.stringify(request);
     command.dataType = "application/json";
     console.log(request.requestId, "Sending", command);
@@ -70,7 +71,12 @@ const forwardRequest = async (nodeRedData, targetDeviceId, request) => {
     try {
         resp = await new Promise((resolve, reject) => {
             setTimeout(() => reject(-1), 10000);
-            deviceManager.send(command).then((response) => resolve(response), reject);
+            deviceManager
+                .send(command)
+                .then(
+                    (response) => { console.log("resolve: ", response); resolve(response); },
+                    (response) => { console.log("reject: ", response); reject(response); }
+                );
         });
         // resp = (await deviceManager.send(command)) as HttpResponseData;
         console.log(request.requestId, "Raw Response", resp);
@@ -104,12 +110,12 @@ const identifyHandler = async (request) => {
         console.error(request.requestId, "No usable mdns scan data");
         return createResponse(request, {});
     }
-    if (!deviceToIdentify.mdnsScanData.serviceName.endsWith("._node-red._tcp.local")) {
-        console.error(request.requestId, "Not Node Red type");
+    if (deviceToIdentify.mdnsScanData.type != "node-red-google-smarthome") {
+        console.error(request.requestId, "Not Node Red Google Smarthome type");
         return createResponse(request, {});
     }
     try {
-        const nodeRedData = findNodeRedDeviceDataByMdnsData(request.requestId, request.devices);
+        const nodeRedData = findNodeRedDeviceDataByMdnsData(request.requestId, request.devices, deviceToIdentify.mdnsScanData.txt);
         return await forwardRequest(nodeRedData, "", request);
     }
     catch (err) {
@@ -147,7 +153,7 @@ const executeHandler = async (request) => {
 };
 const queryHandler = async (request) => {
     console.log("QUERY intent:", request);
-    const device = request.inputs[0].payload.devices[0];
+	const device = request.inputs[0].payload.devices[0];
     try {
         return forwardRequest(device.customData, device.id, request);
     }
@@ -163,7 +169,7 @@ app
     .onIdentify(identifyHandler)
     .onReachableDevices(reachableDevicesHandler)
     .onExecute(executeHandler)
-    .onQuery((req) => console.log("Query", req))
+    .onQuery(queryHandler)
     // Undocumented in TypeScript
     // Suggested by Googler, seems to work :shrug:
     // https://github.com/actions-on-google/smart-home-local/issues/1#issuecomment-515706997

@@ -57,7 +57,9 @@
     "googleapis": "^92.0.x",
     "uuid-token-generator": "^1.0.x",
     "util": "^0.12.x",
-    "path": "^0.12.x"
+    "path": "^0.12.x",
+    "netaddr": "^1.1.x",
+    "mdns": "^2.7.x"
   },
   "devDependencies": {
     "mocha": "^9.1.3",
