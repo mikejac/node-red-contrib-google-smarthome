@@ -2076,18 +2076,14 @@ class BaseDevice {
             device_name: device.properties.name.name,
             command: command,
             params: original_params,
-            payload: {
-                online: states.online
-            },
+            payload: {},
         };
 
         if (this.topicOut)
             msg.topic = this.topicOut;
 
         // Copy the device state to the payload
-        Object.keys(me.states).forEach(function (key) {
-            msg.payload[key] = me.states[key];
-        });
+        me.cloneObject(msg.payload, me.states, me.state_types);
 
         // Copy the command state to the payload
         Object.keys(states).forEach(function (key) {
@@ -2681,8 +2677,10 @@ class BaseDevice {
                 const differs = me.updateState(msg.payload || {}, me.states, me.state_types);
 
                 if (differs) {
-                    if (msg.stateOutput || false) {
-                        me.send({ topic: me.topicOut, payload: me.states });
+                    if (msgi.stateOutput || false) {
+                        let states = {};
+                        me.cloneObject(states, me.states, me.state_types);
+                        me.send({ topic: me.topicOut, payload: states });
                     }
                     me.clientConn.setState(me, me.states, true);  // tell Google ...
                     if (me.persistent_state) {
