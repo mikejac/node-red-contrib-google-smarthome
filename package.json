@@ -58,7 +58,9 @@
     "uuid-token-generator": "^1.0.x",
     "util": "^0.12.x",
     "path": "^0.12.x",
-    "netaddr": "^1.1.x",
+    "netaddr": "^1.1.x"
+  },
+  "optionalDependencies": {
     "mdns": "^2.7.x"
   },
   "devDependencies": {
