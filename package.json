@@ -57,7 +57,9 @@
     "googleapis": "^92.0.x",
     "uuid-token-generator": "^1.0.x",
     "util": "^0.12.x",
-    "path": "^0.12.x"
+    "path": "^0.12.x",
+    "ip-range-check": "^0.2.x",
+    "@gravitysoftware/dnssd": "^0.5.x"
   },
   "devDependencies": {
     "mocha": "^9.1.3",

@@ -68,6 +68,21 @@ See the developer guide and release notes at https://developers.google.com/assis
 
 *Note:* Adjust the URLs like https://example.com:3001/smarthome to your own hostname, port and settings.
 *Note:* You can't test your project in the Action Console's simulator. It only works on real devices.
+#### Enable Local Fulfillment
+
+1. Open the project you created in the [Actions on Google Console](https://console.actions.google.com/).
+2. Click `Develop` on the top of the page, then click `Actions` located in the hamburger menu on the top left.
+3. Upload [this Javascript file](/local-execution/app.js) for both Node and Chrome by clicking the `Upload Javascript files` button.
+4. Tick the `Support local query` checkbox.
+5. Add device scan configuration:
+    1. Click `+ New scan config`
+    2. Select `MDNS`
+    3. set mDNS service name to `_nodered-google._tcp.local`
+6. `Save` your changes.
+
+Complete the rest of the setup instructions and then follow these two steps:
+1. Either wait for 30 minutes, or restart your connected Google device.
+2. Restart Node Red.
 
 #### Enable HomeGraph API
 
@@ -129,6 +144,8 @@ Google Sign-In later.
 5. Check if your service is reachable from the internet. Use a tool like https://reqbin.com to send a GET request to
    https://example.com:3001/check (using your domain name and port). It must answer with status 200 and the message
    "SUCCESS: Smart Home service is reachable!" as one of the first lines.
+
+You can debug the setup by following [these instructions](https://developers.google.com/assistant/smarthome/develop/local#debugging_from_chrome)
 
 #### Setup Account linking
 

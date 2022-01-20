@@ -74,7 +74,7 @@ module.exports = function(RED) {
             parseInt(config.set_state_delay || '0'),
             config.enabledebug, node._debug);
 
-        let err = this.app.Start(RED.httpNode || RED.httpAdmin);
+        let err = this.app.Start(RED.httpNode || RED.httpAdmin, RED.server);
         if (err !== true) {
             RED.log.error(err);
             return;
@@ -279,7 +279,7 @@ module.exports = function(RED) {
                 if (topic_upper === 'RESTART_SERVER') {
                     RED.log.debug("MgmtNode(input): RESTART_SERVER");
 
-                    this.clientConn.app.Restart(RED.httpNode || RED.httpAdmin);
+                    this.clientConn.app.Restart(RED.httpNode || RED.httpAdmin, RED.server);
                 } else if (topic_upper === 'REPORT_STATE') {
                     RED.log.debug("MgmtNode(input): REPORT_STATE");
 
