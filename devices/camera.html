@@ -20,7 +20,7 @@
     Camera
 -->
 <script type="text/x-red" data-template-name="google-camera">
-    <div class="form-tips">
+    <div class="form-tips" style="border: red 1px solid;">
         <b>This device is deprecated. Please use the Google Device node instead.</b>
     </div><br>
 
@@ -185,6 +185,9 @@
             },
             name: {
                 value: "", required:true
+            },
+            deprecated: {
+                value: "", required:true, validate: (v) => false
             },
             topic: {
                 value: "", required: false
