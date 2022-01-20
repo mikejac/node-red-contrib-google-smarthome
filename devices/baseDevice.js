@@ -836,22 +836,32 @@ class BaseDevice {
             me.available_applications.forEach(application => {
                 values.push(application.key);
             });
-            state_types['currentApplication'] = {
-                type: Formats.STRING + Formats.MANDATORY,
-                values: values
-            };
+            if (values.length > 0) {
+                state_types['currentApplication'] = {
+                    type: Formats.STRING + Formats.MANDATORY,
+                    values: values,
+                    defaultValue: values[0],
+                };
+            } else {
+                me.trait.appselector = false;
+            }
         }
         if (me.trait.armdisarm) {
-            state_types['isArmed'] = Formats.BOOL + Formats.MANDATORY;
             let values = [];
             me.available_arm_levels.forEach(function (al) {
                 values.push(al.level_name);
             });
-            state_types['currentArmLevel'] = {
-                type: Formats.STRING + Formats.MANDATORY,
-                values: values
-            };
-            state_types['exitAllowance'] = Formats.INT;
+            if (values.length > 0) {
+                state_types['isArmed'] = Formats.BOOL + Formats.MANDATORY;
+                state_types['currentArmLevel'] = {
+                    type: Formats.STRING + Formats.MANDATORY,
+                    values: values,
+                    defaultValue: values[0],
+                };
+                state_types['exitAllowance'] = Formats.INT;
+            } else {
+                me.trait.armdisarm = false;
+            }
         }
         if (me.trait.brightness && !me.command_only_brightness) {
             state_types['brightness'] = {
@@ -1031,22 +1041,19 @@ class BaseDevice {
                     state_types['currentFanSpeedSetting'] = {
                         type: Formats.STRING,
                         values: values,
+                        defaultValue: values[0],
                     };
                 }
             }
         }
         if (me.trait.fill) {
-            let fill_level_values = me.available_fill_levels.map(fl => fl.level_name);
             state_types['isFilled'] = Formats.BOOL + Formats.MANDATORY;
             if (me.available_fill_levels.length > 0) {
+                let values = me.available_fill_levels.map(fl => fl.level_name);
                 state_types['currentFillLevel'] = {
                     type: Formats.STRING + Formats.MANDATORY,
-                    values: fill_level_values,
-                };
-            } else {
-                state_types['currentFillLevel'] = {
-                    type: Formats.STRING,
-                    values: fill_level_values,
+                    values: values,
+                    defaultValue: values[0],
                 };
             }
             if (me.supports_fill_percent) {
@@ -1067,20 +1074,28 @@ class BaseDevice {
                 me.available_inputs.forEach(function (input) {
                     values.push(input.key);
                 });
-                state_types['currentInput'] = {
-                    type: Formats.STRING + Formats.MANDATORY,
-                    values: values,
-                };
+                if (values.length > 0) {
+                    state_types['currentInput'] = {
+                        type: Formats.STRING + Formats.MANDATORY,
+                        values: values,
+                    };
+                } else {
+                    me.trait.inputselector = false;
+                }
             }
         }
         if (me.trait.lighteffects) {
             let light_effect_value = [''];
             light_effect_value.push(...me.supported_effects);
-            state_types['activeLightEffect'] = {
-                type: Formats.STRING + Formats.MANDATORY,
-                values: light_effect_value,
-            };
-            state_types['lightEffectEndUnixTimestampSec'] = Formats.INT;
+            if (light_effect_value.length > 0) {
+                state_types['activeLightEffect'] = {
+                    type: Formats.STRING + Formats.MANDATORY,
+                    values: light_effect_value,
+                };
+                state_types['lightEffectEndUnixTimestampSec'] = Formats.INT;
+            } else {
+                me.trait.lighteffects = false;
+            }
         }
         // Locator
         if (me.trait.lockunlock) {
@@ -1102,19 +1117,26 @@ class BaseDevice {
         if (me.trait.modes) {
             if (!me.command_only_modes) {
                 let attributes = {};
+                let ok = false;
                 me.available_modes.forEach(function (mode) {
                     let values = [];
                     mode.settings.forEach(function (setting) {
                         values.push(setting.setting_name);
                     });
-                    attributes[mode.name] = {
-                        type: Formats.STRING + Formats.MANDATORY,
-                        values: values,
-                    };
+                    if (values.length > 0) {
+                        ok = true;
+                        attributes[mode.name] = {
+                            type: Formats.STRING + Formats.MANDATORY,
+                            values: values,
+                            defaultValue: values[0],
+                        };
+                    }
                 });
-                state_types['currentModeSettings'] = {
-                    type: Formats.OBJECT,
-                    attributes: attributes,
+                if (ok) {
+                    state_types['currentModeSettings'] = {
+                        type: Formats.OBJECT,
+                        attributes: attributes,
+                    }
                 }
             }
         }
@@ -2054,18 +2076,14 @@ class BaseDevice {
             device_name: device.properties.name.name,
             command: command,
             params: original_params,
-            payload: {
-                online: states.online
-            },
+            payload: {},
         };
 
         if (this.topicOut)
             msg.topic = this.topicOut;
 
         // Copy the device state to the payload
-        Object.keys(me.states).forEach(function (key) {
-            msg.payload[key] = me.states[key];
-        });
+        me.cloneObject(msg.payload, me.states, me.state_types);
 
         // Copy the command state to the payload
         Object.keys(states).forEach(function (key) {
@@ -2123,9 +2141,11 @@ class BaseDevice {
 
         try {
             if (upper_topic === 'GETSTATE') {
+                let states = {};
+                me.cloneObject(states, me.states, me.state_types);
                 me.send({
                     topic: msg.topic,
-                    payload: me.states,
+                    payload: states,
                     device_id: me.device.id
                 });
             } else if (upper_topic === 'ERRORCODE') {
@@ -2657,8 +2677,10 @@ class BaseDevice {
                 const differs = me.updateState(msg.payload || {}, me.states, me.state_types);
 
                 if (differs) {
-                    if (msg.stateOutput || false) {
-                        me.send({ topic: me.topicOut, payload: me.states });
+                    if (msgi.stateOutput || false) {
+                        let states = {};
+                        me.cloneObject(states, me.states, me.state_types);
+                        me.send({ topic: me.topicOut, payload: states });
                     }
                     me.clientConn.setState(me, me.states, true);  // tell Google ...
                     if (me.persistent_state) {
@@ -3226,7 +3248,11 @@ class BaseDevice {
             }
             if (new_state !== undefined && Array.isArray(state_type.values) && !state_type.values.includes(new_state)) {
                 me.RED.log.error('key "' + key + '" must be one of ' + JSON.stringify(state_type.values));
-                new_state = undefined;
+                if (state_type.values.includes(state[key])) {
+                    new_state = undefined;
+                } else {
+                    new_state = state_type.defaultValue;
+                }
             }
         }
         if (new_state !== undefined && !(state_type.type & (Formats.OBJECT | Formats.ARRAY))) {
