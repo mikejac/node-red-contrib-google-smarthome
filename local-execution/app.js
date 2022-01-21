@@ -61,7 +61,7 @@ const forwardRequest = async (nodeRedData, targetDeviceId, request) => {
     command.deviceId = targetDeviceId;
     command.isSecure = !nodeRedData.httpSSLOffload;
     command.port = nodeRedData.httpPort;
-    command.path = `{$nodeRedData.httpPathPrefix}local_smarthome`;
+    command.path = `${nodeRedData.httpPathPrefix}local_smarthome`;
     command.data = JSON.stringify(request);
     command.dataType = "application/json";
     console.log(request.requestId, "Sending", command);
@@ -111,7 +111,7 @@ const identifyHandler = async (request) => {
         return createResponse(request, {});
     }
     if (deviceToIdentify.mdnsScanData.type != "nodered-google") {
-        console.error(request.requestId, "Not Node Red Google Smarthome type");
+        console.error(request.requestId, "Not Node Red Google Smarthome type. expected: 'nodered-google' got: '" + deviceToIdentify.mdnsScanData.type + "'");
         return createResponse(request, {});
     }
     try {
