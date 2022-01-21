@@ -59,7 +59,6 @@ const forwardRequest = async (nodeRedData, targetDeviceId, request) => {
     command.method = Constants.HttpOperation.POST;
     command.requestId = request.requestId;
     command.deviceId = targetDeviceId;
-    command.isSecure = !nodeRedData.httpSSLOffload;
     command.port = nodeRedData.httpPort;
     command.path = `${nodeRedData.httpPathPrefix}local_smarthome`;
     command.data = JSON.stringify(request);
