@@ -140,7 +140,7 @@ Google Sign-In later.
     * Use external SSL offload: If enabled, the smarthome service will use HTTP instead of HTTPS. Check if you want to
       do SSL termination on a reverse proxy.
     * Public and Private Key: Path to public and private key of your SSL certificate (if you do not use external SSL decryption).
-    * Local Fullfillment Port: The port which local fullfillment runs on. If left empty, it will run on the same port as Node-RED. You must set this if you connect to your Node-RED instance over https.
+    * Local Fulfillment Port: The port which local fulfillment runs on. If left empty, it will run on the same port as Node-RED. You must set this if you connect to your Node-RED instance over https.
 4. Deploy the flow.
 5. Check if your service is reachable from the internet. Use a tool like https://reqbin.com to send a GET request to
    https://example.com:3001/check (using your domain name and port). It must answer with status 200 and the message

@@ -7,7 +7,7 @@
             "usehttpnoderoot": "Use http Node-RED root path",
             "httppath": "Path",
             "port": "Port",
-            "localPort": "Local Fullfillment Port",
+            "localPort": "Local Fulfillment Port",
             "clientid": "Client ID",
             "clientsecret": "Client Secret",
             "ssloffload": "Use external SSL offload",
