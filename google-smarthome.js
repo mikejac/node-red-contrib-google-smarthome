@@ -65,7 +65,7 @@ module.exports = function(RED) {
             config.usehttpnoderoot,
             config.httppath,
             parseInt(config.port || '0'),
-            parseInt(config.localPort || '0'),
+            parseInt(config.localport || '0'),
             RED.server instanceof https.Server,
             config.ssloffload,
             node.credentials.publickey || '', 
