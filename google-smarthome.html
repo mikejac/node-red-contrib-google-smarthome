@@ -187,7 +187,6 @@
 
 <script type="text/javascript">
     (function () {
-        console.log(RED)
         function isNonNegativeInteger(v) {
             const n = parseInt(v);
             const f = parseFloat(v);
@@ -282,12 +281,7 @@
                 },
                 */
                 localPort: {
-                    required:false, validate: function (v) {
-                        if (RED.validators.number(true)(v)) {
-                            return true
-                        }
-                        return !(RED.server.constructor.name === "https.Server") || v !== null;
-                    }
+                    required:false, validate: RED.validators.number(true)
                 },
                 /*
                 jwtkey: {
@@ -405,12 +399,6 @@
                 };
                 useNODERedPort();
                 $('#node-config-input-port').change(useNODERedPort);
-
-                // Hide the local fullfillment port if its not needed
-                if (RED.server.constructor.name === "https.Server")
-                {
-                    $('#node-config-input-local-fullfillment-port').hide();
-                }
             },
             oneditsave: function () {
                 var node = this;
