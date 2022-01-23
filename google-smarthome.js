@@ -24,7 +24,6 @@
  * https://developers.google.com/assistant/smarthome/
 */
 
-const http          = require('http');
 const https         = require('https');
 
 module.exports = function(RED) {
