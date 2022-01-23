@@ -187,9 +187,7 @@
 
 <script type="text/javascript">
     (function () {
-        const http = require("http");
-        const https = require("https");
-
+        console.log(typeof(RED.server.constructor.name))
         function isNonNegativeInteger(v) {
             const n = parseInt(v);
             const f = parseFloat(v);
@@ -288,7 +286,7 @@
                         if (RED.validators.number(true)(v)) {
                             return true
                         }
-                        return !(RED.server instanceof https.Server) || v !== null;
+                        return !(RED.server.constructor.name === "https.Server") || v !== null;
                     }
                 },
                 /*
@@ -409,7 +407,7 @@
                 $('#node-config-input-port').change(useNODERedPort);
 
                 // Hide the local fullfillment port if its not needed
-                if (RED.server instanceof https.Server)
+                if (RED.server.constructor.name === "https.Server")
                 {
                     $('#node-config-input-local-fullfillment-port').hide();
                 }
