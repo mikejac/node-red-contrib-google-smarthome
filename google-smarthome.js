@@ -24,6 +24,9 @@
  * https://developers.google.com/assistant/smarthome/
 */
 
+const http          = require('http');
+const https         = require('https');
+
 module.exports = function(RED) {
     "use strict";
 
@@ -63,6 +66,7 @@ module.exports = function(RED) {
             config.usehttpnoderoot,
             config.httppath,
             parseInt(config.port || '0'),
+            RED.server instanceof https.Server && parseInt(config.localPort || '0') || 0,
             config.ssloffload,
             node.credentials.publickey || '', 
             node.credentials.privatekey || '',

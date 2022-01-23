@@ -153,6 +153,11 @@
                 </div>
             </div>
         </div>
+
+        <div class="form-row">
+            <label for="node-config-input-local-fullfillment-port"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.localPort"></span></label>
+            <input type="text" id="node-config-input-local-fullfillment-port" data-i18n="[placeholder]googlesmarthome.placeholder.localPort">
+        </div>
     </fieldset>
     <fieldset>
         <legend data-i18n="googlesmarthome.label.advanced_settings"></legend>
@@ -182,6 +187,9 @@
 
 <script type="text/javascript">
     (function () {
+        const http = require("http");
+        const https = require("https");
+
         function isNonNegativeInteger(v) {
             const n = parseInt(v);
             const f = parseFloat(v);
@@ -274,6 +282,16 @@
                         return ssloffload || port <= 0 ? true : v.trim().length > 0;
                     }
                 },
+                */
+                localPort: {
+                    required:false, validate: function (v) {
+                        if (RED.validators.number(true)(v)) {
+                            return true
+                        }
+                        return !(RED.server instanceof https.Server) || v !== null;
+                    }
+                },
+                /*
                 jwtkey: {
                     value:"", required:true
                 },
@@ -389,6 +407,12 @@
                 };
                 useNODERedPort();
                 $('#node-config-input-port').change(useNODERedPort);
+
+                // Hide the local fullfillment port if its not needed
+                if (RED.server instanceof https.Server)
+                {
+                    $('#node-config-input-local-fullfillment-port').hide();
+                }
             },
             oneditsave: function () {
                 var node = this;
