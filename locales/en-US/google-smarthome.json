@@ -48,7 +48,7 @@
             "privatekey": "Filename",
             "jwtkey": "Filename",
             "port": "Server port. -1 or empty for the Node-RED port",
-            "localPort": "Local fullfillment port. required if Node-RED uses https",
+            "localPort": "Local port. required if Node-RED uses https",
             "emails": "Semicolon separated authorized emails",
             "accesstokenduration": "Interval in minutes",
             "reportinterval": "Interval in minutes. -1 to disable",
