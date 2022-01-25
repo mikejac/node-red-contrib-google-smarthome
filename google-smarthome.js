@@ -24,6 +24,8 @@
  * https://developers.google.com/assistant/smarthome/
 */
 
+const https         = require('https');
+
 module.exports = function(RED) {
     "use strict";
 
@@ -63,6 +65,8 @@ module.exports = function(RED) {
             config.usehttpnoderoot,
             config.httppath,
             parseInt(config.port || '0'),
+            parseInt(config.localport || '0'),
+            RED.server instanceof https.Server,
             config.ssloffload,
             node.credentials.publickey || '', 
             node.credentials.privatekey || '',
@@ -72,7 +76,7 @@ module.exports = function(RED) {
             config.reportinterval,     // minutes
             parseInt(config.request_sync_delay || '0'),
             parseInt(config.set_state_delay || '0'),
-            config.enabledebug, node._debug);
+            config.enabledebug, node._debug, RED.log.error);
 
         let err = this.app.Start(RED.httpNode || RED.httpAdmin, RED.server);
         if (err !== true) {

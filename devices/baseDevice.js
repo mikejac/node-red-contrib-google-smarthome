@@ -761,7 +761,7 @@ class BaseDevice {
         this.states = this.clientConn.register(this, 'device', config.name);
 
         if (error_msg.length == 0) {
-            this.updateStatusIcon();
+            this.updateStatusIcon(false);
         } else {
             this.status({ fill: "red", shape: "dot", text: error_msg });
         }
@@ -1945,7 +1945,7 @@ class BaseDevice {
         }
     }
 
-    updateStatusIcon() {
+    updateStatusIcon(is_local) {
         const me = this;
         let text = '';
         let fill = 'red';
@@ -2051,6 +2051,9 @@ class BaseDevice {
         if (!text) {
             text = 'Unknown';
         }
+        if (is_local) {
+            shape = 'ring';
+        }
         me.status({ fill: fill, shape: shape, text: text });
     }
 
@@ -2058,7 +2061,7 @@ class BaseDevice {
      * called when state is updated from Google Assistant
      *
      */
-    updated(device, params, original_params) {
+    updated(device, params, original_params, is_local) {
         const me = this;
         let states = device.states;
         let command = device.command.startsWith('action.devices.commands.') ? device.command.substr(24) : device.command;
@@ -2072,7 +2075,7 @@ class BaseDevice {
             this.cloneObject(states, me.states, me.state_types);
         }
 
-        this.updateStatusIcon();
+        this.updateStatusIcon(is_local);
 
         let msg = {
             device_name: device.properties.name.name,
@@ -2688,7 +2691,7 @@ class BaseDevice {
                     if (me.persistent_state) {
                         me.clientConn.app.ScheduleGetState();
                     }
-                    me.updateStatusIcon();
+                    me.updateStatusIcon(false);
                 }
                 if (me.passthru) {
                     me.send(msgi);

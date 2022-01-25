@@ -153,6 +153,11 @@
                 </div>
             </div>
         </div>
+
+        <div class="form-row">
+            <label for="node-config-input-localport"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.localport"></span></label>
+            <input type="text" id="node-config-input-localport" data-i18n="[placeholder]googlesmarthome.placeholder.localport">
+        </div>
     </fieldset>
     <fieldset>
         <legend data-i18n="googlesmarthome.label.advanced_settings"></legend>
@@ -274,6 +279,11 @@
                         return ssloffload || port <= 0 ? true : v.trim().length > 0;
                     }
                 },
+                */
+                localport: {
+                    required:false, validate: RED.validators.number(true)
+                },
+                /*
                 jwtkey: {
                     value:"", required:true
                 },
