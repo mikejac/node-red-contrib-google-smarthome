@@ -814,7 +814,7 @@ class BaseDevice {
                     swVersion: '1.0',
                     hwVersion: '1.0'
                 },
-                otherDeviceIds: [{deviceId: client.id}],
+                otherDeviceIds: [{ deviceId: client.id }],
                 customData: this.clientConn.app.getCustomData()
             }
         };
@@ -2073,6 +2073,9 @@ class BaseDevice {
         const modified = me.updateState(params || states, me.states, me.state_types);
         if (modified) {
             this.cloneObject(states, me.states, me.state_types);
+            //if (me.persistent_state) {
+                me.clientConn.app.ScheduleGetState();
+            //}
         }
 
         this.updateStatusIcon(is_local);
