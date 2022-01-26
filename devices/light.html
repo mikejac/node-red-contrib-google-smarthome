@@ -20,7 +20,7 @@
     On/off light
 -->
 <script type="text/x-red" data-template-name="google-light-onoff">
-    <div class="form-tips">
+    <div class="form-tips" style="border: red 1px solid;">
         <b>This device is deprecated. Please use the Google Device node instead.</b>
     </div><br>
 
@@ -152,6 +152,9 @@
             name: {
                 value: "", required:true
             },
+            deprecated: {
+                value: "", required:true, validate: (v) => false
+            },
             room_hint: {
                 value: "", required: false
             },
@@ -179,7 +182,7 @@
     Dimmable light
 -->
 <script type="text/x-red" data-template-name="google-light-dimmable">
-    <div class="form-tips">
+    <div class="form-tips" style="border: red 1px solid;">
         <b>This device is deprecated. Please use the Google Device node instead.</b>
     </div><br>
 
@@ -327,6 +330,9 @@
             name: {
                 value: "", required:true
             },
+            deprecated: {
+                value: "", required:true, validate: (v) => false
+            },
             room_hint: {
                 value: "", required: false
             },
@@ -354,7 +360,7 @@
     ColorTemp light
 -->
 <script type="text/x-red" data-template-name="google-light-temperature">
-    <div class="form-tips">
+    <div class="form-tips" style="border: red 1px solid;">
         <b>This device is deprecated. Please use the Google Device node instead.</b>
     </div><br>
 
@@ -529,6 +535,9 @@
             name: {
                 value: "", required:true
             },
+            deprecated: {
+                value: "", required:true, validate: (v) => false
+            },
             room_hint: {
                 value: "", required: false
             },
@@ -556,7 +565,7 @@
     HSV light
 -->
 <script type="text/x-red" data-template-name="google-light-hsv">
-    <div class="form-tips">
+    <div class="form-tips" style="border: red 1px solid;">
         <b>This device is deprecated. Please use the Google Device node instead.</b>
     </div><br>
 
@@ -753,6 +762,9 @@
             name: {
                 value: "", required:true
             },
+            deprecated: {
+                value: "", required:true, validate: (v) => false
+            },
             room_hint: {
                 value: "", required: false
             },
@@ -780,7 +792,7 @@
     RGB light
 -->
 <script type="text/x-red" data-template-name="google-light-rgb">
-    <div class="form-tips">
+    <div class="form-tips" style="border: red 1px solid;">
         <b>This device is deprecated. Please use the Google Device node instead.</b>
     </div><br>
 
@@ -951,6 +963,9 @@
             name: {
                 value: "", required:true
             },
+            deprecated: {
+                value: "", required:true, validate: (v) => false
+            },
             room_hint: {
                 value: "", required: false
             },
@@ -978,7 +993,7 @@
     RGB Temp light
 -->
 <script type="text/x-red" data-template-name="google-light-rgb-temp">
-    <div class="form-tips">
+    <div class="form-tips" style="border: red 1px solid;">
         <b>This device is deprecated. Please use the Google Device node instead.</b>
     </div><br>
 
@@ -1162,6 +1177,9 @@
             name: {
                 value: "", required:true
             },
+            deprecated: {
+                value: "", required:true, validate: (v) => false
+            },
             room_hint: {
                 value: "", required: false
             },
@@ -1189,7 +1207,7 @@
     RGB Temp light
 -->
 <script type="text/x-red" data-template-name="google-light">
-    <div class="form-tips">
+    <div class="form-tips" style="border: red 1px solid;">
         <b>This device is deprecated. Please use the Google Device node instead.</b>
     </div><br>
 
@@ -1452,6 +1470,9 @@
             },
             name: {
                 value: "", required:true
+            },
+            deprecated: {
+                value: "", required:true, validate: (v) => false
             },
             room_hint: {
                 value: "", required: false
