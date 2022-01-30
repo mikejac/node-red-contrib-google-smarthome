@@ -254,26 +254,68 @@ or a pull request.
 
 ## Integrating Google Sign-In (optional)
 
-[TODO: Rewrite and add screenshots]
-
 Your project was created using username/password based authentication. You can switch to authentication using
 Google Sign-In if you want. This makes relinking your project in the app a little easier as you don't have to enter
 your username and password again. For regular users it is not necessary though.
 
-1. Navigate to the [Google Cloud Console API & Services page](https://console.cloud.google.com/apis/credentials)
-2. Select your project from the drop-down on top of the page.
-3. Select "OAuth consent screen" in the sidebar.
-4. If you haven't configured the OAuth consent screen yet, you will be asked for the user type. Choose "External" and
-   click "Create".
-5. Specify the app name and an email address. Enter your domain "https://example.com" as "Application home page",
-   "Application privacy policy link" and "Application terms of service link".
-6. Add your domain "example.com" (without protocol and port) as authorized domain.
-7. Enter your email address again as developer contact.
-8. Click "Save and continue". Leave all other steps empty.
-9. Select "Credentials" on the left sidebar.
-10. Click "Create credentials" and choose OAuth client ID.
-11. Choose "Web application" as application type.
-12. In "Authorized JavaScript origin", add the URL of your app, e.g. https://example.com:3001.
-13. As "Authorized redirect URIs", add the URL of your app followed by "/oauth", e.g. https://example.com:3001/oauth.
-14. Click "Save".
-15. Click the Download button next to your newly created entry and copy the Client ID. You will need it later.
+1.  Navigate to the [GCP oAuth consent screen configuration](https://console.cloud.google.com/apis/credentials/consent).
+
+
+2.  Check that your project is selected in the header bar.\
+    ![](images/homegraph_project.png)
+
+
+3.  If you haven't configured the OAuth consent screen yet, you will be asked for the user type. Choose "External" and
+    click "Create".\
+    ![](images/googlesignin_type.png)
+
+
+4.  In case you already had your consent screen configured earlier, there's a link "Edit App" next to the title which
+    will open the configuration form again.\
+    ![](images/googlesignin_editapp.png)
+
+5.  Enter a name for your project, select your e-mail address from the list and at the bottom of the form enter your
+    e-mail again as developer contact. Add your domain "example.com" (without protocol and port) as authorized domain.
+    Then click "Save and continue".\
+    ![](images/googlesignin_consentform.png)
+
+
+5.  In the next two steps "Scopes" and "Optional info" leave all fields empty and click "Save and continue".
+
+
+6.  On the last step you'll see a summary of your settings. Check that it looks like in the screenshot. Especially check
+    that your domain is added as authorized domain.\
+    ![](images/googlesignin_consentform_summary.png)
+
+
+7.  Select "Credentials" on the left sidebar.\
+    ![](images/googlesignin_sidebar_credentials.png)
+
+
+8.  Click "Create credentials" and choose OAuth client ID.
+    ![](images/googlesignin_createcredentials.png)
+
+
+9.  Choose "Web application" as application type. Enter a name for your project. As "Authorized JavaScript Origin" enter
+    the URL of your service without a path (https://example.com:3001). As "Authorized redirect URI" add the URL of your
+    service with the path "/oauth" (https://example.com:3001/oauth). Then click "Create".\
+    ![](images/googlesignin_createclientid.png)
+
+
+10. Copy the client ID. You will need it later.\
+    ![](images/googlesignin_copyclientid.png)
+
+
+11. When you come back to this step later and need the client ID again, you can copy it from the table "OAuth 2.0 Client
+    IDs". Check that you are copying from the correct row.\
+    ![](images/googlesignin_copyclientid_later.png)
+
+
+11. Open the configuration of the Google management node in Node-RED. Check "Use Google login" and enter the client ID
+    you copied earlier. Save and deploy your flows.\
+    ![](images/googlesignin_nodered.png)
+
+
+12. Re-link your account as described in the section [Setup Account Linking](#setup_account_linking). Instead of
+    username and password you will have the button "Sign in with Google".\
+    ![](images/googlesignin_phone.png)
