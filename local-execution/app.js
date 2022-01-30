@@ -1,4 +1,7 @@
 "use strict";
+
+const version = '2.0';
+
 /// <reference types="@google/local-home-sdk" />
 /*
 BASED ON: https://github.com/home-assistant/home-assistant.io/blob/current/source/assets/integrations/google_assistant/app.js
@@ -163,7 +166,7 @@ const queryHandler = async (request) => {
         throw err;
     }
 };
-const app = new App("1.0.0");
+const app = new App(version);
 app
     .onIdentify(identifyHandler)
     .onReachableDevices(reachableDevicesHandler)
@@ -191,6 +194,6 @@ app
     .onUpdate((req) => console.log("Update", req))
     .listen()
     .then(() => {
-        console.log("Ready!");
+        console.log("node-red-contrib-google-smarthome app.js ready!");
     })
     .catch((e) => console.error(e));
