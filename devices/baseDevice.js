@@ -2044,6 +2044,16 @@ class BaseDevice {
                     text += ' ' + me.states.currentFanSpeedSetting;
                 }
             }
+            if (me.trait.sensorstate) {
+                me.states.currentSensorStateData.forEach(sensor => {
+                    if (sensor.currentSensorState !== undefined && sensor.currentSensorState !== 'unknown') {
+                        text += ' ' + sensor.name + ' ' + sensor.currentSensorState;
+                        if (sensor.rawValue !== undefined) {
+                            text += ' ' + sensor.rawValue;
+                        }
+                    }
+                });
+            }
         } else {
             shape = 'ring';
             text = "offline";
@@ -2074,7 +2084,7 @@ class BaseDevice {
         if (modified) {
             this.cloneObject(states, me.states, me.state_types);
             //if (me.persistent_state) {
-                me.clientConn.app.ScheduleGetState();
+            me.clientConn.app.ScheduleGetState();
             //}
         }
 
