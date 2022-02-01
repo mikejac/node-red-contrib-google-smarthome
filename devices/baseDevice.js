@@ -2045,14 +2045,16 @@ class BaseDevice {
                 }
             }
             if (me.trait.sensorstate) {
-                me.states.currentSensorStateData.forEach(sensor => {
-                    if (sensor.currentSensorState !== undefined && sensor.currentSensorState !== 'unknown') {
-                        text += ' ' + sensor.name + ' ' + sensor.currentSensorState;
-                        if (sensor.rawValue !== undefined) {
-                            text += ' ' + sensor.rawValue;
+                if (Array.isArray(me.states.currentSensorStateData)) {
+                    me.states.currentSensorStateData.forEach(sensor => {
+                        if (sensor.currentSensorState !== undefined && sensor.currentSensorState !== 'unknown') {
+                            text += ' ' + sensor.name + ' ' + sensor.currentSensorState;
+                            if (sensor.rawValue !== undefined) {
+                                text += ' ' + sensor.rawValue;
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         } else {
             shape = 'ring';
