@@ -24,9 +24,9 @@
  * https://developers.google.com/assistant/smarthome/
 */
 
-const https         = require('https');
+const https = require('https');
 
-module.exports = function(RED) {
+module.exports = function (RED) {
     "use strict";
 
     const GoogleSmartHome = require('./lib/SmartHome.js');
@@ -35,63 +35,142 @@ module.exports = function(RED) {
      *
      *
      */
-    function GoogleSmartHomeNode(config) {
-        RED.nodes.createNode(this, config);
+    class GoogleSmartHomeNode {
+        constructor(config) {
+            RED.nodes.createNode(this, config);
 
-        this.mgmtNodes = {};
+            this.mgmtNodes = {};
 
-        var node = this;
-        this.default_lang = config.default_lang || 'en';
+            const node = this;
+            this.default_lang = config.default_lang || 'en';
+            this.enabledebug = config.enabledebug;
 
-        this._debug = function(msg) {
-            if (config.enabledebug) {
+            this.app = new GoogleSmartHome(
+                this,
+                config.id,
+                RED.settings.userDir,
+                RED.settings.httpNodeRoot,
+                config.usegooglelogin,
+                node.credentials.loginclientid || '',
+                node.credentials.emails || [],
+                node.credentials.username || '',
+                node.credentials.password || '',
+                parseInt(config.accesstokenduration || '30'), // minutes
+                config.usehttpnoderoot,
+                config.httppath,
+                parseInt(config.port || '0'),
+                parseInt(config.localport || '0'),
+                RED.server instanceof https.Server,
+                config.ssloffload,
+                node.credentials.publickey || '',
+                node.credentials.privatekey || '',
+                node.credentials.jwtkey || '',
+                node.credentials.clientid || '',
+                node.credentials.clientsecret || '',
+                config.reportinterval,     // minutes
+                parseInt(config.request_sync_delay || '0'),
+                parseInt(config.set_state_delay || '0'),
+                this.enabledebug, function (msg) { node._debug(msg); }, function (msg) { node._error(msg); });
+
+            let err = this.app.Start(RED.httpNode || RED.httpAdmin, RED.server);
+            if (err !== true) {
+                node._debug("GoogleSmartHomeNode(constructor): error " + JSON.stringify(err));
+                RED.log.error(err);
+                return;
+            }
+
+            this.on('close', function (removed, done) {
+                node.app.Stop(RED.httpNode || RED.httpAdmin, done);
+
+                if (removed) {
+                    // this node has been deleted
+                } else {
+                    // this node is being restarted
+                    node._debug("GoogleSmartHomeNode(on-close): restarting");
+                }
+            });
+
+            /******************************************************************************************************************
+             * notifications coming from the application server
+             *
+             */
+            this.app.emitter.on('server', function (state, param1) {
+                node._debug("GoogleSmartHomeNode(on-server): state  = " + state);
+                node._debug("GoogleSmartHomeNode(on-server): param1 = " + param1);
+
+                node.callMgmtFuncs({
+                    _type: 'server',
+                    state: state,
+                    param1: param1
+                });
+            });
+
+            this.app.emitter.on('actions-reportstate', function (msg) {
+                node._debug("GoogleSmartHomeNode(on-actions-reportstate): msg = " + JSON.stringify(msg));
+
+                node.callMgmtFuncs({
+                    _type: 'actions-reportstate',
+                    msg: msg
+                });
+            });
+
+            this.app.emitter.on('actions-requestsync', function (msg) {
+                node._debug("GoogleSmartHomeNode(on-actions-requestsync): msg = " + JSON.stringify(msg));
+
+                node.callMgmtFuncs({
+                    _type: 'actions-requestsync',
+                    msg: msg
+                });
+            });
+
+            this.app.emitter.on('/login', function (msg, username, password) {
+                node._debug("GoogleSmartHomeNode(on-login): msg      = " + msg);
+                node._debug("GoogleSmartHomeNode(on-login): username = " + username);
+                node._debug("GoogleSmartHomeNode(on-login): password = " + password);
+
+                node.callMgmtFuncs({
+                    _type: 'login',
+                    msg: msg
+                });
+            });
+        }
+
+        _debug(msg) {
+            if (this.enabledebug) {
                 console.log(msg)
             } else {
                 RED.log.debug(msg);
             }
-        };
+        }
 
-        this.app = new GoogleSmartHome(
-            this,
-            config.id,
-            RED.settings.userDir,
-            RED.settings.httpNodeRoot,
-            config.usegooglelogin,
-            node.credentials.loginclientid || '',
-            node.credentials.emails || [],
-            node.credentials.username || '',
-            node.credentials.password || '',
-            parseInt(config.accesstokenduration || '30'), // minutes
-            config.usehttpnoderoot,
-            config.httppath,
-            parseInt(config.port || '0'),
-            parseInt(config.localport || '0'),
-            RED.server instanceof https.Server,
-            config.ssloffload,
-            node.credentials.publickey || '', 
-            node.credentials.privatekey || '',
-            node.credentials.jwtkey || '',
-            node.credentials.clientid || '', 
-            node.credentials.clientsecret || '',
-            config.reportinterval,     // minutes
-            parseInt(config.request_sync_delay || '0'),
-            parseInt(config.set_state_delay || '0'),
-            config.enabledebug, node._debug, RED.log.error);
+        _error(msg) {
+            if (typeof msg === 'object') {
+                this._debug(JSON.stringify(msg));
+            }
+            RED.log.error(msg);
+        }
 
-        let err = this.app.Start(RED.httpNode || RED.httpAdmin, RED.server);
-        if (err !== true) {
-            RED.log.error(err);
-            return;
+        // call all management nodes
+        callMgmtFuncs(obj) {
+            const node = this;
+            Object.keys(node.mgmtNodes).forEach(function (key) {
+                if (node.mgmtNodes.hasOwnProperty(key)) {
+                    node._debug("GoogleSmartHomeNode(on-server): found mgmt client");
+
+                    node.mgmtNodes[key].updated(obj);
+                }
+            });
         }
 
         /******************************************************************************************************************
          * functions called by our 'clients'
          *
          */
-        this.register = function(client, type, name) {
-            RED.log.debug("GoogleSmartHomeNode(): register; type = " + type);
+        register(client, type, name) {
+            const node = this;
+            node._debug("GoogleSmartHomeNode(): register; type = " + type);
 
-            if(type === 'mgmt') {
+            if (type === 'mgmt') {
                 node.mgmtNodes[client.id] = client;
                 return {};
             }
@@ -100,115 +179,55 @@ module.exports = function(RED) {
             let states = device.states;
 
             if (this.app.registerDevice(client, device)) {
-                RED.log.debug('GoogleSmartHomeNode:register(): successfully registered device ' + type + ' ' + client.id);
+                node._debug('GoogleSmartHomeNode:register(): successfully registered device ' + type + ' ' + client.id);
                 return JSON.parse(JSON.stringify(states));
             } else {
-                RED.log.debug('GoogleSmartHomeNode:register(): registering device ' + type + ' ' + client.id + ' failed');
+                node._debug('GoogleSmartHomeNode:register(): registering device ' + type + ' ' + client.id + ' failed');
                 return {};
             }
-        };
+        }
 
-        this.deregister = function(client, type) {
-            RED.log.debug("GoogleSmartHomeNode(): deregister; type = " + type);
+        deregister(client, type) {
+            const node = this;
+            node._debug("GoogleSmartHomeNode(): deregister; type = " + type);
 
             if (type === 'mgmt' && node.mgmtNodes[client.id]) {
                 delete node.mgmtNodes[client.id];
             }
-        };
+        }
 
-        this.remove = function(client, type) {
-            RED.log.debug("GoogleSmartHomeNode(): remove; type = " + type);
+        remove(client, type) {
+            const node = this;
+            node._debug("GoogleSmartHomeNode(): remove; type = " + type);
 
             if (type === 'mgmt' && node.mgmtNodes[client.id]) {
                 delete node.mgmtNodes[client.id];
             } else {
                 node.app.DeleteDevice(client);
             }
-        };
+        }
 
-        this.sendNotifications = function(client, notifications) {
-            RED.log.debug("GoogleSmartHomeNode:sendNotifications(): notifications = " + JSON.stringify(notifications));
+        sendNotifications(client, notifications) {
+            const node = this;
+            node._debug("GoogleSmartHomeNode:sendNotifications(): notifications = " + JSON.stringify(notifications));
             node.app.SendNotifications(client.id, notifications);
-        };
+        }
 
-        this.setState = function(client, state, replaceAll) {
-            RED.log.debug("GoogleSmartHomeNode:setState(): state = " + JSON.stringify(state));
+        setState(client, state, replaceAll) {
+            const node = this;
+            node._debug("GoogleSmartHomeNode:setState(): state = " + JSON.stringify(state));
             node.app.SetState(client.id, state, replaceAll);
-        };
+        }
 
-        this.getIdFromName = function(name) {
+        getIdFromName(name) {
+            const node = this;
             return node.app.GetIdFromName(name);
-        };
+        }
 
-        this.getProperties = function(deviceIds) {
+        getProperties(deviceIds) {
+            const node = this;
             return node.app.getProperties(deviceIds);
-        };
-
-        this.on('close', function(removed, done) {
-            node.app.Stop(RED.httpNode || RED.httpAdmin, done);
-            
-            if (removed) {
-                // this node has been deleted
-            } else {
-                // this node is being restarted
-                RED.log.debug("GoogleSmartHomeNode(on-close): restarting");
-            }
-        });
-
-        /******************************************************************************************************************
-         * notifications coming from the application server
-         *
-         */
-        this.app.emitter.on('server', function(state, param1) {
-            RED.log.debug("GoogleSmartHomeNode(on-server): state  = " + state);
-            RED.log.debug("GoogleSmartHomeNode(on-server): param1 = " + param1);
-
-            node.callMgmtFuncs({
-                _type: 'server',
-                state: state,
-                param1: param1
-            });
-        });
-
-        this.app.emitter.on('actions-reportstate', function(msg) {
-            RED.log.debug("GoogleSmartHomeNode(on-actions-reportstate): msg = " + JSON.stringify(msg));
-
-            node.callMgmtFuncs({
-                _type: 'actions-reportstate',
-                msg: msg
-            });
-        });
-
-        this.app.emitter.on('actions-requestsync', function(msg) {
-            RED.log.debug("GoogleSmartHomeNode(on-actions-requestsync): msg = " + JSON.stringify(msg));
-
-            node.callMgmtFuncs({
-                _type: 'actions-requestsync',
-                msg: msg
-            });
-        });
-
-        this.app.emitter.on('/login', function(msg, username, password) {
-            RED.log.debug("GoogleSmartHomeNode(on-login): msg      = " + msg);
-            RED.log.debug("GoogleSmartHomeNode(on-login): username = " + username);
-            RED.log.debug("GoogleSmartHomeNode(on-login): password = " + password);
-
-            node.callMgmtFuncs({
-                _type: 'login',
-                msg: msg
-            });
-        });
-
-        // call all management nodes
-        this.callMgmtFuncs = function(obj) {
-            Object.keys(node.mgmtNodes).forEach(function(key) {
-                if (node.mgmtNodes.hasOwnProperty(key)) {
-                    RED.log.debug("GoogleSmartHomeNode(on-server): found mgmt client");
-
-                    node.mgmtNodes[key].updated(obj);
-                }
-            });
-        };
+        }
     }
 
     RED.nodes.registerType("googlesmarthome-client", GoogleSmartHomeNode, {
@@ -229,30 +248,60 @@ module.exports = function(RED) {
      *
      *
      */
-    function MgmtNode(config) {
-        RED.nodes.createNode(this, config);
+    class MgmtNode {
+        constructor(config) {
+            RED.nodes.createNode(this, config);
 
-        this.client     = config.client;
-        this.clientConn = RED.nodes.getNode(this.client);
+            this.client = config.client;
+            this.clientConn = RED.nodes.getNode(this.client);
 
-        if (!this.clientConn) {
-            this.error(RED._("googlesmarthome.errors.missing-config"));
-            this.status({fill:"red", shape:"dot", text:"Missing config"});
-            return;
-        } else if (typeof this.clientConn.register !== 'function') {
-            this.error(RED._("googlesmarthome.errors.missing-bridge"));
-            this.status({fill:"red", shape:"dot", text:"Missing SmartHome"});
-            return;
+            if (!this.clientConn) {
+                this.error(RED._("googlesmarthome.errors.missing-config"));
+                this.status({ fill: "red", shape: "dot", text: "Missing config" });
+                return;
+            } else if (typeof this.clientConn.register !== 'function') {
+                this.error(RED._("googlesmarthome.errors.missing-bridge"));
+                this.status({ fill: "red", shape: "dot", text: "Missing SmartHome" });
+                return;
+            }
+
+            let node = this;
+            this.enabledebug = config.enabledebug || false;
+
+            this.clientConn.register(this, 'mgmt', config.name);
+
+            this.status({ fill: "yellow", shape: "dot", text: "Ready" });
+
+            this.on('input', this.onInput);
+
+            this.on('close', function (removed, done) {
+                if (removed) {
+                    // this node has been deleted
+                    node.clientConn.remove(node, 'mgmt');
+                } else {
+                    // this node is being restarted
+                    node.clientConn.deregister(node, 'mgmt');
+                }
+
+                done();
+            });
         }
 
-        let node = this;
+        _debug(msg) {
+            if (this.enabledebug) {
+                console.log(msg)
+            } else {
+                RED.log.debug(msg);
+            }
+        }
 
         /******************************************************************************************************************
          * called when state is updated from Google Assistant
          *
          */
-        this.updated = function(data) {   // this must be defined before the call to clientConn.register()
-            RED.log.debug("MgmtNode(updated): data = " + JSON.stringify(data));
+        updated(data) {   // this must be defined before the call to clientConn.register()
+            const node = this;
+            node._debug("MgmtNode(updated): data = " + JSON.stringify(data));
 
             let msg = {
                 topic: "management",
@@ -260,36 +309,33 @@ module.exports = function(RED) {
             };
 
             node.send(msg);
-        };
-
-        this.clientConn.register(this, 'mgmt', config.name);
-
-        this.status({fill:"yellow", shape:"dot", text:"Ready"});
+        }
 
         /******************************************************************************************************************
          * respond to inputs from NodeRED
          *
          */
-        this.onInput = function (msg) {
-            RED.log.debug("MgmtNode(input)");
+        onInput(msg) {
+            const node = this;
+            node._debug("MgmtNode(input)");
 
             let topicArr = (msg.topic || '').split(node.topicDelim);
-            let topic    = topicArr[topicArr.length - 1];   // get last part of topic
+            let topic = topicArr[topicArr.length - 1];   // get last part of topic
             const topic_upper = topic.toUpperCase();
 
-            RED.log.debug("MgmtNode(input): topic = " + topic);
+            node._debug("MgmtNode(input): topic = " + topic);
 
             try {
                 if (topic_upper === 'RESTART_SERVER') {
-                    RED.log.debug("MgmtNode(input): RESTART_SERVER");
+                    node._debug("MgmtNode(input): RESTART_SERVER");
 
                     this.clientConn.app.Restart(RED.httpNode || RED.httpAdmin, RED.server);
                 } else if (topic_upper === 'REPORT_STATE') {
-                    RED.log.debug("MgmtNode(input): REPORT_STATE");
+                    node._debug("MgmtNode(input): REPORT_STATE");
 
                     this.clientConn.app.ReportAllStates();
                 } else if (topic_upper === 'REQUEST_SYNC') {
-                    RED.log.debug("MgmtNode(input): REQUEST_SYNC");
+                    node._debug("MgmtNode(input): REQUEST_SYNC");
 
                     this.clientConn.app.RequestSync();
                 } else if (topic_upper === 'GET_STATE' || topic_upper === 'GETSTATE') {
@@ -299,12 +345,12 @@ module.exports = function(RED) {
                     if (typeof msg.payload === 'boolean') {
                         onlyPersistent = msg.payload;
                     } else if (typeof msg.payload === 'string') {
-                        deviceIds = [ msg.payload ];
+                        deviceIds = [msg.payload];
                     } else if (typeof msg.payload === 'object') {
                         onlyPersistent = msg.payload.onlyPersistent || false;
                         useNames = msg.payload.useNames || false;
                         if (typeof msg.payload.devices === 'string') {
-                            deviceIds = [ msg.payload.devices ];
+                            deviceIds = [msg.payload.devices];
                         } else if (Array.isArray(msg.payload.devices)) {
                             deviceIds = msg.payload.devices;
                         }
@@ -322,11 +368,12 @@ module.exports = function(RED) {
                     }
                 }
             } catch (err) {
+                node._debug("MgmtNode(input): error " + JSON.stringify(err));
                 RED.log.error(err);
             }
-        };
+        }
 
-        this.sendSetState = function () {
+        sendSetState() {
             let states = this.clientConn.app.getStates(undefined, true, false, RED);
             if (states) {
                 this.send({
@@ -334,21 +381,7 @@ module.exports = function(RED) {
                     payload: states
                 });
             }
-        };
-
-        this.on('input', this.onInput);
-
-        this.on('close', function(removed, done) {
-            if (removed) {
-                // this node has been deleted
-                node.clientConn.remove(node, 'mgmt');
-            } else {
-                // this node is being restarted
-                node.clientConn.deregister(node, 'mgmt');
-            }
-            
-            done();
-        });
+        }
     }
 
     RED.nodes.registerType("google-mgmt", MgmtNode);
