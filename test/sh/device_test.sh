@@ -103,9 +103,12 @@ execute_payload() {
     fi
     REQUEST="{\"payload\": $PAYLOAD, \"topic\": \"$TOPIC\", \"test_num\": $TEST_NUM}"
     echo $REQUEST
-    mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old" 
+    mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old"
+    if [ -f "$REPORT_STATE_FILE" ] ; then
+        mv "$REPORT_STATE_FILE" "$REPORT_STATE_FILE.old"
+    fi
     echo "{}" > "$PAYLOAD_FILE" 
-    # echo "{}" > "$REPORT_STATE_FILE" 
+    echo "" > "$REPORT_STATE_FILE" 
     curl -s \
         -H "Content-Type: application/json;charset=UTF-8" \
         --data "$REQUEST" \
@@ -139,7 +142,9 @@ execute_no_report_state() {
     CMD="${CMD_%%_*}"
     echo ./execute "$@"
     mv "$PAYLOAD_FILE" "$PAYLOAD_FILE.old"
-    mv "$REPORT_STATE_FILE" "$REPORT_STATE_FILE.old"
+    if [ -f "$REPORT_STATE_FILE" ] ; then
+        mv "$REPORT_STATE_FILE" "$REPORT_STATE_FILE.old"
+    fi
     REPORT_STATE=''
     # echo "{}" > "$PAYLOAD_FILE" 
     # echo "{}" > "$REPORT_STATE_FILE" 
@@ -756,9 +761,9 @@ test_sync .payload.devices[0].attributes.commandOnlyVolume false
 echo
 
 
-execute_payload fake_topic1 '{"online":false,"isArmed":false,"currentArmLevel":"L1","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"half_level","currentInput":"hdmi 1","activeLightEffect":"colorLoop","currentModeSettings":{"load_mode":"large_load","temp_mode":"cold_temp"},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet":false,"extra_bass":false,"Energy Saving":false},"currentVolume":40,"on":true,"isDocked":false}'
+execute_payload fake_topic1 '{"online":false,"isArmed":false,"currentApplication":"video","currentArmLevel":"L1","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"half_level","currentInput":"hdmi 1","activeLightEffect":"colorLoop","currentModeSettings":{"load_mode":"large_load","temp_mode":"cold_temp"},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet":false,"extra_bass":false,"Energy Saving":false},"currentVolume":40,"on":true,"isDocked":false}'
 
-execute_payload fake_topic2 '{"online":true,"isArmed":false,"currentArmLevel":"L2","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"full_level","currentInput":"hdmi 1","activeLightEffect":"sleep","currentModeSettings":{"load_mode":"small_load","temp_mode":"warm_temp"},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet":false,"extra_bass":false,"Energy Saving":false},"currentVolume":40,"on":true,"isDocked":false}'
+execute_payload fake_topic2 '{"online":true,"isArmed":false,"currentApplication":"video","currentArmLevel":"L2","color":{"temperatureK":9000},"currentCookingMode":"NONE","dispenseItems":[{"itemName":"water","amountRemaining":{"amount":10,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":11,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"cat_bowl","amountRemaining":{"amount":12,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":13,"unit":"NO_UNITS"},"isCurrentlyDispensing":false},{"itemName":"glass_1","amountRemaining":{"amount":14,"unit":"NO_UNITS"},"amountLastDispensed":{"amount":15,"unit":"NO_UNITS"},"isCurrentlyDispensing":false}],"descriptiveCapacityRemaining":"FULL","capacityRemaining":[],"capacityUntilFull":[],"isPluggedIn":false,"currentFanSpeedPercent":0,"isFilled":false,"currentFillLevel":"full_level","currentInput":"hdmi 1","activeLightEffect":"sleep","currentModeSettings":{"load_mode":"small_load","temp_mode":"warm_temp"},"openState":[{"openPercent":0,"openDirection":"UP"},{"openPercent":0,"openDirection":"DOWN"},{"openPercent":0,"openDirection":"LEFT"},{"openPercent":0,"openDirection":"RIGHT"},{"openPercent":0,"openDirection":"IN"},{"openPercent":0,"openDirection":"OUT"}],"currentRunCycle":[{"currentCycle":"unknown","lang":"en"}],"currentTotalRemainingTime":0,"currentCycleRemainingTime":0,"currentSensorStateData":[{"name":"AirQuality","currentSensorState":"unknown","rawValue":0},{"name":"CarbonMonoxideLevel","currentSensorState":"unknown","rawValue":0},{"name":"SmokeLevel","currentSensorState":"unknown","rawValue":0},{"name":"FilterCleanliness","currentSensorState":"unknown"},{"name":"WaterLeak","currentSensorState":"unknown"},{"name":"RainDetection","currentSensorState":"unknown"},{"name":"FilterLifeTime","currentSensorState":"unknown","rawValue":0},{"name":"PreFilterLifeTime","rawValue":0},{"name":"HEPAFilterLifeTime","rawValue":0},{"name":"Max2FilterLifeTime","rawValue":0},{"name":"CarbonDioxideLevel","rawValue":0},{"name":"PM2.5","rawValue":0},{"name":"PM10","rawValue":0},{"name":"VolatileOrganicCompounds","rawValue":0}],"lastSoftwareUpdateUnixTimestampSec":0,"isRunning":false,"currentStatusReport":[],"temperatureSetpointCelsius":0,"thermostatMode":"off","thermostatTemperatureAmbient":1,"thermostatTemperatureSetpoint":1,"timerRemainingSec":-1,"currentToggleSettings":{"quiet":false,"extra_bass":false,"Energy Saving":false},"currentVolume":40,"on":true,"isDocked":false}'
 test_payload .online true
 test_payload .isArmed false
 test_payload .currentArmLevel '"L2"'
@@ -1123,10 +1128,10 @@ echo
 
 # AppSelector 
 echo AppSelector
-execute $NODE_ID appInstall mia_application
+execute_no_report_state $NODE_ID appInstall mia_application
 test_payload ".params.newApplication" '"mia_application"'
 
-execute $NODE_ID appInstall_name mia_application
+execute_no_report_state $NODE_ID appInstall_name mia_application
 
 execute_error $NODE_ID appInstall YouTube
 test_out ".payload.commands[0].errorCode" '"alreadyInstalledApp"'
@@ -1134,9 +1139,9 @@ test_out ".payload.commands[0].errorCode" '"alreadyInstalledApp"'
 execute_error $NODE_ID appInstall_name YouTube
 test_out ".payload.commands[0].errorCode" '"alreadyInstalledApp"'
 
-execute $NODE_ID appSearch YouTube
+execute_no_report_state $NODE_ID appSearch YouTube
 
-execute $NODE_ID appSearch_name YouTube
+execute_no_report_state $NODE_ID appSearch_name YouTube
 
 execute_error $NODE_ID appSearch no_installed_app
 test_out ".payload.commands[0].errorCode" '"noAvailableApp"'
@@ -1144,6 +1149,7 @@ test_out ".payload.commands[0].errorCode" '"noAvailableApp"'
 execute_error $NODE_ID appSearch_name no_installed_app1
 test_out ".payload.commands[0].errorCode" '"noAvailableApp"'
 
+execute_no_report_state $NODE_ID appSelect YouTube
 execute $NODE_ID appSelect_name "Prime Video"
 test_payload .currentApplication '"Amazon Prime Video"'
 test_payload .params.newApplicationName '"Prime Video"'
