@@ -258,6 +258,10 @@ Your project was created using username/password based authentication. You can s
 Google Sign-In if you want. This makes relinking your project in the app a little easier as you don't have to enter
 your username and password again. For regular users it is not necessary though.
 
+<span style="color: red">Currently, we are experiencing issues with Google Sign-In.
+    See [#241](https://github.com/mikejac/node-red-contrib-google-smarthome/issues/241). For the time being, please
+    use username/password based authentication.</span>
+
 1.  Navigate to the [GCP oAuth consent screen configuration](https://console.cloud.google.com/apis/credentials/consent).
 
 
