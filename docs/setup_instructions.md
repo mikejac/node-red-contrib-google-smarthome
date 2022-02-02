@@ -312,7 +312,8 @@ your username and password again. For regular users it is not necessary though.
 
 
 11. Open the configuration of the Google management node in Node-RED. Check "Use Google login" and enter the client ID
-    you copied earlier. Save and deploy your flows.\
+    you copied earlier. Add your email address (the one your Google account is registered to) as authorized email. Save
+    and deploy your flows.\
     ![](images/googlesignin_nodered.png)
 
 
