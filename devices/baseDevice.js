@@ -1951,6 +1951,10 @@ class BaseDevice {
         let fill = 'red';
         let shape = 'dot';
         if (me.states.online) {
+            if (me.trait.scene) {
+                text = 'OK';
+                fill = 'green';
+            }
             if (me.trait.onoff) {
                 if (me.states.on !== undefined) {
                     if (me.states.on) {
