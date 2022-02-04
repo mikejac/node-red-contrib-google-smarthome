@@ -18,7 +18,7 @@
     "node-red"
   ],
   "node-red": {
-    "version": ">=2.0.0",
+    "version": ">=1.3.0",
     "nodes": {
       "google-smarthome": "google-smarthome.js",
       "device": "devices/device.js",
@@ -40,7 +40,7 @@
     }
   },
     "engines": {
-    "node": ">=12.0.0"
+    "node": ">=10.0.0"
   },
   "author": {
     "name": "Michael Jacobsen"
