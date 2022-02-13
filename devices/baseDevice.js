@@ -3050,7 +3050,7 @@ class BaseDevice {
             }
         } else if (typeof value === 'object') {
             if (value.hasOwnProperty(key)) {
-                return FormatValue(format, key, value[key]);
+                return this.formatValue(format, key, value[key]);
             } else {
                 throw new Error('Type of ' + key + ' is object but it does not have matching property');
             }
