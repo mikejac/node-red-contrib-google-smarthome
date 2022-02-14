@@ -3683,6 +3683,13 @@ class BaseDevice {
         // me._debug(".execCommand: device " +  JSON.stringify(device));
         // me._debug(".execCommand: me.device " +  JSON.stringify(me.device));
 
+        if (me.states.online !== true) {
+            return {
+                status: 'ERROR',
+                errorCode: 'deviceOffline'
+            };
+        }
+
         let challenge_type = '';
         let challenge_pin = '';
         switch (command.command) {
