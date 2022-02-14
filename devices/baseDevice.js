@@ -18,7 +18,6 @@
 
 "use strict";
 
-const formats = require('../formatvalues.js');
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
@@ -2383,7 +2382,7 @@ class BaseDevice {
                 me.updateTogglesState(me, me);
                 me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'CAMERASTREAMAUTHTOKEN') {
-                const auth_token = formats.FormatValue(formats.Formats.STRING, 'cameraStreamAuthToken', msg.payload) || "";
+                const auth_token = me.formatValue('cameraStreamAuthToken', msg.payload, Formats.STRING, '');
                 if (auth_token != me.auth_token) {
                     me.auth_token = auth_token;
                     if (me.device.properties.attributes.hasOwnProperty("cameraStreamNeedAuthToken")) {
@@ -2395,7 +2394,7 @@ class BaseDevice {
                     }
                 }
             } else if (upper_topic === 'GUESTNETWORKPASSWORD') {
-                me.guest_network_password = formats.FormatValue(formats.Formats.STRING, 'guestNetworkPassword', msg.payload);
+                me.guest_network_password = me.formatValue('guestNetworkPassword', msg.payload, Formats.STRING);
             } else if (me.trait.objectdetection && upper_topic === 'OBJECTDETECTION') {
                 let payload = {};
                 if (typeof msg.payload.familiar === 'number') {
@@ -3051,7 +3050,7 @@ class BaseDevice {
             }
         } else if (typeof value === 'object') {
             if (value.hasOwnProperty(key)) {
-                return FormatValue(format, key, value[key]);
+                return this.formatValue(format, key, value[key]);
             } else {
                 throw new Error('Type of ' + key + ' is object but it does not have matching property');
             }
@@ -3683,6 +3682,13 @@ class BaseDevice {
         me._debug(".execCommand: states " + JSON.stringify(me.states));
         // me._debug(".execCommand: device " +  JSON.stringify(device));
         // me._debug(".execCommand: me.device " +  JSON.stringify(me.device));
+
+        if (me.states.online !== true) {
+            return {
+                status: 'ERROR',
+                errorCode: 'deviceOffline'
+            };
+        }
 
         let challenge_type = '';
         let challenge_pin = '';
