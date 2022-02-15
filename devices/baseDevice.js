@@ -2382,7 +2382,7 @@ class BaseDevice {
                 me.updateTogglesState(me, me);
                 me.clientConn.app.ScheduleRequestSync();
             } else if (upper_topic === 'CAMERASTREAMAUTHTOKEN') {
-                const auth_token = me.formatValue('cameraStreamAuthToken', msg.payload, Formats.STRING, "");
+                const auth_token = me.formatValue('cameraStreamAuthToken', msg.payload, Formats.STRING, '');
                 if (auth_token != me.auth_token) {
                     me.auth_token = auth_token;
                     if (me.device.properties.attributes.hasOwnProperty("cameraStreamNeedAuthToken")) {
