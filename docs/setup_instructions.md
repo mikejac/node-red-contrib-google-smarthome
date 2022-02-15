@@ -79,23 +79,44 @@ First we will register a new Smart Home project in the Actions Console.
 **Note:** You can't test your project in the Action Console's simulator. It only works on real devices.
 
 
-#### Enable Local Fulfillment
+## Enable Local Fulfillment (optional)
 
-[TODO: Add screenshots]
+Local fulfillment establishes direct communication between your smart speaker and Node-RED. This reduces latencies
+and makes your devices respond faster. It is not required though. If local fulfillment is not setup or is not available, Google will fall back to the
+"normal" mode.
 
-1. Open the project you created in the [Actions on Google Console](https://console.actions.google.com/).
+1. Open the [Actions on Google Console](https://console.actions.google.com/) and select your project.
+   ![](images/actionsconsole_check_project.png)
+
+
 2. Click `Develop` on the top of the page, then click `Actions` located in the hamburger menu on the top left.
-3. Upload [this Javascript file](/local-execution/app.js) for both Node and Chrome by clicking the `Upload Javascript files` button.
-4. Tick the `Support local query` checkbox.
-5. Add device scan configuration:
+   ![](images/actionsconsole_tab_actions.png)
+
+
+3. Click the button `Upload JavaScript files`.
+   ![](images/localexecution_upload.png)
+
+
+4. Upload [this Javascript file](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js/local-execution/app.js)
+   for both Node and Chrome.
+   ![](images/localexecution_upload_files.png)
+
+
+5. Tick the `Support local query` checkbox.
+   ![](images/localexecution_localquery.png)
+
+
+6. Add device scan configuration:
     1. Click `+ New scan config`
     2. Select `MDNS`
     3. set mDNS service name to `_nodered-google._tcp.local`
-6. `Save` your changes.
 
-Complete the rest of the setup instructions and then follow these two steps:
-1. Either wait for 30 minutes, or restart your connected Google device.
-2. Restart Node Red.
+
+7. The complete local fulfillment form should look like this.
+   ![](images/localexecution_form.png)
+
+
+8. `Save` your changes.
 
 
 ## Enable HomeGraph API
@@ -249,7 +270,17 @@ or a pull request.
 9. Congratulations! Your project is successfully set up. You can now start adding devices.
 
 
-[TODO: Write a section about basic usage? How to create the first device, send inputs, handle outputs etc.?]
+## Finalizing local fulfillment
+
+If you enabled Local fulfillment earlier, you need to:
+- restart Node-RED
+- wait 30 minutes or restart your Google device
+
+You can test if local fulfillment was successfully enabled by saying "Hey Google, force local" (works on non-english
+devices too). Then try to control your devices. All actions will now be executed locally or will fail if local
+fulfillment is not available. After you are done testing, revert to normal mode by saying "Hey Google, force default".
+
+Local fulfillment can be tricky to set up. If you have problems, look at the troubleshooting section in the readme.
 
 
 ## Integrating Google Sign-In (optional)
