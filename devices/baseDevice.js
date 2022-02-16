@@ -922,7 +922,7 @@ class BaseDevice {
                         min: me.temperature_min_k,
                         max: me.temperature_max_k,
                         exclusiveStates: ['spectrumRgb', 'spectrumHsv']
-                    }
+                    };
                 }
             }
         }
@@ -1137,7 +1137,7 @@ class BaseDevice {
                     state_types['currentModeSettings'] = {
                         type: Formats.OBJECT,
                         attributes: attributes,
-                    }
+                    };
                 }
             }
         }
