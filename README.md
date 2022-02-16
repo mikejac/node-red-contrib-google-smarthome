@@ -17,6 +17,7 @@
 - [Sending spoken notifications](#sending-spoken-notifications)
 - [Inviting other users](#inviting-other-users)
 - [Troubleshooting](#troubleshooting)
+- [Troubleshooting local fulfillment](#troubleshooting-local-fulfillment)
 - [Credits](#credits)
 - [Copyright and license](#copyright-and-license)
 
@@ -318,6 +319,35 @@ Google Workspace account. If this is the case, you can share access to your smar
 - Google might say that it cannot reach your device if that device did not update its state at least once after creation.
 - Go through the [setup instructions](docs/setup_instructions.md) again and compare your settings to what you see on the
   screenshots
+
+
+--
+## Troubleshooting Local fulfillment
+
+- You can test if local fulfillment was successfully enabled by saying "Hey Google, force local" (works on non-english
+  devices too). Then try to control your devices. All actions will now be executed locally or will fail if local
+  fulfillment is not available. After you are done testing, revert to normal mode by saying "Hey Google, force default".
+- Set a port for local fulfillment in the management node's config.
+- Send an HTTP POST request to `http://192.168.178.25:13002/local_smarthome` (with the IP address of your host and the
+  port you chose). E.g. run `curl -X POST http://192.168.178.25:13002/local_smarthome`. It should answer with
+  `{"error":"missing inputs"}`. This error message is okay, all other messages indicate connection problems with the
+  local fulfillment service.
+- Install an app like [mDNS Discovery](https://play.google.com/store/apps/details?id=com.mdns_discovery.app) on your
+  phone. Let it search for "nodered-google". It should find exactly one device, with the IP address of your host and the
+  port you specified in your configuration.
+- Open [chrome://inspect](chrome://inspect) in Chrome on your computer (not available on phone) Let it run a while until
+  your smart speaker is discovered. Click the `inspect` link. You'll see the console output of your smart speaker. The
+  first two lines should read "Ready, App version: x.0" and "node-red-contrib-google-smarthome app.js ready!". If the
+  local fulfillment connection was successfully established, you should see lines starting with "IDENTIFY" and
+  "REACHABLE_DEVICES" as well as lots of other lines. Yellow warning lines are okay, but you should not see red error
+  lines.
+- The first lines in  the chrome://inspect console will show the version number of the app.js script. Compare the
+  version number to the one on the third line of the official
+  [app.js script](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js).
+  If they are different, update the app.js script as explained
+  in the [setup instructions](docs/setup_instructions.md#enable-local-fulfillment-optional). After updating app.js, you
+  might have to restart your smart speaker.
+- Sometimes it takes several hours for the local fulfillment connection to be established.
 
 ---
 
