@@ -277,7 +277,7 @@ Inviting people does not work in all cases. For example it won't work if you or 
 Google Workspace account. If this is the case, you can share access to your smart home project like this:
 
 1. If you are currently using username/password authentication, switch to Google Sign-In by following the instructions
-   on [Integrating Google Sign-In](#integrating-google-sign-in-optional). Only continue if you successfully unlinked and
+   on [Integrating Google Sign-In](docs/setup_instructions.md#integrating-google-sign-in-optional). Only continue if you successfully unlinked and
    relinked your own account.
 2. In "Authorized emails" add the email address of the account you want to add. Save and deploy.
 3. Open your project in Google Actions Console.
@@ -287,7 +287,7 @@ Google Workspace account. If this is the case, you can share access to your smar
 7. Go back to Google Actions Console. In tab `Test` choose `Settings` and disable `On device testing`.
    Then click `Start testing`.
 8. The person you just added should now able to link to your project by following the steps in
-   [Setup Account linking](#setup-account-linking).
+   [Setup Account linking](docs/setup_instructions.md#setup-account-linking).
 
 ---
 ## Troubleshooting
