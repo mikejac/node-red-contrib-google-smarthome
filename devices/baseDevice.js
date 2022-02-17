@@ -756,8 +756,45 @@ class BaseDevice {
 
         this.updateStateTypesForTraits();
 
+        const default_name = this.getDefaultName(this.device_type);
+        const default_name_type = default_name.replace(/[_ ()/]+/g, '-').toLowerCase();
+        this.states = {
+            online: true
+        };
+        this.device = {
+            id: this.id,
+            states: this.states,
+            properties: {
+                type: 'action.devices.types.' + this.device_type,
+                traits: this.getTraits(this),
+                name: {
+                    defaultNames: ["Node-RED " + default_name],
+                    name: this.name
+                },
+                roomHint: this.room_hint,
+                willReportState: true,
+                notificationSupportedByAgent: this.trait.objectdetection || this.trait.runcycle || this.trait.sensorstate
+                    || this.trait.lockunlock || this.trait.networkcontrol || this.trait.openclose,
+                attributes: {
+                },
+                deviceInfo: {
+                    manufacturer: 'Node-RED',
+                    model: 'nr-device-' + default_name_type + '-v1',
+                    swVersion: '1.0',
+                    hwVersion: '1.0'
+                },
+                otherDeviceIds: [{ deviceId: this.id }],
+                customData: this.clientConn.app.getCustomData()
+            }
+        };
+
+        this.updateAttributesForTraits(this.device);
+        this.updateStatesForTraits(this.device);
+
+        this._debug(".constructor: device = " + JSON.stringify(this.device));
+
         // GoogleSmartHomeNode -> (client.registerDevice -> DeviceNode.registerDevice), app.registerDevice
-        this.states = this.clientConn.register(this, 'device', config.name);
+        this.clientConn.register(this, 'device');
 
         if (error_msg.length == 0) {
             this.updateStatusIcon(false);
@@ -777,54 +814,6 @@ class BaseDevice {
         } else {
             this.debug(msg);
         }
-    }
-
-    /******************************************************************************************************************
-     * called to register device
-     *
-     */
-    registerDevice(client, name) {
-        this._debug(".registerDevice: device_type " + this.device_type);
-
-        const default_name = this.getDefaultName(this.device_type);
-        const default_name_type = default_name.replace(/[_ ()/]+/g, '-').toLowerCase();
-        let states = {
-            online: true
-        };
-        let device = {
-            id: client.id,
-            states: states,
-            properties: {
-                type: 'action.devices.types.' + this.device_type,
-                traits: this.getTraits(this),
-                name: {
-                    defaultNames: ["Node-RED " + default_name],
-                    name: name
-                },
-                roomHint: this.room_hint,
-                willReportState: true,
-                notificationSupportedByAgent: this.trait.objectdetection || this.trait.runcycle || this.trait.sensorstate
-                    || this.trait.lockunlock || this.trait.networkcontrol || this.trait.openclose,
-                attributes: {
-                },
-                deviceInfo: {
-                    manufacturer: 'Node-RED',
-                    model: 'nr-device-' + default_name_type + '-v1',
-                    swVersion: '1.0',
-                    hwVersion: '1.0'
-                },
-                otherDeviceIds: [{ deviceId: client.id }],
-                customData: this.clientConn.app.getCustomData()
-            }
-        };
-
-        this.updateAttributesForTraits(device);
-        this.updateStatesForTraits(device);
-
-        this._debug(".registerDevice: device = " + JSON.stringify(device));
-
-        this.device = device;
-        return device;
     }
 
     updateStateTypesForTraits() {
@@ -2076,50 +2065,40 @@ class BaseDevice {
      * called when state is updated from Google Assistant
      *
      */
-    updated(device, params, original_params, is_local) {
+    updated(g_command, exe_result, is_local) {
         const me = this;
-        let states = device.states;
-        let command = device.command.startsWith('action.devices.commands.') ? device.command.substr(24) : device.command;
-        this._debug(".updated: device.command = " + JSON.stringify(command));
-        this._debug(".updated: device.states = " + JSON.stringify(states));
-        this._debug(".updated: params = " + JSON.stringify(params));
-        this._debug(".updated: original_params = " + JSON.stringify(original_params));
+        let command = g_command.command.startsWith('action.devices.commands.') ? g_command.command.substr(24) : g_command.command;
+        let params = exe_result.params || {};
+        me._debug(".updated: g_command = " + JSON.stringify(g_command));
+        me._debug(".updated: exe_result = " + JSON.stringify(exe_result));
 
-        const modified = me.updateState(params || states, me.states, me.state_types);
+        const modified = me.updateState(params, me.states, me.state_types);
         if (modified) {
-            this.cloneObject(states, me.states, me.state_types);
-            //if (me.persistent_state) {
-            me.clientConn.app.ScheduleGetState();
-            //}
+            if (me.persistent_state) {
+                me.clientConn.app.ScheduleGetState();
+            }
         }
 
-        this.updateStatusIcon(is_local);
+        me.updateStatusIcon(is_local);
 
         let msg = {
-            device_name: device.properties.name.name,
+            device_name: me.device.properties.name.name,
             command: command,
-            params: original_params,
+            params: g_command.params,
             payload: {},
         };
 
-        if (this.topicOut)
-            msg.topic = this.topicOut;
+        if (me.topicOut)
+            msg.topic = me.topicOut;
 
         // Copy the device state to the payload
         me.cloneObject(msg.payload, me.states, me.state_types);
 
-        // Copy the command state to the payload
-        Object.keys(states).forEach(function (key) {
-            if (!msg.payload.hasOwnProperty(key)) {
-                msg.payload[key] = states[key];
-            }
-        });
-
-        // Copy the command params to the payload
-        if (params) {
-            Object.keys(params).forEach(function (key) {
-                if (!msg.payload.hasOwnProperty(key) && params[key] !== original_params[key]) {
-                    msg.payload[key] = params[key];
+        // Copy the exe_result params to the payload
+        if (exe_result.params) {
+            Object.keys(exe_result.params).forEach(function (key) {
+                if (!msg.payload.hasOwnProperty(key) && !exe_result.executionStates.includes(key)) {
+                    msg.payload[key] = exe_result.params[key];
                 }
             });
         }
@@ -2131,20 +2110,8 @@ class BaseDevice {
             }
         });*/
 
-        // Allow subclasses to modify the message
-        msg = this.modifyUpdateMessage(msg);
-
-        this.send(msg);
+        me.send(msg);
     };
-
-    /******************************************************************************************************************
-     * Modify update message. Can be overridden by subclasses to modify output messages.
-     *
-     */
-    modifyUpdateMessage(msg) {
-        console.log("modifyUpdateMessage Basisklasse: " + JSON.stringify(msg));
-        return msg;
-    }
 
     /******************************************************************************************************************
      * respond to inputs from NodeRED
@@ -2533,7 +2500,7 @@ class BaseDevice {
                     }
                 });
                 if (me.updateState({ currentStatusReport: new_payload }, me.states, me.state_types) || differs) {
-                    me.clientConn.setState(me, me.states, true);  // tell Google ...
+                    me.clientConn.reportState(me.id);  // tell Google ...
                     if (me.persistent_state) {
                         me.clientConn.app.ScheduleGetState();
                     }
@@ -2705,7 +2672,7 @@ class BaseDevice {
                         me.cloneObject(states, me.states, me.state_types);
                         me.send({ topic: me.topicOut, payload: states });
                     }
-                    me.clientConn.setState(me, me.states, true);  // tell Google ...
+                    me.clientConn.reportState(me.id);  // tell Google ...
                     if (me.persistent_state) {
                         me.clientConn.app.ScheduleGetState();
                     }
@@ -3657,10 +3624,10 @@ class BaseDevice {
         }
     }
 
-    // Called by Device.execCommand
+    // Called by HttpActions.execCommand
     //
     //
-    execCommand(device, command, orig_device) {
+    execCommand(command) {
         let me = this;
         let params = {};
         let executionStates = ['online'];
@@ -3969,6 +3936,7 @@ class BaseDevice {
                 }
             }
         }
+        
         // ColorLoop
         else if (command.command == 'action.devices.commands.ColorLoop') {
             params['activeLightEffect'] = 'colorLoop';
@@ -3986,6 +3954,7 @@ class BaseDevice {
             params['activeLightEffect'] = 'wake';
             executionStates.push('activeLightEffect');
         }
+
         // Cook
         else if (command.command == 'action.devices.commands.Cook') {
             //const start = command.params['start'];
@@ -4041,6 +4010,7 @@ class BaseDevice {
                 executionStates.push('currentFoodUnit');
             }
         }
+
         // Dispense
         else if (command.command == 'action.devices.commands.Dispense') {
             const item_name = command.params['item'] || '';
@@ -4116,6 +4086,7 @@ class BaseDevice {
                 */
             }
         }
+
         // Dock
         else if (command.command == 'action.devices.commands.Dock') {
             params['isDocked'] = true;
@@ -4190,12 +4161,14 @@ class BaseDevice {
                 executionStates.push('currentFanSpeedPercent');
             }*/
         }
+
         // LockUnlock
         else if (command.command == 'action.devices.commands.LockUnlock') {
             const lock = command.params['lock'];
             params['isLocked'] = lock;
             executionStates.push('isLocked');
         }
+
         // HumiditySetting
         else if (command.command == 'action.devices.commands.SetHumidity') {
             if (!me.command_only_humiditysetting) {
@@ -4216,6 +4189,7 @@ class BaseDevice {
                 executionStates.push('humiditySetpointPercent');
             }*/
         }
+
         // NetworkControl
         else if (command.command == 'action.devices.commands.EnableDisableNetworkProfile') {
             const profile = command.params['profile'].toLowerCase();
@@ -4250,6 +4224,7 @@ class BaseDevice {
                 executionStates: executionStates,
             };
         }
+
         // Inputs
         else if (command.command == 'action.devices.commands.SetInput') {
             if (!me.command_only_input_selector) {
@@ -4293,6 +4268,7 @@ class BaseDevice {
                 params['currentInput'] = this.available_inputs[this.current_input_index].key;
             }
         }
+
         // On/Off
         else if (command.command == 'action.devices.commands.OnOff') {
             if (!me.command_only_onoff) {
@@ -4303,6 +4279,7 @@ class BaseDevice {
                 }
             }
         }
+
         // OpenClose
         else if (command.command == 'action.devices.commands.OpenClose') {
             if (!me.command_only_openclose) {
@@ -4342,6 +4319,7 @@ class BaseDevice {
                 params['openState'] = new_open_directions;
             }*/
         }
+
         // StartStop
         else if (command.command == 'action.devices.commands.StartStop') {
             const start = command.params['start'] || false;
@@ -4373,6 +4351,7 @@ class BaseDevice {
             params['isPaused'] = pause;
             executionStates.push('isPaused');
         }
+
         // TransportControl
         else if (command.command == 'action.devices.commands.mediaStop') {
             params['playbackState'] = 'STOPPED';
@@ -4432,6 +4411,7 @@ class BaseDevice {
         else if (command.command == 'action.devices.commands.mediaClosedCaptioningOff') {
             executionStates.push('playbackState');
         }
+
         // TemperatureControl
         else if (command.command == 'action.devices.commands.SetTemperature') {
             if (!me.command_only_temperaturecontrol) {
@@ -4440,6 +4420,7 @@ class BaseDevice {
                 executionStates.push('temperatureSetpointCelsius');
             }
         }
+
         // TemperatureSetting
         else if (command.command == 'action.devices.commands.ThermostatTemperatureSetpoint') {
             if (!me.command_only_temperaturesetting) {
@@ -4489,6 +4470,7 @@ class BaseDevice {
                 executionStates.push('thermostatTemperatureSetpoint');
             }*/
         }
+
         // Timer
         else if (command.command == 'action.devices.commands.TimerStart') {
             if (!me.command_only_timer) {
@@ -4570,6 +4552,7 @@ class BaseDevice {
                 }
             }
         }
+
         // Volume
         else if (command.command == 'action.devices.commands.mute') {
             if (!me.command_only_volume) {
@@ -4620,6 +4603,7 @@ class BaseDevice {
                 }
             }
         }
+
         // Channels
         else if (command.command == 'action.devices.commands.selectChannel') {
             if (command.params.hasOwnProperty('channelCode')) {
@@ -4708,6 +4692,7 @@ class BaseDevice {
             params['currentChannelNumber'] = this.available_channels[current_channel_index].number || '';
             // executionStates.push('currentChannel');
         }
+
         // Modes
         else if (command.command == 'action.devices.commands.SetModes') {
             if (!me.command_only_modes) {
@@ -4733,6 +4718,7 @@ class BaseDevice {
                 }
             }
         }
+
         // Rotation
         else if (command.command == 'action.devices.commands.RotateAbsolute') {
             if (!me.command_only_rotation) {
@@ -4748,6 +4734,7 @@ class BaseDevice {
                 }
             }
         }
+
         // Traits
         else if (command.command == 'action.devices.commands.SetToggles') {
             if (!me.command_only_toggles) {
@@ -4767,6 +4754,7 @@ class BaseDevice {
                 }
             }
         }
+
         // Brightness
         else if (command.command == 'action.devices.commands.BrightnessAbsolute') {
             if (!me.command_only_brightness) {
@@ -4790,6 +4778,7 @@ class BaseDevice {
             executionStates.push('brightness');
             */
         }
+
         // ColorSetting
         else if (command.command == 'action.devices.commands.ColorAbsolute') {
             if (!me.command_only_colorsetting) {
@@ -4814,6 +4803,7 @@ class BaseDevice {
                 }
             }
         }
+
         // Camera
         else if (command.command == 'action.devices.commands.GetCameraStream') {
             if (command.params.hasOwnProperty('SupportedStreamProtocols')) {

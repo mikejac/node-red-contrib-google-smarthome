@@ -1,8 +1,7 @@
 {
 	"device": {
-		"node_name": "Dispositivo Google",
 		"label": {
-			"node_name": "Dispositivo Google",
+			"node_name": "Dispositivo",
 			"name": "Nome",
             "lang": "Lingua",
 			"topic": "Oggetto in uscita",
