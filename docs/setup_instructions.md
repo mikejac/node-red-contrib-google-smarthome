@@ -97,7 +97,7 @@ and makes your devices respond faster. It is not required though. If local fulfi
    ![](images/localexecution_upload.png)
 
 
-4. Upload [this Javascript file](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js/local-execution/app.js)
+4. Upload [this Javascript file](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js)
    for both Node and Chrome.
    ![](images/localexecution_upload_files.png)
 
