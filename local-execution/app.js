@@ -63,9 +63,12 @@ const forwardRequest = async (nodeRedData, targetDeviceId, request) => {
     command.requestId = request.requestId;
     command.deviceId = targetDeviceId;
     command.port = nodeRedData.httpPort;
-    command.path = `${nodeRedData.httpPathPrefix}local_smarthome`;
+    command.path = `${nodeRedData.httpPathPrefix}smarthome`;
     command.data = JSON.stringify(request);
     command.dataType = "application/json";
+    command.additionalHeaders = {
+        'Authorization': `Bearer ${nodeRedData.accessToken}`
+    };
     console.log(request.requestId, "Sending", command);
     const deviceManager = await app.getDeviceManager();
 
