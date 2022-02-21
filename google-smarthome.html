@@ -448,6 +448,17 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="googlesmarthome.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]lgooglesmarthome.placeholder.name">
     </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-set_state_type"><i class="fa fa-tag"></i> <span data-i18n="googlesmarthome.label.set_state_type"></span></label>
+        <select id="node-input-set_state_type" >
+            <option value="no_nodes" data-i18n="googlesmarthome.label.no_nodes"></option>
+            <option value="all_by_id" data-i18n="googlesmarthome.label.all_by_id"></option>
+            <option value="all_by_name" data-i18n="googlesmarthome.label.all_by_name"></option>
+            <option value="filtered_by_id" data-i18n="googlesmarthome.label.filtered_by_id"></option>
+            <option value="filtered_by_name" data-i18n="googlesmarthome.label.filtered_by_name"></option>
+        </select>
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -462,6 +473,9 @@
             name: {
                 value: ""
             },
+            set_state_type: {
+                value: 'filtered_by_id', required: true
+            }
         },
         inputs: 1,
         outputs: 1,

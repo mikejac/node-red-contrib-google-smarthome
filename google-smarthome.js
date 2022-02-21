@@ -256,6 +256,7 @@ module.exports = function (RED) {
 
             let node = this;
             this.enabledebug = config.enabledebug || false;
+            this.set_state_type = config.set_state_type || 'filtered_by_id';
 
             this.clientConn.register(this, 'mgmt', config.name);
 
@@ -328,16 +329,20 @@ module.exports = function (RED) {
 
                     this.clientConn.app.RequestSync();
                 } else if (topic_upper === 'GET_STATE' || topic_upper === 'GETSTATE') {
-                    let onlyPersistent = false;
-                    let useNames = false;
+                    let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(node.set_state_type );
+                    let useNames = ['all_by_name', 'filtered_by_name'].includes(node.set_state_type );
                     let deviceIds = undefined;
                     if (typeof msg.payload === 'boolean') {
                         onlyPersistent = msg.payload;
                     } else if (typeof msg.payload === 'string') {
                         deviceIds = [msg.payload];
                     } else if (typeof msg.payload === 'object') {
-                        onlyPersistent = msg.payload.onlyPersistent || false;
-                        useNames = msg.payload.useNames || false;
+                        if (typeof msg.payload.onlyPersistent === 'boolean') {
+                            onlyPersistent = msg.payload.onlyPersistent;
+                        }
+                        if (typeof msg.payload.useNames === 'boolean') {
+                            useNames = msg.payload.useNames;
+                        }
                         if (typeof msg.payload.devices === 'string') {
                             deviceIds = [msg.payload.devices];
                         } else if (Array.isArray(msg.payload.devices)) {
@@ -363,7 +368,10 @@ module.exports = function (RED) {
         }
 
         sendSetState() {
-            let states = this.clientConn.app.getStates(undefined, true, false, RED);
+            if (this.set_state_type === 'no_nodes') return;
+            let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.set_state_type);
+            let useNames = ['all_by_name', 'filtered_by_name'].includes(this.set_state_type);
+            let states = this.clientConn.app.getStates(undefined, onlyPersistent, useNames, RED);
             if (states) {
                 this.send({
                     topic: 'set_state',
