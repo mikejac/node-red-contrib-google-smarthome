@@ -11,7 +11,7 @@
 - [Nodes in this package](#nodes-in-this-package)
   - [General Information](#general-information)
   - [Google Device node](#--google-device-node-a-general-node-supporting-all-google-device-types-and-all-google-device-traits)
-  - [Other device nodes](#--other-device-nodes)
+  - [Other device nodes](#other-device-nodes)
   - [Management](#--management)
 - [The config node](#the-config-node)
 - [Sending spoken notifications](#sending-spoken-notifications)
