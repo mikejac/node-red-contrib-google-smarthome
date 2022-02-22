@@ -336,6 +336,8 @@ module.exports = function (RED) {
                         onlyPersistent = msg.payload;
                     } else if (typeof msg.payload === 'string') {
                         deviceIds = [msg.payload];
+                    } else if (Array.isArray(msg.payload)) {
+                        deviceIds = msg.payload;
                     } else if (typeof msg.payload === 'object') {
                         if (typeof msg.payload.onlyPersistent === 'boolean') {
                             onlyPersistent = msg.payload.onlyPersistent;
