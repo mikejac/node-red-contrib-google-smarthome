@@ -1,7 +1,7 @@
 {
     "device": {
         "label": {
-            "node_name": "Google Device",
+            "node_name": "Device",
             "name": "Name",
             "topic": "Out topic",
             "device_type": "Device Type",

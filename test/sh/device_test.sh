@@ -66,6 +66,10 @@ test_out() {
     test_json Response "$OUT" "$@"
 }
 
+test_payload_no_report_state() {
+    test_json Payload "$PAYLOAD" "$@"
+}
+
 test_payload() {
     test_json Payload "$PAYLOAD" "$@"
     # if [ "$1" != ".command" ] ; then
@@ -1260,16 +1264,16 @@ test_out ".payload.commands[0].errorCode" '"noAvailableChannel"'
 
 execute $NODE_ID selectChannel 'rai1' 'Rai 1'
 test_out ".payload.commands[0].states.online" true
-test_payload ".currentChannel" '"rai1"'
-test_payload ".currentChannelNumber" '"1"'
+test_payload_no_report_state ".currentChannel" '"rai1"'
+test_payload_no_report_state ".currentChannelNumber" '"1"'
 
 execute_error $NODE_ID selectChannel_number 'No channel number'
 test_out ".payload.commands[0].errorCode" '"noAvailableChannel"'
 
 execute $NODE_ID selectChannel_number '501'
 test_out ".payload.commands[0].states.online" true
-test_payload ".currentChannel" '"rai1_hd"'
-test_payload ".currentChannelNumber" '"501"'
+test_payload_no_report_state ".currentChannel" '"rai1_hd"'
+test_payload_no_report_state ".currentChannelNumber" '"501"'
 
 # ColorSetting 
 echo

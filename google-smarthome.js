@@ -166,24 +166,14 @@ module.exports = function (RED) {
          * functions called by our 'clients'
          *
          */
-        register(client, type, name) {
+        register(client, type) {
             const node = this;
-            node._debug("GoogleSmartHomeNode(): register; type = " + type);
+            node._debug("GoogleSmartHomeNode(): register; type = " + type + ' ' + client.id);
 
             if (type === 'mgmt') {
                 node.mgmtNodes[client.id] = client;
-                return {};
-            }
-
-            let device = client.registerDevice(client, name);
-            let states = device.states;
-
-            if (this.app.registerDevice(client, device)) {
-                node._debug('GoogleSmartHomeNode:register(): successfully registered device ' + type + ' ' + client.id);
-                return JSON.parse(JSON.stringify(states));
             } else {
-                node._debug('GoogleSmartHomeNode:register(): registering device ' + type + ' ' + client.id + ' failed');
-                return {};
+                node.app.registerDevice(client);
             }
         }
 
@@ -213,10 +203,9 @@ module.exports = function (RED) {
             node.app.SendNotifications(client.id, notifications);
         }
 
-        setState(client, state, replaceAll) {
+        reportState(deviceId) {
             const node = this;
-            node._debug("GoogleSmartHomeNode:setState(): state = " + JSON.stringify(state));
-            node.app.SetState(client.id, state, replaceAll);
+            node.app.ReportState(deviceId);
         }
 
         getIdFromName(name) {

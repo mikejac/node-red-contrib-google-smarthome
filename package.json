@@ -21,22 +21,7 @@
     "version": ">=1.3.0",
     "nodes": {
       "google-smarthome": "google-smarthome.js",
-      "device": "devices/device.js",
-      "blind": "devices/blind.js",
-      "camera": "devices/camera.js",
-      "fan": "devices/fan.js",
-      "fireplace": "devices/fireplace.js",
-      "hood": "devices/hood.js",
-      "light": "devices/light.js",
-      "media": "devices/media.js",
-      "outlet": "devices/outlet.js",
-      "scene": "devices/scene.js",
-      "sensor": "devices/sensor.js",
-      "shutter": "devices/shutter.js",
-      "switch": "devices/switch.js",
-      "thermostat": "devices/thermostat.js",
-      "vaccum": "devices/vacuum.js",
-      "window": "devices/window.js"
+      "device": "devices/device.js"
     }
   },
     "engines": {
