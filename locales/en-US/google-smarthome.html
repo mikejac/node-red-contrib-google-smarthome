@@ -102,15 +102,25 @@
             <dd>A topic of <code>request_sync</code> requests Google to sync to learn about new or changed devices. <code>msg.payload</code> is not used for anything.</dd>
         </dl>
 
-        <p>If <code>msg.topic</code> is <code>get_state</code> the node send a message in output with all the Google device state.</p>
+        <p>If <code>msg.topic</code> is <code>get_state</code> or <code>getstate</code> the node send a message in output with the state of the Google devices.</p>
         <dl class="message-properties">
             <dt>topic
                 <span class="property-type">string</span>
             </dt>
-            <dd>A topic of <code>get_state</code> requests to send to the output the state of all Google devices, if the <code>msg.payload</code> is not true, otherwise sends to the output the state of all Google devices with the "Persistent State" enabled.</dd>
+            <dd>A topic of <code>get_state</code> requests to send to the output the state of the Google devices.</dd>
+            <dl class="message-properties">
+                <dt>payload
+                    <span class="property-type">boolean|string|array of string|object</span>
+                </dt>
+                <dd><code>undefined</code> sends to the output the state of all Google devices in an object with key the devices id or name according to the node configuration.</dd>
+                <dd><code>true</code> sends to the output the state of all Google devices with the "Persistent State" enabled in an object with key the devices id or name according to the node configuration.</dd>
+                <dd><code>string</code> sends to the output the state of the Google device with the id or the name specified in the payload in an object with key the device id or name according to the node configuration.</dd>
+                <dd><code>array of strings</code> sends to the output the state of the Google devices with the ids or names specified in the payload in an object with key the device id or name according to the node configuration.</dd>
+                <dd><code>object</code> the object attributes can be <code>onlyPersistent</code>, <code>useNames</code> or <code>devices</code>, sends to the output the state of the Google devices in according to the payload and to the node configuration.</dd>
+            </dl>    
         </dl>
 
-        <p>If <code>msg.topic</code> is <code>set_state</code> the node updates the Google devices states with the states contained on the <code>msg.payload</code>.</p>
+        <p>If <code>msg.topic</code> is <code>set_state</code> or <code>setstate</code> the node updates the Google devices states with the states contained on the <code>msg.payload</code>.</p>
         <dl class="message-properties">
             <dt>topic
                 <span class="property-type">object</span>
