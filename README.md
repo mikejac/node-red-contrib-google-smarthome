@@ -328,6 +328,8 @@ Google Workspace account. If this is the case, you can share access to your smar
   devices too). Then try to control your devices. All actions will now be executed locally or will fail if local
   fulfillment is not available. After you are done testing, revert to normal mode by saying "Hey Google, force default".
 - Set a port for local fulfillment in the management node's config.
+- If you have set a domain on your host, check the configuration. /etc/hostname must only contain the hostname without
+  the domain. /etc/hosts must contain a line for your hostname including the domain.
 - Send an HTTP POST request to `http://192.168.178.25:13002/local_smarthome` (with the IP address of your host and the
   port you chose). E.g. run `curl -X POST http://192.168.178.25:13002/local_smarthome`. It should answer with
   `{"error":"missing inputs"}`. This error message is okay, all other messages indicate connection problems with the
