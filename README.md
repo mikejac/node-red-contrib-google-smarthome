@@ -330,8 +330,8 @@ Google Workspace account. If this is the case, you can share access to your smar
 - Set a port for local fulfillment in the management node's config.
 - If you have set a domain on your host, check the configuration. /etc/hostname must only contain the hostname without
   the domain. /etc/hosts must contain a line for your hostname including the domain.
-- Send an HTTP POST request to `http://192.168.178.25:13002/local_smarthome` (with the IP address of your host and the
-  port you chose). E.g. run `curl -X POST http://192.168.178.25:13002/local_smarthome`. It should answer with
+- Send an HTTP POST request to `http://192.168.178.25:13002/smarthome` (with the IP address of your host and the
+  port you chose). E.g. run `curl -X POST http://192.168.178.25:13002/smarthome`. It should answer with
   `{"error":"missing inputs"}`. This error message is okay, all other messages indicate connection problems with the
   local fulfillment service.
 - Install an app like [mDNS Discovery](https://play.google.com/store/apps/details?id=com.mdns_discovery.app) on your

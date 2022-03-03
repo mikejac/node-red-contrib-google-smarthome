@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "home-12345",
+  "private_key_id": "1234567890123456789012345678901234567890",
+  "private_key": "",
+  "client_email": "node-red-request-sync@home-12345.iam.gserviceaccount.com",
+  "client_id": "123456789012345678901",
+  "auth_uri": "https://accounts.testsm.test.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.testsm.test.com/token",
+  "auth_provider_x509_cert_url": "https://www.testsm.test.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.testsm.test.com/robot/v1/metadata/x509/node-red-request-sync%40home-12345.iam.gserviceaccount.com"
+}
