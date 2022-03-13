@@ -328,8 +328,6 @@ Google Workspace account. If this is the case, you can share access to your smar
   devices too). Then try to control your devices. All actions will now be executed locally or will fail if local
   fulfillment is not available. After you are done testing, revert to normal mode by saying "Hey Google, force default".
 - Set a port for local fulfillment in the management node's config.
-- If you have set a domain on your host, check the configuration. /etc/hostname must only contain the hostname without
-  the domain. /etc/hosts must contain a line for your hostname including the domain.
 - Send an HTTP POST request to `http://192.168.178.25:13002/smarthome` (with the IP address of your host and the
   port you chose). E.g. run `curl -X POST http://192.168.178.25:13002/smarthome`. It should answer with
   `{"error":"missing inputs"}`. This error message is okay, all other messages indicate connection problems with the
@@ -337,6 +335,8 @@ Google Workspace account. If this is the case, you can share access to your smar
 - Install [Service Browser](https://play.google.com/store/apps/details?id=com.druk.servicebrowser) or a similar mDNS
   discovery tool on your phone. It must find a service named "_nodered-google._tcp.". Tap on it, then tap again on
   "nodered" to see the details. Check if the IP address and port are correct.
+- If Service Browser lists the "nodered" service with an additional domain, check the configuration files /etc/hostname
+  and /etc/hosts. Both files must contain the host name without a domain.
 - Open [chrome://inspect](chrome://inspect) in Chrome on your computer (not available on phone) Let it run a while until
   your smart speaker is discovered. Click the `inspect` link. You'll see the console output of your smart speaker. The
   first two lines should read "Ready, App version: x.0" and "node-red-contrib-google-smarthome app.js ready!". If the
