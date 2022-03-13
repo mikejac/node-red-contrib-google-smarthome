@@ -273,7 +273,7 @@ Example flow:
 You can invite other people into your smart home in the app by following
 [these steps](https://support.google.com/googlenest/answer/9155535?hl=en#zippy=%2Cinvite-members-to-a-home).
 
-Inviting people does not work in all cases. For example it won't work if you or the other person has a commercial
+Inviting people does not work in all cases. For example, it won't work if you or the other person has a commercial
 Google Workspace account. If this is the case, you can share access to your smart home project like this:
 
 1. If you are currently using username/password authentication, switch to Google Sign-In by following the instructions
@@ -299,7 +299,7 @@ Google Workspace account. If this is the case, you can share access to your smar
   [Possible errors](https://github.com/mikejac/node-red-contrib-google-smarthome/wiki/Possible-errors).
 - Look at Node-Red's debug panel for error messages.
 - Unlink and relink your account in the Google Home app. Meanwhile, look for errors in the debug panel.
-- If you have problems during account linking, disable "Use Google Login" and try try login with username/password first. You can switch back to Google Login later.
+- If you have problems during account linking, disable "Use Google Login" and try login with username/password first. You can switch back to Google Login later.
 - Restart your flows (using the `Restart Flows` option in the dropdown menu of the deploy button) while the debug panel
   is open to see error messages during initialization.
 - Go to [Actions on Google Console](https://console.actions.google.com), in tab *Test* choose *logs in Google Cloud*.
@@ -315,7 +315,8 @@ Google Workspace account. If this is the case, you can share access to your smar
 - Go to [Actions on Google Console](https://console.actions.google.com), on tab *Test* click *Reset Test*. If this
   doesn't do anything, click the *Settings* button, disable "On device testing", then click "Start testing" to enable it again. This is
   especially important after making changes in the Google Actions Console.
-- Check that your management node and all devices have the same config node selected.
+- Check that you only have one single config node and this config is selected in your management node and all your
+  devices.
 - Google might say that it cannot reach your device if that device did not update its state at least once after creation.
 - Go through the [setup instructions](docs/setup_instructions.md) again and compare your settings to what you see on the
   screenshots
@@ -337,10 +338,10 @@ Google Workspace account. If this is the case, you can share access to your smar
   "nodered" to see the details. Check if the IP address and port are correct.
 - If Service Browser lists the "nodered" service with an additional domain, check the configuration files /etc/hostname
   and /etc/hosts. Both files must contain the host name without a domain.
-- Open [chrome://inspect](chrome://inspect) in Chrome on your computer (not available on phone) Let it run a while until
-  your smart speaker is discovered. Click the `inspect` link. You'll see the console output of your smart speaker. The
-  first two lines should read "Ready, App version: x.0" and "node-red-contrib-google-smarthome app.js ready!". If the
-  local fulfillment connection was successfully established, you should see lines starting with "IDENTIFY" and
+- Open [chrome://inspect](chrome://inspect) in Chrome on your computer (not available on phone). Let it run for a while
+  until your smart speaker is discovered. Click the `inspect` link. You'll see the console output of your smart speaker.
+  The first two lines should read "Ready, App version: x.y" and "node-red-contrib-google-smarthome app.js ready!". If
+  the local fulfillment connection was successfully established, you should see lines starting with "IDENTIFY" and
   "REACHABLE_DEVICES" as well as lots of other lines. Yellow warning lines are okay, but you should not see red error
   lines.
 - The first lines in  the chrome://inspect console will show the version number of the app.js script. Compare the
