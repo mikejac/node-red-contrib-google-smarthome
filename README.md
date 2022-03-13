@@ -334,9 +334,9 @@ Google Workspace account. If this is the case, you can share access to your smar
   port you chose). E.g. run `curl -X POST http://192.168.178.25:13002/smarthome`. It should answer with
   `{"error":"missing inputs"}`. This error message is okay, all other messages indicate connection problems with the
   local fulfillment service.
-- Install an app like [mDNS Discovery](https://play.google.com/store/apps/details?id=com.mdns_discovery.app) on your
-  phone. Let it search for "nodered-google". It should find exactly one device, with the IP address of your host and the
-  port you specified in your configuration.
+- Install [Service Browser](https://play.google.com/store/apps/details?id=com.druk.servicebrowser) or a similar mDNS
+  discovery tool on your phone. It must find a service named "_nodered-google._tcp.". Tap on it, then tap again on
+  "nodered" to see the details. Check if the IP address and port are correct.
 - Open [chrome://inspect](chrome://inspect) in Chrome on your computer (not available on phone) Let it run a while until
   your smart speaker is discovered. Click the `inspect` link. You'll see the console output of your smart speaker. The
   first two lines should read "Ready, App version: x.0" and "node-red-contrib-google-smarthome app.js ready!". If the
