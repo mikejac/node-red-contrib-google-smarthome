@@ -2047,6 +2047,13 @@ module.exports = function (RED) {
                         });
                     }
                 }
+                if (me.trait.lockunlock) {
+                    if (me.states.isJammed) {
+                        text += ' JAMMED';
+                    } else if (typeof me.states.isLocked === 'boolean') {
+                        text += me.states.isLocked ? ' LOCKED' : ' UNLOCKED';
+                    }
+                }
             } else {
                 shape = 'ring';
                 text = "offline";
