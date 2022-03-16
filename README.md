@@ -299,6 +299,7 @@ Google Workspace account. If this is the case, you can share access to your smar
   [Possible errors](https://github.com/mikejac/node-red-contrib-google-smarthome/wiki/Possible-errors).
 - Look at Node-Red's debug panel for error messages.
 - Unlink and relink your account in the Google Home app. Meanwhile, look for errors in the debug panel.
+- If you have problems during account linking, disable WiFi on your phone to use the cellular network only.
 - If you have problems during account linking, disable "Use Google Login" and try login with username/password first. You can switch back to Google Login later.
 - Restart your flows (using the `Restart Flows` option in the dropdown menu of the deploy button) while the debug panel
   is open to see error messages during initialization.
