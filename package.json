@@ -43,7 +43,7 @@
     "morgan": "^1.10.x",
     "cors": "^2.8.x",
     "google-auth-library": "^7.10.1",
-    "googleapis": "^99.0.x",
+    "googleapis": "^100.0.x",
     "uuid-token-generator": "^1.0.x",
     "util": "^0.12.x",
     "path": "^0.12.x",
