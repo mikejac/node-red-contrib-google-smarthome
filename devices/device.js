@@ -52,6 +52,7 @@ module.exports = function (RED) {
             this.device = {};
             this.client = config.client;
             this.name = config.name || config.id;
+            this.nicknames = config.nicknames;
             this.clientConn = RED.nodes.getNode(this.client);
             this._debug(".constructor config " + JSON.stringify(config));
 
@@ -757,6 +758,7 @@ module.exports = function (RED) {
 
             const default_name = RED._('device.device_type.' + this.device_type);
             const default_name_type = default_name.replace(/[_ ()/]+/g, '-').toLowerCase();
+            const nicknames = this.nicknames ? this.nicknames.split(',') : [];
             this.states = {
                 online: true
             };
@@ -768,7 +770,8 @@ module.exports = function (RED) {
                     traits: this.getTraits(this),
                     name: {
                         defaultNames: ["Node-RED " + default_name],
-                        name: this.name
+                        name: this.name,
+                        nicknames: nicknames,
                     },
                     roomHint: this.room_hint,
                     willReportState: true,

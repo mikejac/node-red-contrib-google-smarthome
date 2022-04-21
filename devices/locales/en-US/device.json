@@ -3,6 +3,7 @@
         "label": {
             "node_name": "Device",
             "name": "Name",
+            "nicknames": "Nicknames",
             "topic": "Out topic",
             "device_type": "Device Type",
             "lang": "Language",
@@ -236,6 +237,7 @@
         },
         "placeholder": {
             "name": "Name",
+            "nicknames": "Nicknames",
             "topic": "Outgoing topic",
             "volume_max_level": "Volume max level",
             "volume_can_mute_and_unmute": "Can mute and unmute",

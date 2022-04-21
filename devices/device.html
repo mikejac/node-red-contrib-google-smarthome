@@ -44,6 +44,11 @@
     </div>
 
     <div class="form-row">
+        <label style="width:auto" for="node-input-nicknames"><i class="fa fa-tag"></i> <span data-i18n="device.label.nicknames"></span></label>
+        <input type="text" id="node-input-nicknames" data-i18n="[placeholder]device.placeholder.nicknames">
+    </div>
+
+    <div class="form-row">
         <b>Node-RED Settings</b>
     </div>
 
@@ -2012,6 +2017,9 @@
             },
             name: {
                 value: "", required: true
+            },
+            nicknames: {
+                value: "", required: false
             },
             topic: {
                 value: "", required: false
