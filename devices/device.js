@@ -758,7 +758,9 @@ module.exports = function (RED) {
 
             const default_name = RED._('device.device_type.' + this.device_type);
             const default_name_type = default_name.replace(/[_ ()/]+/g, '-').toLowerCase();
-            const nicknames = this.nicknames ? this.nicknames.split(',') : [];
+            // Google uses first nickname as the "real" name of the device. Therefore, report device name as the first nickname
+            const nicknames = this.nicknames ? [this.name].concat(this.nicknames.split(',')) : [];
+
             this.states = {
                 online: true
             };
