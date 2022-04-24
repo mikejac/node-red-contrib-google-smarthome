@@ -1,9 +1,5 @@
 # Setup Instructions
 
-This is our new setup guide. It wil eventually replace the setup instructions in the Readme. Currently it is still a
-work in progress. Feel free to report issues or contribute!
-
-
 ## Prerequisites
 
 - This tutorial assumes your service will be running on https://example.com:3001. Adjust domain, port and paths
