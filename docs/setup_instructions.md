@@ -207,6 +207,8 @@ Now we will install the module in Node-RED and configure it.
       This tutorial assumes a simple path setup, so leave it empty.
     * Use external SSL offload: If enabled, the smarthome service will use HTTP instead of HTTPS. Check this box if you
       want to do SSL termination on a reverse proxy like Caddy or Traefik.
+    * Local fulfillment port: A port number to use for local fulfillment. Choose any port you want. This port is used
+      for internal communication only and must not be forwarded externally.
     * Public and Private Key: Path to public and private key files of your SSL certificate (if you do not use external
       SSL decryption). Remember that you need to restart Node-RED after the certificates are renewed.
     * Access Token Duration, Report Interval, Request sync delay, set_state message delay: Usually you don't need to

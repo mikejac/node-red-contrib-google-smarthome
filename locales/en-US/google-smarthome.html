@@ -36,6 +36,9 @@
           path of "foo" this changes to https://example.com:3001/foo/smarthome. Same for URLs `/oauth` and `/token`.<br>
     <code>Port</code>: TCP port of your choosing for incoming connections from Google. Must match what you entered in the <b>Actions on Google</b> project. If empty, it will use the same port as Node-RED.<br>
     <code>External SSL offload</code>: If enabled, the smarthome service will use HTTP instead of HTTPS. Check if you want to do SSL termination on a reverse proxy.
+    <code>Local fulfillment port</code>: A port number to use for local fulfillment. If empty, it will use the same port as Node-RED.
+                            If you use Node-RED's built-in HTTPS encryption or you have a httpAdminRoot set, you need to
+                            set a port. Don't create a forwarding rule for this port!
     <code>Public Key</code>: Path (absolute or relative to the Node-RED HOME folder) to public key file, e.g. `fullchain.pem` from Let's Encrypt.<br>
     <code>Private Key</code>: Path (absolute or relative to the Node-RED HOME folder) to private key file, e.g. `privkey.pem` from Let's Encrypt.<br>
     <code>Local Fulfillment Port</code>: TCP port of your choosing for incoming connections from Google for local fulfillment. If you connect to Node-RED over https you must set this port, otherwise it will use the same port as Node-RED.<br>
