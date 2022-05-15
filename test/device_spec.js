@@ -25,6 +25,10 @@ helper.init(require.resolve('node-red'));
 
 describe('Device Node', function () {
   beforeEach(function (done) {
+    // Ensure Node-RED userDir is set
+    if(typeof helper.settings().userDir == 'undefined')
+      helper.settings({ userDir: '/tmp' });
+    
     helper.startServer(done);
   });
 
