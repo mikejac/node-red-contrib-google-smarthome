@@ -173,7 +173,7 @@ module.exports = function (RED) {
             if (type === 'mgmt') {
                 node.mgmtNodes[client.id] = client;
             } else {
-                node.app.registerDevice(client);
+                node.app.devices.registerDevice(client);
             }
         }
 
@@ -193,29 +193,29 @@ module.exports = function (RED) {
             if (type === 'mgmt' && node.mgmtNodes[client.id]) {
                 delete node.mgmtNodes[client.id];
             } else {
-                node.app.DeleteDevice(client);
+                node.app.devices.DeleteDevice(client);
             }
         }
 
         sendNotifications(client, notifications) {
             const node = this;
             node._debug("GoogleSmartHomeNode:sendNotifications(): notifications = " + JSON.stringify(notifications));
-            node.app.SendNotifications(client.id, notifications);
+            node.app.devices.SendNotifications(client.id, notifications);
         }
 
         reportState(deviceId) {
             const node = this;
-            node.app.ReportState(deviceId);
+            node.app.devices.ReportState(deviceId);
         }
 
         getIdFromName(name) {
             const node = this;
-            return node.app.GetIdFromName(name);
+            return node.app.devices.GetIdFromName(name);
         }
 
         getProperties(deviceIds) {
             const node = this;
-            return node.app.getProperties(deviceIds);
+            return node.app.devices.getProperties(deviceIds);
         }
     }
 
@@ -351,7 +351,7 @@ module.exports = function (RED) {
                             deviceIds = msg.payload.devices;
                         }
                     }
-                    let states = this.clientConn.app.getStates(deviceIds, onlyPersistent, useNames, RED);
+                    let states = this.clientConn.app.devices.getStates(deviceIds, onlyPersistent, useNames, RED);
                     if (states) {
                         this.send({
                             topic: topic,
@@ -360,7 +360,7 @@ module.exports = function (RED) {
                     }
                 } else if (topic_upper === 'SET_STATE' || topic_upper === 'SETSTATE') {
                     if (typeof msg.payload === 'object') {
-                        this.clientConn.app.setStates(msg.payload);
+                        this.clientConn.app.devices.setStates(msg.payload);
                     }
                 }
             } catch (err) {
@@ -373,7 +373,7 @@ module.exports = function (RED) {
             if (this.set_state_type === 'no_nodes') return;
             let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.set_state_type);
             let useNames = ['all_by_name', 'filtered_by_name'].includes(this.set_state_type);
-            let states = this.clientConn.app.getStates(undefined, onlyPersistent, useNames, RED);
+            let states = this.clientConn.app.devices.getStates(undefined, onlyPersistent, useNames, RED);
             if (states) {
                 this.send({
                     topic: 'set_state',
