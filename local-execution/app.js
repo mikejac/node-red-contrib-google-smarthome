@@ -1,6 +1,6 @@
 "use strict";
 
-const version = '2.1';
+const VERSION = '2.2';
 
 /// <reference types="@google/local-home-sdk" />
 /*
@@ -178,11 +178,12 @@ app
     // Undocumented in TypeScript
     // Suggested by Googler, seems to work :shrug:
     // https://github.com/actions-on-google/smart-home-local/issues/1#issuecomment-515706997
+    // June '22: Disabled because it breaks local execution
     // @ts-ignore
-    .onProxySelected((req) => {
-        console.log("ProxySelected", req);
-        return createResponse(req, {});
-    })
+    //.onProxySelected((req) => {
+    //    console.log("ProxySelected", req);
+    //    return createResponse(req, {});
+    //})
     // @ts-ignore
     .onIndicate((req) => console.log("Indicate", req))
     // @ts-ignore
