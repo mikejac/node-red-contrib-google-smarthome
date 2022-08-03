@@ -169,7 +169,7 @@ const queryHandler = async (request) => {
         throw err;
     }
 };
-const app = new App(version);
+const app = new App(VERSION);
 app
     .onIdentify(identifyHandler)
     .onReachableDevices(reachableDevicesHandler)
