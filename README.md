@@ -1,7 +1,3 @@
-**Breaking change:** On upgrade to v0.1.0 you have to re-enter your credentials. See the [release notes](https://github.com/mikejac/node-red-contrib-google-smarthome/releases/tag/v0.1.0).
-
-**Deprecation note:** As of v0.2.0 all device nodes except the Google Device are deprecated and will be removed later. Please migrate to the Google Device node.
-
 ## Table of Contents
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
