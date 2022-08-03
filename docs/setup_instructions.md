@@ -81,24 +81,24 @@ Local fulfillment establishes direct communication between your smart speaker an
 and makes your devices respond faster. It is not required though. If local fulfillment is not setup or is not available, Google will fall back to the
 "normal" mode.
 
-1. Open the [Actions on Google Console](https://console.actions.google.com/) and select your project.
+1. Open the [Actions on Google Console](https://console.actions.google.com/) and select your project.\
    <kbd>![](images/actionsconsole_check_project.png)</kbd>
 
 
-2. Click `Develop` on the top of the page, then click `Actions` located in the hamburger menu on the top left.
+2. Click `Develop` on the top of the page, then click `Actions` located in the hamburger menu on the top left.\
    <kbd>![](images/actionsconsole_tab_actions.png)</kbd>
 
 
-3. Click the button `Upload JavaScript files`.
+3. Click the button `Upload JavaScript files`.\
    <kbd>![](images/localexecution_upload.png)</kbd>
 
 
 4. Upload [this Javascript file](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js)
-   for both Node and Chrome.
+   for both Node and Chrome.\
    <kbd>![](images/localexecution_upload_files.png)</kbd>
 
 
-5. Tick the `Support local query` checkbox.
+5. Tick the `Support local query` checkbox.\
    <kbd>![](images/localexecution_localquery.png)</kbd>
 
 
@@ -108,7 +108,7 @@ and makes your devices respond faster. It is not required though. If local fulfi
     3. set mDNS service name to `_nodered-google._tcp.local`
 
 
-7. The complete local fulfillment form should look like this.
+7. The complete local fulfillment form should look like this.\
    <kbd>![](images/localexecution_form.png)</kbd>
 
 
