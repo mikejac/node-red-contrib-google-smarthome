@@ -1,6 +1,6 @@
 "use strict";
 
-const VERSION = '2.2';
+const VERSION = '2.3';
 
 /// <reference types="@google/local-home-sdk" />
 /*
