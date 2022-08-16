@@ -48,4 +48,9 @@ This tutorial assumes your service is already set up and working.
 9. Restart your smart speaker and Node-RED.
 
 
+10. Now control your device. If local fulfillment is working, you will see a ring icon instead of the usual filled
+    circle.\
+    <kbd>![](images/local_fulfillment/localexecution_ring.png)</kbd>
+    
+
 Local fulfillment can be tricky to set up. If you have problems, look at the troubleshooting section in the readme.
