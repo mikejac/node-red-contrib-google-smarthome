@@ -75,46 +75,6 @@ First we will register a new Smart Home project in the Actions Console.
 **Note:** You can't test your project in the Action Console's simulator. It only works on real devices.
 
 
-## Enable Local Fulfillment (optional)
-
-Local fulfillment establishes direct communication between your smart speaker and Node-RED. This reduces latencies
-and makes your devices respond faster. It is not required though. If local fulfillment is not setup or is not available, Google will fall back to the
-"normal" mode.
-
-1. Open the [Actions on Google Console](https://console.actions.google.com/) and select your project.\
-   <kbd>![](images/setup_instructions/actionsconsole_check_project.png)</kbd>
-
-
-2. Click `Develop` on the top of the page, then click `Actions` located in the hamburger menu on the top left.\
-   <kbd>![](images/setup_instructions/actionsconsole_tab_actions.png)</kbd>
-
-
-3. Click the button `Upload JavaScript files`.\
-   <kbd>![](images/setup_instructions/localexecution_upload.png)</kbd>
-
-
-4. Upload [this Javascript file](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js)
-   for both Node and Chrome.\
-   <kbd>![](images/setup_instructions/localexecution_upload_files.png)</kbd>
-
-
-5. Tick the `Support local query` checkbox.\
-   <kbd>![](images/setup_instructions/localexecution_localquery.png)</kbd>
-
-
-6. Add device scan configuration:
-    1. Click `+ New scan config`
-    2. Select `MDNS`
-    3. set mDNS service name to `_nodered-google._tcp.local`
-
-
-7. The complete local fulfillment form should look like this.\
-   <kbd>![](images/setup_instructions/localexecution_form.png)</kbd>
-
-
-8. `Save` your changes.
-
-
 ## Enable HomeGraph API
 
 Next we will enable the HomeGraph API and download the credentials. This API is used to report the state of your devices
@@ -268,19 +228,6 @@ or a pull request.
 9. Congratulations! Your project is successfully set up. You can now start adding devices.
 
 
-## Finalizing local fulfillment
-
-If you enabled Local fulfillment earlier, you need to:
-- restart Node-RED
-- wait 30 minutes or restart your Google device
-
-You can test if local fulfillment was successfully enabled by saying "Hey Google, force local" (works on non-english
-devices too). Then try to control your devices. All actions will now be executed locally or will fail if local
-fulfillment is not available. After you are done testing, revert to normal mode by saying "Hey Google, force default".
-
-Local fulfillment can be tricky to set up. If you have problems, look at the troubleshooting section in the readme.
-
-
 ## Integrating Google Sign-In (optional)
 
 Your project was created using username/password based authentication. You can switch to authentication using
@@ -351,3 +298,9 @@ your username and password again. For regular users it is not necessary though.
 12. Re-link your account as described in the section [Setup Account Linking](#setup_account_linking). Instead of
     username and password you will have the button "Sign in with Google".\
     <kbd>![](images/setup_instructions/googlesignin_phone.png)</kbd>
+
+---
+
+## Next steps
+
+- You can enable [local fulfillment](local_fulfillment.md) for faster response times.
