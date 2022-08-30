@@ -2997,6 +2997,9 @@ module.exports = function (RED) {
                     case Formats.STRING:
                         return value.toString();
 
+                    case Formats.INT:
+                        return parseInt(value);
+
                     case Formats.DATETIME:
                         let dval = new Date(value);
                         return dval.toISOString();
