@@ -62,7 +62,7 @@ as you don't have to enter your username and password again. For regular users i
     and deploy your flows.\
     <kbd>![](images/google_signin/googlesignin_nodered.png)</kbd>
 
-
-12. Re-link your account as described in the section [Setup Account Linking](setup_instructions.md#setup_account_linking). Instead of
-    username and password you will have the button "Sign in with Google".\
+12. Re-link your account as described in the section [Setup Account Linking](setup_instructions.md#setup_account_linking). In the Google Home app Click on your linked services and select "reconnect account". Here you will see a screen that asks if you want to linked your account, click on "Continue". Instead of username and password you will have the button "Sign in with Google".\
+   <kbd>![](images/google_signin/googlesignin_reconnect_phone.png)</kbd>
+\
     <kbd>![](images/google_signin/googlesignin_phone.png)</kbd>
