@@ -195,9 +195,6 @@ Now we will install the module in Node-RED and configure it.
 
 Finally, we will link the Google Home App to the Node-RED service.
 
-Note: Screenshots were taken on a german phone. If you can provide screenshots on an english phone, please open an issue
-or a pull request.
-
 1. Open the Google Home App on a device logged into the same account used to create the project in the Actions Console.
 
 
