@@ -2108,7 +2108,7 @@ module.exports = function (RED) {
             // Copy the exe_result params to the payload
             if (exe_result.params) {
                 Object.keys(exe_result.params).forEach(function (key) {
-                    if (!msg.payload.hasOwnProperty(key) && !exe_result.executionStates.includes(key)) {
+                    if (!Object.prototype.hasOwnProperty.call(msg.payload, key) && !exe_result.executionStates.includes(key)) {
                         msg.payload[key] = exe_result.params[key];
                     }
                 });
@@ -2116,7 +2116,7 @@ module.exports = function (RED) {
 
             // Copy the command original params to the payload
             /*Object.keys(original_params).forEach(function (key) {
-                if (!msg.payload.hasOwnProperty(key)) {
+                if (!Object.prototype.hasOwnProperty.call(msg.payload, key)) {
                    msg.payload[key] = original_params[key];
                 }
             });*/
@@ -2363,7 +2363,7 @@ module.exports = function (RED) {
                     const auth_token = me.formatValue('cameraStreamAuthToken', msg.payload, Formats.STRING, '');
                     if (auth_token != me.auth_token) {
                         me.auth_token = auth_token;
-                        if (me.device.properties.attributes.hasOwnProperty("cameraStreamNeedAuthToken")) {
+                        if (Object.prototype.hasOwnProperty.call(me.device.properties.attributes, "cameraStreamNeedAuthToken")) {
                             let cameraStreamNeedAuthToken = me.device.properties.attributes.cameraStreamNeedAuthToken;
                             if (cameraStreamNeedAuthToken != (auth_token.length > 0)) {
                                 me.device.properties.attributes['cameraStreamNeedAuthToken'] = auth_token.length > 0;
@@ -2871,7 +2871,7 @@ module.exports = function (RED) {
             me._debug("CCHI updateState state_types " + JSON.stringify(state_types));
             me._debug('updateState current state ' + JSON.stringify(to_state));
             Object.keys(state_types).forEach(key => {
-                if (from_states.hasOwnProperty(key)) {
+                if (Object.prototype.hasOwnProperty.call(from_states, key)) {
                     // console.log("CCHI found key " + key);
                     let o_modified = me.setState(key, from_states[key], to_state, state_types[key]);
                     if (o_modified) {
@@ -3027,7 +3027,7 @@ module.exports = function (RED) {
                         }
                 }
             } else if (typeof value === 'object') {
-                if (value.hasOwnProperty(key)) {
+                if (Object.prototype.hasOwnProperty.call(value, key)) {
                     return this.formatValue(format, key, value[key]);
                 } else {
                     throw new Error('Type of ' + key + ' is object but it does not have matching property');
@@ -3057,7 +3057,7 @@ module.exports = function (RED) {
             if (value == null) {
                 if (state_type.type & Formats.MANDATORY) {
                     me.error("key " + key + " is mandatory.");
-                } else if (state.hasOwnProperty(key)) {
+                } else if (Object.prototype.hasOwnProperty.call(state, key)) {
                     delete state[key];
                     differs = key;
                 }
@@ -3895,7 +3895,7 @@ module.exports = function (RED) {
             if ((command.command == 'action.devices.commands.appInstall') ||
                 (command.command == 'action.devices.commands.appSearch') ||
                 (command.command == 'action.devices.commands.appSelect')) {
-                if (command.params.hasOwnProperty('newApplication')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'newApplication')) {
                     const newApplication = command.params['newApplication'];
                     let application_index = -1;
                     this.available_applications.forEach(function (application, index) {
@@ -3921,7 +3921,7 @@ module.exports = function (RED) {
                         params['currentApplication'] = newApplication;
                     }
                 }
-                if (command.params.hasOwnProperty('newApplicationName')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'newApplicationName')) {
                     const newApplicationName = command.params['newApplicationName'];
                     let application_key = '';
                     me.available_applications.forEach(function (application, index) {
@@ -3972,7 +3972,7 @@ module.exports = function (RED) {
             // Cook
             else if (command.command == 'action.devices.commands.Cook') {
                 //const start = command.params['start'];
-                if (command.params.hasOwnProperty('cookingMode')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'cookingMode')) {
                     const cooking_mode = command.params['cookingMode'];
                     if (me.supported_cooking_modes.includes(cooking_mode)) {
                         params['currentCookingMode'] = cooking_mode;
@@ -3986,7 +3986,7 @@ module.exports = function (RED) {
                     }
                 }
                 let selected_preset = undefined;
-                if (command.params.hasOwnProperty('foodPreset')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'foodPreset')) {
                     const food_preset_name = command.params['foodPreset'];
                     me.food_presets.forEach(function (food_preset) {
                         if (food_preset.food_preset_name === food_preset_name) {
@@ -4004,12 +4004,12 @@ module.exports = function (RED) {
                         };
                     }
                 }
-                if (command.params.hasOwnProperty('quantity')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'quantity')) {
                     const quantity = command.params['quantity'];
                     params['currentFoodQuantity'] = quantity;
                     executionStates.push('currentFoodQuantity');
                 }
-                if (command.params.hasOwnProperty('unit')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'unit')) {
                     const unit = command.params['unit'];
                     if (selected_preset !== undefined) {
                         if (!selected_preset.supported_units.includes(unit)) {
@@ -4109,9 +4109,9 @@ module.exports = function (RED) {
 
             // ArmLevel
             else if (command.command == 'action.devices.commands.ArmDisarm') {
-                if (command.params.hasOwnProperty('arm')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'arm')) {
                     let new_armLevel = "";
-                    if (command.params.hasOwnProperty('armLevel')) {
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'armLevel')) {
                         const armLevel = command.params['armLevel'];
                         this.available_arm_levels.forEach(function (al) {
                             if (al.level_name === armLevel) {
@@ -4139,7 +4139,7 @@ module.exports = function (RED) {
             // FanSpeed
             else if (command.command == 'action.devices.commands.SetFanSpeed') {
                 if (!me.command_only_fanspeed) {
-                    if (command.params.hasOwnProperty('fanSpeed')) {
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'fanSpeed')) {
                         const fanSpeed = command.params['fanSpeed'];
                         let new_fanspeed = '';
                         this.available_fan_speeds.forEach(function (fanspeed) {
@@ -4156,20 +4156,20 @@ module.exports = function (RED) {
                         params['currentFanSpeedSetting'] = fanSpeed;
                         executionStates.push('currentFanSpeedSetting');
                     }
-                    if (command.params.hasOwnProperty('fanSpeedPercent')) {
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'fanSpeedPercent')) {
                         const fanSpeedPercent = command.params['fanSpeedPercent'];
                         params['currentFanSpeedPercent'] = fanSpeedPercent;
                         executionStates.push('currentFanSpeedPercent');
                     }
                 }
             }
-            else if (command.command == 'action.devices.commands.SetFanSpeedRelative') {
-                /*if (command.params.hasOwnProperty('fanSpeedRelativeWeight')) {
+            else if (command.command === 'action.devices.commands.SetFanSpeedRelative') {
+                /*if (Object.prototype.hasOwnProperty.call(command.params, 'fanSpeedRelativeWeight')) {
                     const fanSpeedRelativeWeight = command.params['fanSpeedRelativeWeight'];
                     params['currentFanSpeedPercent'] = me.states['currentFanSpeedPercent'] + fanSpeedRelativeWeight;
                     executionStates.push('currentFanSpeedPercent');
                 }
-                if (command.params.hasOwnProperty('fanSpeedRelativePercent')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'fanSpeedRelativePercent')) {
                     const fanSpeedRelativePercent = command.params['fanSpeedRelativePercent'];
                     params['currentFanSpeedPercent'] = Math.round(me.states['currentFanSpeedPercent'] * (1 + fanSpeedRelativePercent / 100));
                     executionStates.push('currentFanSpeedPercent');
@@ -4192,12 +4192,12 @@ module.exports = function (RED) {
                 }
             }
             else if (command.command == 'action.devices.commands.HumidityRelative') {
-                /*if (command.params.hasOwnProperty('humidityRelativePercent')) {
+                /*if (Object.prototype.hasOwnProperty.call(command.params, 'humidityRelativePercent')) {
                     const humidityRelativePercent = command.params['humidityRelativePercent'];
                     params['humiditySetpointPercent'] = Math.round(me.states['humiditySetpointPercent'] * (1 + humidityRelativePercent / 100));
                     executionStates.push('humiditySetpointPercent');
                 }
-                if (command.params.hasOwnProperty('humidityRelativeWeight')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'humidityRelativeWeight')) {
                     const humidityRelativeWeight = command.params['humidityRelativeWeight'];
                     params['humiditySetpointPercent'] = me.states['humiditySetpointPercent'] + humidityRelativeWeight;
                     executionStates.push('humiditySetpointPercent');
@@ -4242,7 +4242,7 @@ module.exports = function (RED) {
             // Inputs
             else if (command.command == 'action.devices.commands.SetInput') {
                 if (!me.command_only_input_selector) {
-                    if (command.params.hasOwnProperty('newInput')) {
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'newInput')) {
                         const newInput = command.params['newInput'];
                         let current_input_index = -1;
                         this.available_inputs.forEach(function (input_element, index) {
@@ -4286,7 +4286,7 @@ module.exports = function (RED) {
             // On/Off
             else if (command.command == 'action.devices.commands.OnOff') {
                 if (!me.command_only_onoff) {
-                    if (command.params.hasOwnProperty('on')) {
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'on')) {
                         const on_param = command.params['on'];
                         executionStates.push('on');
                         params['on'] = on_param;
@@ -4298,10 +4298,10 @@ module.exports = function (RED) {
             else if (command.command == 'action.devices.commands.OpenClose') {
                 if (!me.command_only_openclose) {
                     const open_percent = command.params['openPercent'] || 0;
-                    if (me.states.hasOwnProperty('openPercent')) {
+                    if (Object.prototype.hasOwnProperty.call(me.states, 'openPercent')) {
                         executionStates.push('openPercent');
                         params['openPercent'] = open_percent;
-                    } else if (command.params.hasOwnProperty('openDirection')) {
+                    } else if (Object.prototype.hasOwnProperty.call(command.params, 'openDirection')) {
                         const open_direction = command.params['openDirection'];
                         let new_open_directions = [];
                         me.states.openState.forEach(element => {
@@ -4317,10 +4317,10 @@ module.exports = function (RED) {
             }
             else if (command.command == 'action.devices.commands.OpenCloseRelative') {
                 /*const open_percent = command.params['openRelativePercent'] || 0;
-                if (me.states.hasOwnProperty('openPercent')) {
+                if (Object.prototype.hasOwnProperty.call(me.states, 'openPercent')) {
                     executionStates.push('openPercent');
                     params['openPercent'] = open_percent;
-                } else if (command.params.hasOwnProperty('openDirection')) {
+                } else if (Object.prototype.hasOwnProperty.call(command.params, 'openDirection')) {
                     const open_direction = command.params['openDirection'];
                     let new_open_directions = [];
                     me.states.openState.forEach(element => {
@@ -4338,9 +4338,9 @@ module.exports = function (RED) {
             else if (command.command == 'action.devices.commands.StartStop') {
                 const start = command.params['start'] || false;
                 let zones = undefined;
-                if (command.params.hasOwnProperty('zone')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'zone')) {
                     zones = [command.params['zone']];
-                } else if (command.params.hasOwnProperty('multipleZones')) {
+                } else if (Object.prototype.hasOwnProperty.call(command.params, 'multipleZones')) {
                     zones = command.params['multipleZones'];
                 }
                 params['isRunning'] = start;
@@ -4388,35 +4388,35 @@ module.exports = function (RED) {
                 executionStates.push('playbackState');
             }
             else if (command.command == 'action.devices.commands.mediaSeekRelative') {
-                if (command.params.hasOwnProperty('relativePositionMs')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'relativePositionMs')) {
                     //const relative_position_ms = command.params['relativePositionMs'];
                     params['playbackState'] = 'PLAYING';
                     executionStates.push('playbackState');
                 }
             }
             else if (command.command == 'action.devices.commands.mediaSeekToPosition') {
-                if (command.params.hasOwnProperty('absPositionMs')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'absPositionMs')) {
                     //const abs_position_ms = command.params['absPositionMs'];
                     params['playbackState'] = 'PLAYING';
                     executionStates.push('playbackState');
                 }
             }
             else if (command.command == 'action.devices.commands.mediaRepeatMode') {
-                if (command.params.hasOwnProperty('isOn')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'isOn')) {
                     //const is_on = command.params['isOn'];
                 }
-                if (command.params.hasOwnProperty('isSingle')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'isSingle')) {
                     //const is_single = command.params['isSingle'];
                 }
             }
             else if (command.command == 'action.devices.commands.mediaShuffle') {
             }
             else if (command.command == 'action.devices.commands.mediaClosedCaptioningOn') {
-                if (command.params.hasOwnProperty('closedCaptioningLanguage')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'closedCaptioningLanguage')) {
                     //const closedCaptioningLanguage = command.params['closedCaptioningLanguage'];
                     params['playbackState'] = me.states['playbackState'];
                 }
-                if (command.params.hasOwnProperty('userQueryLanguage')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'userQueryLanguage')) {
                     //const userQueryLanguage = command.params['userQueryLanguage'];
                     params['playbackState'] = me.states['playbackState'];
                 }
@@ -4471,12 +4471,12 @@ module.exports = function (RED) {
                 }
             }
             else if (command.command == 'action.devices.commands.TemperatureRelative') {
-                /*if (command.params.hasOwnProperty('thermostatTemperatureRelativeDegree')) {
+                /*if (Object.prototype.hasOwnProperty.call(command.params, 'thermostatTemperatureRelativeDegree')) {
                     const thermostatTemperatureRelativeDegree = command.params['thermostatTemperatureRelativeDegree'];
                     params['thermostatTemperatureSetpoint'] = me.states['thermostatTemperatureSetpoint'] + thermostatTemperatureRelativeDegree;
                     executionStates.push('thermostatTemperatureSetpoint');
                 }
-                if (command.params.hasOwnProperty('thermostatTemperatureRelativeWeight')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'thermostatTemperatureRelativeWeight')) {
                     const thermostatTemperatureRelativeWeight = command.params['thermostatTemperatureRelativeWeight'];
                     me._debug("C CHI thermostatTemperatureRelativeWeight " + thermostatTemperatureRelativeWeight);
                     me._debug("C CHI thermostatTemperatureSetpoint " + me.states['thermostatTemperatureSetpoint']);
@@ -4570,7 +4570,7 @@ module.exports = function (RED) {
             // Volume
             else if (command.command == 'action.devices.commands.mute') {
                 if (!me.command_only_volume) {
-                    if (command.params.hasOwnProperty('mute')) {
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'mute')) {
                         const mute = command.params['mute'];
                         params['isMuted'] = mute;
                         executionStates.push('isMuted', 'currentVolume');
@@ -4579,7 +4579,7 @@ module.exports = function (RED) {
             }
             else if (command.command == 'action.devices.commands.setVolume') {
                 if (!me.command_only_volume) {
-                    if (command.params.hasOwnProperty('volumeLevel')) {
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'volumeLevel')) {
                         let volumeLevel = command.params['volumeLevel'];
                         if (volumeLevel > this.volumeMaxLevel) {
                             volumeLevel = this.volumeMaxLevel;
@@ -4592,7 +4592,7 @@ module.exports = function (RED) {
             }
             else if (command.command == 'action.devices.commands.volumeRelative') {
                 if (!me.command_only_volume) {
-                    if (command.params.hasOwnProperty('relativeSteps')) {
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'relativeSteps')) {
                         const relativeSteps = command.params['relativeSteps'];
                         let current_volume = me.states['currentVolume'];
                         if (current_volume >= this.volumeMaxLevel && relativeSteps > 0) {
@@ -4620,7 +4620,7 @@ module.exports = function (RED) {
 
             // Channels
             else if (command.command == 'action.devices.commands.selectChannel') {
-                if (command.params.hasOwnProperty('channelCode')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'channelCode')) {
                     const channelCode = command.params['channelCode'];
                     let new_channel_index = -1;
                     let new_channel_key = '';
@@ -4643,10 +4643,10 @@ module.exports = function (RED) {
                     params['currentChannelNumber'] = new_channel_number;
                     // executionStates.push('currentChannel');
                 }
-                /*if (command.params.hasOwnProperty('channelName')) {
+                /*if (Object.prototype.hasOwnProperty.call(command.params, 'channelName')) {
                     const channelName = command.params['channelName'];
                 }*/
-                if (command.params.hasOwnProperty('channelNumber')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'channelNumber')) {
                     const channelNumber = command.params['channelNumber'];
                     let new_channel_index = -1;
                     let new_channel_key = '';
@@ -4671,7 +4671,7 @@ module.exports = function (RED) {
                 }
             }
             else if (command.command == 'action.devices.commands.relativeChannel') {
-                if (command.params.hasOwnProperty('relativeChannelChange')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'relativeChannelChange')) {
                     const relativeChannelChange = command.params['relativeChannelChange'];
                     let current_channel_index = this.current_channel_index;
                     if (current_channel_index < 0) {
@@ -4710,7 +4710,7 @@ module.exports = function (RED) {
             // Modes
             else if (command.command == 'action.devices.commands.SetModes') {
                 if (!me.command_only_modes) {
-                    if (command.params.hasOwnProperty('updateModeSettings')) {
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'updateModeSettings')) {
                         const updateModeSettings = command.params['updateModeSettings'];
                         let current_modes = me.states['currentModeSettings'];
                         let new_modes = {};
@@ -4736,12 +4736,12 @@ module.exports = function (RED) {
             // Rotation
             else if (command.command == 'action.devices.commands.RotateAbsolute') {
                 if (!me.command_only_rotation) {
-                    if (command.params.hasOwnProperty('rotationDegrees')) {
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'rotationDegrees')) {
                         const rotationDegrees = command.params['rotationDegrees'];
                         params['rotationDegrees'] = rotationDegrees;
                         executionStates.push('rotationDegrees');
                     }
-                    if (command.params.hasOwnProperty('rotationPercent')) {
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'rotationPercent')) {
                         const rotationPercent = command.params['rotationPercent'];
                         params['rotationPercent'] = rotationPercent;
                         executionStates.push('rotationPercent');
@@ -4752,7 +4752,7 @@ module.exports = function (RED) {
             // Traits
             else if (command.command == 'action.devices.commands.SetToggles') {
                 if (!me.command_only_toggles) {
-                    if (command.params.hasOwnProperty('updateToggleSettings')) {
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'updateToggleSettings')) {
                         const updateToggleSettings = command.params['updateToggleSettings'];
                         let current_toggle = me.states['currentToggleSettings'];
                         let toggles = {};
@@ -4780,11 +4780,11 @@ module.exports = function (RED) {
             else if (command.command == 'action.devices.commands.BrightnessRelative') {
                 /*
                 let brightness = me.states['brightness'];
-                if (command.params.hasOwnProperty('brightnessRelativePercent')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'brightnessRelativePercent')) {
                     const brightnessRelativePercent = command.params['brightnessRelativePercent'];
                     brightness = Math.round(brightness * (1 + parseInt(brightnessRelativePercent) / 100));
                 }
-                if (command.params.hasOwnProperty('brightnessRelativeWeight')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'brightnessRelativeWeight')) {
                     //const brightnessRelativeWeight = command.params['brightnessRelativeWeight'];
                     brightness = brightness + parseInt(brightnessRelativePercent);
                 }
@@ -4796,15 +4796,15 @@ module.exports = function (RED) {
             // ColorSetting
             else if (command.command == 'action.devices.commands.ColorAbsolute') {
                 if (!me.command_only_colorsetting) {
-                    if (command.params.hasOwnProperty('color')) {
-                        if (command.params.color.hasOwnProperty('temperature') || command.params.color.hasOwnProperty('temperatureK')) {
-                            const temperature = command.params.color.hasOwnProperty('temperature') ? command.params.color.temperature : command.params.color.temperatureK;
+                    if (Object.prototype.hasOwnProperty.call(command.params, 'color')) {
+                        if (Object.prototype.hasOwnProperty.call(command.params.color, 'temperature') || Object.prototype.hasOwnProperty.call(command.params.color, 'temperatureK')) {
+                            const temperature = Object.prototype.hasOwnProperty.call(command.params.color, 'temperature') ? command.params.color.temperature : command.params.color.temperatureK;
                             params['color'] = { temperatureK: temperature };
-                        } else if (command.params.color.hasOwnProperty('spectrumRGB') || command.params.color.hasOwnProperty('spectrumRgb')) {
-                            const spectrum_RGB = command.params.color.hasOwnProperty('spectrumRGB') ? command.params.color.spectrumRGB : command.params.color.spectrumRgb;
+                        } else if (Object.prototype.hasOwnProperty.call(command.params.color, 'spectrumRGB') || Object.prototype.hasOwnProperty.call(command.params.color, 'spectrumRgb')) {
+                            const spectrum_RGB = Object.prototype.hasOwnProperty.call(command.params.color, 'spectrumRGB') ? command.params.color.spectrumRGB : command.params.color.spectrumRgb;
                             params['color'] = { spectrumRgb: spectrum_RGB };
-                        } else if (command.params.color.hasOwnProperty('spectrumHSV') || command.params.color.hasOwnProperty('spectrumHsv')) {
-                            const spectrum_HSV = command.params.color.hasOwnProperty('spectrumHSV') ? command.params.color.spectrumHSV : command.params.color.spectrumHsv;
+                        } else if (Object.prototype.hasOwnProperty.call(command.params.color, 'spectrumHSV') || Object.prototype.hasOwnProperty.call(command.params.color, 'spectrumHsv')) {
+                            const spectrum_HSV = Object.prototype.hasOwnProperty.call(command.params.color, 'spectrumHSV') ? command.params.color.spectrumHSV : command.params.color.spectrumHsv;
                             params['color'] = {
                                 spectrumHsv: {
                                     hue: spectrum_HSV.hue,
@@ -4820,7 +4820,7 @@ module.exports = function (RED) {
 
             // Camera
             else if (command.command == 'action.devices.commands.GetCameraStream') {
-                if (command.params.hasOwnProperty('SupportedStreamProtocols')) {
+                if (Object.prototype.hasOwnProperty.call(command.params, 'SupportedStreamProtocols')) {
                     const supported_protocols = command.params['SupportedStreamProtocols'];
                     let protocol = '';
                     let stream_url = '';

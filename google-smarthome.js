@@ -154,7 +154,7 @@ module.exports = function (RED) {
         callMgmtFuncs(obj) {
             const node = this;
             Object.keys(node.mgmtNodes).forEach(function (key) {
-                if (node.mgmtNodes.hasOwnProperty(key)) {
+                if (Object.prototype.hasOwnProperty.call(node.mgmtNodes, key)) {
                     node._debug("GoogleSmartHomeNode(on-server): found mgmt client");
 
                     node.mgmtNodes[key].updated(obj);

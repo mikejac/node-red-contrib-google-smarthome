@@ -332,7 +332,7 @@
                 $('#node-config-input-googlesmarthome-emails-container').css('min-height', '150px').css('min-width', '250px').editableList({
                     addItem: function (container, i, opt) {
                         var emails = opt;
-                        if (!emails.hasOwnProperty('name')) {
+                        if (!Object.prototype.hasOwnProperty.call(emails, 'name')) {
                             emails = { name: "" };
                         }
                         container.css({

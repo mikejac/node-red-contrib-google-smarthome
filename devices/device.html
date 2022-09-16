@@ -2807,7 +2807,7 @@
             $('#node-input-device-zone-container').css('min-height', '150px').css('min-width', '450px').editableList({
                 addItem: function (container, i, opt) {
                     var zone = opt;
-                    if (!zone.hasOwnProperty('name')) {
+                    if (!Object.prototype.hasOwnProperty.call(zone, 'name')) {
                         zone = { name: "" };
                     }
                     container.css({
@@ -2836,7 +2836,7 @@
             $('#node-input-device-network-profiles-container').css('min-height', '150px').css('min-width', '450px').editableList({
                 addItem: function (container, i, opt) {
                     var network_profiles = opt;
-                    if (!network_profiles.hasOwnProperty('name')) {
+                    if (!Object.prototype.hasOwnProperty.call(network_profiles, 'name')) {
                         network_profiles = { name: "" };
                     }
                     container.css({
