@@ -5,7 +5,7 @@ as a reverse proxy.
 
 ## Benefits:
 - SSL certificates are automatically managed and renewed by Caddy.
-- You don't need to install to install Certbot.
+- You don't need to install Certbot.
 
 ## Guide
 1. On your home router forward port 3001 to the host where Node-RED is running.
