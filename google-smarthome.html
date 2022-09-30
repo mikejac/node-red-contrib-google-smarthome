@@ -331,7 +331,7 @@
                 // emails
                 $('#node-config-input-googlesmarthome-emails-container').css('min-height', '150px').css('min-width', '250px').editableList({
                     addItem: function (container, i, opt) {
-                        var emails = opt;
+                        let emails = opt;
                         if (!Object.prototype.hasOwnProperty.call(emails, 'name')) {
                             emails = { name: "" };
                         }
@@ -340,8 +340,8 @@
                             whiteSpace: 'nowrap'
                         });
                         let fragment = document.createDocumentFragment();
-                        var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
-                        var propertyName = $('<input/>', { class: "node-config-input-googlesmarthome-emails-property-name", type: "text", style: "width: 100%" })
+                        let row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
+                        let propertyName = $('<input/>', { class: "node-config-input-googlesmarthome-emails-property-name", type: "text", style: "width: 100%" })
                             .appendTo(row1);
                         propertyName.val(emails.name);
 
@@ -357,8 +357,8 @@
                 if (!emails) {
                     emails = [];
                 }
-                for (var i = 0; i < emails.length; i++) {
-                    var email = emails[i];
+                for (let i = 0; i < emails.length; i++) {
+                    let email = emails[i];
                     $("#node-config-input-googlesmarthome-emails-container").editableList('addItem', { name: email });
                 }
                 // Use Google login on / off
@@ -401,24 +401,24 @@
                 $('#node-config-input-port').change(useNODERedPort);
             },
             oneditsave: function () {
-                var node = this;
+                let node = this;
                 // emails
-                var emails = $("#node-config-input-googlesmarthome-emails-container").editableList('items');
+                let emails = $("#node-config-input-googlesmarthome-emails-container").editableList('items');
                 node.credentials.emails = [];
                 emails.each(function (i) {
-                    var email = $(this);
-                    var name = email.find(".node-config-input-googlesmarthome-emails-property-name").val();
+                    let email = $(this);
+                    let name = email.find(".node-config-input-googlesmarthome-emails-property-name").val();
                     node.credentials.emails.push(name);
                 });
             },
             oneditresize: function (size) {
                 // emails
-                var rows = $("#dialog-form>div:not(node-config-input-googlesmarthome-emails-container-row)");
-                var height = size.height;
-                for (var i = 0; i < rows.length; i++) {
+                let rows = $("#dialog-form>div:not(node-config-input-googlesmarthome-emails-container-row)");
+                let height = size.height;
+                for (let i = 0; i < rows.length; i++) {
                     height -= $(rows[i]).outerHeight(true);
                 }
-                var editorRow = $("#dialog-form>div.node-config-input-googlesmarthome-emails-container-row");
+                let editorRow = $("#dialog-form>div.node-config-input-googlesmarthome-emails-container-row");
                 height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
                 height += 16;
                 $("#node-config-input-googlesmarthome-emails-container").editableList('height', height);

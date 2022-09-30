@@ -16,8 +16,8 @@
     <title>Google SmartHome test page</title>
 
     <script>
-        var url = '';
-        var xhr = new XMLHttpRequest();
+        let url = '';
+        let xhr = new XMLHttpRequest();
         function test_success(elmId, data) {
             if (typeof data !== "string") {
                 data = JSON.stringify(data);

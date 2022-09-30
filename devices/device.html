@@ -2806,7 +2806,7 @@
             // Zones
             $('#node-input-device-zone-container').css('min-height', '150px').css('min-width', '450px').editableList({
                 addItem: function (container, i, opt) {
-                    var zone = opt;
+                    let zone = opt;
                     if (!Object.prototype.hasOwnProperty.call(zone, 'name')) {
                         zone = { name: "" };
                     }
@@ -2815,8 +2815,8 @@
                         whiteSpace: 'nowrap'
                     });
                     let fragment = document.createDocumentFragment();
-                    var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
-                    var propertyName = $('<input/>', { class: "node-input-device-zone-property-name", type: "text", style: "width: 100%" })
+                    let row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
+                    let propertyName = $('<input/>', { class: "node-input-device-zone-property-name", type: "text", style: "width: 100%" })
                         .appendTo(row1);
                     propertyName.val(zone.name);
 
@@ -2828,14 +2828,14 @@
             if (!this.available_zones) {
                 this.available_zones = [];
             }
-            for (var i = 0; i < this.available_zones.length; i++) {
-                var zone = this.available_zones[i];
+            for (let i = 0; i < this.available_zones.length; i++) {
+                let zone = this.available_zones[i];
                 $("#node-input-device-zone-container").editableList('addItem', { name: zone });
             }
             // Network profiles
             $('#node-input-device-network-profiles-container').css('min-height', '150px').css('min-width', '450px').editableList({
                 addItem: function (container, i, opt) {
-                    var network_profiles = opt;
+                    let network_profiles = opt;
                     if (!Object.prototype.hasOwnProperty.call(network_profiles, 'name')) {
                         network_profiles = { name: "" };
                     }
@@ -2844,8 +2844,8 @@
                         whiteSpace: 'nowrap'
                     });
                     let fragment = document.createDocumentFragment();
-                    var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
-                    var propertyName = $('<input/>', { class: "node-input-device-network-profiles-property-name", type: "text", style: "width: 100%" })
+                    let row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
+                    let propertyName = $('<input/>', { class: "node-input-device-network-profiles-property-name", type: "text", style: "width: 100%" })
                         .appendTo(row1);
                     propertyName.val(network_profiles.name);
 
@@ -2857,8 +2857,8 @@
             if (!this.network_profiles) {
                 this.network_profiles = [];
             }
-            for (var i = 0; i < this.network_profiles.length; i++) {
-                var network_profiles = this.network_profiles[i];
+            for (let i = 0; i < this.network_profiles.length; i++) {
+                let network_profiles = this.network_profiles[i];
                 $("#node-input-device-network-profiles-container").editableList('addItem', { name: network_profiles });
             }
 
@@ -2923,7 +2923,7 @@
             });
             $("#node-input-supports_fan_speed_percent").change();
 
-            var setTraitRecomended = function (name, recommended, show_traits) {
+            let setTraitRecomended = function (name, recommended, show_traits) {
                 $("#node-input-trait_" + name).show();
                 $("#label_trait_" + name).hide();
                 $("#cb_trait_" + name).show();
@@ -2951,7 +2951,7 @@
                 return show_trait;
             };
 
-            var setTraitRequired = function (name) {
+            let setTraitRequired = function (name) {
                 $("#node-input-trait_" + name).hide();
                 $("#node-input-trait_" + name).prop('checked', true);
                 $("#label_trait_" + name).show();
@@ -2961,11 +2961,11 @@
             };
 
             // Device Type
-            var deviceTypeChanged = function () {
-                var device_type = $("#node-input-device_type").val();
-                var show_trait = $("#node-input-show_trait").val();
-                var required_traits = [];
-                var recommended_traits = [];
+            let deviceTypeChanged = function () {
+                let device_type = $("#node-input-device_type").val();
+                let show_trait = $("#node-input-show_trait").val();
+                let required_traits = [];
+                let recommended_traits = [];
                 switch (device_type) {
                     case "AC_UNIT": // Air conditioning unit
                         recommended_traits = ["fanspeed"];
@@ -3307,7 +3307,7 @@
             deviceTypeChanged();
             $("#node-input-device_type").change(deviceTypeChanged);
             $("#node-input-show_trait").change(deviceTypeChanged);
-            var challenge_type_change = function () {
+            let challenge_type_change = function () {
                 let _this = $(this);
                 let show = _this.val() === 'pinNeeded';
                 if (show) {
@@ -3320,45 +3320,47 @@
             $(".challenge_type").change();
         },
         oneditsave: function () {
-            var node = this;
+            let node = this;
             node.advanced_settings = false;
             node.show_trait = 'selected';
+
             // Zone
-            var available_zones = $("#node-input-device-zone-container").editableList('items');
+            let available_zones = $("#node-input-device-zone-container").editableList('items');
             node.available_zones = [];
-            available_zones.each(function (i) {
-                var zone = $(this);
-                var name = zone.find(".node-input-device-zone-property-name").val();
+            available_zones.each(function () {
+                let zone = $(this);
+                let name = zone.find(".node-input-device-zone-property-name").val();
                 node.available_zones.push(name);
             });
+
             // Network profiles
-            var network_profiles = $("#node-input-device-network-profiles-container").editableList('items');
-            var node = this;
+            let network_profiles = $("#node-input-device-network-profiles-container").editableList('items');
             node.network_profiles = [];
-            network_profiles.each(function (i) {
-                var network_profile = $(this);
-                var name = network_profile.find(".node-input-device-network-profiles-property-name").val();
+            network_profiles.each(function () {
+                let network_profile = $(this);
+                let name = network_profile.find(".node-input-device-network-profiles-property-name").val();
                 node.network_profiles.push(name);
             });
         },
         oneditresize: function (size) {
             // Zone
-            var rows = $("#dialog-form>div:not(.node-input-device-zone-container-row)");
-            var height = size.height;
-            for (var i = 0; i < rows.length; i++) {
+            let rows = $("#dialog-form>div:not(.node-input-device-zone-container-row)");
+            let height = size.height;
+            for (let i = 0; i < rows.length; i++) {
                 height -= $(rows[i]).outerHeight(true);
             }
-            var editorRow = $("#dialog-form>div.node-input-device-zone-container-row");
+            let editorRow = $("#dialog-form>div.node-input-device-zone-container-row");
             height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
             height += 16;
             $("#node-input-device-zone-container").editableList('height', height);
+
             // Network profiles
-            var rows = $("#dialog-form>div:not(.node-input-device-network-profiles-container-row)");
-            var height = size.height;
-            for (var i = 0; i < rows.length; i++) {
+            rows = $("#dialog-form>div:not(.node-input-device-network-profiles-container-row)");
+            height = size.height;
+            for (let i = 0; i < rows.length; i++) {
                 height -= $(rows[i]).outerHeight(true);
             }
-            var editorRow = $("#dialog-form>div.node-input-device-network-profiles-container-row");
+            editorRow = $("#dialog-form>div.node-input-device-network-profiles-container-row");
             height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
             height += 16;
             $("#node-input-device-network-profiles-container").editableList('height', height);
