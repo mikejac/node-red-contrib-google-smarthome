@@ -2930,7 +2930,7 @@
                 /*if (typeof recommended === "boolean") {
                     $("#node-input-trait_" + name).prop('checked', recommended);
                 }*/
-                let show_trait = show_traits == "all";
+                let show_trait = show_traits === "all";
                 if (show_traits === "selected") {
                     show_trait = $("#node-input-trait_" + name).prop('checked');
                 } else if (show_traits === "recommended") {
