@@ -769,7 +769,7 @@ module.exports = function (RED) {
                 states: this.states,
                 properties: {
                     type: 'action.devices.types.' + this.device_type,
-                    traits: this.getTraits(this),
+                    traits: this.getTraits(),
                     name: {
                         defaultNames: ["Node-RED " + default_name],
                         name: this.name,
@@ -1763,7 +1763,7 @@ module.exports = function (RED) {
             if (me.trait.modes) {
                 if (!me.command_only_modes) {
                     states['currentModeSettings'] = {};
-                    this.updateModesState(me, device);
+                    this.updateModesState(device);
                 }
             }
             //if (me.trait.networkcontrol) {
@@ -1924,7 +1924,7 @@ module.exports = function (RED) {
             if (me.trait.toggles) {
                 if (!me.command_only_toggles) {
                     states['currentToggleSettings'] = {};
-                    this.updateTogglesState(me, device);
+                    this.updateTogglesState(device);
                 }
             }
             if (me.trait.volume) {
@@ -2083,7 +2083,7 @@ module.exports = function (RED) {
             me._debug(".updated: g_command = " + JSON.stringify(g_command));
             me._debug(".updated: exe_result = " + JSON.stringify(exe_result));
 
-            const modified = me.updateState(params, me.states, me.state_types);
+            const modified = me.updateState(params);
             if (modified) {
                 if (me.persistent_state) {
                     me.clientConn.app.ScheduleGetState();
@@ -2324,7 +2324,7 @@ module.exports = function (RED) {
                         if (me.modes_type !== 'json') {
                             if (typeof msg.payload === 'undefined') {
                                 me.available_modes = me.to_available_modes(me.loadJson('Modes', me.modes_file.replace(/<id>/g, me.id), []));
-                                me.updateModesState(me, me);
+                                me.updateModesState(me);
                             } else {
                                 me.available_modes = me.to_available_modes(msg.payload);
                                 if (!me.writeJson('Modes', me.modes_file.replace(/<id>/g, me.id), me.available_modes)) {
@@ -2337,14 +2337,14 @@ module.exports = function (RED) {
                         me.error("Modes disabled");
                     }
                     me.device.properties.attributes.availableModes = me.available_modes;
-                    me.updateModesState(me, me);
+                    me.updateModesState(me);
                     me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLETOGGLES') {
                     if (me.trait.toggles) {
                         if (me.toggles_type !== 'json') {
                             if (typeof msg.payload === 'undefined') {
                                 me.available_toggles = me.to_available_toggles(me.loadJson('Toggles', me.toggles_file.replace(/<id>/g, me.id), []));
-                                me.updateTogglesState(me, me);
+                                me.updateTogglesState(me);
                             } else {
                                 me.available_toggles = me.to_available_toggles(msg.payload);
                                 if (!me.writeJson('Toggles', me.toggles_file.replace(/<id>/g, me.id), me.available_toggles)) {
@@ -2357,7 +2357,7 @@ module.exports = function (RED) {
                         me.error("Toggles disabled");
                     }
                     me.device.properties.attributes.availableToggles = me.available_toggles;
-                    me.updateTogglesState(me, me);
+                    me.updateTogglesState(me);
                     me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'CAMERASTREAMAUTHTOKEN') {
                     const auth_token = me.formatValue('cameraStreamAuthToken', msg.payload, Formats.STRING, '');
@@ -2510,7 +2510,7 @@ module.exports = function (RED) {
                             }
                         }
                     });
-                    if (me.updateState({ currentStatusReport: new_payload }, me.states, me.state_types) || differs) {
+                    if (me.updateState({ currentStatusReport: new_payload }) || differs) {
                         me.clientConn.reportState(me.id);  // tell Google ...
                         if (me.persistent_state) {
                             me.clientConn.app.ScheduleGetState();
@@ -2675,7 +2675,7 @@ module.exports = function (RED) {
                     } else {
                         me._debug(".input: some other topic");
                     }
-                    const differs = me.updateState(msg.payload || {}, me.states, me.state_types);
+                    const differs = me.updateState(msg.payload || {});
 
                     if (differs) {
                         if (msgi.stateOutput || false) {
@@ -2711,8 +2711,9 @@ module.exports = function (RED) {
             done();
         }
 
-        updateTogglesState(me, device) {
+        updateTogglesState(device) {
             // Key/value pair with the toggle name of the device as the key, and the current state as the value.
+            const me = this;
             me._debug(".updateTogglesState");
             let states = device.states || {};
             const currentToggleSettings = states['currentToggleSettings']
@@ -2727,8 +2728,9 @@ module.exports = function (RED) {
             states['currentToggleSettings'] = new_toggles;
         }
 
-        updateModesState(me, device) {
+        updateModesState(device) {
             // Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
+            const me = this;
             me._debug(".updateModesState");
             let states = device.states || {};
             const currentModeSettings = states['currentModeSettings']
@@ -2743,7 +2745,8 @@ module.exports = function (RED) {
             states['currentModeSettings'] = new_modes;
         }
 
-        getTraits(me) {
+        getTraits() {
+            const me = this;
             const trait = me.trait;
             let traits = [];
 
@@ -2865,15 +2868,15 @@ module.exports = function (RED) {
         //
         //
         //
-        updateState(from_states, to_state, state_types) {
+        updateState(from_states) {
             const me = this;
             let modified = [];
-            me._debug("CCHI updateState state_types " + JSON.stringify(state_types));
-            me._debug('updateState current state ' + JSON.stringify(to_state));
-            Object.keys(state_types).forEach(key => {
+            me._debug("CCHI updateState state_types " + JSON.stringify(me.state_types));
+            me._debug('updateState current state ' + JSON.stringify(me.states));
+            Object.keys(me.state_types).forEach(key => {
                 if (Object.prototype.hasOwnProperty.call(from_states, key)) {
                     // console.log("CCHI found key " + key);
-                    let o_modified = me.setState(key, from_states[key], to_state, state_types[key]);
+                    let o_modified = me.setState(key, from_states[key], me.states, me.state_types[key]);
                     if (o_modified) {
                         me._debug('.updateState set "' + key + '" to ' + JSON.stringify(from_states[key]));
                         modified.push(o_modified);
@@ -2884,20 +2887,20 @@ module.exports = function (RED) {
             });
             let thermostat_modified = false;
             if (modified.includes("thermostatTemperatureSetpoint")) {
-                me.thermostat_temperature_setpoint = to_state.thermostatTemperatureSetpoint;
+                me.thermostat_temperature_setpoint = me.states.thermostatTemperatureSetpoint;
                 thermostat_modified = true;
             }
             if (modified.includes("thermostatTemperatureSetpointLow")) {
-                me.thermostat_temperature_setpoint_low = to_state.thermostatTemperatureSetpointLow;
+                me.thermostat_temperature_setpoint_low = me.states.thermostatTemperatureSetpointLow;
                 thermostat_modified = true;
             }
             if (modified.includes("thermostatTemperatureSetpointHigh")) {
-                me.thermostat_temperature_setpoint_hight = to_state.thermostatTemperatureSetpointHigh;
+                me.thermostat_temperature_setpoint_hight = me.states.thermostatTemperatureSetpointHigh;
                 thermostat_modified = true;
             }
             if (thermostat_modified | modified.includes("thermostatMode")) {
                 let keys_to_update = [];
-                if (to_state.thermostatMode === 'heatcool') {
+                if (me.states.thermostatMode === 'heatcool') {
                     keys_to_update = ['thermostatTemperatureSetpointLow', 'thermostatTemperatureSetpointHigh'];
                     from_states = {
                         thermostatTemperatureSetpointLow: me.thermostat_temperature_setpoint_low,
@@ -2910,13 +2913,13 @@ module.exports = function (RED) {
                     };
                 }
                 keys_to_update.forEach(key => {
-                    if (me.setState(key, from_states[key], to_state, me.state_types[key])) {
-                        me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(to_state[key]));
+                    if (me.setState(key, from_states[key], me.states, me.state_types[key])) {
+                        me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(me.states[key]));
                         modified.push(key);
                     }
                 });
             }
-            me._debug('.updateState: new State ' + JSON.stringify(modified) + ' = ' + JSON.stringify(to_state));
+            me._debug('.updateState: new State ' + JSON.stringify(modified) + ' = ' + JSON.stringify(me.states));
             return modified;
         }
 
