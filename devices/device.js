@@ -22,24 +22,13 @@ module.exports = function (RED) {
     const fs = require('fs');
     const path = require('path');
     const util = require('util');
+    const Formats = require('../lib/Formats.js');
     const COOK_SUPPORTED_UNITS = ["UNKNOWN_UNITS", "NO_UNITS", "CENTIMETERS", "CUPS", "DECILITERS", "FEET", "FLUID_OUNCES", "GALLONS", "GRAMS", "INCHES", "KILOGRAMS", "LITERS", "METERS", "MILLIGRAMS", "MILLILITERS", "MILLIMETERS", "OUNCES", "PINCH", "PINTS", "PORTION", "POUNDS", "QUARTS", "TABLESPOONS", "TEASPOONS"];
     const DISPENSE_SUPPORTED_UNITS = ["CENTIMETERS", "CUPS", "DECILITERS", "FLUID_OUNCES", "GALLONS", "GRAMS", "KILOGRAMS", "LITERS", "MILLIGRAMS", "MILLILITERS", "MILLIMETERS", "NO_UNITS", "OUNCES", "PINCH", "PINTS", "PORTION", "POUNDS", "QUARTS", "TABLESPOONS", "TEASPOONS"];
     const ENERGY_STORAGE_UNITS = ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'];
     const LANGUAGES = ["da", "nl", "en", "fr", "de", "hi", "id", "it", "ja", "ko", "no", "pt-BR", "es", "sv", "th", "zh-TW"];
 
-    const Formats = {
-        BOOL: 1,
-        INT: 2,
-        FLOAT: 4,
-        STRING: 8,
-        DATETIME: 16,
-        PRIMITIVE: 31,
-        OBJECT: 32,
-        ARRAY: 64,
-        MANDATORY: 128,
-        COPY_OBJECT: 256,
-        DELETE_MISSING: 512,
-    };
+
 
     /******************************************************************************************************************
      *
@@ -2360,7 +2349,7 @@ module.exports = function (RED) {
                     me.updateTogglesState(me);
                     me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'CAMERASTREAMAUTHTOKEN') {
-                    const auth_token = me.formatValue('cameraStreamAuthToken', msg.payload, Formats.STRING, '');
+                    const auth_token = Formats.formatValue('cameraStreamAuthToken', msg.payload, Formats.STRING, '');
                     if (auth_token != me.auth_token) {
                         me.auth_token = auth_token;
                         if (Object.prototype.hasOwnProperty.call(me.device.properties.attributes, "cameraStreamNeedAuthToken")) {
@@ -2372,7 +2361,7 @@ module.exports = function (RED) {
                         }
                     }
                 } else if (upper_topic === 'GUESTNETWORKPASSWORD') {
-                    me.guest_network_password = me.formatValue('guestNetworkPassword', msg.payload, Formats.STRING);
+                    me.guest_network_password = Formats.formatValue('guestNetworkPassword', msg.payload, Formats.STRING);
                 } else if (me.trait.objectdetection && upper_topic === 'OBJECTDETECTION') {
                     let payload = {};
                     if (typeof msg.payload.familiar === 'number') {
@@ -2949,101 +2938,6 @@ module.exports = function (RED) {
         //
         //
         //
-        formatValue(key, value, format, default_value) {
-            if (typeof value === 'undefined') {
-                value = default_value;
-            }
-
-            if (typeof value === 'string') {
-                switch (format) {
-                    case Formats.BOOL:
-                        let t = value.toUpperCase()
-
-                        if (t === "TRUE" || t === "ON" || t === "YES" || t === "1") {
-                            return true;
-                        } else if (t === "FALSE" || t === "OFF" || t === "NO" || t === "0") {
-                            return false;
-                        } else {
-                            throw new Error('Type of ' + key + ' is string but it cannot be converted to a boolean');
-                        }
-
-                    case Formats.STRING:
-                        return value;
-
-                    case Formats.FLOAT:
-                        let fval = parseFloat(value);
-
-                        if (isNaN(fval)) {
-                            throw new Error('Type of ' + key + ' is string but it cannot be converted to a float');
-                        }
-
-                        return fval;
-
-                    case Formats.DATETIME:
-                        return value;
-
-                    default:
-                        let val = parseInt(value)
-
-                        if (isNaN(val)) {
-                            throw new Error('Type of ' + key + ' is string but it cannot be converted to a integer');
-                        }
-
-                        return val;
-                }
-            } else if (typeof value === 'number') {
-                switch (format) {
-                    case Formats.BOOL:
-                        let val = (value != 0)
-                        return val;
-
-                    case Formats.STRING:
-                        return value.toString();
-
-                    case Formats.INT:
-                        return parseInt(value);
-
-                    case Formats.DATETIME:
-                        let dval = new Date(value);
-                        return dval.toISOString();
-
-                    default:
-                        return value;
-                }
-            } else if (typeof value === 'boolean') {
-                switch (format) {
-                    case Formats.BOOL:
-                        return value;
-
-                    case Formats.STRING:
-                        if (value) {
-                            return "true";
-                        } else {
-                            return "false";
-                        }
-
-                    default:
-                        if (value) {
-                            return 1;
-                        } else {
-                            return 0;
-                        }
-                }
-            } else if (typeof value === 'object') {
-                if (Object.prototype.hasOwnProperty.call(value, key)) {
-                    return this.formatValue(format, key, value[key]);
-                } else {
-                    throw new Error('Type of ' + key + ' is object but it does not have matching property');
-                }
-            } else {
-                throw new Error('Type of ' + key + ' is not compatible; typeof = ' + typeof value + "; value = " + JSON.stringify(value));
-            }
-        }
-
-        //
-        //
-        //
-        //
         setState(key, value, state, state_type) {
             const me = this;
             let differs = false;
@@ -3074,7 +2968,7 @@ module.exports = function (RED) {
                     let old_arr = Array.isArray(old_state) ? old_state : [];
                     const allowed_values = state_type.values;
                     value.forEach((elm, idx) => {
-                        let new_val = me.formatValue(key + '[' + idx + ']', elm, state_type.type & Formats.PRIMITIVE);
+                        let new_val = Formats.formatValue(key + '[' + idx + ']', elm, state_type.type & Formats.PRIMITIVE);
                         if (state_type.upperCase && new_val) {
                             new_val = new_val.toUpperCase();
                         }
@@ -3240,7 +3134,7 @@ module.exports = function (RED) {
                     });
                 }
             } else {
-                new_state = me.formatValue(key, value, state_type.type & Formats.PRIMITIVE, state_type.defaultValue);
+                new_state = Formats.formatValue(key, value, state_type.type & Formats.PRIMITIVE, state_type.defaultValue);
                 // console.log("CCHI checking new_state " + key + " " + new_state + " type " + JSON.stringify(state_type));
                 if (state_type.min !== undefined && new_state < state_type.min) {
                     me.error('key "' + key + '" must be greather or equal than ' + state_type.min);
