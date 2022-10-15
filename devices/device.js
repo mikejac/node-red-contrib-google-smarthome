@@ -4482,8 +4482,8 @@ module.exports = function (RED) {
                 if (!me.command_only_volume) {
                     if (Object.prototype.hasOwnProperty.call(command.params, 'volumeLevel')) {
                         let volumeLevel = command.params['volumeLevel'];
-                        if (volumeLevel > this.volumeMaxLevel) {
-                            volumeLevel = this.volumeMaxLevel;
+                        if (volumeLevel > me.volume_max_level) {
+                            volumeLevel = me.volume_max_level;
                         }
                         params['currentVolume'] = volumeLevel;
                         params['isMuted'] = false;
@@ -4496,7 +4496,7 @@ module.exports = function (RED) {
                     if (Object.prototype.hasOwnProperty.call(command.params, 'relativeSteps')) {
                         const relativeSteps = command.params['relativeSteps'];
                         let current_volume = me.states['currentVolume'];
-                        if (current_volume >= this.volumeMaxLevel && relativeSteps > 0) {
+                        if (current_volume >= me.volume_max_level && relativeSteps > 0) {
                             return {
                                 status: 'ERROR',
                                 errorCode: 'volumeAlreadyMax'
@@ -4508,8 +4508,8 @@ module.exports = function (RED) {
                             };
                         }
                         current_volume += relativeSteps;
-                        if (current_volume > this.volumeMaxLevel) {
-                            current_volume = volumeMaxLevel;
+                        if (current_volume > me.volume_max_level) {
+                            current_volume = me.volume_max_level;
                         } else if (current_volume < 0) {
                             current_volume = 0;
                         }
