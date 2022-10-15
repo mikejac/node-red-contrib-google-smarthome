@@ -62,6 +62,12 @@
         <input type="text" id="node-input-room_hint" data-i18n="[placeholder]device.placeholder.room_hint">
     </div>
 
+    <!-- Filter by Topic -->
+    <div class="form-row">
+        <label style="width:auto" for="node-input-topic_filter"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.topic_filter"></span></label>
+        <input type="checkbox" checked id="node-input-topic_filter" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+
     <!-- Passthru-->
     <div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.passthru"></span></label>
@@ -2210,6 +2216,9 @@
             },
             auth_token: {
                 value: "", required: false
+            },
+            topic_filter: {
+                value: false, required: false
             },
             passthru: {
                 value: false, required: false

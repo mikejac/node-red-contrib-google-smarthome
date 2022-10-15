@@ -99,6 +99,7 @@ module.exports = function (RED) {
             };
             this.topicOut = config.topic;
             this.passthru = config.passthru;
+            this.topic_filter = config.topic_filter || false;
             this.persistent_state = config.persistent_state || false;
             this.room_hint = config.room_hint;
             this.device_type = config.device_type;
@@ -2120,6 +2121,9 @@ module.exports = function (RED) {
         onInput(msgi) {
             const me = this;
             let msg = msgi;
+            if (me.topic_filter && !(msg.topic || '').startsWith(me.topicOut)) {
+                return;
+            }
             me._debug(".input: topic = " + msg.topic);
 
             let upper_topic = '';
