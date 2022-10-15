@@ -5,6 +5,7 @@
             "name": "Name",
             "nicknames": "Nicknames",
             "topic": "Out topic",
+			"topic_filter": "Incoming messages filter",
             "device_type": "Device Type",
             "lang": "Language",
             "transport_control": "Transport control",
