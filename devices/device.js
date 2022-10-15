@@ -3276,7 +3276,7 @@ module.exports = function (RED) {
             let new_data = [];
             if (Array.isArray(json_data)) {
                 if (typeof manage_other_fields !== 'function') {
-                    manage_other_fields = function (data_in, data_out) { return true; }
+                    manage_other_fields = function () { return true; }
                 }
                 json_data.forEach((rec, pos) => {
                     if (typeof rec === 'string') {
@@ -3825,7 +3825,7 @@ module.exports = function (RED) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'newApplicationName')) {
                     const newApplicationName = command.params['newApplicationName'];
                     let application_key = '';
-                    me.available_applications.forEach(function (application, index) {
+                    me.available_applications.forEach(function (application) {
                         application.names.forEach(function (name) {
                             if (name.name_synonym.includes(newApplicationName)) {
                                 application_key = application.key;
