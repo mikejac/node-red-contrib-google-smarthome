@@ -2121,7 +2121,7 @@ module.exports = function (RED) {
         onInput(msgi) {
             const me = this;
             let msg = msgi;
-            if (me.topic_filter && !(msg.topic || '').startsWith(me.topicOut)) {
+            if (me.topic_filter && !(msg.topic || '').toString().startsWith(me.topicOut)) {
                 return;
             }
             me._debug(".input: topic = " + msg.topic);
