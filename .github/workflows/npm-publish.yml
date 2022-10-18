@@ -16,7 +16,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: latest
-          registry-url: https://registry.npmjs.org/
       - name: Publish to npm
         run: npm publish
         env:
