@@ -4,7 +4,7 @@
             "node_name": "Device",
             "name": "Name",
             "nicknames": "Nicknames",
-            "topic": "Out topic",
+            "topic": "Topic",
 			"topic_filter": "Incoming messages filter",
             "device_type": "Device Type",
             "lang": "Language",
