@@ -97,6 +97,271 @@ module.exports = function (RED) {
                 transportcontrol: config.trait_transportcontrol || false,
                 volume: config.trait_volume || false,
             };
+
+            if (this.device_type !== 'SCENE') {
+                this.trait.scene = false;
+            }
+
+            // Sets required traits
+            switch (this.device_type) {
+                case "AC_UNIT": // Air conditioning unit
+                    this.trait.temperaturesetting = true;
+                    break;
+                case "AIRCOOLER": // Air cooler
+                    this.trait.temperaturesetting = true;
+                    break;
+                case "AIRFRESHENER": // Air freshener
+                    this.trait.onoff = true;
+                    break;
+                case "AIRPURIFIER": // Air purifier
+                    this.trait.onoff = true;
+                    break;
+                case "AUDIO_VIDEO_RECEIVER": // Audio-Video receiver
+                    this.trait.inputselector = true;
+                    this.trait.onoff = true;
+                    this.trait.volume = true;
+                    break;
+                case "AWNING": // Awning
+                    this.trait.openclose = true;
+                    break;
+                case "BATHTUB": // Bathtub
+                    this.trait.fill = true;
+                    this.trait.temperaturecontrol = true;
+                    this.trait.startstop = true;
+                    break;
+                case "BED": // Bed
+                    this.trait.modes = true;
+                    break;
+                case "BLENDER": // Blender
+                    this.trait.onoff = true;
+                    break;
+                case "BLINDS": // Blinds
+                    this.trait.openclose = true;
+                    break;
+                case "BOILER": // Boiler
+                    this.trait.onoff = true;
+                    break;
+                case "CAMERA": // Camera
+                    this.trait.camerastream = true;
+                    break;
+                case "CARBON_MONOXIDE_DETECTOR": // Carbon monoxide detector
+                    this.trait.sensorstate = true;
+                    break;
+                case "CHARGER": // Charger
+                    this.trait.energystorage = true;
+                    break;
+                case "CLOSET": // Closet
+                    this.trait.closet = true;
+                    break;
+                case "COFFEE_MAKER": // Coffee Maker
+                    this.trait.onoff = true;
+                    break;
+                case "COOKTOP": // Cooktop
+                    this.trait.onoff = true;
+                    break;
+                case "CURTAIN": // Curtain
+                    this.trait.openclose = true;
+                    break;
+                case "DEHUMIDIFIER": // Dehumidifier
+                    this.trait.onoff = true;
+                    break;
+                case "DEHYDRATOR": // Dehydrator
+                    this.trait.onoff = true;
+                    break;
+                case "DISHWASHER": // Dishwasher
+                    this.trait.startstop = true;
+                    break;
+                case "DOOR": // Door
+                    this.trait.openclose = true;
+                    break;
+                case "DRAWER": // Drawer
+                    this.trait.openclose = true;
+                    break;
+                case "DRYER": // Dryer
+                    this.trait.startstop = true;
+                    break;
+                case "FAN": // Fan
+                    this.trait.onoff = true;
+                    break;
+                case "FAUCET": // Faucet
+                    break;
+                case "FIREPLACE": // Fireplace
+                    break;
+                case "FREEZER": // Freezer
+                    this.trait.temperaturecontrol = true;
+                    break;
+                case "FRYER": // Fryer
+                    this.trait.onoff = true;
+                    break;
+                case "GARAGE": // Garage
+                    this.trait.openclose = true;
+                    break;
+                case "GATE": // Gate
+                    this.trait.openclose = true;
+                    break;
+                case "GRILL": // Grill
+                    this.trait.startstop = true;
+                    break;
+                case "HEATER": // Heater
+                    this.trait.temperaturesetting = true;
+                    break;
+                case "HOOD": // Hood
+                    this.trait.onoff = true;
+                    break;
+                case "HUMIDIFIER": // Humidifier
+                    this.trait.onoff = true;
+                    break;
+                case "KETTLE": // Kettle
+                    this.trait.onoff = true;
+                    break;
+                case "LIGHT": // Light
+                    this.trait.onoff = true;
+                    break;
+                case "LOCK": // Lock
+                    this.trait.lockunlock = true;
+                    break;
+                case "MICROWAVE": // Microwave
+                    this.trait.startstop = true;
+                    break;
+                case "MOP": // Mop
+                    this.trait.startstop = true;
+                    break;
+                case "MOWER": // Mower
+                    this.trait.startstop = true;
+                    break;
+                case "MULTICOOKER": // Multicooker
+                    this.trait.onoff = true;
+                    break;
+                case "NETWORK": // Network
+                    this.trait.networkcontrol = true;
+                    break;
+                case "OUTLET": // Outlet
+                    this.trait.onoff = true;
+                    break;
+                case "OVEN": // Oven
+                    this.trait.onoff = true;
+                    break;
+                case "PERGOLA": // Pergola
+                    this.trait.openclose = true;
+                    break;
+                case "PETFEEDER": // Pet feeder
+                    this.trait.dispense = true;
+                    break;
+                case "PRESSURECOOKER": // Pressure cooker
+                    this.trait.onoff = true;
+                    break;
+                case "RADIATOR": // Radiator
+                    this.trait.onoff = true;
+                    break;
+                case "REFRIGERATOR": // Refrigerator
+                    this.trait.temperaturecontrol = true;
+                    break;
+                case "REMOTECONTROL": // Remote control
+                    this.trait.inputselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.onoff = true;
+                    this.trait.transportcontrol = true;
+                    this.trait.volume = true;
+                    break;
+                case "ROUTER": // Router
+                    this.trait.networkcontrol = true;
+                    break;
+                case "SCENE": // Scene
+                    this.trait.scene = true;
+                    this.trait = {
+                        scene: config.trait_scene || false
+                    };
+                    break;
+                case "SECURITYSYSTEM": // Security system
+                    this.trait.armdisarm = true;
+                    break;
+                case "SENSOR": // Sensor
+                    this.trait.sensorstate = true;
+                    break;
+                case "SETTOP": // Settop
+                    this.trait.appselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.channel = true;
+                    this.trait.transportcontrol = true;
+                    break;
+                case "SHOWER": // Shower
+                    this.trait.openclose = true;
+                    break;
+                case "SHUTTER": // Shutter
+                    this.trait.openclose = true;
+                    break;
+                case "SMOKE_DETECTOR": // Smoke detector
+                    break;
+                case "SOUNDBAR": // Soundbar
+                    this.trait.volume = true;
+                    break;
+                case "SOUSVIDE": // Sousvide
+                    this.trait.onoff = true;
+                    break;
+                case "SPEAKER": // Speaker
+                    this.trait.volume = true;
+                    break;
+                case "SPRINKLER": // Sprinkler
+                    this.trait.startstop = true;
+                    break;
+                case "STANDMIXER": // Stand mixer
+                    this.trait.onoff = true;
+                    break;
+                case "STREAMING_BOX": // Streaming box
+                    this.trait.appselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.transportcontrol = true;
+                    this.trait.volume = true;
+                    break;
+                case "STREAMING_SOUNDBAR": // Streaming soundbar
+                    this.trait.appselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.transportcontrol = true;
+                    this.trait.volume = true;
+                    break;
+                case "STREAMING_STICK": // Streaming stick
+                    this.trait.appselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.transportcontrol = true;
+                    this.trait.volume = true;
+                    break;
+                case "SWITCH": // Switch
+                    this.trait.onoff = true;
+                    break;
+                case "THERMOSTAT": // Thermostat
+                    this.trait.temperaturesetting = true;
+                    break;
+                case "TV": // Television
+                    this.trait.appselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.onoff = true;
+                    this.trait.transportcontrol = true;
+                    this.trait.volume = true;
+                    break;
+                case "VACUUM": // Vacuum
+                    this.trait.startstop = true;
+                    break;
+                case "VALVE": // Valve
+                    this.trait.openclose = true;
+                    break;
+                case "WASHER": // Washer
+                    this.trait.startstop = true;
+                    break;
+                case "WATERHEATER": // Water heater
+                    this.trait.onoff = true;
+                    break;
+                case "WATERPURIFIER": // Water purifier
+                    break;
+                case "WATERSOFTENER": // Water softener
+                    break;
+                case "WINDOW": // Window
+                    this.trait.openclose = true;
+                    break;
+                case "YOGURTMAKER": // Yogurt maker
+                    this.trait.onoff = true;
+                    break;
+            }
+
             this.topicOut = config.topic;
             this.passthru = config.passthru;
             this.topic_filter = config.topic_filter || false;
@@ -362,270 +627,6 @@ module.exports = function (RED) {
             this.pin_transportcontrol = config.pin_transportcontrol || '';
             this.ct_volume = config.ct_volume || '';
             this.pin_volume = config.pin_volume || '';
-
-            if (this.device_type !== 'SCENE') {
-                this.trait.scene = false;
-            }
-
-            // Sets required traits
-            switch (this.device_type) {
-                case "AC_UNIT": // Air conditioning unit
-                    this.trait.temperaturesetting = true;
-                    break;
-                case "AIRCOOLER": // Air cooler
-                    this.trait.temperaturesetting = true;
-                    break;
-                case "AIRFRESHENER": // Air freshener
-                    this.trait.onoff = true;
-                    break;
-                case "AIRPURIFIER": // Air purifier
-                    this.trait.onoff = true;
-                    break;
-                case "AUDIO_VIDEO_RECEIVER": // Audio-Video receiver
-                    this.trait.inputselector = true;
-                    this.trait.onoff = true;
-                    this.trait.volume = true;
-                    break;
-                case "AWNING": // Awning
-                    this.trait.openclose = true;
-                    break;
-                case "BATHTUB": // Bathtub
-                    this.trait.fill = true;
-                    this.trait.temperaturecontrol = true;
-                    this.trait.startstop = true;
-                    break;
-                case "BED": // Bed
-                    this.trait.modes = true;
-                    break;
-                case "BLENDER": // Blender
-                    this.trait.onoff = true;
-                    break;
-                case "BLINDS": // Blinds
-                    this.trait.openclose = true;
-                    break;
-                case "BOILER": // Boiler
-                    this.trait.onoff = true;
-                    break;
-                case "CAMERA": // Camera
-                    this.trait.camerastream = true;
-                    break;
-                case "CARBON_MONOXIDE_DETECTOR": // Carbon monoxide detector
-                    this.trait.sensorstate = true;
-                    break;
-                case "CHARGER": // Charger
-                    this.trait.energystorage = true;
-                    break;
-                case "CLOSET": // Closet
-                    this.trait.closet = true;
-                    break;
-                case "COFFEE_MAKER": // Coffee Maker
-                    this.trait.onoff = true;
-                    break;
-                case "COOKTOP": // Cooktop
-                    this.trait.onoff = true;
-                    break;
-                case "CURTAIN": // Curtain
-                    this.trait.openclose = true;
-                    break;
-                case "DEHUMIDIFIER": // Dehumidifier
-                    this.trait.onoff = true;
-                    break;
-                case "DEHYDRATOR": // Dehydrator
-                    this.trait.onoff = true;
-                    break;
-                case "DISHWASHER": // Dishwasher
-                    this.trait.startstop = true;
-                    break;
-                case "DOOR": // Door
-                    this.trait.openclose = true;
-                    break;
-                case "DRAWER": // Drawer
-                    this.trait.openclose = true;
-                    break;
-                case "DRYER": // Dryer
-                    this.trait.startstop = true;
-                    break;
-                case "FAN": // Fan
-                    this.trait.onoff = true;
-                    break;
-                case "FAUCET": // Faucet
-                    break;
-                case "FIREPLACE": // Fireplace
-                    break;
-                case "FREEZER": // Freezer
-                    this.trait.temperaturecontrol = true;
-                    break;
-                case "FRYER": // Fryer
-                    this.trait.onoff = true;
-                    break;
-                case "GARAGE": // Garage
-                    this.trait.openclose = true;
-                    break;
-                case "GATE": // Gate
-                    this.trait.openclose = true;
-                    break;
-                case "GRILL": // Grill
-                    this.trait.startstop = true;
-                    break;
-                case "HEATER": // Heater
-                    this.trait.temperaturesetting = true;
-                    break;
-                case "HOOD": // Hood
-                    this.trait.onoff = true;
-                    break;
-                case "HUMIDIFIER": // Humidifier
-                    this.trait.onoff = true;
-                    break;
-                case "KETTLE": // Kettle
-                    this.trait.onoff = true;
-                    break;
-                case "LIGHT": // Light
-                    this.trait.onoff = true;
-                    break;
-                case "LOCK": // Lock
-                    this.trait.lockunlock = true;
-                    break;
-                case "MICROWAVE": // Microwave
-                    this.trait.startstop = true;
-                    break;
-                case "MOP": // Mop
-                    this.trait.startstop = true;
-                    break;
-                case "MOWER": // Mower
-                    this.trait.startstop = true;
-                    break;
-                case "MULTICOOKER": // Multicooker
-                    this.trait.onoff = true;
-                    break;
-                case "NETWORK": // Network
-                    this.trait.networkcontrol = true;
-                    break;
-                case "OUTLET": // Outlet
-                    this.trait.onoff = true;
-                    break;
-                case "OVEN": // Oven
-                    this.trait.onoff = true;
-                    break;
-                case "PERGOLA": // Pergola
-                    this.trait.openclose = true;
-                    break;
-                case "PETFEEDER": // Pet feeder
-                    this.trait.dispense = true;
-                    break;
-                case "PRESSURECOOKER": // Pressure cooker
-                    this.trait.onoff = true;
-                    break;
-                case "RADIATOR": // Radiator
-                    this.trait.onoff = true;
-                    break;
-                case "REFRIGERATOR": // Refrigerator
-                    this.trait.temperaturecontrol = true;
-                    break;
-                case "REMOTECONTROL": // Remote control
-                    this.trait.inputselector = true;
-                    this.trait.mediastate = true;
-                    this.trait.onoff = true;
-                    this.trait.transportcontrol = true;
-                    this.trait.volume = true;
-                    break;
-                case "ROUTER": // Router
-                    this.trait.networkcontrol = true;
-                    break;
-                case "SCENE": // Scene
-                    this.trait.scene = true;
-                    this.trait = {
-                        scene: config.trait_scene || false
-                    };
-                    break;
-                case "SECURITYSYSTEM": // Security system
-                    this.trait.armdisarm = true;
-                    break;
-                case "SENSOR": // Sensor
-                    this.trait.sensorstate = true;
-                    break;
-                case "SETTOP": // Settop
-                    this.trait.appselector = true;
-                    this.trait.mediastate = true;
-                    this.trait.channel = true;
-                    this.trait.transportcontrol = true;
-                    break;
-                case "SHOWER": // Shower
-                    this.trait.openclose = true;
-                    break;
-                case "SHUTTER": // Shutter
-                    this.trait.openclose = true;
-                    break;
-                case "SMOKE_DETECTOR": // Smoke detector
-                    break;
-                case "SOUNDBAR": // Soundbar
-                    this.trait.volume = true;
-                    break;
-                case "SOUSVIDE": // Sousvide
-                    this.trait.onoff = true;
-                    break;
-                case "SPEAKER": // Speaker
-                    this.trait.volume = true;
-                    break;
-                case "SPRINKLER": // Sprinkler
-                    this.trait.startstop = true;
-                    break;
-                case "STANDMIXER": // Stand mixer
-                    this.trait.onoff = true;
-                    break;
-                case "STREAMING_BOX": // Streaming box
-                    this.trait.appselector = true;
-                    this.trait.mediastate = true;
-                    this.trait.transportcontrol = true;
-                    this.trait.volume = true;
-                    break;
-                case "STREAMING_SOUNDBAR": // Streaming soundbar
-                    this.trait.appselector = true;
-                    this.trait.mediastate = true;
-                    this.trait.transportcontrol = true;
-                    this.trait.volume = true;
-                    break;
-                case "STREAMING_STICK": // Streaming stick
-                    this.trait.appselector = true;
-                    this.trait.mediastate = true;
-                    this.trait.transportcontrol = true;
-                    this.trait.volume = true;
-                    break;
-                case "SWITCH": // Switch
-                    this.trait.onoff = true;
-                    break;
-                case "THERMOSTAT": // Thermostat
-                    this.trait.temperaturesetting = true;
-                    break;
-                case "TV": // Television
-                    this.trait.appselector = true;
-                    this.trait.mediastate = true;
-                    this.trait.onoff = true;
-                    this.trait.transportcontrol = true;
-                    this.trait.volume = true;
-                    break;
-                case "VACUUM": // Vacuum
-                    this.trait.startstop = true;
-                    break;
-                case "VALVE": // Valve
-                    this.trait.openclose = true;
-                    break;
-                case "WASHER": // Washer
-                    this.trait.startstop = true;
-                    break;
-                case "WATERHEATER": // Water heater
-                    this.trait.onoff = true;
-                    break;
-                case "WATERPURIFIER": // Water purifier
-                    break;
-                case "WATERSOFTENER": // Water softener
-                    break;
-                case "WINDOW": // Window
-                    this.trait.openclose = true;
-                    break;
-                case "YOGURTMAKER": // Yogurt maker
-                    this.trait.onoff = true;
-                    break;
-            }
 
             let error_msg = '';
             if (this.trait.appselector) {
