@@ -3417,47 +3417,6 @@ module.exports = function (RED) {
             return new_data;
         }
 
-        key_name_synonym1(json_data) {
-            const me = this;
-            let new_data = [];
-            if (Array.isArray(json_data)) {
-                json_data.forEach(rec => {
-                    if (typeof rec.key === 'string' && rec.key.trim()) {
-                        let new_rec = {};
-                        new_rec.key = rec.key.trim();
-                        let found = new_data.filter(element => element.key === new_rec.key);
-                        if (found.length === 0 && Array.isArray(rec.names)) {
-                            new_rec.names = [];
-                            rec.names.forEach(names => {
-                                let lang = typeof names.lang === 'string' ? names.lang.trim() : '';
-                                if (lang.length === 0) {
-                                    lang = me.lang;
-                                }
-                                if (Array.isArray(names.name_synonym)) {
-                                    let name_synonym = [];
-                                    names.name_synonym.forEach(name => {
-                                        if (typeof name === 'string' && name.trim().length > 0 && !name_synonym.includes(name.trim())) {
-                                            name_synonym.push(name.trim());
-                                        }
-                                    });
-                                    if (name_synonym.length > 0) {
-                                        new_rec.names.push({
-                                            lang: lang,
-                                            name_synonym: name_synonym
-                                        });
-                                    }
-                                }
-                            });
-                            if (new_rec.names.length > 0) {
-                                new_data.push(new_rec);
-                            }
-                        }
-                    }
-                });
-            }
-            return new_data;
-        }
-
         parseJson(text, json_text, defaultValue) {
             this._debug('.parseJson: ' + text);
             if (json_text.trim().length > 0) {
