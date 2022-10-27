@@ -3753,64 +3753,49 @@ module.exports = function (RED) {
             }
 
             // Applications
-            if ((command.command === 'action.devices.commands.appInstall') ||
+            if (
+                (command.command === 'action.devices.commands.appInstall') ||
                 (command.command === 'action.devices.commands.appSearch') ||
-                (command.command === 'action.devices.commands.appSelect')) {
-                if (Object.prototype.hasOwnProperty.call(command.params, 'newApplication')) {
-                    const newApplication = command.params['newApplication'];
-                    let application_index = -1;
-                    this.available_applications.forEach(function (application, index) {
-                        if (application.key === newApplication) {
-                            application_index = index;
-                        }
-                    });
-                    if (command.command === 'action.devices.commands.appInstall') {
-                        if (application_index >= 0) {
-                            return {
-                                status: 'ERROR',
-                                errorCode: 'alreadyInstalledApp'
-                            };
-                        }
-                    } else {
-                        if (application_index < 0) {
-                            return {
-                                status: 'ERROR',
-                                errorCode: 'noAvailableApp'
-                            };
-                        }
-                        executionStates.push('online', 'currentApplication');
-                        params['currentApplication'] = newApplication;
+                (command.command === 'action.devices.commands.appSelect')
+            ) {
+                let foundApplication = null;
+
+                for (const application of this.available_applications) {
+                    // Try to identify app by key
+                    if(Object.prototype.hasOwnProperty.call(command.params, 'newApplication') &&
+                        command.params['newApplication'].localeCompare(application.key, undefined, { 'sensitivity': 'base' }) === 0) {
+                        foundApplication = application;
+                        break;
                     }
-                }
-                if (Object.prototype.hasOwnProperty.call(command.params, 'newApplicationName')) {
-                    const newApplicationName = command.params['newApplicationName'];
-                    let application_key = '';
-                    me.available_applications.forEach(function (application) {
-                        application.names.forEach(function (name) {
-                            if (name.name_synonym.includes(newApplicationName)) {
-                                application_key = application.key;
+
+                    // Try to identify app by name
+                    if(Object.prototype.hasOwnProperty.call(command.params, 'newApplicationName')) {
+                        for(const name of application.names) {
+                            if (name.name_synonym.some((nameSynonym) => nameSynonym.localeCompare(command.params['newApplicationName'], undefined, { 'sensitivity': 'base' }) === 0)) {
+                                foundApplication = application;
+                                break;
                             }
-                        });
-                    });
-                    if (command.command === 'action.devices.commands.appInstall') {
-                        if (application_key !== '') {
-                            return {
-                                status: 'ERROR',
-                                errorCode: 'alreadyInstalledApp'
-                            };
                         }
-                    } else {
-                        if (application_key === '') {
-                            return {
-                                status: 'ERROR',
-                                errorCode: 'noAvailableApp'
-                            };
-                        }
-                        params['currentApplication'] = application_key;
-                        executionStates.push('currentApplication');
                     }
                 }
-            }
+
+                if(command.command === 'action.devices.commands.appInstall' && foundApplication !== null) {
+                    return {
+                        status: 'ERROR',
+                        errorCode: 'alreadyInstalledApp'
+                    };
+                }
+
+                if(foundApplication === null) {
+                    return {
+                        status: 'ERROR',
+                        errorCode: 'noAvailableApp'
+                    };
+                }
+
+                params['currentApplication'] = foundApplication.key;
+                executionStates.push('online', 'currentApplication');
+          }
 
             // ColorLoop
             else if (command.command === 'action.devices.commands.ColorLoop') {
