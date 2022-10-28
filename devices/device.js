@@ -2163,7 +2163,7 @@ module.exports = function (RED) {
                         }
                     } else {
                         me.available_applications = [];
-                        me.error("Applications disabled");
+                        me.error("Got AVAILABLEAPPLICATIONS message, but AppSelector trait is disabled");
                     }
                     me.device.properties.attributes.availableApplications = me.available_applications;
                     me.clientConn.app.ScheduleRequestSync();
