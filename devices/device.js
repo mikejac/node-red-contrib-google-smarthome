@@ -3795,7 +3795,7 @@ module.exports = function (RED) {
 
                 params['currentApplication'] = foundApplication.key;
                 executionStates.push('online', 'currentApplication');
-          }
+            }
 
             // ColorLoop
             else if (command.command === 'action.devices.commands.ColorLoop') {

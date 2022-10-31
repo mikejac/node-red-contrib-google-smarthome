@@ -180,7 +180,7 @@ Example flow:
 #### Other device nodes
 
 All other device nodes except the Google device are deprecated. Please use the Google device node instead.
-        
+
 #### - Management
 `topic` can be `restart_server`, `report_state` or `request_sync`.
 
@@ -289,7 +289,7 @@ Google Workspace account. If this is the case, you can share access to your smar
 
 - Some devices can be controlled via voice, but not via Google Home App. For example windows and sensors. These devices
   only show a general page with their room assignments in the app, but they don't show their current state or buttons to
-  control it. There is nothing we can do about it, this has to be implemented by Google. 
+  control it. There is nothing we can do about it, this has to be implemented by Google.
 - Some errors and possible solutions are listed at
   [Possible errors](https://github.com/mikejac/node-red-contrib-google-smarthome/wiki/Possible-errors).
 - Look at Node-Red's debug panel for error messages.
@@ -304,7 +304,7 @@ Google Workspace account. If this is the case, you can share access to your smar
   200 (OK) and the message "SUCCESS: Smart Home service is reachable!" as one of the first lines. Use
   https://www.ssllabs.com/ssltest/ to check your SSL certificate.
 - Check Node-RED's log output. Where you find this depends on how you installed Node-Red. Usually something like
-  `journalctl -u nodered`, `docker logs <container>` or a file in `/var/log`. 
+  `journalctl -u nodered`, `docker logs <container>` or a file in `/var/log`.
 - Toggle "Enable Node debug" in the configuration node, connect a debug node to the output of the management node and
   look for debug messages. In Node-Red UI choose 'Restart Flows' on the 'Deploy' button to see messages during
   initialization.
