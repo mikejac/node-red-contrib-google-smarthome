@@ -2183,7 +2183,7 @@ module.exports = function (RED) {
                         }
                     } else {
                         me.available_arm_levels = [];
-                        me.error("Arm levels disabled");
+                        me.error("Got AVAILABLEARMLEVELS message, but ArmDisarm trait is disabled");
                     }
                     me.device.properties.attributes.availableArmLevels.levels = me.available_arm_levels;
                     me.clientConn.app.ScheduleRequestSync();
@@ -2202,7 +2202,7 @@ module.exports = function (RED) {
                         }
                     } else {
                         me.available_channels = [];
-                        me.error("Channels disabled");
+                        me.error("Got AVAILABLECHANNELS message, but Channel trait is disabled");
                     }
                     me.device.properties.attributes.availableChannels = me.available_channels;
                     me.clientConn.app.ScheduleRequestSync();
@@ -2221,7 +2221,7 @@ module.exports = function (RED) {
                         }
                     } else {
                         me.supported_dispense_items = [];
-                        me.error("Dispense items disabled");
+                        me.error("Got SUPPORTEDDISPENSEITEMS message, but Dispense trait is disabled");
                     }
                     me.device.properties.attributes.supportedDispenseItems = me.supported_dispense_items;
                     me.states['dispenseItems'] = me.getDispenseNewState();
@@ -2241,7 +2241,7 @@ module.exports = function (RED) {
                         }
                     } else {
                         me.supported_dispense_presets = [];
-                        me.error("Dispense presets disabled");
+                        me.error("Got SUPPORTEDDISPENSEPRESETS message, but Dispense trait is disabled");
                     }
                     me.device.properties.attributes.supportedDispensePresets = me.supported_dispense_presets;
                     me.states['dispenseItems'] = me.getDispenseNewState();
@@ -2261,7 +2261,7 @@ module.exports = function (RED) {
                         }
                     } else {
                         me.available_fan_speeds = [];
-                        me.error("Fan speeds disabled");
+                        me.error("Got AVAILABLEFANSPEEDS message, but FanSpeed trait is disabled");
                     }
                     me.device.properties.attributes.availableFanSpeeds.speeds = me.available_fan_speeds;
                     me.clientConn.app.ScheduleRequestSync();
@@ -2280,7 +2280,7 @@ module.exports = function (RED) {
                         }
                     } else {
                         me.available_fill_levels = [];
-                        me.error("Fill levels disabled");
+                        me.error("Got AVAILABLEFILLLEVELS message, but Fill trait is disabled");
                     }
                     me.device.properties.attributes.availableFillLevels.levels = me.available_fill_levels;
                     me.clientConn.app.ScheduleRequestSync();
@@ -2299,7 +2299,7 @@ module.exports = function (RED) {
                         }
                     } else {
                         me.food_presets = [];
-                        me.error("Food presets disabled");
+                        me.error("Got AVAILABLEFOODPRESETS message, but Cook trait is disabled");
                     }
                     me.device.properties.attributes.foodPresets = me.food_presets;
                     me.clientConn.app.ScheduleRequestSync();
@@ -2318,7 +2318,7 @@ module.exports = function (RED) {
                         }
                     } else {
                         me.available_inputs = [];
-                        me.error("Inputs disabled");
+                        me.error("Got AVAILABLEINPUTS message, but InputSelector trait is disabled");
                     }
                     me.device.properties.attributes.availableInputs = me.available_inputs;
                     me.clientConn.app.ScheduleRequestSync();
@@ -2338,7 +2338,7 @@ module.exports = function (RED) {
                         }
                     } else {
                         me.available_modes = [];
-                        me.error("Modes disabled");
+                        me.error("Got AVAILABLEMODES message, but Modes trait is disabled");
                     }
                     me.device.properties.attributes.availableModes = me.available_modes;
                     me.updateModesState(me);
@@ -2359,7 +2359,7 @@ module.exports = function (RED) {
                         }
                     } else {
                         me.available_toggles = [];
-                        me.error("Toggles disabled");
+                        me.error("Got AVAILABLETOGGLES message, but Toggles trait is disabled");
                     }
                     me.device.properties.attributes.availableToggles = me.available_toggles;
                     me.updateTogglesState(me);
