@@ -68,7 +68,7 @@ module.exports = function (RED) {
                 node.credentials.clientid || '',
                 node.credentials.clientsecret || '',
                 config.reportinterval,     // minutes
-                parseInt(config.request_sync_delay || '0'),
+                parseInt(config.request_sync_delay || '10'),
                 parseInt(config.set_state_delay || '0'),
                 this.enabledebug, function (msg) { node._debug(msg); }, function (msg) { node._error(msg); });
 
