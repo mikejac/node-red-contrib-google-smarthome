@@ -377,6 +377,7 @@ module.exports = function (RED) {
             this.available_arm_levels_file = config.available_arm_levels_file;
             this.available_arm_levels_type = config.available_arm_levels_type || 'str';
             this.arm_levels_ordered = config.arm_levels_ordered || false;
+            this.available_arm_levels = [];
             // Brightness
             this.command_only_brightness = config.command_only_brightness;
             // CameraStream
@@ -635,9 +636,6 @@ module.exports = function (RED) {
                 } else {
                     this.available_applications = this.to_available_applications(this.parseJson('Applications', this.appselector_file, []));
                 }
-            } else {
-                this.available_applications = [];
-                this._debug(".constructor: AppSelector disabled");
             }
 
             if (this.trait.armdisarm) {
@@ -646,9 +644,6 @@ module.exports = function (RED) {
                 } else {
                     this.available_arm_levels = this.to_available_arm_levels(this.parseJson('Available arm levels', this.available_arm_levels_file, []));
                 }
-            } else {
-                this.available_arm_levels = [];
-                this._debug(".constructor: ArmDisarm disabled");
             }
 
             if (this.trait.channel) {
@@ -657,9 +652,6 @@ module.exports = function (RED) {
                 } else {
                     this.available_channels = this.to_available_channels(this.parseJson('Channels', this.channel_file, []));
                 }
-            } else {
-                this.available_channels = [];
-                this._debug(".constructor: Channel disabled");
             }
 
             if (this.trait.cook) {
@@ -668,9 +660,6 @@ module.exports = function (RED) {
                 } else {
                     this.food_presets = this.to_food_presets(this.parseJson('Food presets', this.food_presets_file, []));
                 }
-            } else {
-                this.food_presets = [];
-                this._debug(".constructor: Cook disabled");
             }
 
             if (this.trait.dispense) {
@@ -684,10 +673,6 @@ module.exports = function (RED) {
                 } else {
                     this.supported_dispense_presets = this.to_supported_dispense_presets(this.parseJson('Supported dispense presets', this.supported_dispense_presets_file, []));
                 }
-            } else {
-                this.supported_dispense_items = [];
-                this.supported_dispense_presets = [];
-                this._debug(".constructor: Dispense disabled");
             }
 
             if (this.trait.fanspeed) {
@@ -696,9 +681,6 @@ module.exports = function (RED) {
                 } else {
                     this.available_fan_speeds = this.to_available_fan_speeds(this.parseJson('Fan speeds', this.available_fan_speeds_file, []));
                 }
-            } else {
-                this.available_fan_speeds = [];
-                this._debug(".constructor: FanSpeeds disabled");
             }
 
             if (this.trait.fill) {
@@ -707,9 +689,6 @@ module.exports = function (RED) {
                 } else {
                     this.available_fill_levels = this.to_available_fill_levels(this.parseJson('Available fill levels', this.available_fill_levels_file, []));
                 }
-            } else {
-                this.available_fill_levels = [];
-                this._debug(".constructor: Fill disabled");
             }
 
             if (this.trait.inputselector) {
@@ -718,9 +697,6 @@ module.exports = function (RED) {
                 } else {
                     this.available_inputs = this.to_available_inputs(this.parseJson('Available inputs', this.inputselector_file, []));
                 }
-            } else {
-                this.available_inputs = [];
-                this._debug(".constructor InputSelector disabled");
             }
 
             if (this.trait.modes) {
@@ -729,9 +705,6 @@ module.exports = function (RED) {
                 } else {
                     this.available_modes = this.to_available_modes(this.parseJson('Modes', this.modes_file, []));
                 }
-            } else {
-                this.available_modes = [];
-                this._debug(".constructor: Modes disabled");
             }
 
             if (this.trait.toggles) {
@@ -740,9 +713,6 @@ module.exports = function (RED) {
                 } else {
                     this.available_toggles = this.to_available_toggles(this.parseJson('Toggles', this.toggles_file, []));
                 }
-            } else {
-                this.available_toggles = [];
-                this._debug(".constructor: Toggles disabled");
             }
 
             this.updateStateTypesForTraits();
