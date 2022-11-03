@@ -2095,219 +2095,239 @@ module.exports = function (RED) {
                     }
                 } else if (upper_topic === 'AVAILABLEAPPLICATIONS') {
                     if (me.trait.appselector) {
-                        if (me.appselector_type !== 'json') {
+                        if (me.appselector_type === 'str') {
                             const filename = me.appselector_file.replace(/<id>/g, me.id);
-                            if (typeof msg.payload === 'undefined') {
-                                me.available_applications = me.to_available_applications(me.loadJson('Applications', filename, []));
-                            } else {
+                            if (typeof msg.payload !== 'undefined') {
                                 me.available_applications = me.to_available_applications(msg.payload);
-                                if (!me.writeJson('Applications', filename, me.available_applications)) {
-                                    me.error("Error saving Applications to file " + filename);
-                                }
+                                me.writeJson('Applications', filename, me.available_applications);
+                            } else {
+                                me.available_applications = me.to_available_applications(me.loadJson('Applications', filename, []));
+                            }
+                        } else {
+                            if (typeof msg.payload !== 'undefined') {
+                                me.available_applications = me.to_available_applications(msg.payload);
                             }
                         }
+                        me.device.properties.attributes.availableApplications = me.available_applications;
+                        me.updateStateTypesForTraits();
+                        me.clientConn.app.ScheduleRequestSync();
                     } else {
-                        me.available_applications = [];
                         me.error("Got AVAILABLEAPPLICATIONS message, but AppSelector trait is disabled");
                     }
-                    me.device.properties.attributes.availableApplications = me.available_applications;
-                    me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEARMLEVELS') {
                     if (me.trait.armdisarm) {
-                        if (me.available_arm_levels_type !== 'json') {
+                        if (me.available_arm_levels_type === 'str') {
                             const filename = me.available_arm_levels_file.replace(/<id>/g, me.id)
-                            if (typeof msg.payload === 'undefined') {
-                                me.available_arm_levels = me.to_available_arm_levels(me.loadJson('Arm levels', filename, []));
-                            } else {
+                            if (typeof msg.payload !== 'undefined') {
                                 me.available_arm_levels = me.to_available_arm_levels(msg.payload);
-                                if (!me.writeJson('Arm levels', filename, me.available_arm_levels)) {
-                                    me.error("Error saving Arm levels to file " + filename);
-                                }
+                                me.writeJson('Arm levels', filename, me.available_arm_levels);
+                            } else {
+                                me.available_arm_levels = me.to_available_arm_levels(me.loadJson('Arm levels', filename, []));
+                            }
+                        } else {
+                            if (typeof msg.payload !== 'undefined') {
+                                me.available_arm_levels = me.to_available_arm_levels(msg.payload);
                             }
                         }
+                        me.device.properties.attributes.availableArmLevels.levels = me.available_arm_levels;
+                        me.updateStateTypesForTraits();
+                        me.clientConn.app.ScheduleRequestSync();
                     } else {
-                        me.available_arm_levels = [];
                         me.error("Got AVAILABLEARMLEVELS message, but ArmDisarm trait is disabled");
                     }
-                    me.device.properties.attributes.availableArmLevels.levels = me.available_arm_levels;
-                    me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLECHANNELS') {
                     if (me.trait.channel) {
-                        if (me.channel_type !== 'json') {
+                        if (me.channel_type === 'str') {
                             const filename = me.channel_file.replace(/<id>/g, me.id);
-                            if (typeof msg.payload === 'undefined') {
-                                me.available_channels = me.to_available_channels(me.loadJson('Channels', filename, []));
-                            } else {
+                            if (typeof msg.payload !== 'undefined') {
                                 me.available_channels = me.to_available_channels(msg.payload);
-                                if (!me.writeJson('Channels', filename, me.available_channels)) {
-                                    me.error("Error saving Channels to file " + filename);
-                                }
+                                me.writeJson('Channels', filename, me.available_channels);
+                            } else {
+                                me.available_channels = me.to_available_channels(me.loadJson('Channels', filename, []));
+                            }
+                        } else {
+                            if (typeof msg.payload !== 'undefined') {
+                                me.available_channels = [];
                             }
                         }
+                        me.device.properties.attributes.availableChannels = me.available_channels;
+                        me.updateStateTypesForTraits();
+                        me.clientConn.app.ScheduleRequestSync();
                     } else {
-                        me.available_channels = [];
                         me.error("Got AVAILABLECHANNELS message, but Channel trait is disabled");
                     }
-                    me.device.properties.attributes.availableChannels = me.available_channels;
-                    me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'SUPPORTEDDISPENSEITEMS') {
                     if (me.trait.dispense) {
-                        if (me.supported_dispense_items_type !== 'json') {
+                        if (me.supported_dispense_items_type === 'str') {
                             const filename = me.supported_dispense_items_file.replace(/<id>/g, me.id);
-                            if (typeof msg.payload === 'undefined') {
-                                me.supported_dispense_items = me.to_supported_dispense_items(me.loadJson('Dispense items', filename, []));
-                            } else {
+                            if (typeof msg.payload !== 'undefined') {
                                 me.supported_dispense_items = me.to_supported_dispense_items(msg.payload);
-                                if (!me.writeJson('Dispense items', filename, me.supported_dispense_items)) {
-                                    me.error("Error saving Dispense items to file " + filename);
-                                }
+                                me.writeJson('Dispense items', filename, me.supported_dispense_items);
+                            } else {
+                                me.supported_dispense_items = me.to_supported_dispense_items(me.loadJson('Dispense items', filename, []));
+                            }
+                        } else {
+                            if (typeof msg.payload !== 'undefined') {
+                                me.supported_dispense_items = me.to_supported_dispense_items(msg.payload);
                             }
                         }
+                        me.device.properties.attributes.supportedDispenseItems = me.supported_dispense_items;
+                        me.states['dispenseItems'] = me.getDispenseNewState();
+                        me.updateStateTypesForTraits();
+                        me.clientConn.app.ScheduleRequestSync();
                     } else {
-                        me.supported_dispense_items = [];
                         me.error("Got SUPPORTEDDISPENSEITEMS message, but Dispense trait is disabled");
                     }
-                    me.device.properties.attributes.supportedDispenseItems = me.supported_dispense_items;
-                    me.states['dispenseItems'] = me.getDispenseNewState();
-                    me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'SUPPORTEDDISPENSEPRESETS') {
                     if (me.trait.dispense) {
-                        if (me.supported_dispense_presets_type !== 'json') {
+                        if (me.supported_dispense_presets_type === 'str') {
                             const filename = me.supported_dispense_presets_file.replace(/<id>/g, me.id);
-                            if (typeof msg.payload === 'undefined') {
-                                me.supported_dispense_presets = me.to_supported_dispense_presets(me.loadJson('Dispense presets', filename, []));
-                            } else {
+                            if (typeof msg.payload !== 'undefined') {
                                 me.supported_dispense_presets = me.to_supported_dispense_presets(msg.payload);
-                                if (!me.writeJson('Dispense presets', filename, me.supported_dispense_presets)) {
-                                    me.error("Error saving Dispense presets to file " + filename);
-                                }
+                                me.writeJson('Dispense presets', filename, me.supported_dispense_presets);
+                            } else {
+                                me.supported_dispense_presets = me.to_supported_dispense_presets(me.loadJson('Dispense presets', filename, []));
+                            }
+                        } else {
+                            if (typeof msg.payload !== 'undefined') {
+                                me.supported_dispense_presets = me.to_supported_dispense_presets(msg.payload);
                             }
                         }
+                        me.device.properties.attributes.supportedDispensePresets = me.supported_dispense_presets;
+                        me.states['dispenseItems'] = me.getDispenseNewState();
+                        me.updateStateTypesForTraits();
+                        me.clientConn.app.ScheduleRequestSync();
                     } else {
-                        me.supported_dispense_presets = [];
                         me.error("Got SUPPORTEDDISPENSEPRESETS message, but Dispense trait is disabled");
                     }
-                    me.device.properties.attributes.supportedDispensePresets = me.supported_dispense_presets;
-                    me.states['dispenseItems'] = me.getDispenseNewState();
-                    me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEFANSPEEDS') {
                     if (me.trait.fanspeed) {
-                        if (me.available_fan_speeds_type !== 'json') {
+                        if (me.available_fan_speeds_type === 'str') {
                             const filename = me.available_fan_speeds_file.replace(/<id>/g, me.id);
-                            if (typeof msg.payload === 'undefined') {
-                                me.available_fan_speeds = me.to_available_fan_speeds(me.loadJson('Fan speeds', filename, []));
-                            } else {
+                            if (typeof msg.payload !== 'undefined') {
                                 me.available_fan_speeds = me.to_available_fan_speeds(msg.payload);
-                                if (!me.writeJson('Fan speeds', filename, me.available_fan_speeds)) {
-                                    me.error("Error saving Fan speeds to file " + filename);
-                                }
+                                me.writeJson('Fan speeds', filename, me.available_fan_speeds);
+                            } else {
+                                me.available_fan_speeds = me.to_available_fan_speeds(me.loadJson('Fan speeds', filename, []));
+                            }
+                        } else {
+                            if (typeof msg.payload !== 'undefined') {
+                                me.available_fan_speeds = me.to_available_fan_speeds(msg.payload);
                             }
                         }
+                        me.device.properties.attributes.availableFanSpeeds.speeds = me.available_fan_speeds;
+                        me.updateStateTypesForTraits();
+                        me.clientConn.app.ScheduleRequestSync();
                     } else {
-                        me.available_fan_speeds = [];
                         me.error("Got AVAILABLEFANSPEEDS message, but FanSpeed trait is disabled");
                     }
-                    me.device.properties.attributes.availableFanSpeeds.speeds = me.available_fan_speeds;
-                    me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEFILLLEVELS') {
                     if (me.trait.dispense) {
-                        if (me.available_fill_levels_type !== 'json') {
+                        if (me.available_fill_levels_type === 'str') {
                             const filename = me.available_fill_levels_file.replace(/<id>/g, me.id);
-                            if (typeof msg.payload === 'undefined') {
-                                me.available_fill_levels = me.to_available_fill_levels(me.loadJson(' Fill levels', filename, []));
-                            } else {
+                            if (typeof msg.payload !== 'undefined') {
                                 me.available_fill_levels = me.to_available_fill_levels(msg.payload);
-                                if (!me.writeJson(' Fill levels', filename, me.available_fill_levels)) {
-                                    me.error("Error saving Fill levels to file " + filename);
-                                }
+                                me.writeJson(' Fill levels', filename, me.available_fill_levels);
+                            } else {
+                                me.available_fill_levels = me.to_available_fill_levels(me.loadJson(' Fill levels', filename, []));
+                            }
+                        } else {
+                            if (typeof msg.payload !== 'undefined') {
+                                me.available_fill_levels = me.to_available_fill_levels(msg.payload);
                             }
                         }
+                        me.device.properties.attributes.availableFillLevels.levels = me.available_fill_levels;
+                        me.updateStateTypesForTraits();
+                        me.clientConn.app.ScheduleRequestSync();
                     } else {
-                        me.available_fill_levels = [];
                         me.error("Got AVAILABLEFILLLEVELS message, but Fill trait is disabled");
                     }
-                    me.device.properties.attributes.availableFillLevels.levels = me.available_fill_levels;
-                    me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEFOODPRESETS') {
                     if (me.trait.cook) {
-                        if (me.food_presets_type !== 'json') {
+                        if (me.food_presets_type === 'str') {
                             const filename = me.food_presets_file.replace(/<id>/g, me.id);
-                            if (typeof msg.payload === 'undefined') {
-                                me.food_presets = me.to_food_presets(me.loadJson('Food presets', filename, []));
-                            } else {
+                            if (typeof msg.payload !== 'undefined') {
                                 me.food_presets = me.to_food_presets(msg.payload);
-                                if (!me.writeJson('Food presets', filename, me.food_presets)) {
-                                    me.error("Error saving Food presets to file " + filename);
-                                }
+                                me.writeJson('Food presets', filename, me.food_presets);
+                            } else {
+                                me.food_presets = me.to_food_presets(me.loadJson('Food presets', filename, []));
+                            }
+                        } else {
+                            if (typeof msg.payload !== 'undefined') {
+                                me.food_presets = me.to_food_presets(msg.payload);
                             }
                         }
+                        me.device.properties.attributes.foodPresets = me.food_presets;
+                        me.updateStateTypesForTraits();
+                        me.clientConn.app.ScheduleRequestSync();
                     } else {
-                        me.food_presets = [];
                         me.error("Got AVAILABLEFOODPRESETS message, but Cook trait is disabled");
                     }
-                    me.device.properties.attributes.foodPresets = me.food_presets;
-                    me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEINPUTS') {
                     if (me.trait.inputselector) {
-                        if (me.inputselector_type !== 'json') {
+                        if (me.inputselector_type === 'json') {
                             const filename = me.inputselector_file.replace(/<id>/g, me.id)
-                            if (typeof msg.payload === 'undefined') {
-                                me.available_inputs = me.to_available_inputs(me.loadJson('Inputs', filename, []));
-                            } else {
+                            if (typeof msg.payload !== 'undefined') {
                                 me.available_inputs = me.to_available_inputs(msg.payload);
-                                if (!me.writeJson('Inputs', filename, me.available_inputs)) {
-                                    me.error("Error saving Inputs to file " + filename);
-                                }
+                                me.writeJson('Inputs', filename, me.available_inputs);
+                            } else {
+                                me.available_inputs = me.to_available_inputs(me.loadJson('Inputs', filename, []));
+                            }
+                        } else {
+                            if (typeof msg.payload !== 'undefined') {
+                                me.available_inputs = me.to_available_inputs(msg.payload);
                             }
                         }
+                        me.device.properties.attributes.availableInputs = me.available_inputs;
+                        me.updateStateTypesForTraits();
+                        me.clientConn.app.ScheduleRequestSync();
                     } else {
-                        me.available_inputs = [];
                         me.error("Got AVAILABLEINPUTS message, but InputSelector trait is disabled");
                     }
-                    me.device.properties.attributes.availableInputs = me.available_inputs;
-                    me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLEMODES') {
                     if (me.trait.modes) {
                         if (me.modes_type !== 'json') {
                             const filename = me.modes_file.replace(/<id>/g, me.id);
-                            if (typeof msg.payload === 'undefined') {
-                                me.available_modes = me.to_available_modes(me.loadJson('Modes', filename, []));
-                                me.updateModesState(me);
-                            } else {
+                            if (typeof msg.payload !== 'undefined') {
                                 me.available_modes = me.to_available_modes(msg.payload);
-                                if (!me.writeJson('Modes', filename, me.available_modes)) {
-                                    me.error("Error saving Modes to file " + filename);
-                                }
+                                me.writeJson('Modes', filename, me.available_modes);
+                            } else {
+                                me.available_modes = me.to_available_modes(me.loadJson('Modes', filename, []));
+                            }
+                        } else {
+                            if (typeof msg.payload !== 'undefined') {
+                                me.available_modes = me.to_available_modes(msg.payload);
                             }
                         }
+                        me.device.properties.attributes.availableModes = me.available_modes;
+                        me.updateStateTypesForTraits();
+                        me.updateModesState(me);
+                        me.clientConn.app.ScheduleRequestSync();
                     } else {
-                        me.available_modes = [];
                         me.error("Got AVAILABLEMODES message, but Modes trait is disabled");
                     }
-                    me.device.properties.attributes.availableModes = me.available_modes;
-                    me.updateModesState(me);
-                    me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'AVAILABLETOGGLES') {
                     if (me.trait.toggles) {
-                        if (me.toggles_type !== 'json') {
+                        if (me.toggles_type === 'str') {
                             const filename = me.toggles_file.replace(/<id>/g, me.id);
-                            if (typeof msg.payload === 'undefined') {
-                                me.available_toggles = me.to_available_toggles(me.loadJson('Toggles', filename, []));
-                                me.updateTogglesState(me);
-                            } else {
+                            if (typeof msg.payload !== 'undefined') {
                                 me.available_toggles = me.to_available_toggles(msg.payload);
-                                if (!me.writeJson('Toggles', filename, me.available_toggles)) {
-                                    me.error("Error saving Toggles to file " + filename);
-                                }
+                                me.writeJson('Toggles', filename, me.available_toggles);
+                            } else {
+                                me.available_toggles = me.to_available_toggles(me.loadJson('Toggles', filename, []));
+                            }
+                        } else {
+                            if (typeof msg.payload !== 'undefined') {
+                                me.available_toggles = me.to_available_toggles(msg.payload);
                             }
                         }
+                        me.device.properties.attributes.availableToggles = me.available_toggles;
+                        me.updateStateTypesForTraits();
+                        me.updateTogglesState(me);
+                        me.clientConn.app.ScheduleRequestSync();
                     } else {
-                        me.available_toggles = [];
                         me.error("Got AVAILABLETOGGLES message, but Toggles trait is disabled");
                     }
-                    me.device.properties.attributes.availableToggles = me.available_toggles;
-                    me.updateTogglesState(me);
-                    me.clientConn.app.ScheduleRequestSync();
                 } else if (upper_topic === 'CAMERASTREAMAUTHTOKEN') {
                     const auth_token = Formats.formatValue('cameraStreamAuthToken', msg.payload, Formats.STRING, '');
                     if (auth_token != me.auth_token) {
