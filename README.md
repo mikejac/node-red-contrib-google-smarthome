@@ -33,7 +33,7 @@ What this module does NOT:
 ## Prerequisites
 
 1. You are going to need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/).
-2. You also need to be able to forward TCP traffic coming in from the Internet to your Node-RED server on a port you
+2. You also need to be able to forward TCP traffic coming in from the internet to your Node-RED server on a port you
 specify. This is not your full Node-RED server but a service started by `node-red-contrib-google-smarthome`, providing
 only the functions needed by Google.
 3. This package requires NodeJS version 8.0.0 at a minimum.
@@ -199,7 +199,7 @@ All other device nodes except the Google device are deprecated. Please use the G
 
   `Use Google Login`: If enabled, use the Google login authentication.
 
-  `Login Client ID`: If Google Login is enabled, the client id you gained from the *Google Sign-In* integration.
+  `Login Client ID`: If Google Login is enabled, the client ID you gained from the *Google Sign-In* integration.
 
   `Authorized emails`: If Google Login is enabled, The email addresses authorized to log in.
 
@@ -207,7 +207,7 @@ All other device nodes except the Google device are deprecated. Please use the G
   
 **Actions on Google Project Settings**
 
-  `Client ID`: The client id you entered in the *Actions on Google* project.
+  `Client ID`: The client ID you entered in the *Actions on Google* project.
 
   `Client Secret`: The client secret you entered in the *Actions on Google* project.
 
@@ -294,7 +294,7 @@ Google Workspace account. If this is the case, you can share access to your smar
   [Possible errors](https://github.com/mikejac/node-red-contrib-google-smarthome/wiki/Possible-errors).
 - Look at Node-Red's debug panel for error messages.
 - Unlink and relink your account in the Google Home app. Meanwhile, look for errors in the debug panel.
-- If you have problems during account linking, disable WiFi on your phone to use the cellular network only.
+- If you have problems during account linking, disable Wi-Fi on your phone to use the cellular network only.
 - If you have problems during account linking, disable "Use Google Login" and try login with username/password first. You can switch back to Google Login later.
 - Restart your flows (using the `Restart Flows` option in the dropdown menu of the deploy button) while the debug panel
   is open to see error messages during initialization.
@@ -333,7 +333,7 @@ Google Workspace account. If this is the case, you can share access to your smar
   discovery tool on your phone. It must find a service named "_nodered-google._tcp.". Tap on it, then tap again on
   "nodered" to see the details. Check if the IP address and port are correct.
 - If Service Browser lists the "nodered" service with an additional domain, check the configuration files /etc/hostname
-  and /etc/hosts. Both files must contain the host name without a domain.
+  and /etc/hosts. Both files must contain the hostname without a domain.
 - Open [chrome://inspect](chrome://inspect) in Chrome on your computer (not available on phone). Let it run for a while
   until your smart speaker is discovered. Click the `inspect` link. You'll see the console output of your smart speaker.
   The first two lines should read "Ready, App version: x.y" and "node-red-contrib-google-smarthome app.js ready!". If

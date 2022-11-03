@@ -7,7 +7,7 @@
 - You need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/). Make sure you have the public
   and private key file. You can also use a reverse proxy (like Caddy or Traefik) for certificate management and
   SSL termination.
-- TCP traffic on port 3001 needs to be forwarded from the Internet to your host where Node-RED is running.
+- TCP traffic on port 3001 needs to be forwarded from the internet to your host where Node-RED is running.
 
 ---
 

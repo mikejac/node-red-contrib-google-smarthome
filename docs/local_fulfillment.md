@@ -23,7 +23,7 @@ This tutorial assumes your service is already set up and working.
    <kbd>![](images/local_fulfillment/localexecution_upload.png)</kbd>
 
 
-4. Upload [this Javascript file](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js)
+4. Upload [this JavaScript file](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js)
    for both Node and Chrome.\
    <kbd>![](images/local_fulfillment/localexecution_upload_files.png)</kbd>
 
