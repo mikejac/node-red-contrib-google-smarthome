@@ -817,10 +817,7 @@ module.exports = function (RED) {
             state_types['online'] = Formats.BOOL + Formats.MANDATORY;
 
             if (me.trait.appselector) {
-                let values = [];
-                me.available_applications.forEach(application => {
-                    values.push(application.key);
-                });
+                let values = me.available_applications.map(application => application.key);
                 if (values.length > 0) {
                     state_types['currentApplication'] = {
                         type: Formats.STRING + Formats.MANDATORY,
@@ -832,10 +829,7 @@ module.exports = function (RED) {
                 }
             }
             if (me.trait.armdisarm) {
-                let values = [];
-                me.available_arm_levels.forEach(function (al) {
-                    values.push(al.level_name);
-                });
+                let values = me.available_arm_levels.map(al => al.level_name);
                 if (values.length > 0) {
                     state_types['isArmed'] = Formats.BOOL + Formats.MANDATORY;
                     state_types['currentArmLevel'] = {
@@ -930,10 +924,7 @@ module.exports = function (RED) {
                 };
             }
             if (me.trait.dispense) {
-                let dispense_items_values = [];
-                me.supported_dispense_items.forEach(function (item) {
-                    dispense_items_values.push(item.item_name);
-                });
+                let dispense_items_values = me.supported_dispense_items.map(item => item.item_name);
                 state_types['dispenseItems'] = {
                     type: Formats.OBJECT + Formats.ARRAY,
                     attributes: {
@@ -1019,10 +1010,7 @@ module.exports = function (RED) {
                         state_types['currentFanSpeedPercent'] = Formats.INT;
                     }
                     if (me.available_fan_speeds.length > 0) {
-                        let values = [];
-                        this.available_fan_speeds.forEach(function (fanspeed) {
-                            values.push(fanspeed.speed_name);
-                        });
+                        let values = me.available_fan_speeds.map(fanspeed => fanspeed.speed_name);
                         state_types['currentFanSpeedSetting'] = {
                             type: Formats.STRING,
                             values: values,
@@ -1055,10 +1043,7 @@ module.exports = function (RED) {
             }
             if (me.trait.inputselector) {
                 if (!me.command_only_input_selector) {
-                    let values = [];
-                    me.available_inputs.forEach(function (input) {
-                        values.push(input.key);
-                    });
+                    let values = me.available_inputs.map(input => input.key);
                     if (values.length > 0) {
                         state_types['currentInput'] = {
                             type: Formats.STRING + Formats.MANDATORY,
@@ -1104,10 +1089,7 @@ module.exports = function (RED) {
                     let attributes = {};
                     let ok = false;
                     me.available_modes.forEach(function (mode) {
-                        let values = [];
-                        mode.settings.forEach(function (setting) {
-                            values.push(setting.setting_name);
-                        });
+                        let values = mode.settings.map(setting => setting.setting_name);
                         if (values.length > 0) {
                             ok = true;
                             attributes[mode.name] = {
