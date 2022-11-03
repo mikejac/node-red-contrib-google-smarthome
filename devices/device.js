@@ -824,8 +824,6 @@ module.exports = function (RED) {
                         values: values,
                         defaultValue: values[0],
                     };
-                } else {
-                    me.trait.appselector = false;
                 }
             }
             if (me.trait.armdisarm) {
@@ -838,8 +836,6 @@ module.exports = function (RED) {
                         defaultValue: values[0],
                     };
                     state_types['exitAllowance'] = Formats.INT;
-                } else {
-                    me.trait.armdisarm = false;
                 }
             }
             if (me.trait.brightness && !me.command_only_brightness) {
@@ -1049,8 +1045,6 @@ module.exports = function (RED) {
                             type: Formats.STRING + Formats.MANDATORY,
                             values: values,
                         };
-                    } else {
-                        me.trait.inputselector = false;
                     }
                 }
             }
@@ -1063,8 +1057,6 @@ module.exports = function (RED) {
                         values: light_effect_value,
                     };
                     state_types['lightEffectEndUnixTimestampSec'] = Formats.INT;
-                } else {
-                    me.trait.lighteffects = false;
                 }
             }
             // Locator
