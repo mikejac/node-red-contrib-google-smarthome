@@ -629,7 +629,6 @@ module.exports = function (RED) {
             this.ct_volume = config.ct_volume || '';
             this.pin_volume = config.pin_volume || '';
 
-            let error_msg = '';
             if (this.trait.appselector) {
                 if (this.appselector_type !== 'json') {
                     this.available_applications = this.to_available_applications(this.loadJson('Applications', this.appselector_file.replace(/<id>/g, this.id), []));
@@ -761,11 +760,7 @@ module.exports = function (RED) {
             // GoogleSmartHomeNode -> (client.registerDevice -> DeviceNode.registerDevice), app.registerDevice
             this.clientConn.register(this, 'device');
 
-            if (error_msg.length == 0) {
-                this.updateStatusIcon(false);
-            } else {
-                this.status({ fill: "red", shape: "dot", text: error_msg });
-            }
+            this.updateStatusIcon(false);
 
             this.on('input', this.onInput);
             this.on('close', this.onClose);
