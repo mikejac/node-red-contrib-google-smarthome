@@ -2835,7 +2835,7 @@ module.exports = function (RED) {
         updateState(from_states) {
             const me = this;
             let modified = [];
-            me._debug("CCHI updateState state_types " + JSON.stringify(me.state_types));
+            // me._debug("CCHI updateState state_types " + JSON.stringify(me.state_types));
             me._debug('updateState current state ' + JSON.stringify(me.states));
             Object.keys(me.state_types).forEach(key => {
                 if (Object.prototype.hasOwnProperty.call(from_states, key)) {

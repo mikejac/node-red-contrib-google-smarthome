@@ -15,6 +15,14 @@ var Execute = smarthome.Execute;
 var Intents = smarthome.Intents; 
 var IntentFlow = smarthome.IntentFlow;
 
+const hex2a = (hexx) => {
+    var hex = hexx.toString();
+    var str = '';
+    for (var i = 0; i < hex.length; i += 2)
+        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    return str;
+}
+
 const findNodeRedDeviceDataByClientId = (requestId, devices, clientId) => {
     let device;
     device = devices.find((dev) => {
@@ -117,9 +125,11 @@ const identifyHandler = async (request) => {
     const deviceToIdentify = request.inputs[0].payload.device;
     var clientId = "";
     if (deviceToIdentify.udpScanData) {
-        const data = deviceToIdentify.udpScanData.data.toString('utf8');
+        console.log("IDENTIFY intent data:" + deviceToIdentify.udpScanData.data);
+        const data = hex2a(deviceToIdentify.udpScanData.data);
+        console.log("IDENTIFY intent data:" + data);
         const json_data = JSON.parse(data);
-        clientId = json_data; // .clientId;
+        clientId = json_data.clientId;
     } else {
         clientId = deviceToIdentify.mdnsScanData;
         if (!deviceToIdentify.mdnsScanData) {
