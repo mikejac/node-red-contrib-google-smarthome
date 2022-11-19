@@ -10,7 +10,7 @@
             "localport": "Porta HTTP",
             "local_scan_type": "Tipo di scansione",
             "local_scan_port": "Porta per la scansione",
-            "local_scan_packet": "Discovery packet",
+            "local_scan_packet": "Discovery Packet",
             "disabled": "Disabilitato",
             "UDP": "UDP",
             "MDNS": "MDNS",

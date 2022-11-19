@@ -37,6 +37,14 @@
     <code>Usa un server SSL esterno</code>: Se abilitato, la cifratura SSL non sarà gestita da questo nodo e deve essere configurata altrove, ad esempio usando un reverse proxy.
     <code>Chiave pubblica</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file contenente la chiave pubblica, es:. `fullchain.pem` scaricato da Let's Encrypt.<br>
     <code>Private Key</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file contenente la chiave privata, es:.  `privkey.pem` scaricato da Let's Encrypt.<br>
+    <br>
+    <b>Impostazioni per il Local fulfillment</b><br>
+    <code>Tipo di scansione</code>: Il protocollo di scansione da usare. Deve corrispondere a quello configurato in Google.<br>
+    <code>"Porta per la scansione</code>: Un numero di porta per la risposta della scansione. Per la scansione di tipo UDP, Deve corrispondere a quanto configurato nel campo "Broadcast Port" in Google. Se vuoto, userà la stessa porta del campo "Porta HTTP", se definito, altrimenti userà la stessa porta usata da Node-RED.<br>
+    <code>Discovery Packet</code>: Dati da ricevere nel messaggio di UDP broadcast. Valido soltanto per il tipo di scansione UDP. Deve corrispondere a quanto configurato nel campo "Discovery Packet" in Google, ma non in formato esadecimale.<br>
+    <code>Porta HTTP</code>: Un numero di porta per ricevere i messaggi non HTTPS. Se vuoto, userà la stessa porta usata da Node-RED.
+                            Se la cifratura HTTPS è usata da Node-RED oppure è configurato un httpAdminRoot, è necessario specificare una porta, altrimenti è sicuro lasciare questo campo vuoto.
+                            Se non vuoto, non creare una regola di inoltro dal router per questa porta!
     <b>Impostazioni Avanzate</b><br>
     <code>"Durata del token di accesso</code>: la durata del token di accesso (in minuti) usato dalla domotica di Google per identificarsi a questo nododi  Node-RED. Il valore predefinito è di 60 minuti.<br>
     <code>Intervallo tra i report (m)</code>: Intervallo di tempo, in minuti, tra due report di aggiornamento di stato che sono inviati a Google.<br>
