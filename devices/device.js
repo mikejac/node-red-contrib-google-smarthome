@@ -41,6 +41,7 @@ module.exports = function (RED) {
             this.device = {};
             this.client = config.client;
             this.name = config.name || config.id;
+            this.device_type = config.device_type;
             this.nicknames = config.nicknames;
             this.clientConn = RED.nodes.getNode(this.client);
             this._debug(".constructor config " + JSON.stringify(config));
@@ -367,7 +368,6 @@ module.exports = function (RED) {
             this.topic_filter = config.topic_filter || false;
             this.persistent_state = config.persistent_state || false;
             this.room_hint = config.room_hint;
-            this.device_type = config.device_type;
 
             // AppSelector
             this.appselector_file = config.appselector_file;
