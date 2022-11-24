@@ -42,7 +42,6 @@
     <b>Local fulfillment Settings</b><br>
     <code>Scan Type</code>: The discovery protocol to use. It must match the Google configuration.<br>
     <code>Discovery Port</code>: A port number for the Discovery response. For the UDP scan type, it must match the "Broadcast Port" Google configuration. If empty, it will use the same port as HTTP port if defined, otherwise it will use the same port as Node-RED.<br>
-    <code>Discovery Packet</code>: Payload to receive in the UDP broadcast. Only for the UDP scan type. It must correspond to the value of the "Discovery Packet" Google configuration, but not in HEX format.<br>
     <code>HTTP port</code>: A port number to use for local fulfillment. If empty, it will use the same port as Node-RED.
                             If you use Node-RED's built-in HTTPS encryption or you have a httpAdminRoot set, you need to
                             set a port. Don't create a forwarding rule for this port!

@@ -61,7 +61,6 @@ module.exports = function (RED) {
                 parseInt(config.port || '0'),
                 config.local_scan_type || '',
                 parseInt(config.local_scan_port || '0'),
-                config.local_scan_packet || '',
                 parseInt(config.localport || '0'),
                 RED.server instanceof https.Server,
                 config.ssloffload,

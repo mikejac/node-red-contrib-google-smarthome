@@ -172,11 +172,6 @@
                 <input type="text" id="node-config-input-local_scan_port" data-i18n="[placeholder]googlesmarthome.placeholder.local_scan_port">
             </div>
 
-            <div id="local_scan_packet" class="form-row">
-                <label for="node-config-input-local_scan_packet"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.local_scan_packet"></span></label>
-                <input type="text" id="node-config-input-local_scan_packet" data-i18n="[placeholder]googlesmarthome.placeholder.local_scan_packet">
-            </div>
-
             <div class="form-row">
                 <label for="node-config-input-localport"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.localport"></span></label>
                 <input type="text" id="node-config-input-localport" data-i18n="[placeholder]googlesmarthome.placeholder.localport">
@@ -311,9 +306,6 @@
                 local_scan_port: {
                     required: false, validate: RED.validators.number(true)
                 },
-                local_scan_packet: {
-                    value:"", required: false
-                },
                 localport: {
                     required: false, validate: RED.validators.number(true)
                 },
@@ -439,11 +431,6 @@
                     let scan_type = $('#node-config-input-local_scan_type').val();
                     if (scan_type) {
                         $('#local_fulfillment').show();
-                        if (scan_type === "UDP") {
-                            $('#local_scan_packet').show();
-                        } else {
-                            $('#local_scan_packet').hide();
-                        }
                     } else {
                         $('#local_fulfillment').hide();
                     }
