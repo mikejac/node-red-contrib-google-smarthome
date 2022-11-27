@@ -38,8 +38,11 @@ This tutorial assumes your service is already set up and working.
     3. set mDNS service name to `_nodered-google._tcp.local`
 
 
-7. The complete local fulfillment form should look like this.\
-   <kbd>![](images/local_fulfillment/localexecution_form.png)</kbd>
+7. The complete local fulfillment form for mDNS Scan Type should look like this.\
+   <kbd>![](images/local_fulfillment/localexecution_form_mDNS.png)</kbd>
+
+   The complete local fulfillment form for UDP Scan Type should look like this.\
+   <kbd>![](images/local_fulfillment/localexecution_form_UDP.png)</kbd>
 
 
 8. `Save` your changes.

@@ -134,7 +134,6 @@
                 <input type="checkbox" id="node-config-input-usehttpnoderoot" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
         
-        
             <div class="form-row">
                 <label style="width:auto" for="node-config-input-ssloffload"><i class="fa fa-arrow-right"></i> <span data-i18n="googlesmarthome.label.ssloffload"></span></label>
                 <input type="checkbox" id="node-config-input-ssloffload" style="display:inline-block; width:auto; vertical-align:top;">
@@ -153,12 +152,33 @@
                 </div>
             </div>
         </div>
+    </fieldset>
 
+    <fieldset>
+        <legend>Local Fulfillment</legend>
+    
         <div class="form-row">
-            <label for="node-config-input-localport"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.localport"></span></label>
-            <input type="text" id="node-config-input-localport" data-i18n="[placeholder]googlesmarthome.placeholder.localport">
+            <label for="node-config-input-local_scan_type"><i class="fa fa-tag"></i> <span data-i18n="googlesmarthome.label.local_scan_type"></span></label>
+            <select id="node-config-input-local_scan_type" >
+                <option value='' data-i18n='googlesmarthome.label.disabled'></option>
+                <option value='MDNS' data-i18n='googlesmarthome.label.MDNS'></option>
+                <option value='UDP' data-i18n='googlesmarthome.label.UDP'></option>
+            </select>
+        </div>
+    
+        <div class="form-row hidden" id="local_fulfillment" style="background: #fbfbfb">
+            <div class="form-row">
+                <label for="node-config-input-local_scan_port"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.local_scan_port"></span></label>
+                <input type="text" id="node-config-input-local_scan_port" data-i18n="[placeholder]googlesmarthome.placeholder.local_scan_port">
+            </div>
+
+            <div class="form-row">
+                <label for="node-config-input-localport"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.localport"></span></label>
+                <input type="text" id="node-config-input-localport" data-i18n="[placeholder]googlesmarthome.placeholder.localport">
+            </div>
         </div>
     </fieldset>
+
     <fieldset>
         <legend data-i18n="googlesmarthome.label.advanced_settings"></legend>
 
@@ -207,7 +227,7 @@
                 default_lang: {
                     value: "en", required: true,
                 },
-                usegooglelogin : {
+                usegooglelogin: {
                     value: false
                 },
                 /*
@@ -244,14 +264,14 @@
                     }
                 },
                 */
-                usehttpnoderoot : {
+                usehttpnoderoot: {
                     value: false
                 },
                 port: {
-                    value:3001, required:false, validate:RED.validators.number(true)
+                    value: 3001, required: false, validate: RED.validators.number(true)
                 },
                 httppath: {
-                    value:"", required: false
+                    value: "", required: false
                 },
                 ssloffload: {
                     value: false
@@ -280,8 +300,14 @@
                     }
                 },
                 */
+                local_scan_type: {
+                    value: "", required: false
+                },
+                local_scan_port: {
+                    required: false, validate: RED.validators.number(true)
+                },
                 localport: {
-                    required:false, validate: RED.validators.number(true)
+                    required: false, validate: RED.validators.number(true)
                 },
                 /*
                 jwtkey: {
@@ -295,16 +321,16 @@
                 }
                 */
                 accesstokenduration: {
-                    value:60, required:true, validate:RED.validators.number(true)
+                    value: 60, required: true, validate: RED.validators.number(true)
                 },
                 reportinterval: {
-                    value:60, required:true, validate:RED.validators.number(true)
+                    value: 60, required: true, validate: RED.validators.number(true)
                 },
                 request_sync_delay: {
-                    value:'', required:false, validate: isOptionalNonNegativeInteger
+                    value: '', required: false, validate: isOptionalNonNegativeInteger
                 },
                 set_state_delay: {
-                    value:'', required:false, validate: isOptionalNonNegativeInteger
+                    value: '', required: false, validate: isOptionalNonNegativeInteger
                 }
             },
 
@@ -319,15 +345,15 @@
                 clientid: { type: "text" },
                 clientsecret: { type: "password" },
             },
-            color:"#3FADB5",
+            color: "#3FADB5",
             icon: "google-smarthome.png",
-            label: function() {
+            label: function () {
                 return this.name || "googlesmarthome-client";
             },
-            labelStyle: function() {
+            labelStyle: function () {
                 return this.name ? "node_label_italic" : "";
             },
-            oneditprepare: function() {
+            oneditprepare: function () {
                 // emails
                 $('#node-config-input-googlesmarthome-emails-container').css('min-height', '150px').css('min-width', '250px').editableList({
                     addItem: function (container, i, opt) {
@@ -362,7 +388,7 @@
                     $("#node-config-input-googlesmarthome-emails-container").editableList('addItem', { name: email });
                 }
                 // Use Google login on / off
-                let useGoogleLogin = function() {
+                let useGoogleLogin = function () {
                     let usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
                     if (usegooglelogin == false) {
                         $("#usegooglelogin").hide();
@@ -376,7 +402,7 @@
                 $("#node-config-input-usegooglelogin").change(useGoogleLogin);
 
                 // Use external SSL offload on / off
-                let sslOffLoadKeys = function() {
+                let sslOffLoadKeys = function () {
                     let ssloffload = $("#node-config-input-ssloffload").prop('checked');
                     if (ssloffload == false) {
                         $("#ssloffloadkeys").show();
@@ -388,7 +414,7 @@
                 $("#node-config-input-ssloffload").change(sslOffLoadKeys);
 
                 // Use same NODE-Red port
-                let useNODERedPort = function() {
+                let useNODERedPort = function () {
                     let input_port = $('#node-config-input-port').val();
                     input_port = isNaN(input_port) ? 0 : +input_port;
                     if ((input_port <= 0)) { //  || (RED.settings.uiPort === node)) {
@@ -399,6 +425,18 @@
                 };
                 useNODERedPort();
                 $('#node-config-input-port').change(useNODERedPort);
+
+                // Local FulFillment
+                let localFulFillment = function () {
+                    let scan_type = $('#node-config-input-local_scan_type').val();
+                    if (scan_type) {
+                        $('#local_fulfillment').show();
+                    } else {
+                        $('#local_fulfillment').hide();
+                    }
+                };
+                localFulFillment();
+                $('#node-config-input-local_scan_type').change(localFulFillment);
             },
             oneditsave: function () {
                 let node = this;
@@ -467,7 +505,7 @@
         paletteLabel: 'Management',
         defaults: {
             client: {
-                type: "googlesmarthome-client", 
+                type: "googlesmarthome-client",
                 required: true
             },
             name: {
@@ -479,14 +517,13 @@
         },
         inputs: 1,
         outputs: 1,
-        color:"#C0DEED",
+        color: "#C0DEED",
         icon: "google-smarthome.png",
-        label: function() {
+        label: function () {
             return this.name || "Management";
         },
-        labelStyle: function() {
+        labelStyle: function () {
             return this.name ? "node_label_italic" : ""
         }
     })
 </script>
-

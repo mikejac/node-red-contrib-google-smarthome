@@ -59,6 +59,8 @@ module.exports = function (RED) {
                 config.usehttpnoderoot,
                 config.httppath,
                 parseInt(config.port || '0'),
+                config.local_scan_type || '',
+                parseInt(config.local_scan_port || '0'),
                 parseInt(config.localport || '0'),
                 RED.server instanceof https.Server,
                 config.ssloffload,
@@ -351,7 +353,7 @@ module.exports = function (RED) {
                             deviceIds = msg.payload.devices;
                         }
                     }
-                    let states = this.clientConn.app.devices.getStates(deviceIds, onlyPersistent, useNames, RED);
+                    let states = this.clientConn.app.devices.getStates(deviceIds, onlyPersistent, useNames);
                     if (states) {
                         this.send({
                             topic: topic,
@@ -373,7 +375,7 @@ module.exports = function (RED) {
             if (this.set_state_type === 'no_nodes') return;
             let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.set_state_type);
             let useNames = ['all_by_name', 'filtered_by_name'].includes(this.set_state_type);
-            let states = this.clientConn.app.devices.getStates(undefined, onlyPersistent, useNames, RED);
+            let states = this.clientConn.app.devices.getStates(undefined, onlyPersistent, useNames);
             if (states) {
                 this.send({
                     topic: 'set_state',

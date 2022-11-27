@@ -1,6 +1,6 @@
 "use strict";
 
-const VERSION = '2.4';
+const VERSION = '2.5';
 
 /// <reference types="@google/local-home-sdk" />
 /*
@@ -15,11 +15,19 @@ var Execute = smarthome.Execute;
 var Intents = smarthome.Intents; 
 var IntentFlow = smarthome.IntentFlow;
 
-const findNodeRedDeviceDataByMdnsData = (requestId, devices, mdnsScanData) => {
+const hex2a = (hexx) => {
+    var hex = hexx.toString();
+    var str = '';
+    for (var i = 0; i < hex.length; i += 2)
+        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    return str;
+}
+
+const findNodeRedDeviceDataByClientId = (requestId, devices, clientId) => {
     let device;
     device = devices.find((dev) => {
         const customData = dev.customData;
-        return (customData && (!mdnsScanData.clientId || customData.clientId === mdnsScanData.clientId));
+        return (customData && (!clientId || customData.clientId === clientId));
     });
 
     if (!device) {
@@ -29,6 +37,7 @@ const findNodeRedDeviceDataByMdnsData = (requestId, devices, mdnsScanData) => {
 
     return device.customData;
 };
+
 const findNodeRedDeviceDataByDeviceId = (requestId, devices, deviceId) => {
     let device;
     device = devices.find((dev) => {
@@ -48,6 +57,7 @@ const createResponse = (request, payload) => ({
     requestId: request.requestId,
     payload,
 });
+
 class UnknownInstance extends Error {
     constructor(requestId) {
         super();
@@ -57,6 +67,7 @@ class UnknownInstance extends Error {
         throw new IntentFlow.HandlerError(this.requestId, "invalidRequest", "Unknown Instance");
     }
 }
+
 const forwardRequest = async (nodeRedData, targetDeviceId, request) => {
     const command = new DataFlow.HttpRequestData();
     command.method = Constants.HttpOperation.POST;
@@ -108,19 +119,30 @@ const forwardRequest = async (nodeRedData, targetDeviceId, request) => {
         throw new IntentFlow.HandlerError(request.requestId, "invalidRequest", err.message);
     }
 };
+
 const identifyHandler = async (request) => {
     console.log("IDENTIFY intent:", request);
     const deviceToIdentify = request.inputs[0].payload.device;
-    if (!deviceToIdentify.mdnsScanData) {
-        console.error(request.requestId, "No usable mdns scan data");
-        return createResponse(request, {});
-    }
-    if (deviceToIdentify.mdnsScanData.type !== "nodered-google") {
-        console.error(request.requestId, "Not Node Red Google Smarthome type. expected: 'nodered-google' got: '" + deviceToIdentify.mdnsScanData.type + "'");
-        return createResponse(request, {});
+    var clientId = "";
+    if (deviceToIdentify.udpScanData) {
+        console.log("IDENTIFY intent data:" + deviceToIdentify.udpScanData.data);
+        const data = hex2a(deviceToIdentify.udpScanData.data);
+        console.log("IDENTIFY intent data:" + data);
+        const json_data = JSON.parse(data);
+        clientId = json_data.clientId;
+    } else {
+        clientId = deviceToIdentify.mdnsScanData;
+        if (!deviceToIdentify.mdnsScanData) {
+            console.error(request.requestId, "No usable mdns scan data");
+            return createResponse(request, {});
+        }
+        if (deviceToIdentify.mdnsScanData.type !== "nodered-google") {
+            console.error(request.requestId, "Not Node Red Google Smarthome type. expected: 'nodered-google' got: '" + deviceToIdentify.mdnsScanData.type + "'");
+            return createResponse(request, {});
+        }
     }
     try {
-        const nodeRedData = findNodeRedDeviceDataByMdnsData(request.requestId, request.devices, deviceToIdentify.mdnsScanData.txt);
+        const nodeRedData = findNodeRedDeviceDataByClientId(request.requestId, request.devices, clientId);
         return await forwardRequest(nodeRedData, "", request);
     }
     catch (err) {
@@ -130,6 +152,7 @@ const identifyHandler = async (request) => {
         throw err;
     }
 };
+
 const reachableDevicesHandler = async (request) => {
     console.log("REACHABLE_DEVICES intent:", request);
     const nodeRedData = findNodeRedDeviceDataByDeviceId(request.requestId, request.devices, request.inputs[0].payload.device.id);
@@ -143,6 +166,7 @@ const reachableDevicesHandler = async (request) => {
         throw err;
     }
 };
+
 const executeHandler = async (request) => {
     console.log("EXECUTE intent:", request);
     const device = request.inputs[0].payload.commands[0].devices[0];
@@ -156,6 +180,7 @@ const executeHandler = async (request) => {
         throw err;
     }
 };
+
 const queryHandler = async (request) => {
     console.log("QUERY intent:", request);
 	const device = request.inputs[0].payload.devices[0];
@@ -169,7 +194,9 @@ const queryHandler = async (request) => {
         throw err;
     }
 };
+
 const app = new App(VERSION);
+
 app
     .onIdentify(identifyHandler)
     .onReachableDevices(reachableDevicesHandler)
