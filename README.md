@@ -228,13 +228,19 @@ All other device nodes except the Google device are deprecated. Please use the G
   `Use external SSL offload`: If enabled, the smarthome service will use HTTP instead of HTTPS. Check if you want to
                               do SSL termination on a reverse proxy.
 
-  `Local fulfillment port`: A port number to use for local fulfillment. If empty, it will use the same port as Node-RED.
-                            If you use Node-RED's built-in HTTPS encryption or you have a httpAdminRoot set, you need to
-                            set a port. Don't create a forwarding rule for this port!
-
   `Public Key`: Full path to public key file, e.g. `fullchain.pem` from Let's Encrypt.
 
   `Private Key`: Full path to private key file, e.g. `privkey.pem` from Let's Encrypt.
+
+**Local Fulfillment**
+
+  `Scan Type`: The service discovery method to use. Must match what is set in the *Actions on Google* project.
+
+  `Discovery Port`: A port number to use for UDP or MDNS service discovery. 
+
+  `HTTP Port`: A port number to from your smart speaker to Node-RED. If empty, it will use the same port as Node-RED.
+               If you use Node-RED's built-in HTTPS encryption or you have a httpAdminRoot set, you need to
+               set a port. Don't create a forwarding rule for this port!
 
 **Advanced Settings**
 

@@ -167,6 +167,8 @@ Now we will install the module in Node-RED and configure it.
       This tutorial assumes a simple path setup, so leave it empty.
     * Use external SSL offload: If enabled, the smarthome service will use HTTP instead of HTTPS. Check this box if you
       want to do SSL termination on a reverse proxy like Caddy or Traefik.
+    * Scan Type: Specifies how your smart speaker will search for Node-RED instances on your local network to use for
+      local fulfillment. You can setup local fulfillment later, so set it to "Disabled" for now.
     * Local fulfillment port: A port number to use for local fulfillment. Choose any port you want. This port is used
       for internal communication only and must not be forwarded externally.
     * Public and Private Key: Path to public and private key files of your SSL certificate (if you do not use external
