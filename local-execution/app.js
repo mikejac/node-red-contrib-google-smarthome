@@ -1,6 +1,6 @@
 "use strict";
 
-const VERSION = '2.5';
+const VERSION = '2.6';
 
 /// <reference types="@google/local-home-sdk" />
 /*
@@ -131,7 +131,6 @@ const identifyHandler = async (request) => {
         const json_data = JSON.parse(data);
         clientId = json_data.clientId;
     } else {
-        clientId = deviceToIdentify.mdnsScanData;
         if (!deviceToIdentify.mdnsScanData) {
             console.error(request.requestId, "No usable mdns scan data");
             return createResponse(request, {});
@@ -140,6 +139,7 @@ const identifyHandler = async (request) => {
             console.error(request.requestId, "Not Node Red Google Smarthome type. expected: 'nodered-google' got: '" + deviceToIdentify.mdnsScanData.type + "'");
             return createResponse(request, {});
         }
+        clientId = deviceToIdentify.mdnsScanData.txt.clientId;
     }
     try {
         const nodeRedData = findNodeRedDeviceDataByClientId(request.requestId, request.devices, clientId);
