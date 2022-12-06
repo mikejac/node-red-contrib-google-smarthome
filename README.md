@@ -36,7 +36,7 @@ What this module does NOT:
 2. You also need to be able to forward TCP traffic coming in from the internet to your Node-RED server on a port you
 specify. This is not your full Node-RED server but a service started by `node-red-contrib-google-smarthome`, providing
 only the functions needed by Google.
-3. This package requires NodeJS version 8.0.0 at a minimum.
+3. This package requires NodeJS version 10.0.0 at a minimum.
 
 ---
 ## Setup Instructions
