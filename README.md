@@ -320,8 +320,7 @@ Google Workspace account. If this is the case, you can share access to your smar
 - Go to [Actions on Google Console](https://console.actions.google.com), on tab *Test* click *Reset Test*. If this
   doesn't do anything, click the *Settings* button, disable "On device testing", then click "Start testing" to enable it again. This is
   especially important after making changes in the Google Actions Console.
-- Check that you only have one single config node and this config is selected in your management node and all your
-  devices.
+- Check that you have only one single management node and one single config node.
 - Google might say that it cannot reach your device if that device did not update its state at least once after creation.
 - Go through the [setup instructions](docs/setup_instructions.md) again and compare your settings to what you see on the
   screenshots
