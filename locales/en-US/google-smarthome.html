@@ -17,40 +17,47 @@
 -->
 
 <script type="text/x-red" data-help-name="googlesmarthome-client">
+    <code>Name</code>: A name for the node.<br>
+    <code>Enable Node Debug</code>: If enabled, debugging information will be logged to Node-RED's log.<br>
+    <code>Default language</code>: The language of your project.<br>
+    <br>
     <b>Local Authentication</b><br>
-    <code>Use Google login</code>: If enabled, use the Google login authentication.<br>
-    <code>Login Client ID</code>: If Google Login is enabled, the client id you gained from the *Google Sign-In* integration.<br>
+    <code>Use Google login</code>: If enabled, use Google Sign-In to link your account in the Google Home App. See
+            <a href="https://github.com/mikejac/node-red-contrib-google-smarthome/blob/master/docs/google_signin.md"
+            target="_blank">the docs</a> for more information.<br>
+    <code>Login Client ID</code>: If Google Login is enabled, the client ID you gained from the *Google Sign-In* integration.<br>
     <code>Authorized emails</code>: If Google Login is enabled, The email addresses authorized to log in.<br>
-    <code>Username</code> and <code>Password</code>: A username and password used when you link Google SmartHome to this node.<br>
+    <code>Username</code> and <code>Password</code>: If Google Login is disabled, a username and password to use when
+            you link your account in the Google Home App.<br>
     <br>
     <b>Actions on Google Project Settings</b><br>
-    <code>Client ID</code>: The client id you entered in the <b>Actions on Google</b> project.<br>
-    <code>Client Secret</code>: The client secret you entered in the <b>Actions on Google</b> project.<br>
+    <code>Client ID</code>: The client id you entered in the <i>Actions on Google</i> project.<br>
+    <code>Client Secret</code>: The client secret you entered in the <i>Actions on Google</i> project.<br>
     <br>
     <b>Google HomeGraph Settings</b><br>
-    <code>Jwt Key</code>: Path (absolute or relative to the Node-RED HOME folder) to JWT key file.<br>
+    <code>Jwt Key</code>: Path to the JSON file you downloaded during setup. Can be an absolute path or a path relative
+          to Node-REDs user dir (where your settings.js, flows.json etc. are stored).<br>
     <br>
     <b>Web Server Settings</b><br>
-    <code>Use http Node-RED root path</code>: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.<br>
+    <code>Port</code>: TCP port of your choice for incoming connections from Google. Must match what you entered in the <i>Actions on Google</i> project. If empty, it will use the same port as Node-RED.<br>
     <code>Path</code>: Prefix for URLs provided by this module. Default fulfillment URL is https://example.com:3001/smarthome. With a
           path of "foo" this changes to https://example.com:3001/foo/smarthome. Same for URLs `/oauth` and `/token`.<br>
-    <code>Port</code>: TCP port of your choosing for incoming connections from Google. Must match what you entered in the <b>Actions on Google</b> project. If empty, it will use the same port as Node-RED.<br>
-    <code>External SSL offload</code>: If enabled, the smarthome service will use HTTP instead of HTTPS. Check if you want to do SSL termination on a reverse proxy.
-    <code>Public Key</code>: Path (absolute or relative to the Node-RED HOME folder) to public key file, e.g. `fullchain.pem` from Let's Encrypt.<br>
-    <code>Private Key</code>: Path (absolute or relative to the Node-RED HOME folder) to private key file, e.g. `privkey.pem` from Let's Encrypt.<br>
+    <code>Use http Node-RED root path</code>: If enabled, use the same http root path prefix configured for Node-RED. Otherwise, no prefix will be used.<br>
+    <code>Use external SSL offload</code>: If enabled, the smarthome service will use HTTP instead of HTTPS. Check if you want to do SSL termination on a reverse proxy.
+    <code>Public Key</code>: Path to the file containing the public SSL key, e.g. `fullchain.pem` from Let's Encrypt. Can be an absolute path or a path relative to Node-REDs user dir (where your settings.js, flows.json etc. are stored).<br>
+    <code>Private Key</code>: Path to the file containing the private SSL key, e.g. `privkey.pem` from Let's Encrypt. Can be an absolute path or a path relative to Node-REDs user dir (where your settings.js, flows.json etc. are stored).<br>
     <br>
-    <b>Local fulfillment Settings</b><br>
-    <code>Scan Type</code>: The discovery protocol to use. It must match the Google configuration.<br>
-    <code>Discovery Port</code>: A port number for the Discovery response. For the UDP scan type, it must match the "Broadcast Port" Google configuration. If empty, it will use the same port as HTTP port if defined, otherwise it will use the same port as Node-RED.<br>
+    <b>Local fulfillment</b><br>
+    <code>Scan Type</code>: The discovery protocol to use. Must match the configuration in the <i>Actions on Google</i> project.<br>
+    <code>Discovery Port</code>: A port number for UDP or MDNS. For UDP, it must match the "Broadcast Port" in the Google configuration.<br>
     <code>HTTP port</code>: A port number to use for local fulfillment. If empty, it will use the same port as Node-RED.
                             If you use Node-RED's built-in HTTPS encryption or you have a httpAdminRoot set, you need to
                             set a port. Don't create a forwarding rule for this port!
-    <code>HTTP port</code>: TCP port of your choosing for incoming connections from Google for local fulfillment. If you connect to Node-RED over https you must set this port, otherwise it will use the same port as Node-RED.<br>
     <b>Advanced Settings</b><br>
-    <code>Access Token Duration</code>: The authorization token duration (in minutes) used by Google SmartHome to identify itself to node-red SmartHome plugin. Defaults is 60 minutes.<br>
-    <code>Report Interval (m)</code>: Time, in minutes, between report updates are sent to Google.<br>
-    <code>Request sync delay (s)</code>: Delay, in seconds, for request devices sync after a deploy, 0 or empty for disable (default value 0).<br>
-    <code>Set state delay (s)</code>: Delay, in seconds, for sending the set_state message after state changes, 0 or empty for disable (default value 0).<br>
+    <code>Access Token Duration</code>: The authorization token duration (in minutes) used by Google SmartHome to identify itself to node-red SmartHome plugin. Defaults is 60 min.<br>
+    <code>Report Interval (m)</code>: Time, in minutes, between report updates are sent to Google. Default is 60 min.<br>
+    <code>Request sync delay (s)</code>: Delay, in seconds, for request devices sync after a deploy, 0 or empty to disable (default value 0).<br>
+    <code>Set state delay (s)</code>: Delay, in seconds, for sending the set_state message after state changes, 0 or empty to disable (default value 0).<br>
 
     <h3>References</h3>
     <p><a href="https://www.npmjs.com/package/node-red-contrib-google-smarthome" target="_new">Node Information</a>.</p>

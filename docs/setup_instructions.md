@@ -155,8 +155,9 @@ Now we will install the module in Node-RED and configure it.
     * Client ID and Client Secret: The client ID and secret you entered in the Google Actions Console earlier.
     * Jwt Key: Path to the JSON file you downloaded while enabling the HomeGraph API. Can be an absolute path or a path
       relative to Node-REDs user dir (where your settings.js, flows.json etc. are stored).
-    * Port: The port on which the service should run. If left empty, the service will run on the same port as Node-RED This port must be reachable from the internet.
-      (but take care to protect your Node-RED from external access when you expose this port to the internet).\
+    * Port: The port on which the service should run. If left empty, the service will run on the same port as Node-RED.
+      This port must be reachable from the internet (but take care to protect your Node-RED from external access when
+      you expose this port to the internet).\
       This tutorial assumes port 3001, so set it to 3001.
     * Path: URL path on which the service will run. If set, it will be https://example.com:3001/<yourpath>/smarthome.
       If left empty, https://example.com:3001/smarthome will be used.\
@@ -169,10 +170,6 @@ Now we will install the module in Node-RED and configure it.
       want to do SSL termination on a reverse proxy like Caddy or Traefik.
     * Scan Type: Specifies how your smart speaker will search for Node-RED instances on your local network to use for
       local fulfillment. You can setup local fulfillment later, so set it to "Disabled" for now.
-    * Local fulfillment port: A port number to use for local fulfillment. Choose any port you want. This port is used
-      for internal communication only and must not be forwarded externally.
-    * Public and Private Key: Path to public and private key files of your SSL certificate (if you do not use external
-      SSL decryption). Remember that you need to restart Node-RED after the certificates are renewed.
     * Access Token Duration, Report Interval, Request sync delay, set_state message delay: Usually you don't need to
       change these values. Leave them at their default values.\
     <kbd>![](images/setup_instructions/nodered_configuration.png)</kbd>

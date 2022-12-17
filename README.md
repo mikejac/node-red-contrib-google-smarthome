@@ -191,6 +191,12 @@ Example flow:
 ---
 ## The config node
 
+  `Name`: A name for your config node.
+
+  `Enable Node Debug`: If enabbled, debug messages will be written to Node-RED's log output.
+
+  `Default Language`: The language of your project.
+
 **Local Authentication**
 
   `Use Google Login`: If enabled, use the Google login authentication.
@@ -209,17 +215,18 @@ Example flow:
 
 **Google HomeGraph Settings**
 
-  `Jwt Key`: Full or relative to the Node-RED config folder path to JWT key file (the one downloaded in the *Add Report State* section).
+  `Jwt Key`: Path to the JSON file you downloaded during setup. Can be an absolute path or a path relative to Node-REDs
+             user dir (where your settings.js, flows.json etc. are stored). 
 
 **Web Server Settings**
 
-  `Use http Node-RED root path`: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.
+  `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the
+          *Actions on Google* project. If empty, it will use the same port as Node-RED.
 
   `Path`: Prefix for URLs provided by this module. Default fulfillment URL is https://example.com:3001/smarthome. With a
           path of "foo" this changes to https://example.com:3001/foo/smarthome. Same for URLs `/oauth` and `/token`.
 
-  `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the
-          *Actions on Google* project. If empty, it will use the same port as Node-RED.
+  `Use http Node-RED root path`: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.
 
   `Use external SSL offload`: If enabled, the smarthome service will use HTTP instead of HTTPS. Check if you want to
                               do SSL termination on a reverse proxy.
