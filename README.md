@@ -177,10 +177,6 @@ and the following Google [traits](https://developers.google.com/assistant/smarth
 Example flow:
         See the flow used for the automatic tests [here](test/sh/flows.json)
 
-#### Other device nodes
-
-All other device nodes except the Google device are deprecated. Please use the Google device node instead.
-
 #### - Management
 `topic` can be `restart_server`, `report_state` or `request_sync`.
 
