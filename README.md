@@ -327,7 +327,7 @@ Google Workspace account. If this is the case, you can share access to your smar
   screenshots
 
 
---
+---
 ## Troubleshooting Local fulfillment
 
 - You can test if local fulfillment was successfully enabled by saying "Hey Google, force local" (works on non-english
