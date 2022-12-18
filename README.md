@@ -355,6 +355,8 @@ Google Workspace account. If this is the case, you can share access to your smar
   in the [setup instructions](docs/setup_instructions.md#enable-local-fulfillment-optional). After updating app.js, you
   might have to restart your smart speaker.
 - Sometimes it takes several hours for the local fulfillment connection to be established.
+- If you experimented with local fulfillment and used "force local", remember to say "Hey Google, force defaullt" to
+  re-enable the automatic fallback to cloud fulfillment.
 
 ---
 
