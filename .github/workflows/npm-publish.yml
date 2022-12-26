@@ -18,10 +18,9 @@ jobs:
         with:
           node-version: latest
           cache: npm
-      - name: Publish to npm
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{secrets.NPM_TOKEN}}
       - name: Publish to Node-RED Library
         uses: Hacksore/node-red-flow@v2
         with:
