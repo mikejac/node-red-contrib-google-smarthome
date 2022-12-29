@@ -1,6 +1,6 @@
 "use strict";
 
-const VERSION = '2.6';
+const VERSION = '2.7';
 
 /// <reference types="@google/local-home-sdk" />
 /*
@@ -143,6 +143,7 @@ const identifyHandler = async (request) => {
     }
     try {
         const nodeRedData = findNodeRedDeviceDataByClientId(request.requestId, request.devices, clientId);
+        request.appJsVersion = VERSION;
         return await forwardRequest(nodeRedData, "", request);
     }
     catch (err) {
