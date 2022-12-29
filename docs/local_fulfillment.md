@@ -83,3 +83,36 @@ This tutorial assumes your service is already set up and working.
     
 
 Local fulfillment can be tricky to set up. If you have problems, look at the troubleshooting section in the readme.
+
+
+---
+## Updating app.js
+
+After updating node-red-contrib-google-smarthome, you may need to update the app.js script running on your smart
+speaker. You'll get a warning on Node-RED's debug panel if this is needed.
+
+1. Open the [Actions on Google Console](https://console.actions.google.com/) and select your project.\
+   <kbd>![](images/setup_instructions/actionsconsole_check_project.png)</kbd>
+
+
+2. Click `Develop` on the top of the page, then click `Actions` located in the hamburger menu on the top left.\
+   <kbd>![](images/setup_instructions/actionsconsole_tab_actions.png)</kbd>
+
+
+3. Delete both app.js files.\
+   <kbd>![](images/local_fulfillment/localexecution_delete_appjs.png)</kbd>
+
+
+4. Click the button `Upload JavaScript files`.\
+   <kbd>![](images/local_fulfillment/localexecution_upload.png)</kbd>
+
+
+5. Upload [this JavaScript file](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js)
+   for both Node and Chrome.\
+   <kbd>![](images/local_fulfillment/localexecution_upload_files.png)</kbd>
+
+
+6. `Save` your changes.
+
+
+7. Restart your smart speaker.
