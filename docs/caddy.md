@@ -5,7 +5,8 @@ as a reverse proxy.
 
 ## Benefits:
 - SSL certificates are automatically managed and renewed by Caddy.
-- You don't need to install Certbot.
+- You don't need to install and configure Certbot.
+- You don't need to restart Node-RED on certificate renewals configure certificate paths in Node-RED and 
 
 ## Guide
 1. On your home router forward port 3001 to the host where Node-RED is running.
@@ -34,11 +35,21 @@ https://example.com:3001 {
 6. Restart Caddy (on Ubuntu it's `systemctl restart caddy`)
 7. Wait a minute. Certificate creation may take a while.
 8. Open https://example.com:3001/check in your browser. You should see the Google Smarthome test page.
+9. Done!
+
+
+For a better understanding, the flow of traffic in this setup is as follows:
+
+```mermaid
+graph TD;
+    Internet--Encrypted traffic-->H["Home Router (e.g. FritzBox)<br/>(listening on port 3001, forwards to port 3001 on the RPi)"];
+    H--Encrypted traffic-->C["Caddy on RPi<br/>(listening on port 3001, decrypts traffic, forwards it to port 13001)"];
+    C--Decrypted traffic-->N["Smarthome service in Node-RED<br/>(listening on port 3001)"];
+```
 
 
 
-
-## Node-RED behind Caddy
+## Node-RED behind Caddy (optional)
 You can also use Caddy to deliver Node-RED.
 
 This guide assumes Node-RED uses port 1880 (`uiPort` in `settings.js`) and is running on host 192.168.0.100. Node-RED
