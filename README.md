@@ -334,4 +334,4 @@ For problems related to local fulfillment have a look at [Troubleshooting local 
 Parts of this README and large parts of the code comes from Google. [Actions on Google: Smart Home sample using Node.js](https://github.com/actions-on-google/smart-home-nodejs) in particular has been of great value.
 
 ## Copyright and license
-Copyright 2018 - 2021 Michael Jacobsen under [the GNU General Public License version 3](LICENSE).
+Copyright 2018 - 2023 Michael Jacobsen and others under [the GNU General Public License version 3](LICENSE).
