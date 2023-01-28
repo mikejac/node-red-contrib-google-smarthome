@@ -32,11 +32,13 @@ What this module does NOT:
 ---
 ## Prerequisites
 
-1. You are going to need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/).
-2. You also need to be able to forward TCP traffic coming in from the internet to your Node-RED server on a port you
-specify. This is not your full Node-RED server but a service started by `node-red-contrib-google-smarthome`, providing
-only the functions needed by Google.
-3. This package requires NodeJS version 10.0.0 at a minimum.
+- You need your own domain. You can use a free domain from any DynDNS provider. The DNS record for this domain must point to your host.
+- You are going to need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/). You must have either the
+  certificate files (e.g. from Certbot). Or you can use a reverse proxy with automatic certificate management, such as
+  Caddy or Traefik. Tip: There's a guide on [how to use Caddy](docs/caddy.md).
+- You need to be able to forward incoming traffic from the internet to a specific port on your host. This may be difficult if your
+  ISP uses carrier-grade NAT, or if you can't configure port forwarding on your router.
+- This package requires NodeJS version 10.0.0 at a minimum.
 
 ---
 ## Setup Instructions
