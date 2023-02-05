@@ -40,8 +40,8 @@
     <br>
     <b>Web Server Settings</b><br>
     <code>Port</code>: TCP port of your choice for incoming connections from Google. Must match what you entered in the <i>Actions on Google</i> project. If empty, it will use the same port as Node-RED.<br>
-    <code>Path</code>: Prefix for URLs provided by this module. Default fulfillment URL is https://example.com:3001/smarthome. With a
-          path of "foo" this changes to https://example.com:3001/foo/smarthome. Same for URLs `/oauth` and `/token`.<br>
+    <code>URL subpath</code>: URL subpath to add to the URL. If set, the URL will change from `https://example.com:3001/check` to
+          `https://example.com:3001/<subpath>/check` (resp. `/<subpath>/smarthome`, `/<subpath>/oauth`, `/<subpath>/token`).<br>
     <code>Use http Node-RED root path</code>: If enabled, use the same http root path prefix configured for Node-RED. Otherwise, no prefix will be used.<br>
     <code>Use external SSL offload</code>: If enabled, the smarthome service will use HTTP instead of HTTPS. Check if you want to do SSL termination on a reverse proxy.
     <code>Public Key</code>: Path to the file containing the public SSL key, e.g. `fullchain.pem` from Let's Encrypt. Can be an absolute path or a path relative to Node-REDs user dir (where your settings.js, flows.json etc. are stored).<br>

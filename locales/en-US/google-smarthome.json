@@ -5,7 +5,7 @@
             "username": "Username",
             "password": "Password",
             "usehttpnoderoot": "Use http Node-RED root path",
-            "httppath": "Path",
+            "httppath": "URL subpath",
             "port": "Port",
             "localport": "HTTP Port",
             "local_scan_type": "Scan Type",

@@ -163,9 +163,9 @@ Now we will install the module in Node-RED and configure it.
       This port must be reachable from the internet (but take care to protect your Node-RED from external access when
       you expose this port to the internet).\
       This tutorial assumes port 3001, so set it to 3001.
-    * Path: URL path on which the service will run. If set, it will be https://example.com:3001/<yourpath>/smarthome.
-      If left empty, https://example.com:3001/smarthome will be used.\
-      This tutorial assumes a simple path setup, so leave it empty.
+    * URL subpath: URL subpath to add to the URL. If set, the URL will change from `https://example.com:3001/check` to
+      `https://example.com:3001/<subpath>/check` (resp. `/<subpath>/smarthome`, `/<subpath>/oauth`, `/<subpath>/token`).
+      This tutorial doesn't use subpaths, so leave it empty.
     * Use http Node-RED root path: If enabled, the service will respect the setting "httpNodeRoot" in Node-RED's
       settings.js. If set, the service will use https://example.com:3001/<httpNodeRoot>/smarthome. If there is also a
       path set in the Path field, the service will use https://example.com:3001/<httpNodeRoot>/<yourpath>/smarthome.

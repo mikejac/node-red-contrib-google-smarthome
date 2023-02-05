@@ -225,8 +225,8 @@ Example flow:
   `Port`: TCP port of your choosing for incoming connections from Google. Must match what you entered in the
           *Actions on Google* project. If empty, it will use the same port as Node-RED.
 
-  `Path`: Prefix for URLs provided by this module. Default fulfillment URL is https://example.com:3001/smarthome. With a
-          path of "foo" this changes to https://example.com:3001/foo/smarthome. Same for URLs `/oauth` and `/token`.
+  `URL subpath`: URL subpath to add to the URL. If set, the URL will change from `https://example.com:3001/check` to
+                 `https://example.com:3001/<subpath>/check` (resp. `/<subpath>/smarthome`, `/<subpath>/oauth`, `/<subpath>/token`).
 
   `Use http Node-RED root path`: If enabled, use the same http root path prefix configured for Node-RED, otherwise use /.
 
