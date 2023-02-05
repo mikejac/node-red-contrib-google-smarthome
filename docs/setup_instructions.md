@@ -2,12 +2,16 @@
 
 ## Prerequisites
 
-- This tutorial assumes your service will be running on https://example.com:3001. Adjust domain, port and paths
-  according to your settings.
-- You need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/). Make sure you have the public
-  and private key file. You can also use a reverse proxy (like Caddy or Traefik) for certificate management and
-  SSL termination.
-- TCP traffic on port 3001 needs to be forwarded from the internet to your host where Node-RED is running.
+- You need your own domain. You can use a free domain from any DynDNS provider. The DNS record for this domain must
+  point to your host.
+- You need a 'real' SSL certificate, e.g. from [Let's Encrypt](https://letsencrypt.org/). You must have either the
+  certificate files  (e.g. from Certbot). Or you can use a reverse proxy with automatic certificate management, such as
+  Caddy or Traefik. Tip: There's a guide on [how to use Caddy]((docs/caddy.md).
+- You need to be able to forward incoming traffic from the internet to a specific port on your host. This may be
+  difficult if your ISP uses carrier-grade NAT, or if you can't configure port forwarding on your router.
+- This package requires at least NodeJS 10.0.0.
+
+This tutorial assumes your domain is `example.com` and you want to use port `3001`. Replace domain and port in the instructions accordingly.
 
 ---
 
