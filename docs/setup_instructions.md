@@ -2,12 +2,17 @@
 
 ## Prerequisites
 
-- This tutorial assumes your service will be running on https://example.com:3001. Adjust domain, port and paths
-  according to your settings.
-- You need a 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org/). Make sure you have the public
-  and private key file. You can also use a reverse proxy (like Caddy or Traefik) for certificate management and
-  SSL termination.
-- TCP traffic on port 3001 needs to be forwarded from the internet to your host where Node-RED is running.
+- You need your own domain. You can use a free domain from any DynDNS provider. The DNS record for this domain must
+  point to your host.
+- You need a 'real' SSL certificate, e.g. from [Let's Encrypt](https://letsencrypt.org/). You must have either the
+  certificate files  (e.g. from Certbot). Or you can use a reverse proxy with automatic certificate management, such as
+  Caddy or Traefik. Tip: There's a guide on [how to use Caddy]((docs/caddy.md).
+- You need to be able to forward incoming traffic from the internet to a specific port on your host. This may be
+  difficult if your ISP uses carrier-grade NAT, or if you can't configure port forwarding on your router.
+- This package requires at least NodeJS 10.0.0.
+
+This tutorial assumes your domain is `example.com` and you want to use port `3001`. Replace domain and port in the
+instructions accordingly.
 
 ---
 
@@ -26,42 +31,42 @@ First we will register a new Smart Home project in the Actions Console.
     <kbd>![](images/setup_instructions/actionsconsole_new_project_form.png)</kbd>
 
 
-4.  Choose type *Smart Home*, then click *Start Building*.\
+4.  Select the type *Smart Home*, then click *Start Building*.\
     <kbd>![](images/setup_instructions/actionsconsole_choose_type.png)</kbd>
 
 
-5.  Check that your project is selected in the header bar.\
+5.  Make sure your project is selected in the header bar.\
     <kbd>![](images/setup_instructions/actionsconsole_check_project.png)</kbd>
 
 
-6.  Leave the tab *Overview* empty. Switch to tab *Develop* and choose *Invocation* from the sidebar.\
+6.  Switch to the *Develop* tab and select *Invocation* from the sidebar.\
     <kbd>![](images/setup_instructions/actionsconsole_tab_invocation.png)</kbd>
 
 
-7.  Enter your App's name. Click *Save*.\
+7.  Enter a name for your project. Click *Save*.\
     <kbd>![](images/setup_instructions/actionsconsole_project_name.png)</kbd>
 
 
-8.  Still on tab *Develop* choose *Actions* from the sidebar.\
+8.  While still on the *Develop* tab, select *Actions* from the sidebar.\
     <kbd>![](images/setup_instructions/actionsconsole_tab_actions.png)</kbd>
 
 
-9.  Enter the fulfillment URL. This is the URL of your app, followed by "/smarthome", e.g.
-    https://example.com:3001/smarthome. Set the log level to "All". Leave all other fields empty. Then click *Save*.\
+9.  Enter the fulfillment URL. This is the URL of your service, followed by "/smarthome", for example
+    https://example.com:3001/smarthome. Set the log level to "All". Leave all other fields blank. Then click *Save*.\
     <kbd>![](images/setup_instructions/actionsconsole_tab_actions_form.png)</kbd>
 
 
-10. Still on tab *Develop* choose *Account linking* from the sidebar.\
+10. While still on the *Develop* tab, select *Account linking* from the sidebar.\
     <kbd>![](images/setup_instructions/actionsconsole_tab_accountlinking.png)</kbd>
 
 
 11. Fill in the fields as follows:
-     * Client ID and secret: Credentials, with which Google will authenticate against your app. Use a password generator
-       like https://passwordsgenerator.net/ to generate two strings of reasonable length (e.g. 32 chars). It's
-       recommended to not use special characters as they can lead to problems. Copy both strings, you'll need them later.
-     * Authorization URL: This is the URL of your app, followed by '/oauth', e.g. https://example.com:3001/oauth.
-     * Token URL: This is the URL of your app, followed by '/token', e.g. https://example.com:3001/token.
-     * Leave all other fields at their default values.\
+    * Client ID and secret: Credentials that Google will use to authenticate against your service. Use a password
+      generator such as https://passwordsgenerator.net/ to generate two strings of reasonable length (e.g. 32 chars).
+      It's recommended not to use special characters as they can cause problems. Copy both strings, you'll need them later.
+    * Authorization URL: This is the URL of your service, followed by '/oauth', for example https://example.com:3001/oauth.
+    * Token URL: This is the URL of your service, followed by '/token', e.g. https://example.com:3001/token.
+    * Leave all other fields at their default values.\
    <kbd>![](images/setup_instructions/actionsconsole_tab_accountlinking_form.png)</kbd>
 
 
@@ -78,16 +83,16 @@ First we will register a new Smart Home project in the Actions Console.
 ## Enable HomeGraph API
 
 Next we will enable the HomeGraph API and download the credentials. This API is used to report the state of your devices
-to Google and to inform Google about new or updated devices.
+to Google and to notify Google about new or updated devices.
 
 1.  Go to the [Google HomeGraph API page](https://console.cloud.google.com/apis/library/homegraph.googleapis.com).
 
 
-2.  Check that your project is selected in the header bar.\
+2.  Make sure your project is selected in the header bar.\
     <kbd>![](images/setup_instructions/homegraph_project.png)</kbd>
 
 
-3.  In case you had to switch projects and were redirected away from the HomeGraph API page, open the
+3.  If you had to switch projects and were redirected away from the HomeGraph API page, open the
     [Google HomeGraph API page](https://console.cloud.google.com/apis/library/homegraph.googleapis.com) again.
 
 
@@ -95,8 +100,8 @@ to Google and to inform Google about new or updated devices.
     <kbd>![](images/setup_instructions/homegraph_enable.png)</kbd>
 
 
-5.  From the left sidebar select *Credentials* (or open the
-    [API credentials page](https://console.cloud.google.com/apis/api/homegraph.googleapis.com/credentials)). \
+5.  Select *Credentials* from the left sidebar (or go to the
+    [API credentials page](https://console.cloud.google.com/apis/api/homegraph.googleapis.com/credentials)).\
     <kbd>![](images/setup_instructions/homegraph_sidebar_credentials.png)</kbd>
     
 
@@ -104,7 +109,7 @@ to Google and to inform Google about new or updated devices.
     <kbd>![](images/setup_instructions/homegraph_create_credentials.png)</kbd>
 
 
-7.  Enter a name for your service account. A service account ID should be automatically generated.\
+7.  Enter a name for your service account. A service account ID should be generated automatically.\
     <kbd>![](images/setup_instructions/homegraph_credentials_form1.png)</kbd>
 
 
@@ -113,7 +118,7 @@ to Google and to inform Google about new or updated devices.
     <kbd>![](images/setup_instructions/homegraph_credentials_form3.png)</kbd>
 
 
-9.  Find your newly create service account in the list and click on the edit button.\
+9.  Find your newly created service account in the list and click the Edit button.\
     <kbd>![](images/setup_instructions/homegraph_serviceaccount_list.png)</kbd>
 
 
@@ -135,41 +140,41 @@ to Google and to inform Google about new or updated devices.
 
 ## Install and configure Node-RED module
 
-Now we will install the module in Node-RED and configure it.
+Now we will install and configure the module in Node-RED.
 
-1. Install `node-red-contrib-google-smarthome` from Node-RED's palette and restart Node-RED.\
-    <kbd>![](images/setup_instructions/nodered_install.png)</kbd>
+1. Install `node-red-contrib-google-smarthome` from the Node-RED palette and restart Node-RED.\
+   <kbd>![](images/setup_instructions/nodered_install.png)</kbd>
 
 
 2. Place the Management node from the section "Google Smart Home" on a flow.\
     <kbd>![](images/setup_instructions/nodered_management.png)</kbd>
 
 
-3. Edit the management node and open its config. Fill in the fields as following:
+3. Edit the management node and open its config. Fill in the fields as follows:
     * Name: A name for your config node.
-    * Enable Node Debug: Check this box if you want to see the debug messages from the node. Enable it for now.
+    * Enable Node Debug: Check this box if you want to see debug messages from the node. Enable it for now.
     * Default Language: The language of your project.
-    * Use Google login: Check, if you want to use authentication via Google Sign-In. This tutorial uses the simpler
-      password based authentication, so disable it.
-    * Username/Password: Username and password of your choice. You use this to log in with the Google Home App later.
-    * Client ID and Client Secret: The client ID and secret you entered in the Google Actions Console earlier.
-    * Jwt Key: Path to the JSON file you downloaded while enabling the HomeGraph API. Can be an absolute path or a path
-      relative to Node-REDs user dir (where your settings.js, flows.json etc. are stored).
-    * Port: The port on which the service should run. If left empty, the service will run on the same port as Node-RED.
-      This port must be reachable from the internet (but take care to protect your Node-RED from external access when
+    * Use Google login: Check this box if you want to use Google Sign-In authentication. This tutorial uses the simpler
+      password based authentication, so uncheck this box.
+    * Username/Password: Username and password of your choice. You will use this to log in in the Google Home App later.
+    * Client ID and Client Secret: The client ID and secret you previously entered in the Google Actions Console.
+    * Jwt Key: Path to the JSON file you downloaded when you enabled the HomeGraph API. Can be an absolute path or a
+      path relative to Node-RED's user dir (where your settings.js, flows.json etc. are stored).
+    * Port: The port on which to run the service. If left empty, the service will run on the same port as Node-RED.
+      This port must be reachable from the internet (but be careful to protect your Node-RED from external access if
       you expose this port to the internet).\
       This tutorial assumes port 3001, so set it to 3001.
-    * Path: URL path on which the service will run. If set, it will be https://example.com:3001/<yourpath>/smarthome.
-      If left empty, https://example.com:3001/smarthome will be used.\
-      This tutorial assumes a simple path setup, so leave it empty.
+    * URL subpath: URL subpath to add to the URL. If set, the URL will change from `https://example.com:3001/check` to
+      `https://example.com:3001/<subpath>/check` (resp. `/<subpath>/smarthome`, `/<subpath>/oauth`, `/<subpath>/token`).
+      This tutorial doesn't use subpaths, so leave it empty.
     * Use http Node-RED root path: If enabled, the service will respect the setting "httpNodeRoot" in Node-RED's
       settings.js. If set, the service will use https://example.com:3001/<httpNodeRoot>/smarthome. If there is also a
       path set in the Path field, the service will use https://example.com:3001/<httpNodeRoot>/<yourpath>/smarthome.
       This tutorial assumes a simple path setup, so leave it empty.
-    * Use external SSL offload: If enabled, the smarthome service will use HTTP instead of HTTPS. Check this box if you
-      want to do SSL termination on a reverse proxy like Caddy or Traefik.
+    * Use external SSL offload: If enabled, the smarthome service will use HTTP instead of HTTPS. This allows you to use
+      a reverse proxy such as Caddy or Traefik to manage SSL certificates.
     * Scan Type: Specifies how your smart speaker will search for Node-RED instances on your local network to use for
-      local fulfillment. You can setup local fulfillment later, so set it to "Disabled" for now.
+      local fulfillment. You can set up local fulfillment later, so set it to "Disabled" for now.
     * Access Token Duration, Report Interval, Request sync delay, set_state message delay: Usually you don't need to
       change these values. Leave them at their default values.\
     <kbd>![](images/setup_instructions/nodered_configuration.png)</kbd>
@@ -179,14 +184,14 @@ Now we will install the module in Node-RED and configure it.
    <kbd>![](images/setup_instructions/nodered_deploy.png)</kbd>
 
 
-5. Check if your service is reachable. Open https://example.com:3001/check in your browser. You should see the
-   "Google SmartHome test page". You don't need to fill in anything here, if you see the page, you are good to go.\
+5. Verify that your service is reachable. Open https://example.com:3001/check in your browser. You should see the
+   "Google SmartHome test page". You don't have to enter anything here, if you see the page, you're good to go.\
    <kbd>![](images/setup_instructions/nodered_check.png)</kbd>
 
 
-6. Also check if the page is reachable from the internet. Use a tool like https://reqbin.com to send a GET request to
-   https://example.com:3001/check (using your domain name and port). It must answer with status 200 and the message
-   "SUCCESS: Smart Home service is reachable!".\
+6. Also check that the page is reachable from the internet. Use a tool such as https://reqbin.com to send a GET request
+   to https://example.com:3001/check (using your domain name and port). It should respond with status 200 and the
+   message "SUCCESS: Smart Home service is reachable!".\
    <kbd>![](images/setup_instructions/nodered_reqbin.png)</kbd>
 
 
@@ -194,7 +199,8 @@ Now we will install the module in Node-RED and configure it.
 
 Finally, we will link the Google Home App to the Node-RED service.
 
-1. Open the Google Home App on a device logged into the same account used to create the project in the Actions Console.
+1. Open the Google Home App on a device that is logged in to the same Google account that you used to create the project
+   in the Actions Console.
 
 
 2. Click the '+' sign to add a device.\
@@ -209,19 +215,18 @@ Finally, we will link the Google Home App to the Node-RED service.
    <kbd>![](images/setup_instructions/phone_existingdevice.png)</kbd>
 
 
-5. Find your app in the list of providers. It will be marked with `[test]`.\
-   Note: Old projects will stay on this list, even after they are deleted. That's why I have several Demo projects.\
+5. Select your service from the list of all providers. Your service will be prefixed with `[test]`.
    <kbd>![](images/setup_instructions/phone_project.png)</kbd>
 
 
-6. Log in to your service. Username and password are the ones you specified in the configuration node.\
+6. Log in to your service. The username and password are the ones you specified in the configuration node.\
    <kbd>![](images/setup_instructions/phone_login.png)</kbd>
 
 
-8. Say "Hey Google, sync my devices". Google should answer that your project was successfully synced.
+8. Say "Hey Google, sync my devices". Google should respond that your project has been successfully synced.
 
 
-9. Congratulations! Your project is successfully set up. You can now start adding devices.
+9. Congratulations! Your project has been successfully set up. You are now ready to add devices.
 
 ---
 

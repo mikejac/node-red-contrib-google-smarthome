@@ -271,7 +271,7 @@
                     value: 3001, required: false, validate: RED.validators.number(true)
                 },
                 httppath: {
-                    value: "", required: false
+                    value: "", required: false, validate: RED.validators.regex(/^[a-zA-Z0-9_\-\/]*$/),
                 },
                 ssloffload: {
                     value: false
