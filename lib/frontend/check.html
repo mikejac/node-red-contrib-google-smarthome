@@ -139,29 +139,23 @@
         <br />
         <form action="javascript:startTest()">
 
-            <div class="field">
+            <div style="display: inline-grid; grid-template-columns: auto 1fr; column-gap: 10px">
+                <label for="client_id">Client ID:</label>
                 <input type="text" name="client_id" id="client_id" autocomplete="off" autocapitalize="none"
                     placeholder="client_id">
-                <label for="client_id">Client ID</label>
-            </div>
 
-            <div class="field">
+                <label for="client_secret">Client Secret:</label>
                 <input type="text" name="client_secret" id="client_secret" autocomplete="off" autocapitalize="none"
                     placeholder="client_secret">
-                <label for="client_secret">Client Secret</label>
-            </div>
 
-            <div class="field">
+                <label for="username">Username:</label>
                 <input type="text" name="username" id="username" autocomplete="off" autocapitalize="none"
                     placeholder="username">
-                <label for="username">Username</label>
-            </div>
 
-            <div class="field">
+                <label for="password">Password:</label>
                 <input type="password" name="password" id="password" placeholder="password">
-                <label for="password">Password</label>
             </div>
-
+            <br>
             <button id="login-button">Test</button>
         </form>
 
