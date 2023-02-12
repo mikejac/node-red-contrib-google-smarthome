@@ -244,6 +244,7 @@ module.exports = function (RED) {
             RED.nodes.createNode(this, config);
 
             this.client = config.client;
+            /** @type {GoogleSmartHomeNode} */
             this.clientConn = RED.nodes.getNode(this.client);
 
             if (!this.clientConn) {
