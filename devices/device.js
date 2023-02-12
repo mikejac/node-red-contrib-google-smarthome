@@ -3288,7 +3288,7 @@ module.exports = function (RED) {
                             }
                         }
                     }
-                    if (typeof rec[key1] == undefined && typeof rec[key2] !== undefined && Array.isArray(rec[key2])) {
+                    if (typeof rec[key1] === 'undefined' && typeof rec[key2] !== 'undefined' && Array.isArray(rec[key2])) {
                         let val2 = rec[key2];
                         if (typeof val2 === 'string') {
                             val2 = [val2];
