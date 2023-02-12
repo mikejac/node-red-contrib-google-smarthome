@@ -22,7 +22,7 @@
  * https://github.com/actions-on-google/smart-home-nodejs
  * 
  * https://developers.google.com/assistant/smarthome/
-*/
+ */
 
 const https = require('https');
 
