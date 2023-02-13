@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* eslint-env mocha */
+
 const should = require('should');
 const helper = require('node-red-node-test-helper');
 const device = require('../devices/device.js');
