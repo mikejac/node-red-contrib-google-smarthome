@@ -2054,14 +2054,19 @@ module.exports = function (RED) {
             me.send(msg);
         }
 
-        /******************************************************************************************************************
+        /**
          * respond to inputs from NodeRED
          *
+         * @param {object} msgi - The incoming message
+         * @param {function} send - Function to send outgoing messages
+         * @param {function} done - Function to inform the runtime that this node has finished its operation
          */
-        onInput(msgi) {
+        onInput(msgi, send, done) {
             const me = this;
+            if(!send) send = function() { me.send.apply(me, arguments) };
             let msg = msgi;
             if (me.topic_filter && !(msg.topic || '').toString().startsWith(me.topicOut)) {
+                if(done) done();
                 return;
             }
             me._debug(".input: topic = " + msg.topic);
@@ -2077,7 +2082,7 @@ module.exports = function (RED) {
                 if (upper_topic === 'GETSTATE') {
                     let states = {};
                     me.cloneObject(states, me.states, me.state_types);
-                    me.send({
+                    send({
                         topic: msg.topic,
                         payload: states,
                         device_id: me.device.id
@@ -2645,7 +2650,7 @@ module.exports = function (RED) {
                         if (msgi.stateOutput || false) {
                             let states = {};
                             me.cloneObject(states, me.states, me.state_types);
-                            me.send({ topic: me.topicOut, payload: states });
+                            send({ topic: me.topicOut, payload: states });
                         }
                         me.clientConn.reportState(me.id);  // tell Google ...
                         if (me.persistent_state) {
@@ -2654,15 +2659,25 @@ module.exports = function (RED) {
                         me.updateStatusIcon(false);
                     }
                     if (me.passthru) {
-                        me.send(msgi);
+                        send(msgi);
                     }
+
+                    if(done) done();
                 }
             } catch (err) {
-                me._debug(".onInput error " + JSON.stringify(err));
-                me.error(err);
+                if(done)
+                    done(err);
+                else
+                    me.error(err);
             }
         }
 
+        /**
+         * Called by the runtime when this node is being removed or restarted
+         *
+         * @param {bool} removed - true if the is being removed, false on restart
+         * @param {function} done - Function to inform the runtime that this node has finished its operation
+         */
         onClose(removed, done) {
             if (removed) {
                 // this node has been deleted
