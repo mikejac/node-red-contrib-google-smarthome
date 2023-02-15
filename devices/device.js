@@ -2647,7 +2647,7 @@ module.exports = function (RED) {
                     const differs = me.updateState(msg.payload || {});
 
                     if (differs) {
-                        if (msgi.stateOutput || false) {
+                        if (msgi.stateOutput) {
                             let states = {};
                             me.cloneObject(states, me.states, me.state_types);
                             send({ topic: me.topicOut, payload: states });
