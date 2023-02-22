@@ -2058,8 +2058,8 @@ module.exports = function (RED) {
          * respond to inputs from NodeRED
          *
          * @param {object} msgi - The incoming message
-         * @param {function} send - Function to send outgoing messages
-         * @param {function} done - Function to inform the runtime that this node has finished its operation
+         * @param {Function} send - Function to send outgoing messages
+         * @param {Function} done - Function to inform the runtime that this node has finished its operation
          */
         onInput(msgi, send, done) {
             const me = this;
@@ -2675,8 +2675,8 @@ module.exports = function (RED) {
         /**
          * Called by the runtime when this node is being removed or restarted
          *
-         * @param {bool} removed - true if the is being removed, false on restart
-         * @param {function} done - Function to inform the runtime that this node has finished its operation
+         * @param {boolean} removed - true if the is being removed, false on restart
+         * @param {Function} done - Function to inform the runtime that this node has finished its operation
          */
         onClose(removed, done) {
             if (removed) {
