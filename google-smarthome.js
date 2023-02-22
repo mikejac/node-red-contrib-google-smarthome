@@ -374,10 +374,10 @@ module.exports = function (RED) {
         onClose(removed, done) {
             if (removed) {
                 // this node has been deleted
-                node.clientConn.remove(node, 'mgmt');
+                this.clientConn.remove(this, 'mgmt');
             } else {
                 // this node is being restarted
-                node.clientConn.deregister(node, 'mgmt');
+                this.clientConn.deregister(this, 'mgmt');
             }
 
             done();
