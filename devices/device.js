@@ -3236,12 +3236,9 @@ module.exports = function (RED) {
 
         to_available_modes(json_data) {
             let me = this;
-            let key_name_synonym = function (type, json_data, key1, key2, key3, manage_other_fields) {
-                return me.key_name_synonym(type, json_data, key1, key2, key3, manage_other_fields);
-            }
             let f = function (data_in, data_out) {
                 if (Array.isArray(data_in.settings)) {
-                    data_out.settings = key_name_synonym("Modes settings", data_in.settings, 'setting_name', 'setting_values', 'setting_synonym');
+                    data_out.settings = me.key_name_synonym("Modes settings", data_in.settings, 'setting_name', 'setting_values', 'setting_synonym');
                     if (typeof data_in.ordered === 'boolean') {
                         data_out.ordered = data_in.ordered;
                     }
