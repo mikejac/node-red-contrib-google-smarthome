@@ -257,7 +257,6 @@ module.exports = function (RED) {
                 return;
             }
 
-            let node = this;
             this.enabledebug = config.enabledebug || false;
             this.set_state_type = config.set_state_type || 'filtered_by_id';
 
