@@ -1973,8 +1973,12 @@ module.exports = function (RED) {
                 if (me.trait.sensorstate) {
                     if (Array.isArray(me.states.currentSensorStateData)) {
                         me.states.currentSensorStateData.forEach(sensor => {
-                            if (sensor.currentSensorState !== undefined && sensor.currentSensorState !== 'unknown') {
-                                text += ' ' + sensor.name + ' ' + sensor.currentSensorState;
+                            const currentSensorStateSet = sensor.currentSensorState !== undefined && sensor.currentSensorState !== 'unknown';
+                            if (currentSensorStateSet || sensor.rawValue !== undefined) {
+                                text += ' ' + sensor.name;
+                                if (currentSensorStateSet) {
+                                    text += ' ' + sensor.currentSensorState;
+                                }
                                 if (sensor.rawValue !== undefined) {
                                     text += ' ' + sensor.rawValue;
                                 }
