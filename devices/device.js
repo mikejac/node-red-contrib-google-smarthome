@@ -753,7 +753,7 @@ module.exports = function (RED) {
             };
 
             this.updateAttributesForTraits(this.device);
-            this.updateStatesForTraits(this.device);
+            this.initializeStates(this.device);
 
             this._debug(".constructor: device = " + JSON.stringify(this.device));
 
@@ -1595,7 +1595,12 @@ module.exports = function (RED) {
             return dispense;
         }
 
-        updateStatesForTraits(device) {
+        /**
+         * Initializes states to their default values.
+         *
+         * @return {Object}
+         */
+        initializeStates(device) {
             let me = this;
             let states = device.states;
 
