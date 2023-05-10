@@ -42,7 +42,7 @@
     "stoppable": "^1.1.x",
     "morgan": "^1.10.x",
     "cors": "^2.8.x",
-    "google-auth-library": "^8.7.0",
+    "google-auth-library": "^8.8.0",
     "googleapis": "^118.0.x",
     "uid-generator": "^2.0.x",
     "ip-range-check": "^0.2.x",
