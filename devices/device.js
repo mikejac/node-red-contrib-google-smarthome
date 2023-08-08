@@ -1943,13 +1943,13 @@ module.exports = function (RED) {
                         text = "OFF " + st;
                     } else if (thermostat_mode === "heat" || thermostat_mode === "cool") {
                         fill = "green";
-                        text = thermostat_mode.substr(0, 1).toUpperCase() + st;
+                        text = thermostat_mode.substring(0, 1).toUpperCase() + st;
                     } else if (thermostat_mode === "heatcool") {
                         fill = "green";
                         text = "H/C T: " + (me.states.thermostatTemperatureAmbient || '?') + "°C | S: [" + (me.states.thermostatTemperatureSetpointLow || '') + " - " + (me.states.thermostatTemperatureSetpointHigh || '') + "]\xB0C";
                     } else {
                         fill = "green";
-                        text = thermostat_mode.substr(0, 1).toUpperCase() + st;
+                        text = thermostat_mode.substring(0, 1).toUpperCase() + st;
                     }
                     if (me.states.thermostatHumidityAmbient !== undefined) {
                         text += ' ' + me.states.thermostatHumidityAmbient + "%";
