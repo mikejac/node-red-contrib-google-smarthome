@@ -6,7 +6,7 @@
   point to your host.
 - You need a 'real' SSL certificate, e.g. from [Let's Encrypt](https://letsencrypt.org/). You must have either the
   certificate files  (e.g. from Certbot). Or you can use a reverse proxy with automatic certificate management, such as
-  Caddy or Traefik. Tip: There's a guide on [how to use Caddy]((docs/caddy.md).
+  Caddy or Nginx Proxy Manager. There's a guide on [how to use reverse proxies](docs/reverse_proxies.md).
 - You need to be able to forward incoming traffic from the internet to a specific port on your host. This may be
   difficult if your ISP uses carrier-grade NAT, or if you can't configure port forwarding on your router.
 - This package requires at least NodeJS 10.0.0.
@@ -172,7 +172,7 @@ Now we will install and configure the module in Node-RED.
       path set in the Path field, the service will use https://example.com:3001/<httpNodeRoot>/<yourpath>/smarthome.
       This tutorial assumes a simple path setup, so leave it empty.
     * Use external SSL offload: If enabled, the smarthome service will use HTTP instead of HTTPS. This allows you to use
-      a reverse proxy such as Caddy or Traefik to manage SSL certificates.
+      a reverse proxy such as Caddy or Nginx Proxy Manager to manage SSL certificates.
     * Scan Type: Specifies how your smart speaker will search for Node-RED instances on your local network to use for
       local fulfillment. You can set up local fulfillment later, so set it to "Disabled" for now.
     * Access Token Duration, Report Interval, Request sync delay, set_state message delay: Usually you don't need to

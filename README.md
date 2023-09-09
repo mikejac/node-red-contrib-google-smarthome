@@ -36,7 +36,7 @@ What this module does NOT do:
   point to your host.
 - You need a 'real' SSL certificate, e.g. from [Let's Encrypt](https://letsencrypt.org/). You must have either the
   certificate files  (e.g. from Certbot). Or you can use a reverse proxy with automatic certificate management, such as
-  Caddy or Traefik. Tip: There's a guide on [how to use Caddy]((docs/caddy.md).
+  Caddy or Nginx Proxy Manager. There's a guide on [how to use reverse proxies](docs/reverse_proxies.md).
 - You need to be able to forward incoming traffic from the internet to a specific port on your host. This may be
   difficult if your ISP uses carrier-grade NAT, or if you can't configure port forwarding on your router.
 - This package requires at least NodeJS 10.0.0.
