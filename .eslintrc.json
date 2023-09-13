@@ -29,6 +29,8 @@
             "SwitchCase": 1
         }],
         "jsdoc/require-hyphen-before-param-description": 1,
-        "jsdoc/tag-lines": 1
+        "jsdoc/tag-lines": ["error", "any", {
+            "startLines":1
+        }]
     }
 }
