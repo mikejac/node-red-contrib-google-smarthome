@@ -1598,7 +1598,7 @@ module.exports = function (RED) {
         /**
          * Initializes states to their default values.
          *
-         * @return {Object}
+         * @returns {Object}
          */
         initializeStates(device) {
             let me = this;
@@ -3171,14 +3171,35 @@ module.exports = function (RED) {
             return differs;
         }
 
+        /**
+         * Converts an array of applications to the format expected by Google.
+         *
+         * @see key_name_synonym
+         * @param {string[]} json_data - The items to convert
+         * @returns {object[]} - Object with items as expected by Google
+         */
         to_available_applications(json_data) {
             return this.key_name_synonym("Applications", json_data, 'key', 'names', 'name_synonym');
         }
 
+        /**
+         * Converts an array of arm levels to the format expected by Google.
+         *
+         * @see key_name_synonym
+         * @param {string[]} json_data - The items to convert
+         * @returns {object[]} - Object with items as expected by Google
+         */
         to_available_arm_levels(json_data) {
             return this.key_name_synonym("Arm levels", json_data, 'level_name', 'level_values', 'level_synonym');
         }
 
+        /**
+         * Converts an array of channels to the format expected by Google.
+         *
+         * @see key_name_synonym
+         * @param {string[]} json_data - The items to convert
+         * @returns {object[]} - Object with items as expected by Google
+         */
         to_available_channels(json_data) {
             let f = function (data_in, data_out) {
                 if (typeof data_in.number === 'string') {
@@ -3189,6 +3210,13 @@ module.exports = function (RED) {
             return this.key_name_synonym("Channels", json_data, 'key', 'names', undefined, f);
         }
 
+        /**
+         * Converts an array of food presets to the format expected by Google.
+         *
+         * @see key_name_synonym
+         * @param {string[]} json_data - The items to convert
+         * @returns {object[]} - Object with items as expected by Google
+         */
         to_food_presets(json_data) {
             let f = function (data_in, data_out) {
                 if (Array.isArray(data_in.supported_units)) {
@@ -3205,6 +3233,13 @@ module.exports = function (RED) {
             return this.key_name_synonym("Food presets", json_data, 'food_preset_name', 'food_synonyms', 'synonym', f);
         }
 
+        /**
+         * Converts an array of dispense items to the format expected by Google.
+         *
+         * @see key_name_synonym
+         * @param {string[]} json_data - The items to convert
+         * @returns {object[]} - Object with items as expected by Google
+         */
         to_supported_dispense_items(json_data) {
             let f = function (data_in, data_out) {
                 if (Array.isArray(data_in.supported_units)) {
@@ -3227,22 +3262,58 @@ module.exports = function (RED) {
             return this.key_name_synonym("Dispense items", json_data, 'item_name', 'item_name_synonyms', 'synonyms', f);
         }
 
+        /**
+         * Converts an array of dispense presets to the format expected by Google.
+         *
+         * @see key_name_synonym
+         * @param {string[]} json_data - The items to convert
+         * @returns {object[]} - Object with items as expected by Google
+         */
         to_supported_dispense_presets(json_data) {
             return this.key_name_synonym("Dispense presets", json_data, 'preset_name', 'preset_name_synonyms', 'synonyms');
         }
 
+        /**
+         * Converts an array of fan speeds to the format expected by Google.
+         *
+         * @see key_name_synonym
+         * @param {string[]} json_data - The items to convert
+         * @returns {object[]} - Object with items as expected by Google
+         */
         to_available_fan_speeds(json_data) {
             return this.key_name_synonym("Fan speeds", json_data, 'speed_name', 'speed_values', 'speed_synonym');
         }
+
+        /**
+         * Converts an array of fill levels to the format expected by Google.
+         *
+         * @see key_name_synonym
+         * @param {string[]} json_data - The items to convert
+         * @returns {object[]} - Object with items as expected by Google
+         */
 
         to_available_fill_levels(json_data) {
             return this.key_name_synonym("Fill levels", json_data, 'level_name', 'level_values', 'level_synonym');
         }
 
+        /**
+         * Converts an array of inputs to the format expected by Google.
+         *
+         * @see key_name_synonym
+         * @param {string[]} json_data - The items to convert
+         * @returns {object[]} - Object with items as expected by Google
+         */
         to_available_inputs(json_data) {
             return this.key_name_synonym("Inputs", json_data, 'key', 'names', 'name_synonym');
         }
 
+        /**
+         * Converts an array of toggles to the format expected by Google.
+         *
+         * @see key_name_synonym
+         * @param {string[]} json_data - The items to convert
+         * @returns {object[]} - Object with items as expected by Google
+         */
         to_available_modes(json_data) {
             let me = this;
             let f = function (data_in, data_out) {
@@ -3258,11 +3329,38 @@ module.exports = function (RED) {
             return this.key_name_synonym("Modes", json_data, 'name', 'name_values', 'name_synonym', f);
         }
 
+        /**
+         * Converts an array of toggles to the format expected by Google.
+         *
+         * @see key_name_synonym
+         * @param {string[]} json_data - The items to convert
+         * @returns {object[]} - Object with items as expected by Google
+         */
         to_available_toggles(json_data) {
             return this.key_name_synonym("Toggles", json_data, 'name', 'name_values', 'name_synonym');
         }
 
-        key_name_synonym(type, json_data, key1, key2, key3, manage_other_fields) {
+        /**
+         * Converts an array to a list of synonyms in the format expected by Google. Used to specify the list of items
+         * in AppSelector, Modes or similar traits.
+         *
+         * Example output:
+         * [
+         *     {"name":"Heating", "name_values":[{"lang":"en", "name_synonym":["Heating"]}]},
+         *     {"name":"Cooling", "name_values":[{"lang":"en", "name_synonym":["Cooling"]}]}
+         * ]
+         *
+         * The keys "name", "name_values" and "name_synonym" can be renamed via the parameters key1, key2 and key3.
+         *
+         * @param {string} type - Type name to use in debug messages
+         * @param {string[] | string} json_data - Array of items to convert
+         * @param {string} key1 - Key for item name ("name" in example)
+         * @param {string} key2 - Key for synonyms object ("name_values" in example)
+         * @param {string} key3 - Key for synonyms array ("name_synonyms" in example)
+         * @param {Function} manage_other_fields - Optional callback function to handle other fields
+         * @returns {object[]} - Object with items as expected by Google
+         */
+        key_name_synonym(type, json_data, key1, key2, key3, manage_other_fields = undefined) {
             const me = this;
             me._debug(".key_name_synonym: Parsing " + type);
             let new_data = [];
