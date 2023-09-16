@@ -342,6 +342,18 @@ For problems related to local fulfillment, see [Troubleshooting local fulfillmen
 
 ---
 
+## Developer resources
+
+- [Google Smart Home project](https://developers.home.google.com/cloud-to-cloud/get-started)
+- [Google Smart Home traits list](https://developers.home.google.com/cloud-to-cloud/traits)
+- [Actions on Google Console](https://console.actions.google.com/project/wohnung-45a57/overview)
+- [Google's Smart Home sample project](https://github.com/actions-on-google/smart-home-nodejs)
+- [SYNC Data Validator](https://developers.home.google.com/cloud-to-cloud/tools/sync-data-validator)
+- [Google Home Playground](https://home-playground.withgoogle.com/)
+- Similar projects: [SmartNORA](https://github.com/andrei-tatar/node-red-contrib-smartnora), [Nabu Casa](https://github.com/NabuCasa/hass-nabucasa)
+
+---
+
 ## Credits
 Parts of this README and much of the code come from Google. In particular,
 [Actions on Google: Smart Home sample using Node.js](https://github.com/actions-on-google/smart-home-nodejs) was of
