@@ -350,7 +350,11 @@ For problems related to local fulfillment, see [Troubleshooting local fulfillmen
 - [Google's Smart Home sample project](https://github.com/actions-on-google/smart-home-nodejs)
 - [SYNC Data Validator](https://developers.home.google.com/cloud-to-cloud/tools/sync-data-validator)
 - [Google Home Playground](https://home-playground.withgoogle.com/)
-- Similar projects: [SmartNORA](https://github.com/andrei-tatar/node-red-contrib-smartnora), [Nabu Casa](https://github.com/NabuCasa/hass-nabucasa)
+- Similar projects:
+  - [SmartNORA](https://github.com/andrei-tatar/node-red-contrib-smartnora) (cloud-hosted Google integration for Node-RED)
+  - [Nabu Casa](https://github.com/NabuCasa/hass-nabucasa) (Google integration for Home Assistant)
+  - [node-red-contrib-googlehome](https://googlehome.hardill.me.uk/) (Google integration for Node-RED by Ben Hardill)
+  - [Node-RED Smart Home Control](https://red.cb-net.co.uk/) (Google integration for Node-RED, based on node-red-contrib-googlehome)
 
 ---
 
