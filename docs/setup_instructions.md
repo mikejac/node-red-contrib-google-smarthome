@@ -74,7 +74,33 @@ First we will register a new Smart Home project in the Actions Console.
     <kbd>![](images/setup_instructions/actionsconsole_tab_accountlinking_save.png)</kbd>
 
 
-13. You don't need to fill in anything on the other tabs.
+12. Switch to the *Deploy* tab and select *Directory Information* from the sidebar.\
+    <kbd>![](images/setup_instructions/actionsconsole_directoryinformation.png)</kbd>
+
+
+13. Fill in the form. It doesn't matter what you enter, these information will not be shown anywhere, but Google
+    requires this form to be filled out. As small logo I used https://nodered.org/about/resources/media/node-red-icon.png,
+    as large image I used an image from https://placekitten.com/1920/1080. The full form looks similar to this:\
+    <kbd>![](images/setup_instructions/actionsconsole_directoryinformation_form.png)</kbd>
+
+
+12. Click *Save*.\
+    <kbd>![](images/setup_instructions/actionsconsole_directoryinformation_save.png)</kbd>
+
+
+13. While still on the *Deploy* tab, select *Company details*.
+    <kbd>![](images/setup_instructions/actionsconsole_companydetails.png)</kbd>
+
+
+14. Same as before, fill in the form as you want.
+    <kbd>![](images/setup_instructions/actionsconsole_companydetails_form.png)</kbd>
+
+
+15. Click *Save*.
+    <kbd>![](images/setup_instructions/actionsconsole_companydetails_save.png)</kbd>
+
+
+16. You don't need to fill in anything on the other tabs.
 
 
 **Note:** You can't test your project in the Action Console's simulator. It only works on real devices.
