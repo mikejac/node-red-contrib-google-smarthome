@@ -55,7 +55,7 @@ module.exports = function (RED) {
                 node.credentials.emails || [],
                 node.credentials.username || '',
                 node.credentials.password || '',
-                parseInt(config.accesstokenduration || '30'), // minutes
+                parseInt(config.accesstokenduration || '60'), // minutes
                 config.usehttpnoderoot,
                 config.httppath,
                 parseInt(config.port || '0'),
