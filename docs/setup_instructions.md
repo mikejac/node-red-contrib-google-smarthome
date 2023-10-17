@@ -342,3 +342,10 @@ Finally, we will link the Google Home App to the Node-RED service.
 
 - You can enable [local fulfillment](local_fulfillment.md) for faster response times.
 - You can [switch to Google Sign-In](google_signin.md) to make logging in a bit easier.
+
+
+## Troubleshooting
+
+- If you encounter any problems, please refer to the [Troubleshooting section](README.md#troubleshooting) in the Readme.
+- If you have questions, ask them on our [Discussions page](https://github.com/mikejac/node-red-contrib-google-smarthome/discussions).
+- If you think you have found a bug, report it on our [Issue Tracker](https://github.com/mikejac/node-red-contrib-google-smarthome/issues).
