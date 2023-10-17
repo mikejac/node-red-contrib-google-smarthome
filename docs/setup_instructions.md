@@ -254,6 +254,88 @@ Finally, we will link the Google Home App to the Node-RED service.
 
 9. Congratulations! Your project has been successfully set up. You are now ready to add devices.
 
+
+## Basic usage
+
+1. Place the device node from the "Google Smart Home" section on a flow.\
+   <kbd>![](images/setup_instructions/basicusage_devicenode.png)</kbd>
+
+
+2. Open the configuration of your device. Give it a name and select a device type. Here you also configure the traits of
+   your device. Traits define the functionalities of your device. Some traits are required by the device type, but you
+   can freely add more traits. A list of all traits and detailed descriptions is available on
+   https://developers.home.google.com/cloud-to-cloud/traits?hl=en.
+   For the beginning, configure your device as a lamp with the On/Off trait.\
+   <kbd>![](images/setup_instructions/basicusage_light.png)</kbd>
+
+
+3. Connect a debug node to its output side to see what happens when you control the device.
+   <kbd>![](images/setup_instructions/basicusage_debug.png)</kbd>
+
+
+4. Deploy your flow.
+
+
+5. Say "Hey Google, turn on the light" or turn on the light in the app.
+
+
+6. You'll see the output message in the debug panel. The most interesting part is the `payload`. This contains the new
+   state of your device. The `on` parameter will now be `true`.\
+   <kbd>![](images/setup_instructions/basicusage_output.png)</kbd>
+
+
+7. To connect the Google device node to your actual device, you usually need to convert the payload to what your device
+   expects. You could use a `change` or `function` node to do this.
+   Let's say I have a Tasmota device (using node-red-contrib-tasmota). Tasmota expects `msg.payload` to be a single
+   boolean value, but the Google device outputs `msg.payload` as an object. So I used a function node to do the
+   conversion.\
+   <kbd>![](images/setup_instructions/basicusage_to_tasmota.png)</kbd>\
+   I hid the label of the function node on the "Appereance" tab to make it shorter. The function node uses this code:
+   ```javascript
+   return {
+       payload: msg.payload.on
+   };
+   ```
+
+
+8. If you just want to control your device, you are done now. If you want to get the current state of your device in the
+   app or using Google Assistant ("Hey Google, is the light on?"), you need to send the current state of your device
+   to the Google device. This usually means taking the output of your actual device, converting it using a
+   `change` or `function` node and then passing it to the Google device.\
+
+   You can inject values in one of two ways. You can either set the state name as `topic` and the value as `payload`:
+   ```json
+   {
+       "topic": "on",
+       "payload": true
+   }
+   ```
+   
+   Or you can send an object with the state name as key and the state value as value:
+
+   ```json
+   {
+       "on": true
+   }
+   ```
+
+   To get the state names (like `on`, `brightness` etc.) and their descriptions, you can have a look on the official
+   trait list at https://developers.home.google.com/cloud-to-cloud/traits?hl=en. The states are listed under each trait
+   in the section "Device States". Or you can control your device and use the state names you get from the output
+   messages.
+
+   A Tasmota lamp with fully connected inputs and outputs would look like this:\
+   <kbd>![](images/setup_instructions/basicusage_complete.png)</kbd>
+   
+   The code for the (upper) function node is:
+   ```javascript
+   return {
+       "payload": {
+           "on": msg.payload
+       }
+   };
+   ```
+
 ---
 
 ## Further information
