@@ -189,8 +189,7 @@ Example flow:
 
 `payload` is not used for anything.
 
-`restart_server` is used to stop and restart the built-in web server. Can be used if your SSL certificate has been
-renewed and needs to be re-read by the web server.
+`restart_server` restarts the built-in web server.
 
 `report_state` will force an update of all states to Google. Mostly useful for debugging.
 

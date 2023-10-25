@@ -1,8 +1,8 @@
 # Using a reverse proxy
 
 You can use a reverse proxy in front of your smarthome service. This way, SSL certificates from Let's Encrypt are
-automatically managed and renewed by the proxy. You don't need to install other certificate management tools like
-Certbot. You also don't need to restart Node-RED on certificate renewals.
+automatically managed and renewed by the proxy, without installing and configuring other certificate management tools
+like Certbot.
 
 Ports 80 and 443 must be free. Services running on these ports must be moved to other ports. They can be proxied
 via Caddy later.
