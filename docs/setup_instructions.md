@@ -199,6 +199,11 @@ Now we will install and configure the module in Node-RED.
       This tutorial assumes a simple path setup, so leave it empty.
     * Use external SSL offload: If enabled, the smarthome service will use HTTP instead of HTTPS. This allows you to use
       a reverse proxy such as Caddy or Nginx Proxy Manager to manage SSL certificates.
+    * Public key: Path to the SSL certificate file, e.g. `fullchain.pem` from Let's Encrypt.
+    * Private Key: Path to private SSL key file, e.g. `privkey.pem` from Let's Encrypt.
+        * Don't set if you use SSL offloading.
+        * Paths can be absolute or relative to Node-RED's user dir.
+        * Certificates are automatically reloaded after renewal. You don't need to restart Node-RED.
     * Scan Type: Specifies how your smart speaker will search for Node-RED instances on your local network to use for
       local fulfillment. You can set up local fulfillment later, so set it to "Disabled" for now.
     * Access Token Duration, Report Interval, Request sync delay, set_state message delay: Usually you don't need to
