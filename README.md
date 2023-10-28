@@ -340,6 +340,12 @@ commercial Google Workspace account. If this is the case, you can share access t
 
 For problems related to local fulfillment, see [Troubleshooting local fulfillment](docs/local_fulfillment.md#troubleshooting-local-fulfillment).
 
+---
+
+## Contact us
+
+- If you have questions, ask them on our [Discussions page](https://github.com/mikejac/node-red-contrib-google-smarthome/discussions).
+- If you think you have found a bug, report it on our [Issue Tracker](https://github.com/mikejac/node-red-contrib-google-smarthome/issues).
 
 ---
 
