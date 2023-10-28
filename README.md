@@ -243,6 +243,8 @@ Example flow:
 
   `Private Key`: Full path to private SSL key file, e.g. `privkey.pem` from Let's Encrypt.
 
+    Note: Certificates are automatically reloaded after renewal. You don't need to restart Node-RED.
+
 **Local Fulfillment**
 
   `Scan Type`: The service discovery method to use. Must match what is set in the *Actions on Google* project.
