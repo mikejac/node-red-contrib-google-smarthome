@@ -24,6 +24,8 @@ This is done by implementing a smart home provider that runs on your own host. S
 party services (other than Google) that can go offline, charge you, or leak your data.
 
 What this module does NOT do:
+- It is not a cloud-hosted solution that you just install and it works. You host a publicly accessible service on your
+  own hardware. It can be difficult to set up. And you do this at your own risk.
 - It does not talk to your physical devices. It only provides virtual devices in Node-RED. It's up to you to pass
   commands from the virtual to the physical devices.
 - It is not an interface to Google devices (like Nest Thermostats, Nest Cams, etc.).
