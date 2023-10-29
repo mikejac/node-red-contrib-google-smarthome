@@ -5,13 +5,13 @@
 - [Nodes in this package](#nodes-in-this-package)
   - [General Information](#general-information)
   - [Google Device node](#--google-device-node)
-  - [Other device nodes](#other-device-nodes)
   - [Management](#--management)
 - [The config node](#the-config-node)
 - [Sending spoken notifications](#sending-spoken-notifications)
 - [Inviting other users](#inviting-other-users)
 - [Troubleshooting](#troubleshooting)
-- [Troubleshooting local fulfillment](#troubleshooting-local-fulfillment)
+- [Contact us](#contact-us)
+- [Developer resources](#developer-resources)
 - [Credits](#credits)
 - [Copyright and license](#copyright-and-license)
 
@@ -57,7 +57,7 @@ Follow our [setup instructions](docs/setup_instructions.md).
   for the part after the last `/`, if any.
 
 
-#### - Google device node
+### Google device node
 This is a generic node that supports the following Google [devices](https://developers.google.com/assistant/smarthome/guides):
 
 * Air conditioning unit
@@ -184,7 +184,7 @@ and the following Google [traits](https://developers.google.com/assistant/smarth
 Example flow:
         See the flow used for the automated tests [here](test/sh/flows.json)
 
-#### - Management
+### Management
 `topic` can be `restart_server`, `report_state` or `request_sync`.
 
 `payload` is not used for anything.
