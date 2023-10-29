@@ -198,7 +198,8 @@ Now we will install and configure the module in Node-RED.
       path set in the Path field, the service will use https://example.com:3001/<httpNodeRoot>/<yourpath>/smarthome.
       This tutorial assumes a simple path setup, so leave it empty.
     * Use external SSL offload: If enabled, the smarthome service will use HTTP instead of HTTPS. This allows you to use
-      a reverse proxy such as Caddy or Nginx Proxy Manager to manage SSL certificates.
+      a reverse proxy such as Caddy or Nginx Proxy Manager to manage SSL certificates. Also see our
+      [guide on reverse proxies](docs/reverse_proxies.md).
     * Public key: Path to the SSL certificate file, e.g. `fullchain.pem` from Let's Encrypt.
     * Private Key: Path to private SSL key file, e.g. `privkey.pem` from Let's Encrypt.
         * Don't set if you use SSL offloading.
