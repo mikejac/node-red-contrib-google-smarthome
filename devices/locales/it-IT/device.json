@@ -4,6 +4,7 @@
 			"node_name": "Dispositivo",
 			"name": "Nome",
 			"lang": "Lingua",
+			"online": "Disponibile",
 			"topic": "Oggetto",
 			"topic_filter": "Filtra i messaggi in ingresso",
 			"device_type": "Tipo dispositivo",

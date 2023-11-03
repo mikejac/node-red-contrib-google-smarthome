@@ -72,17 +72,19 @@
         <input type="checkbox" id="node-input-topic_filter" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
 
-    <!-- Passthru-->
+    <!-- Passthru -->
     <div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.passthru"></span></label>
         <input type="checkbox" id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
 
+    <!-- Persistent State -->
     <div class="form-row">
         <label style="width:auto" for="node-input-persistent_state"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.persistent_state"></span></label>
         <input type="checkbox" id="node-input-persistent_state" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
     
+    <!-- Device Type -->
     <div class="form-row" id="device_type">
         <label style="width:auto" for="node-input-device_type"><i class="fa fa-tag"></i> <span data-i18n="device.label.device_type"></span></label>
         <select id="node-input-device_type" >
@@ -168,6 +170,7 @@
         </select>
     </div>
 
+    <!-- Show Traits -->
     <div class="form-row">
         <label style="width:auto" for="node-input-show_trait"><i class="fa fa-tag"></i> <span data-i18n="device.label.show_trait"></span></label>
         <select id="node-input-show_trait" >
@@ -180,6 +183,11 @@
     <div class="form-row" hidden>
         <label style="width:auto" for="node-input-advanced_settings"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.advanced_settings"></span></label>
         <input type="checkbox" id="node-input-advanced_settings" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-online"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.online"></span></label>
+        <input type="checkbox" id="node-input-online" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
 
     <!-- AppSelector Trait-->
@@ -2034,6 +2042,9 @@
             topic: {
                 value: "", required: false
             },
+            online: {
+                value: true, required: false
+            },
             room_hint: {
                 value: "", required: false
             },
@@ -2756,6 +2767,10 @@
             $('#node-input-show_trait').val('selected');
             this.show_trait = 'selected';
             this.advanced_settings = true;
+            if (typeof this.online !== 'boolean') {
+                this.online = true;
+                $('#node-input-online').prop('checked', true);
+            }
             $("#node-input-appselector_file").typedInput({
                 default: "str",
                 typeField: $("#node-input-appselector_type"),
