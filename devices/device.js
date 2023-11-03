@@ -60,7 +60,6 @@ module.exports = function (RED) {
             this.state_types = {};
             this.errorCode = undefined;
             this.trait = {
-                online: config.online != false;
                 appselector: config.trait_appselector || false,
                 armdisarm: config.trait_armdisarm || false,
                 brightness: config.trait_brightness || false,
@@ -723,7 +722,7 @@ module.exports = function (RED) {
             const nicknames = this.nicknames ? [this.name].concat(this.nicknames.split(',')) : [];
 
             this.states = {
-                online: config.online
+                online: config.online != false
             };
             this.device = {
                 id: this.id,
