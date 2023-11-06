@@ -49,7 +49,7 @@
     "@gravitysoftware/dnssd": "^0.5.x"
   },
   "devDependencies": {
-    "eslint": "^8.52.0",
+    "eslint": "^8.53.0",
     "eslint-plugin-jsdoc": "^46.8.2",
     "@microsoft/eslint-formatter-sarif": "^3.0.0",
     "mocha": "^10.2.0",
