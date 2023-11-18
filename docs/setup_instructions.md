@@ -1,10 +1,6 @@
 # Setup Instructions
 
 ## Prerequisites
-
-- You need a 'real' SSL certificate, e.g. from [Let's Encrypt](https://letsencrypt.org/). You must have either the
-  certificate files  (e.g. from Certbot). Or you can use a reverse proxy with automatic certificate management, such as
-  Caddy or Nginx Proxy Manager. There's a guide on [how to use a reverse proxy](docs/reverse_proxies.md).
 - You need to be able to forward incoming traffic from the internet to a specific port on your host. This may be
   difficult if your ISP uses carrier-grade NAT, or if you can't configure port forwarding on your router.
 - This package requires at least NodeJS 10.0.0.
@@ -21,6 +17,16 @@ installing an update client for your domain. Some routers also support DynDNS up
 instructions on how to do this.
 
 This tutorial assumes that your domain is `example.com`. Replace the domain accordingly.
+
+
+## Get an SSL certificate
+
+Google requires an SSL encrypted connection to your server. This requires a valid SSL certificate. Self-signed
+certificates won't work.
+
+You can use a free certificate from Let's Encrypt or ZeroSSL. For this, you can either use a certificate client
+(see [this guide for acme.sh](ssl_certificate.md)) or you can use a reverse proxy with built-in certificate management
+(see [this guide on how to use Caddy](reverse_proxies.md])).
 
 
 ## Create project in Actions Console
