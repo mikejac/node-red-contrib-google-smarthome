@@ -4638,7 +4638,7 @@ module.exports = function (RED) {
                     this.current_channel_index = 0;
                 }
                 params['currentChannel'] = this.available_channels[this.current_channel_index].key;
-                params['currentChannelNumber'] = this.available_channels[current_channel_index].number || '';
+                params['currentChannelNumber'] = this.available_channels[this.current_channel_index].number || '';
                 // executionStates.push('currentChannel');
             }
 
