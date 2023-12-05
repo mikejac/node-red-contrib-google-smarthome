@@ -12,7 +12,7 @@
             "local_scan_port": "Discovery Port",
             "disabled": "Disabled",
             "UDP": "UDP",
-            "MDNS": "MDNS",
+            "MDNS": "mDNS",
             "clientid": "Client ID",
             "clientsecret": "Client Secret",
             "ssloffload": "Use external SSL offload",

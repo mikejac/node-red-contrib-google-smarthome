@@ -238,7 +238,7 @@ Example flow:
 
   `Scan Type`: The service discovery method to use. Must match what is set in the *Actions on Google* project.
 
-  `Discovery Port`: A port number to use for UDP or MDNS service discovery. 
+  `Discovery Port`: A port number to use for UDP or mDNS service discovery. 
 
   `HTTP Port`: A port number to use for the connection from your smart speaker to Node-RED. If empty, it will use the
                same port as Node-RED. If you are using Node-RED's built-in HTTPS encryption or have a httpAdminRoot set,

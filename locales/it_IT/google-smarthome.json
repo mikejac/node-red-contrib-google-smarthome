@@ -12,7 +12,7 @@
             "local_scan_port": "Porta per la scansione",
             "disabled": "Disabilitato",
             "UDP": "UDP",
-            "MDNS": "MDNS",
+            "MDNS": "mDNS",
             "clientid": "ID del cliente",
             "clientsecret": "Segreto del cliente",
             "ssloffload": "Usa un server SSL esterno",

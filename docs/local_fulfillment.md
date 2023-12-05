@@ -14,7 +14,7 @@ This tutorial assumes that your service is already set up and working.
 
 
 2. Scroll down to the section `Local Fulfillment`. Fill in as follows:
-    * Scan Type: Select either MDNS or UDP scanning. Which one works better depends on your network configuration. You
+    * Scan Type: Select either mDNS or UDP scanning. Which one works better depends on your network configuration. You
       may need to try both.
     * Discovery port: Node-RED will listen on this port for discovery messages from your smart speaker. Enter any port
       that you want. Don't create an external port forwarding for this port on your home router.
@@ -51,11 +51,11 @@ This tutorial assumes that your service is already set up and working.
 9. Click the button `+ New scan config` if you don't have a scan configuration yet.
 
 
-10. Select MDNS or UDP depending on what you selected in the configuration of your management node.
+10. Select mDNS or UDP depending on what you selected in the configuration of your management node.
 
 
-11. For MDNS, fill in the fields as follows.<br>
-    MDNS service name: Set to `_nodered-google._tcp.local`.
+11. For mDNS, fill in the fields as follows.<br>
+    mDNS service name: Set to `_nodered-google._tcp.local`.
     <br><br>
     For UDP, fill in the fields as follows,<br>
     Broadcast address: The IP range of your local network, e.g. `192.168.178.255`.
@@ -130,7 +130,7 @@ speaker. You'll get a warning on Node-RED's debug panel if this is needed.
   port you chose). E.g. run `curl -X POST http://192.168.178.25:13002/smarthome`. It should answer with
   `{"error":"missing inputs"}`. This error message is okay, all other messages indicate connection problems with the
   local fulfillment service.
-- Install [Service Browser](https://play.google.com/store/apps/details?id=com.druk.servicebrowser) or a similar mDNS
+- If you selected mDNS, install [Service Browser](https://play.google.com/store/apps/details?id=com.druk.servicebrowser) or a similar mDNS
   discovery tool on your phone. It must find a service named "_nodered-google._tcp.". Tap on it, then tap again on
   "nodered" to see the details. Check if the IP address and port are correct.
 - If Service Browser lists the "nodered" service with an additional domain, check the configuration files /etc/hostname
