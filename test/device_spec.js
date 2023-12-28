@@ -1,5 +1,5 @@
 /**
- * NodeRED Google SmartHome
+ * node-red-contrib-google-smarthome
  * Copyright (C) 2024 Claudio Chimera and others.
  *
  * This program is free software: you can redistribute it and/or modify
