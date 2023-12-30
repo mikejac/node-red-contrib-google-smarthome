@@ -3,9 +3,8 @@
 ## Prerequisites
 
 - You need to be able to forward incoming traffic from the internet to a specific port on your host. This may be
-  difficult if your ISP uses carrier-grade NAT, if you are on a shared network (e.g. in dormitories) or if you can'tconfigure port forwarding
-  on your router. In this case you can use services like [ZeroTier](https://www.zerotier.com/) or
-  [Cloudflare Tunnel](https://www.cloudflare.com/products/tunnel/).
+  difficult if your ISP uses carrier-grade NAT, if you are on a shared network (e.g. in dormitories) or if you can't
+  configure port forwarding on your router. In this case you can use a service like [Cloudflare Tunnel](https://www.cloudflare.com/products/tunnel/).
 - This package requires at least NodeJS 10.0.0.
 
 ---
