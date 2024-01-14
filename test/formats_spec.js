@@ -107,6 +107,8 @@ describe('Format Conversion', function () {
         '10',
         10.5,
         '10.5',
+        '0x00000A',
+        '#00000A',
     ];
     testConvertsToValue(convertToInt10, formats.INT, 10, 'int 10');
 
