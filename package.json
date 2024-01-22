@@ -43,7 +43,7 @@
     "morgan": "^1.10.x",
     "cors": "^2.8.x",
     "google-auth-library": "^9.4.2",
-    "googleapis": "^130.0.x",
+    "googleapis": "^131.0.x",
     "uid-generator": "^2.0.x",
     "ip-range-check": "^0.2.x",
     "@gravitysoftware/dnssd": "^0.5.x"
