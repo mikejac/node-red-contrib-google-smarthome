@@ -73,26 +73,26 @@ ports:
     mDNS service name: Set to `_nodered-google._tcp.local`.
     <br><br>
     For UDP, fill in the fields as follows,<br>
-    Broadcast address: The IP range of your local network, e.g. `192.168.178.255`.
-    Discovery packet: Set to `6e6f64652d7265642d636f6e747269622d676f6f676c652d736d617274686f6d65`.
-    Listen port: Set the same port you set as "Discovery Port" in the configuration of your management node.
-    Broadcast port: Set the same port you set as "Discovery Port" in the configuration of your management node.
+    * Broadcast address: The IP range of your local network, e.g. `192.168.178.255`.
+    * Discovery packet: Set to `6e6f64652d7265642d636f6e747269622d676f6f676c652d736d617274686f6d65`.
+    * Listen port: Set the same port you set as "Discovery Port" in the configuration of your management node.
+    * Broadcast port: Set the same port you set as "Discovery Port" in the configuration of your management node.
 
 
-13. The complete form for the mDNS scan type should look like this.\
+12. The complete form for the mDNS scan type should look like this.\
     <kbd>![](images/local_fulfillment/localexecution_form_mDNS.png)</kbd>
 
     The complete form for the UDP scan type should look like this.\
     <kbd>![](images/local_fulfillment/localexecution_form_UDP.png)</kbd>
 
 
-14. `Save` your changes.
+13. `Save` your changes.
 
 
-15. Restart your smart speaker and Node-RED.
+14. Restart your smart speaker and Node-RED.
 
 
-16. Now control your device. If local fulfillment is working, you will see a ring icon instead of the usual filled
+15. Now control your device. If local fulfillment is working, you will see a ring icon instead of the usual filled
     circle.\
     <kbd>![](images/local_fulfillment/localexecution_ring.png)</kbd>
     
