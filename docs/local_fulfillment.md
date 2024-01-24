@@ -8,6 +8,21 @@ This tutorial assumes that your service is already set up and working.
 
 ---
 
+## Using local fulfillment with Docker containers
+
+If you are running Node-RED inside a Docker container, you must use UDP as mDNS will not work with containers.
+
+In your container configuration, you must explicitly forward the listen and broadcast ports for TCP and UDP. For
+example, if you want to use port 8882, the port configuration in your `docker-compose.yaml` would have to look like
+this:
+
+```yaml
+ports:
+    - "8882:8882/tcp" # TCP port for local execution
+    - "8882:8882/udp" # UDP port for local execution
+    # ... other ports for Node-RED and the smarthome service
+```
+
 ## Enable Local Fulfillment
 
 1. Open the configuration of your management node in Node-RED.
