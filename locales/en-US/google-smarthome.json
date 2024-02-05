@@ -67,11 +67,6 @@
             "request_sync_delay": "Delay for request sync after a deploy",
             "set_state_delay": "Delay for sending the set_state message after state changes"
         },
-        "state": {
-            "connected": "Connected to broker: __broker__",
-            "disconnected": "Disconnected from broker: __broker__",
-            "connect-failed": "Connection failed to broker: __broker__"
-        },
         "errors": {
             "missing-config": "missing bridge configuration",
             "missing-bridge": "missing bridge"
