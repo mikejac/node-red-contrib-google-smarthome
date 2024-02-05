@@ -41,7 +41,6 @@ module.exports = function (RED) {
                 return;
             }
 
-            this.enabledebug = config.enabledebug || false;
             this.set_state_type = config.set_state_type || 'filtered_by_id';
 
             this.clientConn.register(this, 'mgmt', config.name);
@@ -53,7 +52,7 @@ module.exports = function (RED) {
         }
 
         _debug(msg) {
-            if (this.enabledebug) {
+            if (this.clientConn.enabledebug) {
                 console.log(msg)
             } else {
                 RED.log.debug(msg);
