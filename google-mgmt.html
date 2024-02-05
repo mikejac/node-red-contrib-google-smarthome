@@ -1,0 +1,81 @@
+<!--
+ node-red-contrib-google-smarthome
+ Copyright (C) 2024 Michael Jacobsen and others.
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<script type="text/x-red" data-template-name="google-mgmt">
+    <div class="form-tips" style="margin-bottom: 1em">
+        For setup instructions, <a href="https://github.com/mikejac/node-red-contrib-google-smarthome/blob/master/docs/setup_instructions.md" target="_blank">look here </a>.
+    </div>
+
+    <div class="form-row">
+        <b>Google SmartHome Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-client"><i class="fa fa-globe"></i> SmartHome</span></label>
+        <input type="text" id="node-input-client">
+    </div>
+
+    <div class="form-row">
+        <b>Node-RED Settings</b>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="googlemanagement.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]googlemanagement.placeholder.name">
+    </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-set_state_type"><i class="fa fa-tag"></i> <span data-i18n="googlemanagement.label.set_state_type"></span></label>
+        <select id="node-input-set_state_type" >
+            <option value="no_nodes" data-i18n="googlemanagement.label.no_nodes"></option>
+            <option value="all_by_id" data-i18n="googlemanagement.label.all_by_id"></option>
+            <option value="all_by_name" data-i18n="googlemanagement.label.all_by_name"></option>
+            <option value="filtered_by_id" data-i18n="googlemanagement.label.filtered_by_id"></option>
+            <option value="filtered_by_name" data-i18n="googlemanagement.label.filtered_by_name"></option>
+        </select>
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google-mgmt', {
+        category: 'Google_SmartHome-function',
+        paletteLabel: 'Management',
+        defaults: {
+            client: {
+                type: "googlesmarthome-client",
+                required: true
+            },
+            name: {
+                value: ""
+            },
+            set_state_type: {
+                value: 'filtered_by_id', required: true
+            }
+        },
+        inputs: 1,
+        outputs: 1,
+        color: "#C0DEED",
+        icon: "google-smarthome.png",
+        label: function () {
+            return this.name || "Management";
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : ""
+        }
+    })
+</script>

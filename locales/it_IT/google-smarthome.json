@@ -43,13 +43,7 @@
             "accesstokenduration": "Durata del token di accesso (m)",
             "reportinterval": "Intervallo tra i report (m)",
             "request_sync_delay": "Ritardo richiesta di sincronizzazione (s)",
-            "set_state_delay": "Ritardo invio del messaggio set_state (s)",
-            "set_state_type": "Typo di set_state",
-            "no_nodes": "Nessun nodo",
-            "all_by_id": "Tutti i nodi, la chiave è l'ID",
-            "all_by_name": "Tutti i nodi, la chiave è il nome",
-            "filtered_by_id": "Soltanto i nodi marcati persistenti, la chiave è l'ID",
-            "filtered_by_name": "Soltanto i nodi marcati persistenti, la chiave è il nome"
+            "set_state_delay": "Ritardo invio del messaggio set_state (s)"
         },
         "placeholder": {
             "name": "Nome",
@@ -66,10 +60,6 @@
             "reportinterval": "Intervallo in minuti. -1 per disabilitare",
             "request_sync_delay": "Ritardo richiesta di sincronizzazione dopo un deploy",
             "set_state_delay": "Ritardo invio del messaggio set_state dopo un cambio di stato"
-        },
-        "errors": {
-            "missing-config": "La configurazione di SmartHome non è disponibile",
-            "missing-bridge": "SmartHome non disponibile"
         }
     }
 }

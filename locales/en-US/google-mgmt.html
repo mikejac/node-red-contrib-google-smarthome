@@ -1,0 +1,105 @@
+<!--
+ node-red-contrib-google-smarthome
+ Copyright (C) 2024 Michael Jacobsen and others.
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<script type="text/x-red" data-help-name="google-mgmt">
+    <p>Allows to manage the Google Smart Home service.</p>
+
+    <h3>Inputs</h3>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">string</span>
+            </dt>
+            <dd>Command to run. Can be restart_server, report_state, request_sync, get_state or set_state.</dd>
+        </dl>
+
+     <h3>Output</h3>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">object</span>
+            </dt>
+            <dd>Debug messages from Google Smart Home service or the state of all Google Devices (with set_state or get_state topic).</dd>
+        </dl>
+
+    <h3>Details</h3>
+        <h4>Node Properties - Google SmartHome Settings</h4>
+        <p><code>SmartHome</code> Configuration node.</p>
+        <h4>Node Properties - Node-RED Settings</h4>
+        <p><code>Name</code> Name used by Google Smart Home.</p>
+
+        <h4>Input Messages</h4>
+        <p>If <code>msg.topic</code> is <code>restart_server</code> the built-in webserver will be restarted. Can be used when your SSL certificate has been renewed and needs to be re-read by the webserver.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">string</span>
+            </dt>
+            <dd>A topic of <code>restart_server</code> restarts the built-in webserver. <code>msg.payload</code> is not used for anything.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>report_state</code> an update of all device states will be sent to Google. Mostly useful for debugging.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">string</span>
+            </dt>
+            <dd>A topic of <code>report_state</code> will send an update of all states to Google. <code>msg.payload</code> is not used for anything.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>request_sync</code> Google is requested to sync to learn about new or changed devices. This usually happens automatically.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">string</span>
+            </dt>
+            <dd>A topic of <code>request_sync</code> requests Google to sync to learn about new or changed devices. <code>msg.payload</code> is not used for anything.</dd>
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>get_state</code> or <code>getstate</code> the node send a message in output with the state of the Google devices.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">string</span>
+            </dt>
+            <dd>A topic of <code>get_state</code> requests to send to the output the state of the Google devices.</dd>
+            <dl class="message-properties">
+                <dt>payload
+                    <span class="property-type">boolean|string|array of string|object</span>
+                </dt>
+                <dd><code>undefined</code> sends to the output the state of all Google devices in an object with key the devices id or name according to the node configuration.</dd>
+                <dd><code>true</code> sends to the output the state of all Google devices with the "Persistent State" enabled in an object with key the devices id or name according to the node configuration.</dd>
+                <dd><code>string</code> sends to the output the state of the Google device with the id or the name specified in the payload in an object with key the device id or name according to the node configuration.</dd>
+                <dd><code>array of strings</code> sends to the output the state of the Google devices with the ids or names specified in the payload in an object with key the device id or name according to the node configuration.</dd>
+                <dd><code>object</code> the object attributes can be <code>onlyPersistent</code>, <code>useNames</code> or <code>devices</code>, sends to the output the state of the Google devices in according to the payload and to the node configuration.</dd>
+            </dl>    
+        </dl>
+
+        <p>If <code>msg.topic</code> is <code>set_state</code> or <code>setstate</code> the node updates the Google devices states with the states contained on the <code>msg.payload</code>.</p>
+        <dl class="message-properties">
+            <dt>topic
+                <span class="property-type">object</span>
+            </dt>
+            <dd>A topic of <code>set_state</code> updates the Google devices states with the value of the <code>msg.payload</code>.</dd>
+        </dl>
+
+        <h4>Output Messages</h4>
+        <p>This node will output debug messages if something goes wrong or the state of all Google Devices (with set_state or get_state topic).</p>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string|object</span>
+            </dt>
+            <dd>This node will output debug messages if something goes wrong or the state of all Google Devices (with set_state or get_state topic).</dd>
+        </dl>
+
+        <p>If a device state changes, the node output a message with the <code>msg.topic</code> set to <code>set_state</code>, and the <code>msg.payload</code> contains all the Google devices states that can be persisted if needed. This message can be passed into the node to restore the persisted state.</p>
+</script>

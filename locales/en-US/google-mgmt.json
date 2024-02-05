@@ -1,0 +1,20 @@
+{
+    "googlemanagement": {
+        "label": {
+            "name": "Name",
+            "set_state_type": "set_state type",
+            "no_nodes": "No nodes",
+            "all_by_id": "All nodes, key is ID",
+            "all_by_name": "All nodes, key is name",
+            "filtered_by_id": "Only nodes marked with 'persistent state', key is ID",
+            "filtered_by_name": "Only nodes marked with 'persistent state', key is name"
+        },
+        "placeholder": {
+            "name": "Name"
+        },
+        "errors": {
+            "missing-config": "missing bridge configuration",
+            "missing-bridge": "missing bridge"
+        }
+    }
+}

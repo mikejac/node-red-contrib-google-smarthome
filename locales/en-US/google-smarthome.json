@@ -43,13 +43,7 @@
             "accesstokenduration": "Access Token Duration (m)",
             "reportinterval": "Report Interval (m)",
             "request_sync_delay": "Request sync delay (s)",
-            "set_state_delay": "set_state message delay (s)",
-            "set_state_type": "set_state type",
-            "no_nodes": "No nodes",
-            "all_by_id": "All nodes, key is ID",
-            "all_by_name": "All nodes, key is name",
-            "filtered_by_id": "Only nodes marked with 'persistent state', key is ID",
-            "filtered_by_name": "Only nodes marked with 'persistent state', key is name"
+            "set_state_delay": "set_state message delay (s)"
         },
         "placeholder": {
             "name": "Name",
@@ -66,10 +60,6 @@
             "reportinterval": "Interval in minutes. -1 to disable",
             "request_sync_delay": "Delay for request sync after a deploy",
             "set_state_delay": "Delay for sending the set_state message after state changes"
-        },
-        "errors": {
-            "missing-config": "missing bridge configuration",
-            "missing-bridge": "missing bridge"
         }
     }
 }
