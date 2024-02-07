@@ -22,6 +22,7 @@ const should = require('should');
 const helper = require('node-red-node-test-helper');
 const device = require('../devices/device.js');
 const google_smarthome = require('../google-smarthome.js');
+const google_mgmt = require('../google-mgmt.js');
 
 helper.init(require.resolve('node-red'));
 
@@ -48,7 +49,7 @@ describe('Device Node', function () {
             { id: "h1", type: "helper", name: "", wires: [] },
             { id: "h2", type: "helper", name: "", wires: [] },
         ];
-        helper.load([google_smarthome, device], flow, function () {
+        helper.load([google_smarthome, google_mgmt, device], flow, function () {
             try {
                 const d1 = helper.getNode("d1");
                 d1.should.have.property('type', 'google-device');
