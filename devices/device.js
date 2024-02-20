@@ -1872,6 +1872,11 @@ module.exports = function (RED) {
             }
         }
 
+        /**
+         * Updates the status icon of this device node.
+         *
+         * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
+         */
         updateStatusIcon(is_local) {
             const me = this;
             let text = '';
@@ -2845,10 +2850,12 @@ module.exports = function (RED) {
             return traits;
         }
 
-        //
-        //
-        //
-        //
+        /**
+         * Updates the states of this device with new values.
+         *
+         * @param {Object} from_states - The new states values.
+         * @returns {Array} - Array of the state keys that were modified.
+         */
         updateState(from_states) {
             const me = this;
             let modified = [];
