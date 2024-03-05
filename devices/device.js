@@ -1925,6 +1925,15 @@ module.exports = function (RED) {
                         }
                     }
                 }
+                if (me.trait.startstop) {
+                    if (me.pausable && me.states.isPaused) {
+                        text.push('Paused');
+                        fill = 'yellow';
+                    } else {
+                        text.push(me.states.isRunning ? 'Started' : 'Stopped');
+                        fill = me.states.isRunning ? 'green' : 'red';
+                    }
+                }
                 if (me.trait.humiditysetting) {
                     if (me.states.humidityAmbientPercent !== undefined) {
                         text.push('H: ' + me.states.humidityAmbientPercent + "% ");
