@@ -2012,6 +2012,16 @@ module.exports = function (RED) {
                         text.push(me.states.isLocked ? ' LOCKED' : ' UNLOCKED');
                     }
                 }
+                if (me.trait.runcycle) {
+                    if(
+                        typeof me.states.currentRunCycle !== 'undefined' &&
+                        typeof me.states.currentRunCycle[0] !== 'undefined' &&
+                        typeof me.states.currentRunCycle[0].currentCycle !== 'undefined' &&
+                        me.states.currentRunCycle[0].currentCycle !== 'unknown'
+                    ) {
+                        text.push(me.states.currentRunCycle[0].currentCycle);
+                    }
+                }
             } else {
                 shape = 'ring';
                 text.push("offline");
