@@ -1879,21 +1879,21 @@ module.exports = function (RED) {
          */
         updateStatusIcon(is_local) {
             const me = this;
-            let text = '';
+            let text = [];
             let fill = 'red';
             let shape = 'dot';
             if (me.states.online) {
                 if (me.trait.scene) {
-                    text = 'OK';
+                    text.push('OK');
                     fill = 'green';
                 }
                 if (me.trait.onoff) {
                     if (me.states.on !== undefined) {
                         if (me.states.on) {
-                            text = 'ON';
+                            text.push('ON');
                             fill = 'green';
                         } else {
-                            text = 'OFF';
+                            text.push('OFF');
                         }
                     } else {
                         fill = 'blue';
@@ -1902,82 +1902,82 @@ module.exports = function (RED) {
                     fill = 'blue';
                 }
                 if (me.trait.brightness && me.states.brightness !== undefined) {
-                    text += " bri: " + me.states.brightness;
+                    text.push(`${me.states.brightness} %`);
                 }
                 if (me.trait.colorsetting && me.states.color.temperatureK !== undefined) {
-                    text += ' temp: ' + me.states.color.temperatureK;
+                    text.push(`${me.states.color.temperatureK} K`);
                 }
                 if (me.trait.colorsetting && me.states.color.spectrumRgb !== undefined) {
-                    text += ' RGB: ' + me.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0');
+                    text.push('#' + me.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0'));
                 }
                 if (me.trait.colorsetting && me.states.color.spectrumHsv !== undefined) {
-                    text += ' H: ' + me.states.color.spectrumHsv.hue +
+                    text.push('H: ' + me.states.color.spectrumHsv.hue +
                         ' S: ' + me.states.color.spectrumHsv.saturation +
-                        ' V: ' + me.states.color.spectrumHsv.value;
+                        ' V: ' + me.states.color.spectrumHsv.value);
                 }
                 if (me.trait.openclose) {
                     if (me.states.openPercent !== undefined) {
                         if (me.states.openPercent === 0) {
-                            text += 'CLOSED';
+                            text.push('CLOSED');
                             fill = 'green';
                         } else {
-                            text += me.discrete_only_openclose ? 'OPEN' : util.format("OPEN %d%%", me.states.openPercent);
+                            text.push(me.discrete_only_openclose ? 'OPEN' : util.format("OPEN %d%%", me.states.openPercent));
                         }
                     }
                 }
                 if (me.trait.humiditysetting) {
                     if (me.states.humidityAmbientPercent !== undefined) {
-                        text += ' H: ' + me.states.humidityAmbientPercent + "% ";
+                        text.push('H: ' + me.states.humidityAmbientPercent + "% ");
                     }
                     if (me.states.humiditySetpointPercent !== undefined) {
-                        text += ' TH: ' + me.states.humiditySetpointPercent + "% ";
+                        text.push('TH: ' + me.states.humiditySetpointPercent + "% ");
                     }
                 }
                 if (me.trait.temperaturecontrol) {
                     if (me.states.temperatureAmbientCelsius !== undefined) {
-                        text += ' TC: ' + me.states.temperatureAmbientCelsius + "\xB0C";
+                        text.push('TC: ' + me.states.temperatureAmbientCelsius);
                     }
                     if (me.states.temperatureSetpointCelsius !== undefined) {
-                        text += ' SC: ' + me.states.temperatureSetpointCelsius + "\xB0C";
+                        text.push(' SC: ' + me.states.temperatureSetpointCelsius);
                     }
                 }
                 if (me.trait.temperaturesetting) {
                     const thermostat_mode = me.states.thermostatMode;
-                    const st = " T: " + (me.states.thermostatTemperatureAmbient || '?') + "°C | S: " + (me.states.thermostatTemperatureSetpoint || '?') + "\xB0C";
+                    const st = " T: " + (me.states.thermostatTemperatureAmbient || '?') + "°C | S: " + (me.states.thermostatTemperatureSetpoint || '?');
                     if (thermostat_mode === "off") {
-                        text = "OFF " + st;
+                        text.push('OFF ' + st);
                     } else if (thermostat_mode === "heat" || thermostat_mode === "cool") {
                         fill = "green";
-                        text = thermostat_mode.substring(0, 1).toUpperCase() + st;
+                        text.push(thermostat_mode.substring(0, 1).toUpperCase() + st);
                     } else if (thermostat_mode === "heatcool") {
                         fill = "green";
-                        text = "H/C T: " + (me.states.thermostatTemperatureAmbient || '?') + "°C | S: [" + (me.states.thermostatTemperatureSetpointLow || '') + " - " + (me.states.thermostatTemperatureSetpointHigh || '') + "]\xB0C";
+                        text.push('H/C T: ' + (me.states.thermostatTemperatureAmbient || '?') + "°C | S: [" + (me.states.thermostatTemperatureSetpointLow || '') + " - " + (me.states.thermostatTemperatureSetpointHigh || ''));
                     } else {
                         fill = "green";
-                        text = thermostat_mode.substring(0, 1).toUpperCase() + st;
+                        text.push(thermostat_mode.substring(0, 1).toUpperCase() + st);
                     }
                     if (me.states.thermostatHumidityAmbient !== undefined) {
-                        text += ' ' + me.states.thermostatHumidityAmbient + "%";
+                        text.push(me.states.thermostatHumidityAmbient + "%");
                     }
                 }
                 if (me.trait.energystorage) {
-                    text += ' ' + me.states.descriptiveCapacityRemaining;
+                    text.push(me.states.descriptiveCapacityRemaining);
                 }
                 if (me.trait.armdisarm) {
                     if (me.states.isArmed) {
                         if (me.states.currentArmLevel) {
-                            text += ' ' + me.states.currentArmLevel;
+                            text.push(me.states.currentArmLevel);
                         }
                     } else {
-                        text += ' DISARMED';
+                        text.push('DISARMED');
                     }
                 }
                 if (me.trait.fanspeed) {
                     if (typeof me.states.currentFanSpeedPercent === 'number') {
-                        text += ' ' + me.states.currentFanSpeedPercent + '%';
+                        text.push(me.states.currentFanSpeedPercent + '%');
                     }
                     if (typeof me.states.currentFanSpeedSetting === 'string') {
-                        text += ' ' + me.states.currentFanSpeedSetting;
+                        text.push(me.states.currentFanSpeedSetting);
                     }
                 }
                 if (me.trait.sensorstate) {
@@ -1985,12 +1985,12 @@ module.exports = function (RED) {
                         me.states.currentSensorStateData.forEach(sensor => {
                             const currentSensorStateSet = sensor.currentSensorState !== undefined && sensor.currentSensorState !== 'unknown';
                             if (currentSensorStateSet || sensor.rawValue !== undefined) {
-                                text += ' ' + sensor.name;
+                                text.push(sensor.name);
                                 if (currentSensorStateSet) {
-                                    text += ' ' + sensor.currentSensorState;
+                                    text.push(sensor.currentSensorState);
                                 }
                                 if (sensor.rawValue !== undefined) {
-                                    text += ' ' + sensor.rawValue;
+                                    text.push(sensor.rawValue);
                                 }
                             }
                         });
@@ -1998,14 +1998,14 @@ module.exports = function (RED) {
                 }
                 if (me.trait.lockunlock) {
                     if (me.states.isJammed) {
-                        text += ' JAMMED';
+                        text.push('JAMMED');
                     } else if (typeof me.states.isLocked === 'boolean') {
-                        text += me.states.isLocked ? ' LOCKED' : ' UNLOCKED';
+                        text.push(me.states.isLocked ? ' LOCKED' : ' UNLOCKED');
                     }
                 }
             } else {
                 shape = 'ring';
-                text = "offline";
+                text.push("offline");
             }
             if(text.length === 0) {
                 shape = fill = '';
@@ -2013,6 +2013,7 @@ module.exports = function (RED) {
             if (is_local) {
                 shape = 'ring';
             }
+            text = text.join(' | ');
             me.status({ fill: fill, shape: shape, text: text });
         }
 
