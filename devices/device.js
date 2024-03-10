@@ -2007,8 +2007,8 @@ module.exports = function (RED) {
                 shape = 'ring';
                 text = "offline";
             }
-            if (!text) {
-                text = 'Unknown';
+            if(text.length === 0) {
+                shape = fill = '';
             }
             if (is_local) {
                 shape = 'ring';
