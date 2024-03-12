@@ -28,7 +28,7 @@ certificates won't work.
 
 You can use a free certificate from Let's Encrypt or ZeroSSL. For this, you can either use a certificate client
 (see [this guide for acme.sh](ssl_certificate.md)) or you can use a reverse proxy with built-in certificate management
-(see [this guide on how to use Caddy](reverse_proxies.md])).
+(see [this guide on how to use Caddy](reverse_proxies.md)).
 
 
 ## Create project in Actions Console

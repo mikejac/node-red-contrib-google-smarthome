@@ -6,7 +6,7 @@
   [setup instructions](setup_instructions.md#Prerequisites).
 - Port 80 or 443 on your host must be free. This port must remain unused in the future, as it will be used to renew
   the certificate every 60 days. If you want to use the port for something else, it may be better to use a
-  [reverse proxy](docs/reverse_proxies.md) for certificate generation.
+  [reverse proxy](reverse_proxies.md) for certificate generation.
 
 ## Getting your certificate
 
