@@ -3076,9 +3076,8 @@
                         required_traits = ["onoff"];
                         break;
                     case "DISHWASHER": // Dishwasher
-                        // StartStop is listed as required by Google, but the device also works without it. Therefore, we only list it as recommended.
-                        recommended_traits = ["onoff", "runcycle", "startstop"];
-                        required_traits = [];
+                        recommended_traits = ["onoff", "runcycle"];
+                        required_traits = ["startstop"];
                         break;
                     case "DOOR": // Door
                         recommended_traits = ["lockunlock"];
@@ -3093,9 +3092,8 @@
                         required_traits = ["openclose"];
                         break;
                     case "DRYER": // Dryer
-                        // StartStop is listed as required by Google, but the device also works without it. Therefore, we only list it as recommended.
-                        recommended_traits = ["modes", "onoff", "runcycle", "toggles", "startstop"];
-                        required_traits = [];
+                        recommended_traits = ["modes", "onoff", "runcycle", "toggles"];
+                        required_traits = ["startstop"];
                         break;
                     case "FAN": // Fan
                         recommended_traits = ["fanspeed"];
@@ -3290,9 +3288,8 @@
                         required_traits = ["openclose"];
                         break;
                     case "WASHER": // Washer
-                        // StartStop is listed as required by Google, but the device also works without it. Therefore, we only list it as recommended.
-                        recommended_traits = ["modes", "onoff", "runcycle", "toggles", "startstop"];
-                        required_traits = [];
+                        recommended_traits = ["modes", "onoff", "runcycle", "toggles"];
+                        required_traits = ["startstop"];
                         break;
                     case "WATERHEATER": // Water heater
                         recommended_traits = ["temperaturecontrol"];

@@ -170,7 +170,7 @@ module.exports = function (RED) {
                     this.trait.onoff = true;
                     break;
                 case "DISHWASHER": // Dishwasher
-                    // StartStop is listed as required by Google, but the device also works without it. Therefore, we don't set is as required trait here.
+                    this.trait.startstop = true;
                     break;
                 case "DOOR": // Door
                     this.trait.openclose = true;
@@ -179,7 +179,7 @@ module.exports = function (RED) {
                     this.trait.openclose = true;
                     break;
                 case "DRYER": // Dryer
-                    // StartStop is listed as required by Google, but the device also works without it. Therefore, we don't set is as required trait here.
+                    this.trait.startstop = true;
                     break;
                 case "FAN": // Fan
                     this.trait.onoff = true;
@@ -346,7 +346,7 @@ module.exports = function (RED) {
                     this.trait.openclose = true;
                     break;
                 case "WASHER": // Washer
-                    // StartStop is listed as required by Google, but the device also works without it. Therefore, we don't set is as required trait here.
+                    this.trait.startstop = true;
                     break;
                 case "WATERHEATER": // Water heater
                     this.trait.onoff = true;
