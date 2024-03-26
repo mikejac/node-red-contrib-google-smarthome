@@ -1,6 +1,6 @@
 [
     {
-        "id": "c1",
+        "id": "client1",
         "type": "googlesmarthome-client",
         "name": "",
         "enabledebug": true,
@@ -22,20 +22,20 @@
         "clientsecret": "client_secred"
     },
     {
-        "id": "mngm",
+        "id": "mgmt",
         "type": "google-mgmt",
-        "client": "c1",
+        "client": "client1",
         "name": "",
         "wires": [
             [
-                "h1"
+                "helper1"
             ]
         ]
     },
     {
-        "id": "d1",
+        "id": "device1",
         "type": "google-device",
-        "client": "c1",
+        "client": "client1",
         "name": "Cucina",
         "topic": "",
         "device_type": "TV",
@@ -263,13 +263,13 @@
         ]
     },
     {
-        "id": "h1",
+        "id": "helper1",
         "type": "helper",
         "name": "",
         "wires": []
     },
     {
-        "id": "h2",
+        "id": "helper2",
         "type": "helper",
         "name": "",
         "wires": []

@@ -50,13 +50,13 @@ describe('Device Node', function () {
 
         helper.load([google_smarthome, google_mgmt, device], flow, function () {
             try {
-                const d1 = helper.getNode("d1");
-                d1.should.have.property('type', 'google-device');
-                d1.should.have.property('client');
-                d1.should.have.property('clientConn');
-                const clnt = helper.getNode(d1.client);
-                clnt.should.have.property('type', 'googlesmarthome-client');
-                const mgmt = helper.getNode("mngm");
+                const device1 = helper.getNode("device1");
+                device1.should.have.property('type', 'google-device');
+                device1.should.have.property('client');
+                device1.should.have.property('clientConn');
+                const client = helper.getNode(device1.client);
+                client.should.have.property('type', 'googlesmarthome-client');
+                const mgmt = helper.getNode("mgmt");
                 mgmt.should.have.property('type', 'google-mgmt');
                 /*
                 n1.should.have.property('device_type', 'onoff');
