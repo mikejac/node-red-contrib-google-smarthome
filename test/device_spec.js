@@ -20,7 +20,6 @@
 
 const path = require('path');
 const fs = require('fs');
-const should = require('should');
 const helper = require('node-red-node-test-helper');
 const device = require('../devices/device.js');
 const google_smarthome = require('../google-smarthome.js');

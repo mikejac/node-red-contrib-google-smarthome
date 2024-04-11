@@ -3016,7 +3016,7 @@ module.exports = function (RED) {
                     if (typeof state_type.isValidKey === 'function') {
                         is_valid_key = state_type.isValidKey;
                     } else {
-                        is_valid_key = key => true;
+                        is_valid_key = true;
                     }
                     value.forEach((new_obj, idx) => {
                         let cur_obj;

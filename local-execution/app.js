@@ -11,8 +11,6 @@ For license information please check the repository.
 var App = smarthome.App;
 var Constants = smarthome.Constants;
 var DataFlow = smarthome.DataFlow;
-var Execute = smarthome.Execute;
-var Intents = smarthome.Intents; 
 var IntentFlow = smarthome.IntentFlow;
 
 const hex2a = (hexx) => {
