@@ -32,7 +32,10 @@ module.exports = [
             "jsdoc/require-hyphen-before-param-description": 1,
             "jsdoc/tag-lines": ["error", "any", {
                 "startLines": 1
-            }]
+            }],
+            "no-constant-condition": ["error",  {
+                "checkLoops": false
+            }],
         }
     }
 ];
