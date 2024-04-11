@@ -60,8 +60,8 @@ function testConvertsToValue(inputValues, targetType, targetValue, targetDescrip
  * Tests if trying to convert a list of values to a specific type results in an error being thrown.
  *
  * @param {mixed[]} inputValues - The values to be tested for conversion
- * @param targetType . The target type to which the values will be converted
- * @param targetDescription - Description of the target value for log output
+ * @param {string} targetType . The target type to which the values will be converted
+ * @param {string} targetDescription - Description of the target value for log output
  */
 function testForError(inputValues, targetType, targetDescription)
 {
