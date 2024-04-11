@@ -21,6 +21,12 @@
 const assert = require('assert');
 const formats = require('../lib/Formats');
 
+/**
+ * Format a value for output.
+ *
+ * @param {mixed} value - The value to be formatted
+ * @return {*|string} - The formatted value
+ */
 function outputValue(value)
 {
     if(typeof value === 'string')
@@ -29,6 +35,15 @@ function outputValue(value)
         return value;
 }
 
+/**
+ * Tests if all the values specified in `inputValues` can be successfully converted to the value specified by
+ * `targetValue` and the type specified by `targetType`.
+ *
+ * @param {mixed[]} inputValues - The values to be tested for conversion
+ * @param {string} targetType - The target type to which the values will be converted
+ * @param {mixed} targetValue - The expected result of the conversion for each input value
+ * @param {string} targetDescription - Description of the target value for log output
+ */
 function testConvertsToValue(inputValues, targetType, targetValue, targetDescription)
 {
     inputValues.forEach((value) => {
@@ -40,6 +55,14 @@ function testConvertsToValue(inputValues, targetType, targetValue, targetDescrip
         });
     });
 }
+
+/**
+ * Tests if trying to convert a list of values to a specific type results in an error being thrown.
+ *
+ * @param {mixed[]} inputValues - The values to be tested for conversion
+ * @param targetType . The target type to which the values will be converted
+ * @param targetDescription - Description of the target value for log output
+ */
 function testForError(inputValues, targetType, targetDescription)
 {
     inputValues.forEach((value) => {
