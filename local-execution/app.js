@@ -184,7 +184,7 @@ const executeHandler = async (request) => {
 
 const queryHandler = async (request) => {
     console.log("QUERY intent:", request);
-	const device = request.inputs[0].payload.devices[0];
+    const device = request.inputs[0].payload.devices[0];
     try {
         return forwardRequest(device.customData, device.id, request);
     }
