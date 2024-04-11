@@ -8,6 +8,9 @@ BASED ON: https://github.com/home-assistant/home-assistant.io/blob/current/sourc
 Modified for use with Node Red
 For license information please check the repository.
 */
+
+/* global smarthome */
+
 var App = smarthome.App;
 var Constants = smarthome.Constants;
 var DataFlow = smarthome.DataFlow;
