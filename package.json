@@ -59,6 +59,9 @@
     "node-red": "^3.1.9",
     "node-red-node-test-helper": "^0.3.3"
   },
+  "optionalDependencies": {
+    "fsevents": "*"
+  },
   "maintainers": [
     {
       "name": "mikejac",
