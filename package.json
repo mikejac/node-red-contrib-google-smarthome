@@ -40,7 +40,7 @@
     "@gravitysoftware/dnssd": "^0.5.x",
     "cors": "^2.8.x",
     "express": "^4.19.x",
-    "google-auth-library": "^9.8.0",
+    "google-auth-library": "^9.9.0",
     "googleapis": "^134.0.x",
     "helmet": "^7.1.0",
     "https": "^1.0.x",
