@@ -16,8 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* eslint-env mocha */
-
 const path = require('path');
 const fs = require('fs');
 const helper = require('node-red-node-test-helper');

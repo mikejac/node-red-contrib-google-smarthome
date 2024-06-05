@@ -36,5 +36,13 @@ module.exports = [
                 "checkLoops": false
             }],
         }
+    },
+    {
+        files: ["test/**/*.js"],
+        languageOptions: {
+            globals: {
+                ...globals.mocha,
+            },
+        },
     }
 ];

@@ -16,8 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* eslint-env mocha */
-
 const assert = require('assert');
 const formats = require('../lib/Formats');
 
