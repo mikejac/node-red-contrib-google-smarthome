@@ -32,9 +32,6 @@ module.exports = [
             "jsdoc/tag-lines": ["error", "any", {
                 "startLines": 1
             }],
-            "no-constant-condition": ["error",  {
-                "checkLoops": false
-            }],
         }
     },
     {
