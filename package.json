@@ -41,7 +41,7 @@
     "cors": "^2.8.x",
     "express": "^4.19.x",
     "google-auth-library": "^9.10.0",
-    "googleapis": "^137.1.x",
+    "googleapis": "^140.0.x",
     "helmet": "^7.1.0",
     "https": "^1.0.x",
     "ip-range-check": "^0.2.x",
