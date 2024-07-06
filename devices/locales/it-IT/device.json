@@ -223,7 +223,15 @@
 			"ackNeeded": "Si/No",
 			"pinNeeded": "PIN",
 			"pin": "PIN",
-			"persistent_state": "Stato persistente"
+			"persistent_state": "Stato persistente",
+            "type": "Tipo",
+            "occupancy_sensing_pir": "Infrarosso passivo (PIR)",
+            "occupancy_sensing_ultrasonic": "Ultrasonico",
+            "occupancy_sensing_physical_contact": "Contatto fisico",
+            "occupied_to_unoccupied_delay_sec": "Ritardo da rilevato a non rilevato (sec)",
+            "unoccupied_to_occupied_delay_sec": "Ritardo da non rilevato a rilevato (sec)",
+            "unoccupied_to_occupied_event_threshold": "Soglia da non rilevato a rilevato"
+
 		},
 		"placeholder": {
 			"name": "Nome",
@@ -277,7 +285,10 @@
 			"supported_dispense_items_file": "File delle provviste supportate",
 			"supported_dispense_presets_file": "File delle provviste predefinite supportate",
 			"room_hint": "Stanza",
-			"pin": "PIN"
+			"pin": "PIN",
+            "occupied_to_unoccupied_delay_sec": "Ritardo da rilevato a non rilevato (sec)",
+            "unoccupied_to_occupied_delay_sec": "Ritardo da non rilevato a rilevato (sec)",
+            "unoccupied_to_occupied_event_threshold": "Soglia da non rilevato a rilevato"
 		},
 		"errors": {
 			"missing-config": "La configurazione di SmartHome non è disponibile",
@@ -307,6 +318,7 @@
 			"modes": "Modalità",
 			"networkcontrol": "Network",
 			"objectdetection": "Rileva oggetti",
+            "occupancysensing": "Sensore di presenza",
 			"onoff": "Accensione/Spegnimento",
 			"openclose": "Apri/Chiudi",
 			"reboot": "Riavvia",
