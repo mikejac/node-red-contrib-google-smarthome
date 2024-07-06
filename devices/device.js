@@ -1124,7 +1124,7 @@ module.exports = function (RED) {
             // ObjectDetection
             // OccupancySensing
             if (me.trait.occupancysensing) {
-                if (me.occupancy_sensing_pir || me.occupancy_sensing_ultrasonic || occupancy_sensing_physical_contact) {
+                if (me.occupancy_sensing_pir || me.occupancy_sensing_ultrasonic || me.occupancy_sensing_physical_contact) {
                     state_types['occupancy'] = {
                         type: Formats.STRING + Formats.MANDATORY,
                         values: ['OCCUPIED', 'UNOCCUPIED', 'UNKNOWN_OCCUPANCY_STATE'],
