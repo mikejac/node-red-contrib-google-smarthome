@@ -213,7 +213,7 @@
             "type": "Type",
             "occupancy_sensing_pir": "Passive infrared (PIR)",
             "occupancy_sensing_ultrasonic": "Ultrasonic",
-            "occupancy_sensing_physical_contact": "physical contact",
+            "occupancy_sensing_physical_contact": "Physical contact",
             "occupied_to_unoccupied_delay_sec": "Occupied to unoccupied delay (sec)",
             "unoccupied_to_occupied_delay_sec": "Unoccupied to occupied delay (sec)",
             "unoccupied_to_occupied_event_threshold": "Unoccupied to occupied event threshold"
