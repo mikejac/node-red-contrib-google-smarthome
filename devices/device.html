@@ -1231,6 +1231,85 @@
         </div>
     </div>
 
+    <!-- OccupancySensing Trait-->
+    <div class="form-row red-ui-editableList-border div_trait" id="occupancysensing" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row" id="cb_trait_occupancysensing">
+            <b><label style="width:auto" for="node-input-trait_occupancysensing"><i class="fa fa-arrow-right"></i> <span data-i18n="device.trait.occupancysensing"></span></label></b>
+            <input type="checkbox" id="node-input-trait_occupancysensing" style="display:inline-block; width:auto; vertical-align:top;" class="cb_trait">
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/occupancysensing"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div class="form-row label_trait" id="label_trait_occupancysensing">
+            <b><label style="width:auto"><i class="fa fa-arrow-right"></i> <span data-i18n="device.trait.occupancysensing"></span></label></b>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developers.google.com/assistant/smarthome/traits/occupancysensing"><i class="fa fa-external-link"></i></a>
+            <a class="pull-right" href="#"><i class="fa fa-caret-down oc_trait"></i></a>
+        </div>
+
+        <div id="trait_occupancysensing">
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-occupancy_sensing_pir"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.occupancy_sensing_pir"></span></label>
+                <input type="checkbox" id="node-input-occupancy_sensing_pir" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row occupancy_sensing_pir">
+                <label style="width:auto" for="node-input-occupied_to_unoccupied_delay_sec_pir"><i class="fa fa-tag"></i> <span data-i18n="device.label.occupied_to_unoccupied_delay_sec"></span></label>
+                <input type="text" id="node-input-occupied_to_unoccupied_delay_sec_pir" data-i18n="[placeholder]device.placeholder.occupied_to_unoccupied_delay_sec">
+            </div>
+
+            <div class="form-row occupancy_sensing_pir">
+                <label style="width:auto" for="node-input-unoccupied_to_occupied_delay_sec_pir"1><i class="fa fa-tag"></i> <span data-i18n="device.label.unoccupied_to_occupied_delay_sec"></span></label>
+                <input type="text" id="node-input-unoccupied_to_occupied_delay_sec_pir" data-i18n="[placeholder]device.placeholder.unoccupied_to_occupied_delay_sec">
+            </div>
+
+            <div class="form-row occupancy_sensing_pir">
+                <label style="width:auto" for="node-input-unoccupied_to_occupied_event_threshold_pir"1><i class="fa fa-tag"></i> <span data-i18n="device.label.unoccupied_to_occupied_event_threshold"></span></label>
+                <input type="text" id="node-input-unoccupied_to_occupied_event_threshold_pir" data-i18n="[placeholder]device.placeholder.unoccupied_to_occupied_event_threshold">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-occupancy_sensing_ultrasonic"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.occupancy_sensing_ultrasonic"></span></label>
+                <input type="checkbox" id="node-input-occupancy_sensing_ultrasonic" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row occupancy_sensing_ultrasonic">
+                <label style="width:auto" for="node-input-occupied_to_unoccupied_delay_sec_ultrasonic"><i class="fa fa-tag"></i> <span data-i18n="device.label.occupied_to_unoccupied_delay_sec"></span></label>
+                <input type="text" id="node-input-occupied_to_unoccupied_delay_sec_ultrasonic" data-i18n="[placeholder]device.placeholder.occupied_to_unoccupied_delay_sec">
+            </div>
+
+            <div class="form-row occupancy_sensing_ultrasonic">
+                <label style="width:auto" for="node-input-unoccupied_to_occupied_delay_sec_ultrasonic"1><i class="fa fa-tag"></i> <span data-i18n="device.label.unoccupied_to_occupied_delay_sec"></span></label>
+                <input type="text" id="node-input-unoccupied_to_occupied_delay_sec_ultrasonic" data-i18n="[placeholder]device.placeholder.unoccupied_to_occupied_delay_sec">
+            </div>
+
+            <div class="form-row occupancy_sensing_ultrasonic">
+                <label style="width:auto" for="node-input-unoccupied_to_occupied_event_threshold_ultrasonic"1><i class="fa fa-tag"></i> <span data-i18n="device.label.unoccupied_to_occupied_event_threshold"></span></label>
+                <input type="text" id="node-input-unoccupied_to_occupied_event_threshold_ultrasonic" data-i18n="[placeholder]device.placeholder.unoccupied_to_occupied_event_threshold">
+            </div>
+
+            <div class="form-row">
+                <label style="width:auto" for="node-input-occupancy_sensing_physical_contact"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.occupancy_sensing_physical_contact"></span></label>
+                <input type="checkbox" id="node-input-occupancy_sensing_physical_contact" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row occupancy_sensing_physical_contact">
+                <label style="width:auto" for="node-input-occupied_to_unoccupied_delay_sec_physical_contact"><i class="fa fa-tag"></i> <span data-i18n="device.label.occupied_to_unoccupied_delay_sec"></span></label>
+                <input type="text" id="node-input-occupied_to_unoccupied_delay_sec_physical_contact" data-i18n="[placeholder]device.placeholder.occupied_to_unoccupied_delay_sec">
+            </div>
+
+            <div class="form-row occupancy_sensing_physical_contact">
+                <label style="width:auto" for="node-input-unoccupied_to_occupied_delay_sec_physical_contact"1><i class="fa fa-tag"></i> <span data-i18n="device.label.unoccupied_to_occupied_delay_sec"></span></label>
+                <input type="text" id="node-input-unoccupied_to_occupied_delay_sec_physical_contact" data-i18n="[placeholder]device.placeholder.unoccupied_to_occupied_delay_sec">
+            </div>
+
+            <div class="form-row occupancy_sensing_physical_contact">
+                <label style="width:auto" for="node-input-unoccupied_to_occupied_event_threshold_physical_contact"1><i class="fa fa-tag"></i> <span data-i18n="device.label.unoccupied_to_occupied_event_threshold"></span></label>
+                <input type="text" id="node-input-unoccupied_to_occupied_event_threshold_physical_contact" data-i18n="[placeholder]device.placeholder.unoccupied_to_occupied_event_threshold">
+            </div>
+        </div>
+    </div>
+
     <!-- OnOff Trait-->
     <div class="form-row red-ui-editableList-border div_trait" id="onoff" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row" id="cb_trait_onoff">
@@ -2533,6 +2612,99 @@
             trait_objectdetection: {
                 value: false, required: false
             },
+            trait_occupancysensing: {
+                value: false, required: false
+            },
+            occupancy_sensing_pir: {
+                value: false, required: false
+            },
+            occupancy_sensing_ultrasonic: {
+                value: false, required: false
+            },
+            occupancy_sensing_physical_contact: {
+                value: false, required: false
+            },
+            occupied_to_unoccupied_delay_sec_pir: {
+                value: '', required: false, validate: function (v) {
+                    if (v === undefined || v.trim().length === 0)
+                        return true;
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            unoccupied_to_occupied_delay_sec_pir: {
+                value: '', required: false, validate: function (v) {
+                    if (v === undefined || v.trim().length === 0)
+                        return true;
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            unoccupied_to_occupied_event_threshold_pir: {
+                value: '', required: false, validate: function (v) {
+                    if (v === undefined || v.trim().length === 0)
+                        return true;
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            occupied_to_unoccupied_delay_sec_ultrasonic: {
+                value: '', required: false, validate: function (v) {
+                    if (v === undefined || v.trim().length === 0)
+                        return true;
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            unoccupied_to_occupied_delay_sec_ultrasonic: {
+                value: '', required: false, validate: function (v) {
+                    if (v === undefined || v.trim().length === 0)
+                        return true;
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            unoccupied_to_occupied_event_threshold_ultrasonic: {
+                value: '', required: false, validate: function (v) {
+                    if (v === undefined || v.trim().length === 0)
+                        return true;
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            occupied_to_unoccupied_delay_sec_physical_contact: {
+                value: '', required: false, validate: function (v) {
+                    if (v === undefined || v.trim().length === 0)
+                        return true;
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            unoccupied_to_occupied_delay_sec_physical_contact: {
+                value: '', required: false, validate: function (v) {
+                    if (v === undefined || v.trim().length === 0)
+                        return true;
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
+            unoccupied_to_occupied_event_threshold_physical_contact: {
+                value: '', required: false, validate: function (v) {
+                    if (v === undefined || v.trim().length === 0)
+                        return true;
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
+                }
+            },
             show_trait: {
                 value: "selected", required: false
             },
@@ -2950,6 +3122,36 @@
                 }
             });
             $("#node-input-supports_fan_speed_percent").change();
+
+            $("#node-input-occupancy_sensing_pir").change(function () {
+                const checked = $(this).prop('checked');
+                if (checked) {
+                    $(".occupancy_sensing_pir").show();
+                } else {
+                    $(".occupancy_sensing_pir").hide();
+                }
+            });
+            $("#node-input-occupancy_sensing_pir").change();
+
+            $("#node-input-occupancy_sensing_ultrasonic").change(function () {
+                const checked = $(this).prop('checked');
+                if (checked) {
+                    $(".occupancy_sensing_ultrasonic").show();
+                } else {
+                    $(".occupancy_sensing_ultrasonic").hide();
+                }
+            });
+            $("#node-input-occupancy_sensing_ultrasonic").change();
+
+            $("#node-input-occupancy_sensing_physical_contact").change(function () {
+                const checked = $(this).prop('checked');
+                if (checked) {
+                    $(".occupancy_sensing_physical_contact").show();
+                } else {
+                    $(".occupancy_sensing_physical_contact").hide();
+                }
+            });
+            $("#node-input-occupancy_sensing_physical_contact").change();
 
             let setTraitRecomended = function (name, recommended, show_traits) {
                 $("#node-input-trait_" + name).show();

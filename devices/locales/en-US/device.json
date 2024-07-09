@@ -209,7 +209,14 @@
             "ackNeeded": "Ack needed",
             "pinNeeded": "PIN needed",
             "pin": "PIN",
-            "persistent_state": "Persistent state"
+            "persistent_state": "Persistent state",
+            "type": "Type",
+            "occupancy_sensing_pir": "Passive infrared (PIR)",
+            "occupancy_sensing_ultrasonic": "Ultrasonic",
+            "occupancy_sensing_physical_contact": "Physical contact",
+            "occupied_to_unoccupied_delay_sec": "Occupied to unoccupied delay (sec)",
+            "unoccupied_to_occupied_delay_sec": "Unoccupied to occupied delay (sec)",
+            "unoccupied_to_occupied_event_threshold": "Unoccupied to occupied event threshold"
         },
         "placeholder": {
             "name": "Name",
@@ -261,7 +268,10 @@
             "supported_dispense_items_file": "Supported dispense items file",
             "supported_dispense_presets_file": "Supported dispense presets file",
 			"room_hint": "Room hint",
-            "pin": "PIN"
+            "pin": "PIN",
+            "occupied_to_unoccupied_delay_sec": "Occupied to unoccupied delay (sec)",
+            "unoccupied_to_occupied_delay_sec": "Unoccupied to occupied delay (sec)",
+            "unoccupied_to_occupied_event_threshold": "Unoccupied to occupied event threshold"
         },
         "trait": {
             "appselector": "App selector",
@@ -286,6 +296,7 @@
             "modes": "Modes",
             "networkcontrol": "Network control",
             "objectdetection": "Object detection",
+            "occupancysensing": "Occupancy sensing",
             "onoff": "On/Off",
             "openclose": "Open/Close",
             "reboot": "Reboot",

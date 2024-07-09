@@ -81,6 +81,7 @@ module.exports = function (RED) {
                 modes: config.trait_modes || false,
                 networkcontrol: config.trait_networkcontrol || false,
                 objectdetection: config.trait_objectdetection || false,
+                occupancysensing: config.trait_occupancysensing || false,
                 onoff: config.trait_onoff || false,
                 openclose: config.trait_openclose || false,
                 reboot: config.trait_reboot || false,
@@ -489,6 +490,19 @@ module.exports = function (RED) {
             this.supports_network_upload_speedtest = config.supports_network_upload_speedtest;
             this.guest_network_password = '';
             // ObjectDetection
+            // OccupancySensing
+            this.occupancy_sensing_pir = config.occupancy_sensing_pir || false;
+            this.occupied_to_unoccupied_delay_sec_pir = parseInt(config.occupied_to_unoccupied_delay_sec_pir) || 0;
+            this.unoccupied_to_occupied_delay_sec_pir = parseInt(config.unoccupied_to_occupied_delay_sec_pir) || 2;
+            this.unoccupied_to_occupied_event_threshold_pir = parseInt(config.unoccupied_to_occupied_event_threshold_pir) || 2;
+            this.occupancy_sensing_ultrasonic = config.occupancy_sensing_ultrasonic || false;
+            this.occupied_to_unoccupied_delay_sec_ultrasonic = parseInt(config.occupied_to_unoccupied_delay_sec_ultrasonic) || 0;
+            this.unoccupied_to_occupied_delay_sec_ultrasonic = parseInt(config.unoccupied_to_occupied_delay_sec_ultrasonic) || 2;
+            this.unoccupied_to_occupied_event_threshold_ultrasonic = parseInt(config.unoccupied_to_occupied_event_threshold_ultrasonic) || 2;
+            this.occupancy_sensing_physical_contact = config.occupancy_sensing_physical_contact || false;
+            this.occupied_to_unoccupied_delay_sec_physical_contact = parseInt(config.occupied_to_unoccupied_delay_sec_physical_contact) || 0;
+            this.unoccupied_to_occupied_delay_sec_physical_contact = parseInt(config.unoccupied_to_occupied_delay_sec_physical_contact) || 2;
+            this.unoccupied_to_occupied_event_threshold_physical_contact = parseInt(config.unoccupied_to_occupied_event_threshold_physical_contact) || 2;
             // OnOff
             this.command_only_onoff = config.command_query_onoff === 'command';
             this.query_only_onoff = config.command_query_onoff === 'query';
@@ -1108,6 +1122,19 @@ module.exports = function (RED) {
                 state_types['networkSpeedTestInProgress'] = Formats.BOOL;
             }
             // ObjectDetection
+            // OccupancySensing
+            if (me.trait.occupancysensing) {
+                if (me.occupancy_sensing_pir || me.occupancy_sensing_ultrasonic || me.occupancy_sensing_physical_contact) {
+                    state_types['occupancy'] = {
+                        type: Formats.STRING + Formats.MANDATORY,
+                        values: ['OCCUPIED', 'UNOCCUPIED', 'UNKNOWN_OCCUPANCY_STATE'],
+                        defaultValue: 'UNKNOWN_OCCUPANCY_STATE',
+                        upperCase: true,
+                    }
+                } else {
+                    me.trait.occupancysensing = false;
+                }
+            }
             if (me.trait.onoff) {
                 if (!me.command_only_onoff) {
                     state_types['on'] = Formats.BOOL;
@@ -1387,6 +1414,52 @@ module.exports = function (RED) {
                 attributes['supportsDisablingNetworkProfile'] = me.supports_disabling_network_profile;
                 attributes['supportsNetworkDownloadSpeedTest'] = me.supports_network_download_speedtest;
                 attributes['supportsNetworkUploadSpeedTest'] = me.supports_network_upload_speedtest;
+            }
+            if (me.trait.occupancysensing) {
+                let occupancysensingattributes = [];
+                if (me.occupancy_sensing_pir) {
+                    if (me.occupied_to_unoccupied_delay_sec_pir) {
+                        occupancysensingattributes.push({
+                            occupancySensorType: "PIR",
+                            occupiedToUnoccupiedDelaySec: me.occupied_to_unoccupied_delay_sec_pir,
+                            unoccupiedToOccupiedDelaySec: me.unoccupied_to_occupied_delay_sec_pir,
+                            unoccupiedToOccupiedEventThreshold: me.unoccupied_to_occupied_event_threshold_pir
+                        });
+                    } else {
+                        occupancysensingattributes.push({
+                            occupancySensorType: "PIR"
+                        });
+                    }
+                }
+                if (me.occupancy_sensing_ultrasonic) {
+                    if (me.occupied_to_unoccupied_delay_sec_ultrasonic) {
+                        occupancysensingattributes.push({
+                            occupancySensorType: "ULTRASONIC",
+                            occupiedToUnoccupiedDelaySec: me.occupied_to_unoccupied_delay_sec_ultrasonic,
+                            unoccupiedToOccupiedDelaySec: me.unoccupied_to_occupied_delay_sec_ultrasonic,
+                            unoccupiedToOccupiedEventThreshold: me.unoccupied_to_occupied_event_threshold_ultrasonic
+                        });
+                    } else {
+                        occupancysensingattributes.push({
+                            occupancySensorType: "ULTRASONIC"
+                        });
+                    }
+                }
+                if (me.occupancy_sensing_physical_contact) {
+                    if (me.occupied_to_unoccupied_delay_sec_physical_contact) {
+                        occupancysensingattributes.push({
+                            occupancySensorType: "PHYSICAL_CONTACT",
+                            occupiedToUnoccupiedDelaySec: me.occupied_to_unoccupied_delay_sec_physical_contact,
+                            unoccupiedToOccupiedDelaySec: me.unoccupied_to_occupied_delay_sec_physical_contact,
+                            unoccupiedToOccupiedEventThreshold: me.unoccupied_to_occupied_event_threshold_physical_contact
+                        });
+                    } else {
+                        occupancysensingattributes.push({
+                            occupancySensorType: "PHYSICAL_CONTACT"
+                        });
+                    }
+                }
+                attributes['occupancySensorConfiguration'] = occupancysensingattributes;
             }
             if (me.trait.onoff) {
                 attributes['commandOnlyOnOff'] = me.command_only_onoff;
@@ -2021,6 +2094,10 @@ module.exports = function (RED) {
                     ) {
                         text.push(me.states.currentRunCycle[0].currentCycle);
                     }
+                }
+                if (me.trait.occupancysensing) {
+                    if(typeof me.states.occupancy !== 'undefined')
+                        text.push(me.states.occupancy);
                 }
             } else {
                 shape = 'ring';
