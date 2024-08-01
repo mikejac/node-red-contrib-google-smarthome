@@ -10,17 +10,17 @@ This tutorial assumes that your service is already set up and working.
 
 ## Using local fulfillment with Docker containers
 
-If you are running Node-RED inside a Docker container, you must use UDP as mDNS will not work with containers.
+If you are running Node-RED inside a Docker container, you must use UDP, as mDNS will not work with containers.
 
-In your container configuration, you must explicitly forward the listen and broadcast ports for TCP and UDP. For
-example, if you want to use port 8882, the port configuration in your `docker-compose.yaml` would have to look like
-this:
+In your container configuration, you must list the discovery port with UDP and the HTTP port with TCP. For example, if
+you want to use port 8882 as both your discovery and HTTP port, the port configuration in your `docker-compose.yaml`
+would have to look like this:
 
 ```yaml
 ports:
-    - "8882:8882/tcp" # TCP port for local execution
-    - "8882:8882/udp" # UDP port for local execution
-    # ... other ports for Node-RED and the smarthome service
+    - "8882:8882/udp" # Discovery port for local execution, uses UDP
+    - "8882:8882/tcp" # HTTP port for local execution, uses TCP
+    # ... list other ports for Node-RED and the smarthome service
 ```
 
 ## Enable Local Fulfillment
@@ -34,7 +34,8 @@ ports:
     * Discovery port: Node-RED will listen on this port for discovery messages from your smart speaker. Enter any port
       that you want. Don't create an external port forwarding for this port on your home router.
     * HTTP port: Node-RED will listen on this port for control messages from your smart speaker. Enter any port you
-      want. Don't create an external port forwarding for this port on your home router.
+      want. Can be the same as the discovery port. Don't create an external port forwarding for this port on your home
+      router.
 
     Remember the discovery port. You will need to enter it in the Actions on Google Console later.
 
