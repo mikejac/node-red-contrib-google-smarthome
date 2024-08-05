@@ -54,7 +54,7 @@
     "@microsoft/eslint-formatter-sarif": "^3.1.0",
     "eslint": "^9.8.0",
     "eslint-plugin-jsdoc": "^47.0.2",
-    "globals": "^15.8.0",
+    "globals": "^15.9.0",
     "mocha": "^10.7.0",
     "node-red": "^4.0.2",
     "node-red-node-test-helper": "^0.3.4"
