@@ -2173,6 +2173,9 @@ module.exports = function (RED) {
                 if(done) done();
                 return;
             }
+            if (me.topic_filter && msg.payload.topic && (msg.topic || '').toString().startsWith(me.topicOut)) {
+                msg.topic = msg.payload.topic;
+            }
             me._debug(".input: topic = " + msg.topic);
 
             let upper_topic = '';
