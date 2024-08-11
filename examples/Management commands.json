@@ -1,1 +1,117 @@
-[{"id":"8c31b7f4d1807b41","type":"inject","z":"217df193.d774ce","name":"","props":[{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"get_state","x":300,"y":3430,"wires":[["5f31d2ab482c6ca8"]]},{"id":"e6bbcebee46d352c","type":"inject","z":"217df193.d774ce","name":"","props":[{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"request_sync","x":310,"y":3465,"wires":[["5f31d2ab482c6ca8"]]},{"id":"5f31d2ab482c6ca8","type":"google-mgmt","z":"217df193.d774ce","client":"","name":"","set_state_type":"no_nodes","x":535,"y":3495,"wires":[["50936eea2e94dc36"]]},{"id":"50936eea2e94dc36","type":"debug","z":"217df193.d774ce","name":"Admin","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"true","targetType":"full","statusVal":"","statusType":"auto","x":660,"y":3495,"wires":[],"l":false},{"id":"88904d7301d06182","type":"inject","z":"217df193.d774ce","name":"Restart server","props":[{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"restart_server","x":310,"y":3500,"wires":[["5f31d2ab482c6ca8"]]},{"id":"e9895f3d2d9e49f3","type":"comment","z":"217df193.d774ce","name":"Useful management commands","info":"","x":345,"y":3390,"wires":[]}]
+[
+    {
+        "id": "8c31b7f4d1807b41",
+        "type": "inject",
+        "z": "217df193.d774ce",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "get_state",
+        "x": 300,
+        "y": 3430,
+        "wires": [
+            [
+                "5f31d2ab482c6ca8"
+            ]
+        ]
+    },
+    {
+        "id": "e6bbcebee46d352c",
+        "type": "inject",
+        "z": "217df193.d774ce",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "request_sync",
+        "x": 310,
+        "y": 3465,
+        "wires": [
+            [
+                "5f31d2ab482c6ca8"
+            ]
+        ]
+    },
+    {
+        "id": "5f31d2ab482c6ca8",
+        "type": "google-mgmt",
+        "z": "217df193.d774ce",
+        "client": "",
+        "name": "",
+        "set_state_type": "no_nodes",
+        "x": 535,
+        "y": 3495,
+        "wires": [
+            [
+                "50936eea2e94dc36"
+            ]
+        ]
+    },
+    {
+        "id": "50936eea2e94dc36",
+        "type": "debug",
+        "z": "217df193.d774ce",
+        "name": "Admin",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 3495,
+        "wires": [],
+        "l": false
+    },
+    {
+        "id": "88904d7301d06182",
+        "type": "inject",
+        "z": "217df193.d774ce",
+        "name": "Restart server",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "restart_server",
+        "x": 310,
+        "y": 3500,
+        "wires": [
+            [
+                "5f31d2ab482c6ca8"
+            ]
+        ]
+    },
+    {
+        "id": "e9895f3d2d9e49f3",
+        "type": "comment",
+        "z": "217df193.d774ce",
+        "name": "Useful management commands",
+        "info": "",
+        "x": 345,
+        "y": 3390,
+        "wires": []
+    }
+]
