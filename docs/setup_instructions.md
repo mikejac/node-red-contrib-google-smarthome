@@ -357,6 +357,8 @@ Finally, we will link the Google Home App to the Node-RED service.
    };
    ```
 
+9. Assign your device to a room. Unassigned devices may experience delayed state updates in the app.
+
 ---
 
 ## Further information

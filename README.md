@@ -302,6 +302,7 @@ commercial Google Workspace account. If this is the case, you can share access t
 - Some devices can be controlled by voice, but not by the Google Home app. For example windows and sensors. These
   devices will only show a general page with their room assignments in the app, but they don't show their current state
   or any buttons to control them. There is nothing we can do about this. This has to be implemented by Google.
+- Assign your devices to a room. Unassigned devices may experience delayed state updates in the app.
 - Some errors and possible solutions are listed at
   [Possible errors](wiki/Possible-errors).
 - Check Node-Red's debug panel for error messages.
