@@ -276,7 +276,7 @@ Finally, we will link the Google Home App to the Node-RED service.
 9. Congratulations! Your project has been successfully set up. You are now ready to add devices.
 
 
-## Basic usage
+## Adding your first device
 
 1. Place the device node from the "Google Smart Home" section on a flow.\
    <kbd>![](images/setup_instructions/basicusage_devicenode.png)</kbd>
