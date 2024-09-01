@@ -384,6 +384,11 @@
             </div>
 
             <div class="form-row">
+                <label style="width:auto" for="node-input-need_auth_token"><i class="fa fa-arrow-right"></i> <span data-i18n="device.label.need_auth_token"></span></label>
+                <input type="checkbox" id="node-input-need_auth_token" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        
+            <div class="form-row">
                 <label style="width:auto" for="node-input-auth_token"><i class="fa fa-tag"></i> <span data-i18n="device.label.auth_token"></span></label>
                 <input type="text" id="node-input-auth_token" data-i18n="[placeholder]device.placeholder.auth_token">
             </div>
@@ -2310,6 +2315,9 @@
             },
             auth_token: {
                 value: "", required: false
+            },
+            need_auth_token: {
+                value: false, required: false
             },
             topic_filter: {
                 value: false, required: false

@@ -382,6 +382,7 @@ module.exports = function (RED) {
             // Brightness
             this.command_only_brightness = config.command_only_brightness;
             // CameraStream
+            this.need_auth_token = true == config.need_auth_token;
             this.auth_token = (config.auth_token || '').trim();
             this.hls = (config.hls || '').trim();
             this.hls_app_id = (config.hls_app_id || '').trim();
@@ -1345,7 +1346,7 @@ module.exports = function (RED) {
             }
             if (me.trait.camerastream) {
                 attributes['cameraStreamSupportedProtocols'] = me.camera_stream_supported_protocols;
-                attributes['cameraStreamNeedAuthToken'] = me.auth_token.length > 0;
+                attributes['cameraStreamNeedAuthToken'] = me.need_auth_token;
             }
             if (me.trait.cook) {
                 attributes['supportedCookingModes'] = me.supported_cooking_modes;
@@ -2437,16 +2438,16 @@ module.exports = function (RED) {
                     }
                 } else if (upper_topic === 'CAMERASTREAMAUTHTOKEN') {
                     const auth_token = Formats.formatValue('cameraStreamAuthToken', msg.payload, Formats.STRING, '');
-                    if (auth_token != me.auth_token) {
+                    //if (auth_token != me.auth_token) {
                         me.auth_token = auth_token;
-                        if (Object.prototype.hasOwnProperty.call(me.device.properties.attributes, "cameraStreamNeedAuthToken")) {
+                        /*if (Object.prototype.hasOwnProperty.call(me.device.properties.attributes, "cameraStreamNeedAuthToken")) {
                             let cameraStreamNeedAuthToken = me.device.properties.attributes.cameraStreamNeedAuthToken;
                             if (cameraStreamNeedAuthToken != (auth_token.length > 0)) {
                                 me.device.properties.attributes['cameraStreamNeedAuthToken'] = auth_token.length > 0;
                                 me.clientConn.app.ScheduleRequestSync();
                             }
-                        }
-                    }
+                        }*/
+                    //}
                 } else if (upper_topic === 'GUESTNETWORKPASSWORD') {
                     me.guest_network_password = Formats.formatValue('guestNetworkPassword', msg.payload, Formats.STRING);
                 } else if (me.trait.objectdetection && upper_topic === 'OBJECTDETECTION') {
