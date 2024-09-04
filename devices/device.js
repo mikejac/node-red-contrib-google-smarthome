@@ -2439,14 +2439,14 @@ module.exports = function (RED) {
                 } else if (upper_topic === 'CAMERASTREAMAUTHTOKEN') {
                     const auth_token = Formats.formatValue('cameraStreamAuthToken', msg.payload, Formats.STRING, '');
                     //if (auth_token != me.auth_token) {
-                        me.auth_token = auth_token;
-                        // if (Object.prototype.hasOwnProperty.call(me.device.properties.attributes, "cameraStreamNeedAuthToken")) {
-                        //     let cameraStreamNeedAuthToken = me.device.properties.attributes.cameraStreamNeedAuthToken;
-                        //     if (cameraStreamNeedAuthToken != (auth_token.length > 0)) {
-                        //         me.device.properties.attributes['cameraStreamNeedAuthToken'] = auth_token.length > 0;
-                        //         me.clientConn.app.ScheduleRequestSync();
-                        //     }
-                        // }
+                    me.auth_token = auth_token;
+                    /*if (Object.prototype.hasOwnProperty.call(me.device.properties.attributes, "cameraStreamNeedAuthToken")) {
+                        let cameraStreamNeedAuthToken = me.device.properties.attributes.cameraStreamNeedAuthToken;
+                        if (cameraStreamNeedAuthToken != (auth_token.length > 0)) {
+                            me.device.properties.attributes['cameraStreamNeedAuthToken'] = auth_token.length > 0;
+                            me.clientConn.app.ScheduleRequestSync();
+                        }
+                    }*/
                     //}
                 } else if (upper_topic === 'GUESTNETWORKPASSWORD') {
                     me.guest_network_password = Formats.formatValue('guestNetworkPassword', msg.payload, Formats.STRING);
