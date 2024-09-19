@@ -265,8 +265,10 @@ Finally, we will link the Google Home App to the Node-RED service.
 5. Select your service from the list of all providers. Your service will be prefixed with `[test]`.
    <kbd>![](images/setup_instructions/phone_project.png)</kbd>
 
+6. If your account was already linked, you will be asked if you want to reconnect or unlink your account.
+   Select "Reconnect account".
 
-6. Log in to your service. The username and password are the ones you specified in the configuration node.\
+7. Log in to your service. The username and password are the ones you specified in the configuration node.\
    <kbd>![](images/setup_instructions/phone_login.png)</kbd>
 
 
