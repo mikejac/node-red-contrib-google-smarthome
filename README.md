@@ -304,7 +304,7 @@ commercial Google Workspace account. If this is the case, you can share access t
   or any buttons to control them. There is nothing we can do about this. This has to be implemented by Google.
 - Assign your devices to a room. Unassigned devices may experience delayed state updates in the app.
 - Some errors and possible solutions are listed at
-  [Possible errors](wiki/Possible-errors).
+  [Possible errors](docs/possible-errors.md).
 - Check Node-Red's debug panel for error messages.
 - Unlink and relink your account in the Google Home app. Check Node-RED's debug panel for errors while doing so.
 - If you are having trouble linking your account, try turning off Wi-Fi on your phone to use only the cellular network.
