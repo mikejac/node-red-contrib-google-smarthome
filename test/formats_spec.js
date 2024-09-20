@@ -23,7 +23,7 @@ const formats = require('../lib/Formats');
  * Format a value for output.
  *
  * @param {mixed} value - The value to be formatted
- * @return {*|string} - The formatted value
+ * @returns {*|string} - The formatted value
  */
 function outputValue(value)
 {
