@@ -42,7 +42,7 @@
     "express": "^4.21.x",
     "google-auth-library": "^9.14.1",
     "googleapis": "^144.0.x",
-    "helmet": "^7.1.0",
+    "helmet": "^8.0.0",
     "https": "^1.0.x",
     "ip-range-check": "^0.2.x",
     "morgan": "^1.10.x",
