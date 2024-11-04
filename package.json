@@ -55,7 +55,7 @@
     "eslint": "^9.13.0",
     "eslint-plugin-jsdoc": "^47.0.2",
     "globals": "^15.11.0",
-    "mocha": "^10.7.3",
+    "mocha": "^10.8.2",
     "node-red": "^4.0.5",
     "node-red-node-test-helper": "^0.3.4"
   },
