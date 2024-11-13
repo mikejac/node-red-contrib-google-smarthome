@@ -120,7 +120,7 @@
         "client": "",
         "name": "garage",
         "topic": "garage/temp",
-        "room_hint": "",
+        "room_hint": "Living Room",
         "device_type": "SENSOR",
         "trait_appselector": false,
         "trait_channel": false,

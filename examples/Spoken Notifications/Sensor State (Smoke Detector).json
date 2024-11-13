@@ -7,7 +7,7 @@
         "name": "Smoke Detector",
         "nicknames": "",
         "topic": "",
-        "room_hint": "",
+        "room_hint": "Living Room",
         "device_type": "SMOKE_DETECTOR",
         "trait_appselector": false,
         "trait_channel": false,

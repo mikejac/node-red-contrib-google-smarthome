@@ -7,7 +7,7 @@
         "name": "Front Door",
         "nicknames": "",
         "topic": "",
-        "room_hint": "",
+        "room_hint": "Living Room",
         "device_type": "DOORBELL",
         "trait_appselector": false,
         "trait_channel": false,
