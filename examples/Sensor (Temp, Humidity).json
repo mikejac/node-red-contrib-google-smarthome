@@ -2,7 +2,7 @@
     {
         "id": "ac50c2becaa417bc",
         "type": "inject",
-        "z": "dbe9689e.fc98f8",
+        "z": "ba4ea2f93145cb4f",
         "name": "",
         "props": [
             {
@@ -15,8 +15,8 @@
         "onceDelay": 0.1,
         "topic": "",
         "payloadType": "str",
-        "x": 105,
-        "y": 1640,
+        "x": 150,
+        "y": 740,
         "wires": [
             [
                 "cd91cf89fcbb0e7d"
@@ -26,7 +26,7 @@
     {
         "id": "cd91cf89fcbb0e7d",
         "type": "change",
-        "z": "dbe9689e.fc98f8",
+        "z": "ba4ea2f93145cb4f",
         "name": "Combining Temp & Humidity",
         "rules": [
             {
@@ -49,8 +49,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 295,
-        "y": 1640,
+        "x": 340,
+        "y": 740,
         "wires": [
             [
                 "002f9d772f296377"
@@ -60,7 +60,7 @@
     {
         "id": "f84a971256283008",
         "type": "debug",
-        "z": "dbe9689e.fc98f8",
+        "z": "ba4ea2f93145cb4f",
         "name": "",
         "active": true,
         "tosidebar": true,
@@ -70,24 +70,14 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 695,
-        "y": 1550,
-        "wires": []
-    },
-    {
-        "id": "29c9a7e35c4e9ab6",
-        "type": "comment",
-        "z": "dbe9689e.fc98f8",
-        "name": "Sensor - Temp & Humidity",
-        "info": "",
-        "x": 140,
-        "y": 1555,
+        "x": 810,
+        "y": 640,
         "wires": []
     },
     {
         "id": "4a0a6fa755a31298",
         "type": "inject",
-        "z": "dbe9689e.fc98f8",
+        "z": "ba4ea2f93145cb4f",
         "name": "25 deg",
         "props": [
             {
@@ -105,8 +95,8 @@
         "topic": "temperatureAmbientCelsius",
         "payload": "25",
         "payloadType": "num",
-        "x": 360,
-        "y": 1500,
+        "x": 410,
+        "y": 580,
         "wires": [
             [
                 "002f9d772f296377"
@@ -116,10 +106,12 @@
     {
         "id": "002f9d772f296377",
         "type": "google-device",
-        "z": "dbe9689e.fc98f8",
+        "z": "ba4ea2f93145cb4f",
         "client": "",
-        "name": "garage",
-        "topic": "garage/temp",
+        "name": "Example Sensor",
+        "nicknames": "",
+        "topic": "",
+        "online": true,
         "room_hint": "Living Room",
         "device_type": "SENSOR",
         "trait_appselector": false,
@@ -186,7 +178,9 @@
         "webrtc_ice_servers": "",
         "webrtc_ice_servers_type": "str",
         "auth_token": "",
+        "topic_filter": false,
         "passthru": false,
+        "persistent_state": false,
         "trait_scene": false,
         "scene_reversible": true,
         "trait_timer": false,
@@ -290,6 +284,19 @@
         "supports_network_download_speedtest": false,
         "supports_network_upload_speedtest": false,
         "trait_objectdetection": false,
+        "trait_occupancysensing": false,
+        "occupancy_sensing_pir": false,
+        "occupancy_sensing_ultrasonic": false,
+        "occupancy_sensing_physical_contact": false,
+        "occupied_to_unoccupied_delay_sec_pir": "",
+        "unoccupied_to_occupied_delay_sec_pir": "",
+        "unoccupied_to_occupied_event_threshold_pir": "",
+        "occupied_to_unoccupied_delay_sec_ultrasonic": "",
+        "unoccupied_to_occupied_delay_sec_ultrasonic": "",
+        "unoccupied_to_occupied_event_threshold_ultrasonic": "",
+        "occupied_to_unoccupied_delay_sec_physical_contact": "",
+        "unoccupied_to_occupied_delay_sec_physical_contact": "",
+        "unoccupied_to_occupied_event_threshold_physical_contact": "",
         "show_trait": "selected",
         "advanced_settings": true,
         "ct_appselector": "",
@@ -366,8 +373,8 @@
         "pin_toggles": "",
         "pin_transportcontrol": "",
         "pin_volume": "",
-        "x": 540,
-        "y": 1550,
+        "x": 630,
+        "y": 640,
         "wires": [
             [
                 "f84a971256283008"
@@ -377,7 +384,7 @@
     {
         "id": "1deea56ca0a79b1b",
         "type": "inject",
-        "z": "dbe9689e.fc98f8",
+        "z": "ba4ea2f93145cb4f",
         "name": "30 deg",
         "props": [
             {
@@ -395,8 +402,8 @@
         "topic": "temperatureAmbientCelsius",
         "payload": "30",
         "payloadType": "num",
-        "x": 360,
-        "y": 1535,
+        "x": 410,
+        "y": 620,
         "wires": [
             [
                 "002f9d772f296377"
@@ -406,7 +413,7 @@
     {
         "id": "5b33eb4f2fc888f0",
         "type": "inject",
-        "z": "dbe9689e.fc98f8",
+        "z": "ba4ea2f93145cb4f",
         "name": "90%",
         "props": [
             {
@@ -424,8 +431,8 @@
         "topic": "humidityAmbientPercent",
         "payload": "90",
         "payloadType": "num",
-        "x": 360,
-        "y": 1570,
+        "x": 410,
+        "y": 660,
         "wires": [
             [
                 "002f9d772f296377"
@@ -435,7 +442,7 @@
     {
         "id": "29231c8d9ef7b23c",
         "type": "inject",
-        "z": "dbe9689e.fc98f8",
+        "z": "ba4ea2f93145cb4f",
         "name": "57%",
         "props": [
             {
@@ -453,8 +460,8 @@
         "topic": "humidityAmbientPercent",
         "payload": "57",
         "payloadType": "num",
-        "x": 360,
-        "y": 1605,
+        "x": 410,
+        "y": 700,
         "wires": [
             [
                 "002f9d772f296377"
