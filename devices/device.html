@@ -118,6 +118,7 @@
             <option value='FIREPLACE' data-i18n='device.device_type.FIREPLACE'></option>
             <option value='FREEZER' data-i18n='device.device_type.FREEZER'></option>
             <option value='FRYER' data-i18n='device.device_type.FRYER'></option>
+            <option value='GAME_CONSOLE' data-i18n='device.device_type.GAME_CONSOLE'></option>
             <option value='GARAGE' data-i18n='device.device_type.GARAGE'></option>
             <option value='GATE' data-i18n='device.device_type.GATE'></option>
             <option value='GRILL' data-i18n='device.device_type.GRILL'></option>
@@ -3324,6 +3325,10 @@
                     case "FRYER": // Fryer
                         recommended_traits = ["cook", "startstop", "timer"];
                         required_traits = ["onoff"];
+                        break;
+                    case "GAME_CONSOLE": // Game console
+                        recommended_traits = ["volume"];
+                        required_traits = ["appselector", "mediastate", "onoff", "transportcontrol"];
                         break;
                     case "GARAGE": // Garage
                         recommended_traits = [];

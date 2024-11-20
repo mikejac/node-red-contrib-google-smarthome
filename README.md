@@ -79,6 +79,7 @@ This is a generic node that supports the following Google [devices](https://deve
 * Fireplace
 * Freezer
 * Fryer
+* Game console
 * Garage
 * Gate
 * Grill
