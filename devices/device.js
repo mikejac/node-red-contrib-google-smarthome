@@ -195,6 +195,12 @@ module.exports = function (RED) {
                 case "FRYER": // Fryer
                     this.trait.onoff = true;
                     break;
+                case "GAME_CONSOLE": // Game console
+                    this.trait.appselector = true;
+                    this.trait.mediastate = true;
+                    this.trait.onoff = true;
+                    this.trait.transportcontrol = true;
+                    break;
                 case "GARAGE": // Garage
                     this.trait.openclose = true;
                     break;
