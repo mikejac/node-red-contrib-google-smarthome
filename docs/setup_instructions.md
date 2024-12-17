@@ -66,7 +66,7 @@ First we will register a new Smart Home project in the Google Developer Console.
     * Authorization URL: Your domain and port, followed by the path `/oauth`, e.g. `https://example.com:3001/oauth`.
     * Token URL: Your domain and port, followed by the path `/token`, e.g. `https://example.com:3001/token`.
     * Cloud fulfillment URL: Your domain and port, followed by the path `/smarthome`, e.g. `https://example.com:3001/smarthome`.
-    * Leave all other fields disabled or empty for now.
+    * Leave all other fields disabled or empty for now.\
     <kbd>![](images/setup_instructions/devconsole_setup_form.png)</kbd>
 
 9.  Click *Save*.\
