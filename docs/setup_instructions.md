@@ -31,94 +31,55 @@ You can use a free certificate from Let's Encrypt or ZeroSSL. For this, you can 
 (see [this guide on how to use Caddy](reverse_proxies.md)).
 
 
-## Create project in Actions Console
+## Create project in the Google Developer Console
 
-First we will register a new Smart Home project in the Actions Console.
+First we will register a new Smart Home project in the Google Developer Console.
 
-1.  Go to [Actions on Google Console](https://console.actions.google.com).
+1.  Go to the [Google Home Developer Console](https://console.home.google.com/projects).
 
+2.  Click on *Create a Project*.\
+    <kbd>![](images/setup_instructions/devconsole_create_project.png)</kbd>
 
-2.  Click on *New project*.\
-    <kbd>![](images/setup_instructions/actionsconsole_new_project.png)</kbd>
+3.  On the Get Started page, click *Create project*.\
+    <kbd>![](images/setup_instructions/devconsole_create_project_2.png)</kbd>
 
+4.  Enter a name for your project and click *Create project*.\
+    <kbd>![](images/setup_instructions/devconsole_create_project_name.png)</kbd>
 
-3.  Enter a name and select the language and country for your project. Then click *Create Project*.\
-    <kbd>![](images/setup_instructions/actionsconsole_new_project_form.png)</kbd>
+5.  On the *Project Home* page, click *Add cloud-to-cloud integration.\
+    <kbd>![](images/setup_instructions/devconsole_add_integration.png)</kbd>
 
+6.  Click the *Next: Develop* button at the bottom of the page.\
+    <kbd>![](images/setup_instructions/devconsole_next_develop.png)</kbd>
 
-4.  Select the type *Smart Home*, then click *Start Building*.\
-    <kbd>![](images/setup_instructions/actionsconsole_choose_type.png)</kbd>
+7.  Click the *Next: Setup* button at the bottom of the page.\
+    <kbd>![](images/setup_instructions/devconsole_next_setup.png)</kbd>
 
+8.  On the Setup page, fill in the fields as follows:
+    * Integration name: Enter a name for the integration.
+    * Device type: Select ALL device types. (Hint: Select the first option, then press down arrow and space bar on the
+      keyboard alternatingly to select all other options).
+    * App icon: Upload a PNG image sized 144 x 144 px. You can get one from https://picsum.photos/144.
+    * OAuth Client ID and secret: Credentials that Google will use to authenticate against your service. Use a password
+      generator such as https://passwordsgenerator.net/ to generate two strings of 32 characters length. Use numbers,
+      uppercase and lowercase characters, but no symbols. Copy both strings, you'll need them later.
+    * Authorization URL: Your domain and port, followed by the path `/oauth`, e.g. `https://example.com:3001/oauth`.
+    * Token URL: Your domain and port, followed by the path `/token`, e.g. `https://example.com:3001/token`.
+    * Cloud fulfillment URL: Your domain and port, followed by the path `/smarthome`, e.g. `https://example.com:3001/smarthome`.
+    * Leave all other fields disabled or empty for now.
+    <kbd>![](images/setup_instructions/devconsole_setup_form.png)</kbd>
 
-5.  Make sure your project is selected in the header bar.\
-    <kbd>![](images/setup_instructions/actionsconsole_check_project.png)</kbd>
+9.  Click *Save*.\
+    <kbd>![](images/setup_instructions/devconsole_setup_form_save.png)</kbd>
 
+10. Your integration will now be listed on the `Develop` tab. The "Draft" status is okay. As you will not release your
+    project to the public, it will stay like this forever. 
+    <kbd>![](images/setup_instructions/devconsole_integration_list.png)</kbd>
 
-6.  Switch to the *Develop* tab and select *Invocation* from the sidebar.\
-    <kbd>![](images/setup_instructions/actionsconsole_tab_invocation.png)</kbd>
-
-
-7.  Enter a name for your project. Click *Save*.\
-    <kbd>![](images/setup_instructions/actionsconsole_project_name.png)</kbd>
-
-
-8.  While still on the *Develop* tab, select *Actions* from the sidebar.\
-    <kbd>![](images/setup_instructions/actionsconsole_tab_actions.png)</kbd>
-
-
-9.  Enter the fulfillment URL. This is the URL of your service, followed by "/smarthome", for example
-    https://example.com:3001/smarthome. Set the log level to "All". Leave all other fields blank. Then click *Save*.\
-    <kbd>![](images/setup_instructions/actionsconsole_tab_actions_form.png)</kbd>
-
-
-10. While still on the *Develop* tab, select *Account linking* from the sidebar.\
-    <kbd>![](images/setup_instructions/actionsconsole_tab_accountlinking.png)</kbd>
-
-
-11. Fill in the fields as follows:
-    * Client ID and secret: Credentials that Google will use to authenticate against your service. Use a password
-      generator such as https://passwordsgenerator.net/ to generate two strings of reasonable length (e.g. 32 chars).
-      It's recommended not to use special characters as they can cause problems. Copy both strings, you'll need them later.
-    * Authorization URL: This is the URL of your service, followed by '/oauth', for example https://example.com:3001/oauth.
-    * Token URL: This is the URL of your service, followed by '/token', e.g. https://example.com:3001/token.
-    * Leave all other fields at their default values.\
-   <kbd>![](images/setup_instructions/actionsconsole_tab_accountlinking_form.png)</kbd>
+11. Don't do anything in the `Test`, `Certify` and `Launch` sections.
 
 
-12. Click *Save*.\
-    <kbd>![](images/setup_instructions/actionsconsole_tab_accountlinking_save.png)</kbd>
 
-
-12. Switch to the *Deploy* tab and select *Directory Information* from the sidebar.\
-    <kbd>![](images/setup_instructions/actionsconsole_directoryinformation.png)</kbd>
-
-
-13. Fill in the form. It doesn't matter what you enter, these information will not be shown anywhere, but Google
-    requires this form to be filled out. As small logo I used https://nodered.org/about/resources/media/node-red-icon.png,
-    as large image I used an image from https://placekitten.com/1920/1080. The full form looks similar to this:\
-    <kbd>![](images/setup_instructions/actionsconsole_directoryinformation_form.png)</kbd>
-
-
-12. Click *Save*.\
-    <kbd>![](images/setup_instructions/actionsconsole_directoryinformation_save.png)</kbd>
-
-
-13. While still on the *Deploy* tab, select *Company details*.
-    <kbd>![](images/setup_instructions/actionsconsole_companydetails.png)</kbd>
-
-
-14. Same as before, fill in the form as you want.
-    <kbd>![](images/setup_instructions/actionsconsole_companydetails_form.png)</kbd>
-
-
-15. Click *Save*.
-    <kbd>![](images/setup_instructions/actionsconsole_companydetails_save.png)</kbd>
-
-
-16. You don't need to fill in anything on the other tabs.
-
-
-**Note:** You can't test your project in the Action Console's simulator. It only works on real devices.
 
 
 ## Enable HomeGraph API
