@@ -313,7 +313,7 @@ commercial Google Workspace account. If this is the case, you can share access t
   first. You can switch back to Google Login later.
 - Restart your flows (using the `Restart Flows` option in the dropdown menu of the deploy button) while the debug panel
   is open to see any error messages during initialization.
-- Go to [Actions on Google Console](https://console.actions.google.com), in tab *Test* choose *logs in Google Cloud*.
+- Check the logs at [Google Cloud Logs](https://console.cloud.google.com/logs/). Make sure you selected the correct project.
 - Check if your service is reachable from the outside. Use [reqbin.com](https://reqbin.com/) or a similar tool to send a
   GET request to https://example.com:3001/check (with your hostname and port). It should respond with status
   200 (OK) and the message "SUCCESS: Smart Home service is reachable!" as one of the first lines. Use
@@ -323,8 +323,6 @@ commercial Google Workspace account. If this is the case, you can share access t
 - Toggle "Enable Node debug" in the configuration node, connect a debug node to the output of the management node and
   look for debug messages. In the Node-Red UI select 'Restart Flows' on the 'Deploy' button to see messages during
   initialization.
-- Go to [Actions on Google Console](https://console.actions.google.com), on tab `Test` click `Reset Test`. If this
-  doesn't do anything, click the `Settings` button, disable and re-enable `On device testing`.
 - Check that you have only one single management node and one single config node.
 - Go through the [setup instructions](docs/setup_instructions.md) again and compare your settings with what you see on
   the screenshots
@@ -344,7 +342,7 @@ For problems related to local fulfillment, see [Troubleshooting local fulfillmen
 
 - [Google Smart Home project](https://developers.home.google.com/cloud-to-cloud/get-started)
 - [Google Smart Home traits list](https://developers.home.google.com/cloud-to-cloud/traits)
-- [Actions on Google Console](https://console.actions.google.com/project/wohnung-45a57/overview)
+- [Google Home Developer Console](https://console.home.google.com/projects)
 - [Google's Smart Home sample project](https://github.com/actions-on-google/smart-home-nodejs)
 - [SYNC Data Validator](https://developers.home.google.com/cloud-to-cloud/tools/sync-data-validator)
 - [Google Home Playground](https://home-playground.withgoogle.com/)

@@ -43,34 +43,37 @@ ports:
 3. Save and deploy.
 
 
-4. Open the [Actions on Google Console](https://console.actions.google.com/) and select your project.\
-   <kbd>![](images/setup_instructions/actionsconsole_check_project.png)</kbd>
+4. Go to the [Google Home Developer Console](https://console.home.google.com/projects) and open your project.\
+   <kbd>![](images/local_fulfillment/localexecution_open_project.png)</kbd>
 
 
-5. Click `Develop` at the top of the page, then click `Actions` located in the hamburger menu at the top left.\
-   <kbd>![](images/setup_instructions/actionsconsole_tab_actions.png)</kbd>
+5. Open your cloud-to-cloud integration.\
+   <kbd>![](images/local_fulfillment/localexecution_open_integration.png)</kbd>
 
 
-6. Click the button `Upload JavaScript files`.\
-   <kbd>![](images/local_fulfillment/localexecution_upload.png)</kbd>
+6. Scroll down to the section "Cloud fulfillment URL" and enable "Local fulfillment".\
+   <kbd>![](images/local_fulfillment/localexecution_enable_local_fulfillment.png)</kbd>
 
 
-7. Upload [this JavaScript file](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js)
-   for both Node and Chrome.\
+7. Leave the "Testing URLs" empty.
+
+
+8. Upload [this JavaScript file](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js)
+   to both fields.\
    <kbd>![](images/local_fulfillment/localexecution_upload_files.png)</kbd>
 
 
-8. Tick the `Support local query` checkbox.\
+9. Tick the `Support local queries` checkbox.\
    <kbd>![](images/local_fulfillment/localexecution_localquery.png)</kbd>
 
 
-9. Click the button `+ New scan config` if you don't have a scan configuration yet.
+10. Click the button `+ Add scan configuration` if you don't have a scan configuration yet.
 
 
-10. Select mDNS or UDP depending on what you selected in the configuration of your management node.
+11. Select mDNS or UDP depending on what you selected in the configuration of your management node.
 
 
-11. For mDNS, fill in the fields as follows.<br>
+12. For mDNS, fill in the fields as follows.<br>
     mDNS service name: Set to `_nodered-google._tcp.local`.
     <br><br>
     For UDP, fill in the fields as follows,<br>
@@ -80,17 +83,10 @@ ports:
     * Broadcast port: Set the same port you set as "Discovery Port" in the configuration of your management node.
 
 
-12. The complete form for the mDNS scan type should look like this.\
-    <kbd>![](images/local_fulfillment/localexecution_form_mDNS.png)</kbd>
-
-    The complete form for the UDP scan type should look like this.\
-    <kbd>![](images/local_fulfillment/localexecution_form_UDP.png)</kbd>
-
-
 13. `Save` your changes.
 
 
-14. Restart your smart speaker and Node-RED.
+14. Restart Node-RED. When Node-RED has restarted, power-cycle your smart speaker.
 
 
 15. Now control your device. If local fulfillment is working, you will see a ring icon instead of the usual filled
@@ -108,24 +104,23 @@ Local fulfillment can be tricky to set up. If you encounter problems, see the
 After updating node-red-contrib-google-smarthome, you may need to update the app.js script running on your smart
 speaker. You'll get a warning on Node-RED's debug panel if this is needed.
 
-1. Open the [Actions on Google Console](https://console.actions.google.com/) and select your project.\
-   <kbd>![](images/setup_instructions/actionsconsole_check_project.png)</kbd>
+1. Go to the [Google Home Developer Console](https://console.home.google.com/projects) and open your project.\
+   <kbd>![](images/local_fulfillment/localexecution_open_project.png)</kbd>
 
 
-2. Click `Develop` on the top of the page, then click `Actions` located in the hamburger menu on the top left.\
-   <kbd>![](images/setup_instructions/actionsconsole_tab_actions.png)</kbd>
+2. Open your cloud-to-cloud integration.\
+   <kbd>![](images/local_fulfillment/localexecution_open_integration.png)</kbd>
 
 
-3. Delete both app.js files.\
+3. Scroll down to the section "Cloud fulfillment URL".
+
+
+4. Delete both app.js files.\
    <kbd>![](images/local_fulfillment/localexecution_delete_appjs.png)</kbd>
 
 
-4. Click the button `Upload JavaScript files`.\
-   <kbd>![](images/local_fulfillment/localexecution_upload.png)</kbd>
-
-
 5. Upload [this JavaScript file](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js)
-   for both Node and Chrome.\
+   to both fields.\
    <kbd>![](images/local_fulfillment/localexecution_upload_files.png)</kbd>
 
 
