@@ -77,7 +77,7 @@ ports:
     mDNS service name: Set to `_nodered-google._tcp.local`.
     <br><br>
     For UDP, fill in the fields as follows,<br>
-    * Broadcast address: The IP range of your local network, e.g. `192.168.178.255`.
+    * Broadcast address: Set to `255.255.255.255`.
     * Discovery packet: Set to `6e6f64652d7265642d636f6e747269622d676f6f676c652d736d617274686f6d65`.
     * Listen port: Set the same port you set as "Discovery Port" in the configuration of your management node.
     * Broadcast port: Set the same port you set as "Discovery Port" in the configuration of your management node.
