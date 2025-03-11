@@ -32,7 +32,7 @@ ports:
     * Scan Type: Select either mDNS or UDP scanning. Which one works better depends on your network configuration. You
       may need to try both.
     * Discovery port: Node-RED will listen on this port for discovery messages from your smart speaker. Enter any port
-      that you want. Don't create an external port forwarding for this port on your home router.
+      that you want. Don't create an external port forwarding for this port on your home router. Not available for MDNS.
     * HTTP port: Node-RED will listen on this port for control messages from your smart speaker. Enter any port you
       want. Can be the same as the discovery port. Don't create an external port forwarding for this port on your home
       router.

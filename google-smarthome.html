@@ -171,7 +171,7 @@
         </div>
     
         <div class="form-row hidden" id="local_fulfillment" style="background: #fbfbfb">
-            <div class="form-row">
+            <div class="form-row" id="local_scan_port">
                 <label for="node-config-input-local_scan_port"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.local_scan_port"></span></label>
                 <input type="text" id="node-config-input-local_scan_port" data-i18n="[placeholder]googlesmarthome.placeholder.local_scan_port">
             </div>
@@ -433,8 +433,12 @@
                 // Local FulFillment
                 let localFulFillment = function () {
                     let scan_type = $('#node-config-input-local_scan_type').val();
-                    if (scan_type) {
+                    if (scan_type === 'MDNS') {
                         $('#local_fulfillment').show();
+                        $('#local_scan_port').hide();
+                    } else if (scan_type === 'UDP') {
+                        $('#local_fulfillment').show();
+                        $('#local_scan_port').show();
                     } else {
                         $('#local_fulfillment').hide();
                     }
