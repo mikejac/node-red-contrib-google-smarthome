@@ -25,7 +25,7 @@ jobs:
           cache: npm
       - name: Cache node_modules
         id: cache-node-modules
-        uses: actions/cache@v4.2.2
+        uses: actions/cache@v4.2.3
         with:
           path: node_modules
           key: node-modules-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
