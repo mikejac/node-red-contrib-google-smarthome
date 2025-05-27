@@ -274,7 +274,7 @@ Finally, we will link the Google Home App to the Node-RED service.
    boolean value, but the Google device outputs `msg.payload` as an object. So I used a function node to do the
    conversion.\
    <kbd>![](images/setup_instructions/basicusage_to_tasmota.png)</kbd>\
-   I hid the label of the function node on the "Appereance" tab to make it shorter. The function node uses this code:
+   I hid the label of the function node on the "Appearance" tab to make it shorter. The function node uses this code:
    ```javascript
    return {
        payload: msg.payload.on

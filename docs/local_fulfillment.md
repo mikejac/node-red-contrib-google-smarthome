@@ -135,8 +135,8 @@ speaker. You'll get a warning on Node-RED's debug panel if this is needed.
 
 - You can test if local fulfillment works by saying "Hey Google, force local". Then try to control your devices. All
   actions will now be executed locally or will fail if local fulfillment is not available. Revert to normal mode by
-  saying "Force default" or "Force cloud". This will work on non-english devices too. You may need several tries with
-  different pronounciations though.
+  saying "Force default" or "Force cloud". This will work on non-English devices too. You may need several tries with
+  different pronunciations though.
 - Set a port for local fulfillment in the management node's config.
 - Send an HTTP POST request to `http://192.168.178.25:13002/smarthome` (with the IP address of your host and the
   port you chose). E.g. run `curl -X POST http://192.168.178.25:13002/smarthome`. It should answer with
