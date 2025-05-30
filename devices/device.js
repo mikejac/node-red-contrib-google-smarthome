@@ -153,7 +153,7 @@ module.exports = function (RED) {
                     this.trait.energystorage = true;
                     break;
                 case "CLOSET": // Closet
-                    this.trait.closet = true;
+                    this.trait.openclose = true;
                     break;
                 case "COFFEE_MAKER": // Coffee Maker
                     this.trait.onoff = true;
