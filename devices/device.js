@@ -176,6 +176,8 @@ module.exports = function (RED) {
                 case "DOOR": // Door
                     this.trait.openclose = true;
                     break;
+                case "DOORBELL": // Doorbell
+                    break;
                 case "DRAWER": // Drawer
                     this.trait.openclose = true;
                     break;
