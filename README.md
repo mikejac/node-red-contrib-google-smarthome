@@ -57,6 +57,7 @@ This is a generic node that supports the following Google [devices](https://deve
 * Awning
 * Bathtub
 * Bed
+* Blanket
 * Blender
 * Blinds
 * Boiler
@@ -99,6 +100,7 @@ This is a generic node that supports the following Google [devices](https://deve
 * Pergola
 * Pet feeder
 * Pressure cooker
+* Pump
 * Radiator
 * Refrigerator
 * Remote control

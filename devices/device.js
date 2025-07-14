@@ -260,6 +260,9 @@ module.exports = function (RED) {
                 case "PRESSURECOOKER": // Pressure cooker
                     this.trait.onoff = true;
                     break;
+                case "PUMP": // Pump
+                    this.trait.onoff = true;
+                    break;
                 case "RADIATOR": // Radiator
                     this.trait.onoff = true;
                     break;
