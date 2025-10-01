@@ -3573,26 +3573,26 @@
             $(".challenge_type").change();
         },
         oneditsave: function () {
-            let node = this;
-            node.advanced_settings = false;
-            node.show_trait = 'selected';
+            let me = this;
+            me.advanced_settings = false;
+            me.show_trait = 'selected';
 
             // Zone
             let available_zones = $("#node-input-device-zone-container").editableList('items');
-            node.available_zones = [];
+            me.available_zones = [];
             available_zones.each(function () {
                 let zone = $(this);
                 let name = zone.find(".node-input-device-zone-property-name").val();
-                node.available_zones.push(name);
+                me.available_zones.push(name);
             });
 
             // Network profiles
             let network_profiles = $("#node-input-device-network-profiles-container").editableList('items');
-            node.network_profiles = [];
+            me.network_profiles = [];
             network_profiles.each(function () {
                 let network_profile = $(this);
                 let name = network_profile.find(".node-input-device-network-profiles-property-name").val();
-                node.network_profiles.push(name);
+                me.network_profiles.push(name);
             });
         },
         oneditresize: function (size) {

@@ -64,15 +64,15 @@ module.exports = function (RED) {
          *
          */
         updated(data) {   // this must be defined before the call to clientConn.register()
-            const node = this;
-            node._debug("MgmtNode(updated): data = " + JSON.stringify(data));
+            const me = this;
+            me._debug("MgmtNode(updated): data = " + JSON.stringify(data));
 
             let msg = {
                 topic: "management",
                 payload: data
             };
 
-            node.send(msg);
+            me.send(msg);
         }
 
         /**
@@ -83,31 +83,31 @@ module.exports = function (RED) {
          * @param {Function} done - Function to inform the runtime that this node has finished its operation
          */
         onInput(msg, send, done) {
-            const node = this;
-            node._debug("MgmtNode(input)");
+            const me = this;
+            me._debug("MgmtNode(input)");
 
-            let topicArr = (msg.topic || '').split(node.topicDelim);
+            let topicArr = (msg.topic || '').split(me.topicDelim);
             let topic = topicArr[topicArr.length - 1];   // get last part of topic
             const topic_upper = topic.toUpperCase();
 
-            node._debug("MgmtNode(input): topic = " + topic);
+            me._debug("MgmtNode(input): topic = " + topic);
 
             try {
                 if (topic_upper === 'RESTART_SERVER') {
-                    node._debug("MgmtNode(input): RESTART_SERVER");
+                    me._debug("MgmtNode(input): RESTART_SERVER");
 
                     this.clientConn.app.Restart(RED.httpNode || RED.httpAdmin, RED.server);
                 } else if (topic_upper === 'REPORT_STATE') {
-                    node._debug("MgmtNode(input): REPORT_STATE");
+                    me._debug("MgmtNode(input): REPORT_STATE");
 
                     this.clientConn.app.ReportAllStates();
                 } else if (topic_upper === 'REQUEST_SYNC') {
-                    node._debug("MgmtNode(input): REQUEST_SYNC");
+                    me._debug("MgmtNode(input): REQUEST_SYNC");
 
                     this.clientConn.app.RequestSync();
                 } else if (topic_upper === 'GET_STATE' || topic_upper === 'GETSTATE') {
-                    let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(node.set_state_type );
-                    let useNames = ['all_by_name', 'filtered_by_name'].includes(node.set_state_type );
+                    let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(me.set_state_type );
+                    let useNames = ['all_by_name', 'filtered_by_name'].includes(me.set_state_type );
                     let deviceIds = undefined;
                     if (typeof msg.payload === 'boolean') {
                         onlyPersistent = msg.payload;

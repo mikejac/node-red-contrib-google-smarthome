@@ -447,14 +447,14 @@
                 $('#node-config-input-local_scan_type').change(localFulFillment);
             },
             oneditsave: function () {
-                let node = this;
+                let me = this;
                 // emails
                 let emails = $("#node-config-input-googlesmarthome-emails-container").editableList('items');
-                node.credentials.emails = [];
+                me.credentials.emails = [];
                 emails.each(function (i) {
                     let email = $(this);
                     let name = email.find(".node-config-input-googlesmarthome-emails-property-name").val();
-                    node.credentials.emails.push(name);
+                    me.credentials.emails.push(name);
                 });
             },
             oneditresize: function (size) {
