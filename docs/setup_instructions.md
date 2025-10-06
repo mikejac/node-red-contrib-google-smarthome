@@ -321,6 +321,7 @@ Finally, we will link the Google Home App to the Node-RED service.
    ```
 
 9. Assign your device to a room. Unassigned devices may experience delayed state updates in the app.
+   To assign a device to a room, open the Google Home app, long-tap on the device, tap the settings icon and select "Room".
 
 ---
 
