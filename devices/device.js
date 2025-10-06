@@ -1683,7 +1683,7 @@ module.exports = function (RED) {
         /**
          * Initializes states to their default values.
          *
-         * @returns {Object}
+         * @returns {object}
          */
         initializeStates(device) {
             let me = this;
@@ -2966,7 +2966,7 @@ module.exports = function (RED) {
          * Updates the states of this device with new values.
          *
          * @param {Object} from_states - The new states values.
-         * @returns {Array} - Array of the state keys that were modified.
+         * @returns {string[]} - Array of the state keys that were modified.
          */
         updateState(from_states) {
             const me = this;
