@@ -13,17 +13,21 @@ This tutorial assumes that your service is already set up and working.
 If you are running Node-RED inside a Docker container, you must use UDP, as mDNS will not work with containers.
 
 In your container configuration, you must list the discovery port with UDP and the HTTP port with TCP. For example, if
-you want to use port 8882 as both your discovery and HTTP port, the port configuration in your `docker-compose.yaml`
+you want to use port 3002 as both your discovery and HTTP port, the port configuration in your `docker-compose.yaml`
 would have to look like this:
 
 ```yaml
 ports:
-    - "8882:8882/udp" # Discovery port for local execution, uses UDP
-    - "8882:8882/tcp" # HTTP port for local execution, uses TCP
+    - "3002:3002/udp" # Discovery port for local execution, uses UDP
+    - "3002:3002/tcp" # HTTP port for local execution, uses TCP
     # ... list other ports for Node-RED and the smarthome service
 ```
 
 ## Enable Local Fulfillment
+
+This guide assumes that port 3002 is used for both the HTTP port and the UDP discovery port. You can change the port
+numbers. Just make sure they still match.
+
 
 1. Open the configuration of your management node in Node-RED.
 
@@ -31,13 +35,10 @@ ports:
 2. Scroll down to the section `Local Fulfillment`. Fill in as follows:
     * Scan Type: Select either mDNS or UDP scanning. Which one works better depends on your network configuration. You
       may need to try both.
-    * Discovery port: Node-RED will listen on this port for discovery messages from your smart speaker. Enter any port
-      that you want. Don't create an external port forwarding for this port on your home router. Not available for MDNS.
-    * HTTP port: Node-RED will listen on this port for control messages from your smart speaker. Enter any port you
-      want. Can be the same as the discovery port. Don't create an external port forwarding for this port on your home
+    * Discovery port: Node-RED will listen on this port for discovery messages from your smart speaker. Set to port 3002. Don't create an external port forwarding for this port on your home router. Not available for MDNS.
+    * HTTP port: Node-RED will listen on this port for control messages from your smart speaker. Set to port 3002.
+      Can be the same as the discovery port. Don't create an external port forwarding for this port on your home
       router.
-
-    Remember the discovery port. You will need to enter it in the Actions on Google Console later.
 
 
 3. Save and deploy.
@@ -79,9 +80,8 @@ ports:
     For UDP, fill in the fields as follows,<br>
     * Broadcast address: Set to `255.255.255.255`.
     * Discovery packet: Set to `6e6f64652d7265642d636f6e747269622d676f6f676c652d736d617274686f6d65`.
-    * Listen port: Set the same port you set as "Discovery Port" in the configuration of your management node.
-    * Broadcast port: Set the same port you set as "Discovery Port" in the configuration of your management node.
-
+    * Listen port: Set to port 3002. Must be identical to the "Discovery Port" as set in the configuration of your management node.
+    * Broadcast port: Set to port 3002. Must be identical to the "Listen port".
 
 13. `Save` your changes.
 
@@ -138,8 +138,8 @@ speaker. You'll get a warning on Node-RED's debug panel if this is needed.
   saying "Force default" or "Force cloud". This will work on non-English devices too. You may need several tries with
   different pronunciations though.
 - Set a port for local fulfillment in the management node's config.
-- Send an HTTP POST request to `http://192.168.178.25:13002/smarthome` (with the IP address of your host and the
-  port you chose). E.g. run `curl -X POST http://192.168.178.25:13002/smarthome`. It should answer with
+- Send an HTTP POST request to `http://192.168.178.25:3002/smarthome` (with the IP address of your host and the
+  port you chose). E.g. run `curl -X POST http://192.168.178.25:3002/smarthome`. It should answer with
   `{"error":"missing inputs"}`. This error message is okay, all other messages indicate connection problems with the
   local fulfillment service.
 - If you selected mDNS, install [Service Browser](https://play.google.com/store/apps/details?id=com.druk.servicebrowser) or a similar mDNS
