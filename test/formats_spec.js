@@ -38,7 +38,7 @@ function outputValue(value)
  * `targetValue` and the type specified by `targetType`.
  *
  * @param {mixed[]} inputValues - The values to be tested for conversion
- * @param {string} targetType - The target type to which the values will be converted
+ * @param {number} targetType - The target type to which the values will be converted
  * @param {mixed} targetValue - The expected result of the conversion for each input value
  * @param {string} targetDescription - Description of the target value for log output
  */
@@ -58,7 +58,7 @@ function testConvertsToValue(inputValues, targetType, targetValue, targetDescrip
  * Tests if trying to convert a list of values to a specific type results in an error being thrown.
  *
  * @param {mixed[]} inputValues - The values to be tested for conversion
- * @param {string} targetType - The target type to which the values will be converted
+ * @param {number} targetType - The target type to which the values will be converted
  * @param {string} targetDescription - Description of the target value for log output
  */
 function testForError(inputValues, targetType, targetDescription)
