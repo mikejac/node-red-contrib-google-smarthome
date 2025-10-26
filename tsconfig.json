@@ -6,5 +6,8 @@
         "strict": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true
-    }
+    },
+    "exclude": [
+        "eslint.config.js",
+    ]
 }
