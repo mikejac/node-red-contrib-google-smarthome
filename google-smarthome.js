@@ -27,7 +27,6 @@
 const https = require('https');
 
 module.exports = function (RED) {
-    "use strict";
 
     const GoogleSmartHome = require('./lib/SmartHome.js');
 
