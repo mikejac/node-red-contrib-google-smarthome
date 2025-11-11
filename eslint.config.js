@@ -2,7 +2,7 @@ const js = require('@eslint/js');
 const jsdoc = require('eslint-plugin-jsdoc'); 
 const globals = require('globals'); 
 
-/** @type {import('eslint').Linter.FlatConfig[]} */
+/** @type {import('eslint').Linter.Config[]} */
 module.exports = [
     js.configs.recommended,
     jsdoc.configs['flat/recommended'],
