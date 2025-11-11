@@ -83,13 +83,10 @@ module.exports = function (RED) {
          */
         onInput(msg, send, done) {
             const me = this;
-            me._debug("MgmtNode(input)");
 
             let topicArr = (msg.topic || '').split(me.topicDelim);
             let topic = topicArr[topicArr.length - 1];   // get last part of topic
             const topic_upper = topic.toUpperCase();
-
-            me._debug("MgmtNode(input): topic = " + topic);
 
             try {
                 if (topic_upper === 'RESTART_SERVER') {
@@ -105,6 +102,8 @@ module.exports = function (RED) {
 
                     this.clientConn.app.RequestSync();
                 } else if (topic_upper === 'GET_STATE' || topic_upper === 'GETSTATE') {
+                    me._debug("MgmtNode(input): GET_STATE");
+
                     let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(me.set_state_type );
                     let useNames = ['all_by_name', 'filtered_by_name'].includes(me.set_state_type );
                     let deviceIds = undefined;
@@ -135,9 +134,14 @@ module.exports = function (RED) {
                         });
                     }
                 } else if (topic_upper === 'SET_STATE' || topic_upper === 'SETSTATE') {
+                    me._debug("MgmtNode(input): SET_STATE");
+
                     if (typeof msg.payload === 'object') {
                         this.clientConn.app.devices.setStates(msg.payload);
                     }
+                }
+                else {
+                    this.error(`Unknown command "${topic}"`);
                 }
 
                 done();
