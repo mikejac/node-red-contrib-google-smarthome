@@ -25,11 +25,10 @@
  */
 
 const https = require('https');
+const GoogleSmartHome = require('./lib/SmartHome.js');
 
 /** @param {import('node-red').NodeAPI} RED - The Node-RED API */
 module.exports = function (RED) {
-
-    const GoogleSmartHome = require('./lib/SmartHome.js');
 
     /******************************************************************************************************************
      *
