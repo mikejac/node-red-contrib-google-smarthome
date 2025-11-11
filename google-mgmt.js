@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/** @param {import('node-red').NodeAPI} RED - The Node-RED API */
 module.exports = function (RED) {
     /******************************************************************************************************************
      *
