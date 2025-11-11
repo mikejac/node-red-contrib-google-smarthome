@@ -362,4 +362,4 @@ Parts of this README and much of the code come from Google. In particular,
 great value.
 
 ## Copyright and license
-Copyright 2018 - 2024 Michael Jacobsen and others under [the GNU General Public License version 3](LICENSE).
+Copyright 2018 - 2025 Michael Jacobsen and others under [the GNU General Public License version 3](LICENSE).
