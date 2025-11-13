@@ -16,8 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const assert = require('assert');
-const Formats = require('../lib/Formats');
+import assert from 'assert';
+import { describe, it } from 'mocha';
+import { Formats } from '../lib/Formats.js';
 
 /**
  * Format a value for output.

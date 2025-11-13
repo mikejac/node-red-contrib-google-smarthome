@@ -1,9 +1,9 @@
-const js = require('@eslint/js');
-const jsdoc = require('eslint-plugin-jsdoc'); 
-const globals = require('globals'); 
+import js from '@eslint/js';
+import jsdoc from 'eslint-plugin-jsdoc'; 
+import globals from 'globals'; 
 
 /** @type {import('eslint').Linter.Config[]} */
-module.exports = [
+export default [
     js.configs.recommended,
     jsdoc.configs['flat/recommended'],
     {
@@ -14,7 +14,7 @@ module.exports = [
                 ...globals.node,
                 RED: "readonly"
             },
-            sourceType: "commonjs"
+            sourceType: "module"
         },
         plugins: {
             jsdoc: jsdoc,

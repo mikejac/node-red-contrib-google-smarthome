@@ -17,7 +17,7 @@
  */
 
 /** @param {import('node-red').NodeAPI} RED - The Node-RED API */
-module.exports = function (RED) {
+export default function (RED) {
     /******************************************************************************************************************
      *
      *

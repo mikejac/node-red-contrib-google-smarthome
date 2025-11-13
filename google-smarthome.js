@@ -24,11 +24,11 @@
  * https://developers.google.com/assistant/smarthome/
  */
 
-const https = require('https');
-const GoogleSmartHome = require('./lib/SmartHome.js');
+import https from 'https';
+import GoogleSmartHome from './lib/SmartHome.js';
 
 /** @param {import('node-red').NodeAPI} RED - The Node-RED API */
-module.exports = function (RED) {
+export default function (RED) {
 
     /******************************************************************************************************************
      *
@@ -234,4 +234,3 @@ module.exports = function (RED) {
         }
     });
 }
-

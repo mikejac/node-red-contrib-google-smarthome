@@ -16,14 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const path = require('path');
-const fs = require('fs');
-const helper = require('node-red-node-test-helper');
-const device = require('../devices/device.js');
-const google_smarthome = require('../google-smarthome.js');
-const google_mgmt = require('../google-mgmt.js');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import helper from 'node-red-node-test-helper';
+import { describe, beforeEach, afterEach, it } from 'mocha';
+import device from '../devices/device.js';
+import googleSmarthome from '../google-smarthome.js';
+import googleMgmt from '../google-mgmt.js';
 
-helper.init(require.resolve('node-red'));
+helper.init();
 
 describe('Device Node', function () {
     beforeEach(function (done) {
@@ -42,10 +44,10 @@ describe('Device Node', function () {
     it('Smart Home should be loaded with correct default params', function (done) {
         this.timeout(10000);
 
-        const flowPath = path.join(__dirname, 'device_flow.json');
+        const flowPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'device_flow.json');
         const flow = JSON.parse(fs.readFileSync(flowPath));
 
-        helper.load([google_smarthome, google_mgmt, device], flow, function () {
+        helper.load([googleSmarthome, googleMgmt, device], flow, function () {
             try {
                 const device1 = helper.getNode("device1");
                 device1.should.have.property('type', 'google-device');

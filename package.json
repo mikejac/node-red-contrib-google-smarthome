@@ -3,6 +3,7 @@
   "version": "0.4.21",
   "description": "Lets you control Node-Red via Google Assistant or the Google Home App",
   "main": "google-smarthome.js",
+  "type": "module",
   "scripts": {
     "test": "mocha \"test/**/*_spec.js\""
   },
