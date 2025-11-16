@@ -16,171 +16,176 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @param {import('node-red').NodeAPI} RED - The Node-RED API */
-export default function (RED) {
-    /******************************************************************************************************************
-     *
-     *
-     */
-    class MgmtNode {
-        constructor(config) {
-            RED.nodes.createNode(this, config);
+/** @type {import('node-red').NodeAPI | null} */
+let REDInstance = null;
 
-            this.client = config.client;
-            /** @type {GoogleSmartHomeNode} */
-            this.clientConn = RED.nodes.getNode(this.client);
+/******************************************************************************************************************
+ *
+ *
+ */
+export class MgmtNode {
+    constructor(config) {
+        REDInstance.nodes.createNode(this, config);
 
-            if (!this.clientConn) {
-                this.error(RED._("googlemanagement.errors.missing-config"));
-                this.status({ fill: "red", shape: "dot", text: "Missing config" });
-                return;
-            } else if (typeof this.clientConn.register !== 'function') {
-                this.error(RED._("googlemanagement.errors.missing-bridge"));
-                this.status({ fill: "red", shape: "dot", text: "Missing SmartHome" });
-                return;
-            }
+        this.client = config.client;
+        /** @type {GoogleSmartHomeNode} */
+        this.clientConn = REDInstance.nodes.getNode(this.client);
 
-            this.set_state_type = config.set_state_type || 'filtered_by_id';
-
-            this.clientConn.register(this, 'mgmt', config.name);
-
-            this.status({ fill: "yellow", shape: "dot", text: "Ready" });
-
-            this.on('input', this.onInput);
-            this.on('close', this.onClose);
+        if (!this.clientConn) {
+            this.error(REDInstance._("googlemanagement.errors.missing-config"));
+            this.status({ fill: "red", shape: "dot", text: "Missing config" });
+            return;
+        } else if (typeof this.clientConn.register !== 'function') {
+            this.error(REDInstance._("googlemanagement.errors.missing-bridge"));
+            this.status({ fill: "red", shape: "dot", text: "Missing SmartHome" });
+            return;
         }
 
-        _debug(msg) {
-            if (this.clientConn.enabledebug) {
-                console.log(msg)
-            } else {
-                RED.log.debug(msg);
-            }
-        }
+        this.set_state_type = config.set_state_type || 'filtered_by_id';
 
-        /******************************************************************************************************************
-         * called when state is updated from Google Assistant
-         *
-         */
-        updated(data) {   // this must be defined before the call to clientConn.register()
-            const me = this;
-            me._debug("MgmtNode(updated): data = " + JSON.stringify(data));
+        this.clientConn.register(this, 'mgmt', config.name);
 
-            let msg = {
-                topic: "management",
-                payload: data
-            };
+        this.status({ fill: "yellow", shape: "dot", text: "Ready" });
 
-            me.send(msg);
-        }
+        this.on('input', this.onInput);
+        this.on('close', this.onClose);
+    }
 
-        /**
-         * respond to inputs from NodeRED
-         *
-         * @param {object} msg - The incoming message
-         * @param {Function} send - Function to send outgoing messages
-         * @param {Function} done - Function to inform the runtime that this node has finished its operation
-         */
-        onInput(msg, send, done) {
-            const me = this;
-
-            let topicArr = (msg.topic || '').split(me.topicDelim);
-            let topic = topicArr[topicArr.length - 1];   // get last part of topic
-            const topic_upper = topic.toUpperCase();
-
-            try {
-                if (topic_upper === 'RESTART_SERVER') {
-                    me._debug("MgmtNode(input): RESTART_SERVER");
-
-                    this.clientConn.app.Restart(RED.httpNode || RED.httpAdmin, RED.server);
-                } else if (topic_upper === 'REPORT_STATE') {
-                    me._debug("MgmtNode(input): REPORT_STATE");
-
-                    this.clientConn.app.ReportAllStates();
-                } else if (topic_upper === 'REQUEST_SYNC') {
-                    me._debug("MgmtNode(input): REQUEST_SYNC");
-
-                    this.clientConn.app.RequestSync();
-                } else if (topic_upper === 'GET_STATE' || topic_upper === 'GETSTATE') {
-                    me._debug("MgmtNode(input): GET_STATE");
-
-                    let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(me.set_state_type );
-                    let useNames = ['all_by_name', 'filtered_by_name'].includes(me.set_state_type );
-                    let deviceIds = undefined;
-                    if (typeof msg.payload === 'boolean') {
-                        onlyPersistent = msg.payload;
-                    } else if (typeof msg.payload === 'string') {
-                        deviceIds = [msg.payload];
-                    } else if (Array.isArray(msg.payload)) {
-                        deviceIds = msg.payload;
-                    } else if (typeof msg.payload === 'object') {
-                        if (typeof msg.payload.onlyPersistent === 'boolean') {
-                            onlyPersistent = msg.payload.onlyPersistent;
-                        }
-                        if (typeof msg.payload.useNames === 'boolean') {
-                            useNames = msg.payload.useNames;
-                        }
-                        if (typeof msg.payload.devices === 'string') {
-                            deviceIds = [msg.payload.devices];
-                        } else if (Array.isArray(msg.payload.devices)) {
-                            deviceIds = msg.payload.devices;
-                        }
-                    }
-                    let states = this.clientConn.app.devices.getStates(deviceIds, onlyPersistent, useNames);
-                    if (states) {
-                        send({
-                            topic: topic,
-                            payload: states
-                        });
-                    }
-                } else if (topic_upper === 'SET_STATE' || topic_upper === 'SETSTATE') {
-                    me._debug("MgmtNode(input): SET_STATE");
-
-                    if (typeof msg.payload === 'object') {
-                        this.clientConn.app.devices.setStates(msg.payload);
-                    }
-                }
-                else {
-                    this.error(`Unknown command "${topic}"`);
-                }
-
-                done();
-            } catch (err) {
-                done(err);
-            }
-        }
-
-        /**
-         * Called by the runtime when this node is being removed or restarted
-         *
-         * @param {boolean} removed - true if the is being removed, false on restart
-         * @param {Function} done - Function to inform the runtime that this node has finished its operation
-         */
-        onClose(removed, done) {
-            if (removed) {
-                // this node has been deleted
-                this.clientConn.remove(this, 'mgmt');
-            } else {
-                // this node is being restarted
-                this.clientConn.deregister(this, 'mgmt');
-            }
-
-            done();
-        }
-
-        sendSetState() {
-            if (this.set_state_type === 'no_nodes') return;
-            let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.set_state_type);
-            let useNames = ['all_by_name', 'filtered_by_name'].includes(this.set_state_type);
-            let states = this.clientConn.app.devices.getStates(undefined, onlyPersistent, useNames);
-            if (states) {
-                this.send({
-                    topic: 'set_state',
-                    payload: states
-                });
-            }
+    _debug(msg) {
+        if (this.clientConn.enabledebug) {
+            console.log(msg)
+        } else {
+            REDInstance.log.debug(msg);
         }
     }
 
-    RED.nodes.registerType("google-mgmt", MgmtNode);
+    /******************************************************************************************************************
+     * called when state is updated from Google Assistant
+     *
+     */
+    updated(data) {   // this must be defined before the call to clientConn.register()
+        const me = this;
+        me._debug("MgmtNode(updated): data = " + JSON.stringify(data));
+
+        let msg = {
+            topic: "management",
+            payload: data
+        };
+
+        me.send(msg);
+    }
+
+    /**
+     * respond to inputs from NodeRED
+     *
+     * @param {object} msg - The incoming message
+     * @param {Function} send - Function to send outgoing messages
+     * @param {Function} done - Function to inform the runtime that this node has finished its operation
+     */
+    onInput(msg, send, done) {
+        const me = this;
+
+        let topicArr = (msg.topic || '').split(me.topicDelim);
+        let topic = topicArr[topicArr.length - 1];   // get last part of topic
+        const topic_upper = topic.toUpperCase();
+
+        try {
+            if (topic_upper === 'RESTART_SERVER') {
+                me._debug("MgmtNode(input): RESTART_SERVER");
+
+                this.clientConn.app.Restart(REDInstance.httpNode || REDInstance.httpAdmin, REDInstance.server);
+            } else if (topic_upper === 'REPORT_STATE') {
+                me._debug("MgmtNode(input): REPORT_STATE");
+
+                this.clientConn.app.ReportAllStates();
+            } else if (topic_upper === 'REQUEST_SYNC') {
+                me._debug("MgmtNode(input): REQUEST_SYNC");
+
+                this.clientConn.app.RequestSync();
+            } else if (topic_upper === 'GET_STATE' || topic_upper === 'GETSTATE') {
+                me._debug("MgmtNode(input): GET_STATE");
+
+                let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(me.set_state_type );
+                let useNames = ['all_by_name', 'filtered_by_name'].includes(me.set_state_type );
+                let deviceIds = undefined;
+                if (typeof msg.payload === 'boolean') {
+                    onlyPersistent = msg.payload;
+                } else if (typeof msg.payload === 'string') {
+                    deviceIds = [msg.payload];
+                } else if (Array.isArray(msg.payload)) {
+                    deviceIds = msg.payload;
+                } else if (typeof msg.payload === 'object') {
+                    if (typeof msg.payload.onlyPersistent === 'boolean') {
+                        onlyPersistent = msg.payload.onlyPersistent;
+                    }
+                    if (typeof msg.payload.useNames === 'boolean') {
+                        useNames = msg.payload.useNames;
+                    }
+                    if (typeof msg.payload.devices === 'string') {
+                        deviceIds = [msg.payload.devices];
+                    } else if (Array.isArray(msg.payload.devices)) {
+                        deviceIds = msg.payload.devices;
+                    }
+                }
+                let states = this.clientConn.app.devices.getStates(deviceIds, onlyPersistent, useNames);
+                if (states) {
+                    send({
+                        topic: topic,
+                        payload: states
+                    });
+                }
+            } else if (topic_upper === 'SET_STATE' || topic_upper === 'SETSTATE') {
+                me._debug("MgmtNode(input): SET_STATE");
+
+                if (typeof msg.payload === 'object') {
+                    this.clientConn.app.devices.setStates(msg.payload);
+                }
+            }
+            else {
+                this.error(`Unknown command "${topic}"`);
+            }
+
+            done();
+        } catch (err) {
+            done(err);
+        }
+    }
+
+    /**
+     * Called by the runtime when this node is being removed or restarted
+     *
+     * @param {boolean} removed - true if the is being removed, false on restart
+     * @param {Function} done - Function to inform the runtime that this node has finished its operation
+     */
+    onClose(removed, done) {
+        if (removed) {
+            // this node has been deleted
+            this.clientConn.remove(this, 'mgmt');
+        } else {
+            // this node is being restarted
+            this.clientConn.deregister(this, 'mgmt');
+        }
+
+        done();
+    }
+
+    sendSetState() {
+        if (this.set_state_type === 'no_nodes') return;
+        let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.set_state_type);
+        let useNames = ['all_by_name', 'filtered_by_name'].includes(this.set_state_type);
+        let states = this.clientConn.app.devices.getStates(undefined, onlyPersistent, useNames);
+        if (states) {
+            this.send({
+                topic: 'set_state',
+                payload: states
+            });
+        }
+    }
+}
+
+/** @param {import('node-red').NodeAPI} RED - The Node-RED API */
+export default function (RED) {
+    REDInstance = RED;
+
+    REDInstance.nodes.registerType("google-mgmt", MgmtNode);
 }
