@@ -40,7 +40,7 @@
   "dependencies": {
     "@gravitysoftware/dnssd": "^0.5.x",
     "cors": "^2.8.x",
-    "express": "^5.1.x",
+    "express": "^5.2.x",
     "google-auth-library": "^10.5.0",
     "googleapis": "^166.0.x",
     "helmet": "^8.1.0",
