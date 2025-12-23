@@ -28,7 +28,6 @@ import path from 'path';
 import { EventEmitter } from 'events';
 import dnssd from '@gravitysoftware/dnssd';
 import dgram from 'dgram';
-import { fileURLToPath } from 'url';
 
 import Auth from './Auth.js';
 import Devices from './Devices.js';
@@ -648,7 +647,7 @@ class GoogleSmartHome {
      * @param {string} remoteAppJsVersion - version number of the script running on the speaker
      */
     checkAppJsVersion(remoteAppJsVersion) {
-        const appJsPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../local-execution/app.js');
+        const appJsPath = path.resolve(__dirname, '../../local-execution/app.js');
         fs.readFile(appJsPath, 'utf8', (err, data) => {
             if (err) {
                 this.error('SmartHome:checkAppJsVersion(): Cannot read app.js file (' + err + ')');

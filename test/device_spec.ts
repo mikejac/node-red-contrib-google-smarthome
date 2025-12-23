@@ -18,7 +18,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import helper from 'node-red-node-test-helper';
 import { describe, beforeEach, afterEach, it } from 'mocha';
 import device from '../devices/device.js';
@@ -44,7 +43,7 @@ describe('Device Node', function () {
     it('Smart Home should be loaded with correct default params', function (done) {
         this.timeout(10000);
 
-        const flowPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'device_flow.json');
+        const flowPath = path.join(__dirname, 'device_flow.json');
         const flow = JSON.parse(fs.readFileSync(flowPath));
 
         helper.load([googleSmarthome, googleMgmt, device], flow, function () {

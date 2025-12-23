@@ -20,7 +20,6 @@ import fs from 'fs';
 import path from 'path';
 import util from 'util';
 import { OAuth2Client } from 'google-auth-library';
-import { fileURLToPath } from 'url';
 
 /******************************************************************************************************************
  * HttpAuth
@@ -78,8 +77,7 @@ export default class HttpAuth {
             const googleClientId = useGoogleClientAuth ? me._smarthome.auth.getGoogleClientId() : '';
             // User is not logged in. Show login page.
             me._smarthome.debug('HttpAuth:httpAuthRegister(GET /oauth) User is not logged in, showing login page');
-            const loginFileName = path.join(path.dirname(fileURLToPath(import.meta.url)), 'frontend/login.html');
-            fs.readFile(loginFileName, 'utf8', function (err, data) {
+            fs.readFile(path.join(__dirname, 'frontend/login.html'), 'utf8', function (err, data) {
                 if (err) {
                     res.end();
                     throw(err);
