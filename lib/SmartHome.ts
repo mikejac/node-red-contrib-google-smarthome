@@ -28,6 +28,7 @@ import path from 'path';
 import { EventEmitter } from 'events';
 import dnssd from '@gravitysoftware/dnssd';
 import dgram from 'dgram';
+import { NodeAPI } from 'node-red';
 
 import Auth from './Auth.js';
 import Devices from './Devices.js';
@@ -700,3 +701,16 @@ class GoogleSmartHome {
 }
 
 export default GoogleSmartHome;
+
+/******************************************************************************************************************/
+
+/** Global Node-RED instance */
+export let RED: NodeAPI;
+
+/**
+ * Set the global Node-RED instance.
+ * @param val The Node-RED instance to set.
+ */
+export function setRED(val: NodeAPI): void {
+    RED = val;
+}

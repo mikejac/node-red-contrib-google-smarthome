@@ -20,14 +20,12 @@ import fs from 'fs';
 import path from 'path';
 import util from 'util';
 import { Formats } from '../lib/Formats.js';
+import { setRED, RED } from '../lib/SmartHome.js';
 
 const COOK_SUPPORTED_UNITS = ["UNKNOWN_UNITS", "NO_UNITS", "CENTIMETERS", "CUPS", "DECILITERS", "FEET", "FLUID_OUNCES", "GALLONS", "GRAMS", "INCHES", "KILOGRAMS", "LITERS", "METERS", "MILLIGRAMS", "MILLILITERS", "MILLIMETERS", "OUNCES", "PINCH", "PINTS", "PORTION", "POUNDS", "QUARTS", "TABLESPOONS", "TEASPOONS"];
 const DISPENSE_SUPPORTED_UNITS = ["CENTIMETERS", "CUPS", "DECILITERS", "FLUID_OUNCES", "GALLONS", "GRAMS", "KILOGRAMS", "LITERS", "MILLIGRAMS", "MILLILITERS", "MILLIMETERS", "NO_UNITS", "OUNCES", "PINCH", "PINTS", "PORTION", "POUNDS", "QUARTS", "TABLESPOONS", "TEASPOONS"];
 const ENERGY_STORAGE_UNITS = ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'];
 const LANGUAGES = ["da", "nl", "en", "fr", "de", "hi", "id", "it", "ja", "ko", "no", "pt-BR", "es", "sv", "th", "zh-TW"];
-
-/** @type {import('node-red').NodeAPI | null} */
-let REDInstance = null;
 
 /******************************************************************************************************************
  *
@@ -35,22 +33,22 @@ let REDInstance = null;
  */
 class DeviceNode {
     constructor(config) {
-        REDInstance.nodes.createNode(this, config);
+        RED.nodes.createNode(this, config);
 
         this.device = {};
         this.client = config.client;
         this.name = config.name || config.id;
         this.device_type = config.device_type;
         this.nicknames = config.nicknames;
-        this.clientConn = REDInstance.nodes.getNode(this.client);
+        this.clientConn = RED.nodes.getNode(this.client);
         this._debug(".constructor config " + JSON.stringify(config));
 
         if (!this.clientConn) {
-            this.error(REDInstance._("device.errors.missing-config"));
+            this.error(RED._("device.errors.missing-config"));
             this.status({ fill: "red", shape: "dot", text: "Missing config" });
             return;
         } else if (typeof this.clientConn.register !== 'function') {
-            this.error(REDInstance._("device.errors.missing-bridge"));
+            this.error(RED._("device.errors.missing-bridge"));
             this.status({ fill: "red", shape: "dot", text: "Missing SmartHome" });
             return;
         }
@@ -741,7 +739,7 @@ class DeviceNode {
 
         this.updateStateTypesForTraits();
 
-        const default_name = REDInstance._('device.device_type.' + this.device_type);
+        const default_name = RED._('device.device_type.' + this.device_type);
         const default_name_type = default_name.replace(/[_ ()/]+/g, '-').toLowerCase();
         // Google uses first nickname as the "real" name of the device. Therefore, report device name as the first nickname
         const nicknames = this.nicknames ? [this.name].concat(this.nicknames.split(',')) : [];
@@ -3625,7 +3623,7 @@ class DeviceNode {
             this._debug('.loadJson: ' + text);
             let full_filename;
             if (!filename.startsWith(path.sep)) {
-                const userDir = REDInstance.settings.userDir;
+                const userDir = RED.settings.userDir;
                 full_filename = path.join(userDir, filename);
             } else {
                 full_filename = filename;
@@ -3662,7 +3660,7 @@ class DeviceNode {
         if (filename) {
             this._debug('.writeJson: ' + text);
             if (!filename.startsWith(path.sep)) {
-                const userDir = REDInstance.settings.userDir;
+                const userDir = RED.settings.userDir;
                 filename = path.join(userDir, filename);
             }
             this._debug('.writeJson: filename ' + filename);
@@ -4942,9 +4940,9 @@ class DeviceNode {
     }
 }
 
-/** @param {import('node-red').NodeAPI} RED - The Node-RED API */
-module.exports = function(RED) {
-    REDInstance = RED;
 
-    REDInstance.nodes.registerType("google-device", DeviceNode);
+module.exports = function(RED:NodeAPI) {
+    setRED(RED);
+
+    RED.nodes.registerType('google-device', DeviceNode);
 };

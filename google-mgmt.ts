@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @type {import('node-red').NodeAPI | null} */
-let REDInstance = null;
+import { NodeAPI } from "node-red";
+import { setRED, RED } from "./lib/SmartHome";
 
 /******************************************************************************************************************
  *
@@ -25,18 +25,18 @@ let REDInstance = null;
  */
 class MgmtNode {
     constructor(config) {
-        REDInstance.nodes.createNode(this, config);
+        RED.nodes.createNode(this, config);
 
         this.client = config.client;
         /** @type {GoogleSmartHomeNode} */
-        this.clientConn = REDInstance.nodes.getNode(this.client);
+        this.clientConn = RED.nodes.getNode(this.client);
 
         if (!this.clientConn) {
-            this.error(REDInstance._("googlemanagement.errors.missing-config"));
+            this.error(RED._("googlemanagement.errors.missing-config"));
             this.status({ fill: "red", shape: "dot", text: "Missing config" });
             return;
         } else if (typeof this.clientConn.register !== 'function') {
-            this.error(REDInstance._("googlemanagement.errors.missing-bridge"));
+            this.error(RED._("googlemanagement.errors.missing-bridge"));
             this.status({ fill: "red", shape: "dot", text: "Missing SmartHome" });
             return;
         }
@@ -55,7 +55,7 @@ class MgmtNode {
         if (this.clientConn.enabledebug) {
             console.log(msg)
         } else {
-            REDInstance.log.debug(msg);
+            RED.log.debug(msg);
         }
     }
 
@@ -93,7 +93,7 @@ class MgmtNode {
             if (topic_upper === 'RESTART_SERVER') {
                 me._debug("MgmtNode(input): RESTART_SERVER");
 
-                this.clientConn.app.Restart(REDInstance.httpNode || REDInstance.httpAdmin, REDInstance.server);
+                this.clientConn.app.Restart(RED.httpNode || RED.httpAdmin, RED.server);
             } else if (topic_upper === 'REPORT_STATE') {
                 me._debug("MgmtNode(input): REPORT_STATE");
 
@@ -183,9 +183,8 @@ class MgmtNode {
     }
 }
 
-/** @param {import('node-red').NodeAPI} RED - The Node-RED API */
-module.exports = function(RED) {
-    REDInstance = RED;
+module.exports = function(RED:NodeAPI) {
+    setRED(RED);
 
-    REDInstance.nodes.registerType("google-mgmt", MgmtNode);
+    RED.nodes.registerType("google-mgmt", MgmtNode);
 };
