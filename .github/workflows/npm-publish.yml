@@ -18,6 +18,10 @@ jobs:
         with:
           node-version: latest
           cache: npm
+      - name: npm Install
+        run: npm ci
+      - name: Build
+        run: npm run build
       - uses: JS-DevTools/npm-publish@v4
         with:
           token: ${{secrets.NPM_TOKEN}}
