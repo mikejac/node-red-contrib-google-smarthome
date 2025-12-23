@@ -6,7 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "build": "node ./scripts/build.mjs",
-    "test": "mocha \"test/**/*_spec.js\""
+    "test": "mocha \"dist/test/**/*_spec.js\""
   },
   "repository": {
     "type": "git",
@@ -76,6 +76,7 @@
   "files": [
     "dist/**/*",
     "!dist/**/*.map",
+    "!dist/test/",
     "!dist/tsconfig.tsbuildinfo",
     "examples/**/*",
     "README.md",
