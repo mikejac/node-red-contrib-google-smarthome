@@ -23,7 +23,7 @@ let REDInstance = null;
  *
  *
  */
-export class MgmtNode {
+class MgmtNode {
     constructor(config) {
         REDInstance.nodes.createNode(this, config);
 
@@ -184,8 +184,8 @@ export class MgmtNode {
 }
 
 /** @param {import('node-red').NodeAPI} RED - The Node-RED API */
-export default function (RED) {
+module.exports = function(RED) {
     REDInstance = RED;
 
     REDInstance.nodes.registerType("google-mgmt", MgmtNode);
-}
+};

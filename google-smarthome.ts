@@ -34,7 +34,7 @@ let REDInstance = null;
  *
  *
  */
-export class GoogleSmartHomeNode {
+class GoogleSmartHomeNode {
     constructor(config) {
 
         REDInstance.nodes.createNode(this, config);
@@ -222,7 +222,7 @@ export class GoogleSmartHomeNode {
 }
 
 /** @param {import('node-red').NodeAPI} RED - The Node-RED API */
-export default function (RED) {
+module.exports = function(RED:NodeAPI) {
     REDInstance = RED;
 
     REDInstance.nodes.registerType("googlesmarthome-client", GoogleSmartHomeNode, {
@@ -238,4 +238,4 @@ export default function (RED) {
             clientsecret: { type: "password" },
         }
     });
-}
+};

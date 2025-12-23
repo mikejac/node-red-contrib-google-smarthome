@@ -33,7 +33,7 @@ let REDInstance = null;
  *
  *
  */
-export class DeviceNode {
+class DeviceNode {
     constructor(config) {
         REDInstance.nodes.createNode(this, config);
 
@@ -4943,8 +4943,8 @@ export class DeviceNode {
 }
 
 /** @param {import('node-red').NodeAPI} RED - The Node-RED API */
-export default function (RED) {
+module.exports = function(RED) {
     REDInstance = RED;
 
     REDInstance.nodes.registerType("google-device", DeviceNode);
-}
+};
