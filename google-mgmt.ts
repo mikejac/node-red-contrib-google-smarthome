@@ -48,7 +48,7 @@ export class MgmtNode {
 
         this.clientConn.register(this, 'mgmt', config.name);
 
-        this.status({ fill: "yellow", shape: "dot", text: "Ready" });
+        this.status({ fill: "green", shape: "dot", text: "Ready" });
 
         this.on('input', this.onInput);
         this.on('close', this.onClose);
