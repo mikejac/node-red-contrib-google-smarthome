@@ -18,7 +18,7 @@
 
 import assert from 'assert';
 import { describe, it } from 'mocha';
-import { Formats } from '../lib/Formats.js';
+import { Formats } from '../lib/Formats';
 
 /**
  * Format a value for output.

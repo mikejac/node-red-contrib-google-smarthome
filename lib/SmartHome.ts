@@ -30,10 +30,10 @@ import dnssd from '@gravitysoftware/dnssd';
 import dgram from 'dgram';
 import { NodeAPI } from 'node-red';
 
-import Auth from './Auth.js';
-import Devices from './Devices.js';
-import HttpAuth from './HttpAuth.js';
-import HttpActions from './HttpActions.js';
+import Auth from './Auth';
+import Devices from './Devices';
+import HttpAuth from './HttpAuth';
+import HttpActions from './HttpActions';
 
 /******************************************************************************************************************
  * GoogleSmartHome

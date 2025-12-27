@@ -20,9 +20,9 @@ import fs from 'fs';
 import path from 'path';
 import helper from 'node-red-node-test-helper';
 import { describe, beforeEach, afterEach, it } from 'mocha';
-import device from '../devices/device.js';
-import googleSmarthome from '../google-smarthome.js';
-import googleMgmt from '../google-mgmt.js';
+import device from '../devices/device';
+import googleSmarthome from '../google-smarthome';
+import googleMgmt from '../google-mgmt';
 
 helper.init();
 

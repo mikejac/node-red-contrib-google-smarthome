@@ -26,7 +26,7 @@
 
 import https from 'https';
 import { NodeAPI } from 'node-red';
-import { GoogleSmartHome, setRED, RED } from './lib/SmartHome.js';
+import { GoogleSmartHome, setRED, RED } from './lib/SmartHome';
 
 class GoogleSmartHomeNode {
     constructor(config) {
