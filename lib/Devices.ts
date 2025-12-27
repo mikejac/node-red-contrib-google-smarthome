@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { GoogleSmartHome } from './SmartHome';
+
 const syncRequestDelay = 5000;
 
 /******************************************************************************************************************
@@ -23,12 +25,15 @@ const syncRequestDelay = 5000;
  *
  */
 export default class Devices {
+    private _smarthome: GoogleSmartHome;
+
+
     /**
      * Constructor
      *
      * @param {GoogleSmartHome} smarthome
      */
-    constructor(smarthome) {
+    constructor(smarthome: GoogleSmartHome) {
         this._smarthome = smarthome;
         this._nodes = {};
         this._devicesSyncTimer = null;

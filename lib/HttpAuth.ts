@@ -21,17 +21,22 @@ import path from 'path';
 import util from 'util';
 import { OAuth2Client } from 'google-auth-library';
 
+import { GoogleSmartHome } from './SmartHome';
+
 /******************************************************************************************************************
  * HttpAuth
  *
  */
 export default class HttpAuth {
+    private _smarthome: GoogleSmartHome;
+
+
     /**
      * Constructor
      *
      * @param {GoogleSmartHome} smarthome
      */
-    constructor(smarthome) {
+    constructor(smarthome: GoogleSmartHome) {
         this._smarthome = smarthome;
     }
     //

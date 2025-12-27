@@ -18,17 +18,20 @@
 
 import { NodeAPI } from "node-red";
 import { setRED, RED } from "./lib/SmartHome";
+import { GoogleSmartHomeNode } from "./google-smarthome";
 
 /******************************************************************************************************************
  *
  *
  */
-class MgmtNode {
+export class MgmtNode {
+    private clientConn: GoogleSmartHomeNode;
+
+
     constructor(config) {
         RED.nodes.createNode(this, config);
 
         this.client = config.client;
-        /** @type {GoogleSmartHomeNode} */
         this.clientConn = RED.nodes.getNode(this.client);
 
         if (!this.clientConn) {

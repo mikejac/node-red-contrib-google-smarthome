@@ -34,13 +34,23 @@ import Auth from './Auth';
 import Devices from './Devices';
 import HttpAuth from './HttpAuth';
 import HttpActions from './HttpActions';
+import { MgmtNode } from '../google-mgmt';
 
 /******************************************************************************************************************
  * GoogleSmartHome
  *
  */
 export class GoogleSmartHome {
-    constructor(mgmtNode, nodeId, userDir, httpNodeRoot, useGoogleLogin, googleClientId, emails, username, password, accessTokenDuration, usehttpnoderoot,
+    public auth: Auth;
+    private devices: Devices;
+    public httpActions: HttpActions;
+    public httpAuth: HttpAuth;
+    private _mgmtNode: MgmtNode;
+    public app: express.Express;
+    private localApp: express.Express;
+
+
+    constructor(mgmtNode: MgmtNode, nodeId, userDir, httpNodeRoot, useGoogleLogin, googleClientId, emails, username, password, accessTokenDuration, usehttpnoderoot,
         httpPath, httpPort, localScanType, localScanPort, httpLocalPort, nodeRedUsesHttps, ssloffload, publicKey, privateKey, jwtkeyFile, clientid,
         clientsecret, reportStateInterval, requestSyncDelay, setStateDelay, debug, debug_function, error_function) {
 

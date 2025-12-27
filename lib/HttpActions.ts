@@ -26,6 +26,7 @@ import path from 'path';
 import UidGenerator from 'uid-generator';
 import { google } from 'googleapis';
 import ipRangeCheck from 'ip-range-check';
+import { GoogleSmartHome } from './SmartHome';
 
 const userId = '0';
 
@@ -50,12 +51,15 @@ const isLocalIP = function (ip) {
  *
  */
 export default class HttpActions {
+    private _smarthome: GoogleSmartHome;
+
+
     /**
      * Constructor
      *
      * @param {GoogleSmartHome} smarthome - Instance of the GoogleSmartHome class
      */
-    constructor(smarthome) {
+    constructor(smarthome: GoogleSmartHome) {
         this._smarthome = smarthome;
         this._reqGen = new UidGenerator(128, UidGenerator.BASE62);
     }

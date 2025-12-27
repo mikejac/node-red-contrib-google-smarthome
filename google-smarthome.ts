@@ -27,8 +27,13 @@
 import https from 'https';
 import { NodeAPI } from 'node-red';
 import { GoogleSmartHome, setRED, RED } from './lib/SmartHome';
+import { MgmtNode } from './google-mgmt';
 
-class GoogleSmartHomeNode {
+export class GoogleSmartHomeNode {
+    public app: GoogleSmartHome;
+    private mgmtNodes: Record<string, MgmtNode>;
+
+
     constructor(config) {
 
         RED.nodes.createNode(this, config);

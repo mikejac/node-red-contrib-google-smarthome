@@ -20,9 +20,9 @@ import fs from 'fs';
 import path from 'path';
 import helper from 'node-red-node-test-helper';
 import { describe, beforeEach, afterEach, it } from 'mocha';
-import device from '../devices/device';
-import googleSmarthome from '../google-smarthome';
-import googleMgmt from '../google-mgmt';
+import { DeviceNode } from '../devices/device';
+import { GoogleSmartHomeNode } from '../google-smarthome';
+import { MgmtNode } from '../google-mgmt';
 
 helper.init();
 
@@ -46,7 +46,7 @@ describe('Device Node', function () {
         const flowPath = path.join(__dirname, 'device_flow.json');
         const flow = JSON.parse(fs.readFileSync(flowPath));
 
-        helper.load([googleSmarthome, googleMgmt, device], flow, function () {
+        helper.load([GoogleSmartHomeNode, MgmtNode, DeviceNode], flow, function () {
             try {
                 const device1 = helper.getNode("device1");
                 device1.should.have.property('type', 'google-device');

@@ -20,18 +20,22 @@ import path from 'path';
 import fs from 'fs';
 import util from 'util';
 import UidGenerator from 'uid-generator';
+import { GoogleSmartHome } from './SmartHome';
 
 /******************************************************************************************************************
  * Auth
  *
  */
 export default class Auth {
+    private _smarthome: GoogleSmartHome;
+
+
     /**
      * Constructor
      *
      * @param {GoogleSmartHome} smarthome
      */
-    constructor(smarthome) {
+    constructor(smarthome: GoogleSmartHome) {
         this._smarthome = smarthome;
         this._clientId       = "";
         this._clientSecret   = "";
