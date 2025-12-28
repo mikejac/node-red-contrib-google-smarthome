@@ -306,6 +306,8 @@ commercial Google Workspace account. If this is the case, you can share access t
   devices will only show a general page with their room assignments in the app, but they don't show their current state
   or any buttons to control them. There is nothing we can do about this. This has to be implemented by Google.
 - Assign your devices to a room. Unassigned devices may experience delayed state updates in the app.
+- Say "Hey Google, force default" to reset Google back to the default fulfilment mode (local with fallback to cloud
+  fulfillment), in case Google was actively or inadvertently switched to local-only fulfilment.
 - Some errors and possible solutions are listed at
   [Possible errors](docs/possible-errors.md).
 - Check Node-Red's debug panel for error messages.
@@ -327,7 +329,7 @@ commercial Google Workspace account. If this is the case, you can share access t
   initialization.
 - Check that you have only one single management node and one single config node.
 - Go through the [setup instructions](docs/setup_instructions.md) again and compare your settings with what you see on
-  the screenshots
+  the screenshots.
 
 For problems related to local fulfillment, see [Troubleshooting local fulfillment](docs/local_fulfillment.md#troubleshooting-local-fulfillment).
 
