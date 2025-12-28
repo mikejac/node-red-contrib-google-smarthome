@@ -167,7 +167,7 @@ speaker. You'll get a warning on Node-RED's debug panel if this is needed.
   version number to the one on the third line of the official
   [app.js script](https://raw.githubusercontent.com/mikejac/node-red-contrib-google-smarthome/master/local-execution/app.js).
   If they are different, update the app.js script as explained
-  in the [setup instructions](docs/setup_instructions.md#enable-local-fulfillment-optional). After updating app.js, you
+  in the [setup instructions](setup_instructions.md#enable-local-fulfillment-optional). After updating app.js, you
   might have to restart your smart speaker.
 - Sometimes it takes several hours for the local fulfillment connection to be established.
 - If you experimented with local fulfillment and used "force local", remember to say "Hey Google, force default" to

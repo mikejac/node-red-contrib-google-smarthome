@@ -50,4 +50,4 @@
   [here](https://github.com/acmesh-official/acme.sh/wiki/How-to-issue-a-cert).
 - You can also use [Certbot](https://certbot.eff.org/).
 - Instead of generating your certificate files manually, you can also use a reverse proxy with automated certificate
-  management, such as Caddy, Nginx Proxy Manager or Traefik. Read our [guide](docs/reverse_proxies.md).
+  management, such as Caddy, Nginx Proxy Manager or Traefik. Read our [guide](reverse_proxies.md).

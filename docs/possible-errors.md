@@ -55,7 +55,7 @@ This is an **incomplete** list of possible errors and ideas on how to fix them:
 
 This can happen if you move the smarthome node to a Node-RED system on a different host. Your devices will no longer appear in your Google Home app any more.
 
-Repeat the steps from the [setup account linking](https://github.com/mikejac/node-red-contrib-google-smarthome/blob/master/docs/setup_instructions.md#setup-account-linking) tutorial.
+Repeat the steps from the [setup account linking](setup_instructions.md#setup-account-linking) tutorial.
 
 Follow the next steps from the tutorial. If everything goes well, you will see a list of your devices:
 
