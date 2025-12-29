@@ -7,6 +7,7 @@ import { glob } from 'glob';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/** List of static assets to copy to the dist directory */
 const assetsToCopy = [
     'google-smarthome.html',
     'google-mgmt.html',
@@ -38,6 +39,7 @@ try {
     process.exitCode = 1;
 }
 
+/** Copy static assets to the dist directory */
 async function copyAssets() {
     const assetsGlob = await glob(assetsToCopy);
     for await (let file of assetsGlob) {
@@ -49,9 +51,9 @@ async function copyAssets() {
         
         console.log(`Copied: ${file}`);
     }
-
 }
 
+/** Run the TypeScript compiler */
 function runTsc() {
     return new Promise((resolve, reject) => {
         const tscBin = path.join(
