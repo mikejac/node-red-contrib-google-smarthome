@@ -4,6 +4,11 @@ import globals from 'globals';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
+    // exclude build output
+    {
+        ignores: ["dist/**"]
+    },
+
     js.configs.recommended,
     jsdoc.configs['flat/recommended'],
     {
