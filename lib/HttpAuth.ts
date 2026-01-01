@@ -201,7 +201,7 @@ export default class HttpAuth {
         if (!isValidUser) {
             let redirectUrl = util.format('%s?client_id=%s&redirect_uri=%s&state=%s&response_type=code&error=invalid_user',
                 this._smarthome.Path_join(httpRoot, 'oauth'), req.body.client_id, encodeURIComponent(req.body.redirect_uri), req.body.state);
-            this._smarthome._mgmtNode.error('HttpAuth:_handleUserAuth(): invalid user');
+            this._smarthome.mgmtNode.error('HttpAuth:_handleUserAuth(): invalid user');
             this._smarthome.debug('HttpAuth:_handleUserAuth(): invalid user, redirecting to login form at ' + redirectUrl);
             res.redirect(redirectUrl);
             return;
@@ -219,7 +219,7 @@ export default class HttpAuth {
         } else {
             let redirectUrl = util.format('%s?client_id=%s&redirect_uri=%s&state=%s&response_type=code',
                 this._smarthome.Path_join(httpRoot, 'oauth'), req.body.client_id, encodeURIComponent(req.body.redirect_uri), req.body.state);
-            this._smarthome._mgmtNode.error('HttpAuth:_handleUserAuth(): generating authCode failed');
+            this._smarthome.mgmtNode.error('HttpAuth:_handleUserAuth(): generating authCode failed');
             this._smarthome.debug('HttpAuth:_handleUserAuth(): generating authCode failed, redirecting to Google at ' + redirectUrl);
             res.redirect(redirectUrl);
         }
@@ -245,7 +245,7 @@ export default class HttpAuth {
             res.status(200).json(token);
         }
         catch (err) {
-            this._smarthome._mgmtNode.error('HttpAuth:_handleAuthCode(): ' + err);
+            this._smarthome.mgmtNode.error('HttpAuth:_handleAuthCode(): ' + err);
             let error_result = {"error": "invalid_grant"};
             res.status(400).send(error_result);
         }
@@ -269,7 +269,7 @@ export default class HttpAuth {
             res.status(200).json(token);
         }
         catch (err) {
-            this._smarthome._mgmtNode.error('HttpAuth:_handleRefreshToken(): ' + err);
+            this._smarthome.mgmtNode.error('HttpAuth:_handleRefreshToken(): ' + err);
             let error_result = {"error": "invalid_grant"};
             res.status(400).send(error_result);
         }

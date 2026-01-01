@@ -45,7 +45,7 @@ export class GoogleSmartHome {
     private devices: Devices;
     public httpActions: HttpActions;
     public httpAuth: HttpAuth;
-    private _mgmtNode: MgmtNode;
+    public mgmtNode: MgmtNode;
     public app: express.Express;
     private localApp: express.Express;
 
@@ -60,7 +60,7 @@ export class GoogleSmartHome {
         this.httpAuth               = new HttpAuth(this);
 
         this._nodeId                = nodeId;
-        this._mgmtNode              = mgmtNode;
+        this.mgmtNode              = mgmtNode;
         this._reportStateTimer      = null;
         this._reportStateInterval   = reportStateInterval;  // minutes
         this._httpNodeRoot          = httpNodeRoot;
@@ -643,7 +643,7 @@ export class GoogleSmartHome {
             me._getStateScheduled = true;
             setTimeout(() => {
                 me._getStateScheduled = false;
-                Object.keys(me._mgmtNode.mgmtNodes).forEach(key => me._mgmtNode.mgmtNodes[key].sendSetState());
+                Object.keys(me.mgmtNode.mgmtNodes).forEach(key => me.mgmtNode.mgmtNodes[key].sendSetState());
             }, me._setStateDelay);
         }
     }
@@ -677,9 +677,9 @@ export class GoogleSmartHome {
             if(remoteAppJsVersion === localAppJsVersion) {
                 this.debug('SmartHome:checkAppJsVersion(): app.js on smart speaker is up to date (v' + localAppJsVersion + ')');
             } else if(typeof remoteAppJsVersion === 'undefined') {
-                this._mgmtNode.warn('SmartHome:checkAppJsVersion(): app.js on smart speaker did not report version number. Please upload latest app.js as explained on https://github.com/mikejac/node-red-contrib-google-smarthome/blob/master/docs/local_fulfillment.md#updating-appjs.');
+                this.mgmtNode.warn('SmartHome:checkAppJsVersion(): app.js on smart speaker did not report version number. Please upload latest app.js as explained on https://github.com/mikejac/node-red-contrib-google-smarthome/blob/master/docs/local_fulfillment.md#updating-appjs.');
             } else {
-                this._mgmtNode.warn('SmartHome:checkAppJsVersion(): app.js version on smart speaker did not match local app. Expected ' + localAppJsVersion + ', got ' + remoteAppJsVersion + '. Please upload latest app.js as explained on https://github.com/mikejac/node-red-contrib-google-smarthome/blob/master/docs/local_fulfillment.md#updating-appjs.');
+                this.mgmtNode.warn('SmartHome:checkAppJsVersion(): app.js version on smart speaker did not match local app. Expected ' + localAppJsVersion + ', got ' + remoteAppJsVersion + '. Please upload latest app.js as explained on https://github.com/mikejac/node-red-contrib-google-smarthome/blob/master/docs/local_fulfillment.md#updating-appjs.');
             }
         });
     }

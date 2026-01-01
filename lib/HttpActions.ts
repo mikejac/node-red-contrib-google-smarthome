@@ -561,7 +561,7 @@ export default class HttpActions {
         const cur_device = me._smarthome.devices.getDevice(deviceId);
         // check whether the device exists or whether it exists and it is disconnected.
         if (!cur_device || !cur_device.states.online) {
-            me._smarthome._mgmtNode.warn('HttpActions:_execDevice(): the device you want to control is offline');
+            me._smarthome.mgmtNode.warn('HttpActions:_execDevice(): the device you want to control is offline');
             return { status: 'ERROR', errorCode: 'deviceOffline' };
         }
 
