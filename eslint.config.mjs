@@ -12,7 +12,7 @@ export default [
     js.configs.recommended,
     jsdoc.configs['flat/recommended'],
     {
-        files: ["**/*.{js,mjs}", "**/*.html"],
+        files: ["**/*.{js,mjs}"],
         languageOptions: {
             globals: {
                 ...globals.es6,
