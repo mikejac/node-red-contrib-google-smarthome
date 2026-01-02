@@ -45,7 +45,6 @@
     "google-auth-library": "^10.5.0",
     "googleapis": "^169.0.x",
     "helmet": "^8.1.0",
-    "https": "^1.0.x",
     "ip-range-check": "^0.2.x",
     "morgan": "^1.10.x",
     "stoppable": "^1.1.x",
