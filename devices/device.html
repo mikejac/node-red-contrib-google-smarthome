@@ -2253,7 +2253,7 @@
                 }
             },
             temperature_max_k: {
-                value: 9000, required: false, function(v) {
+                value: 9000, required: false, validate: function (v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
                     return !isNaN(v) && Number.isInteger(f) && n > 0;
@@ -2393,17 +2393,17 @@
                 value: false, required: false
             },
             min_percent: {
-                value: 0, required: false, function(v) {
+                value: 0, required: false, validate: function (v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
-                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
                 }
             },
             max_percent: {
-                value: 100, required: false, function(v) {
+                value: 100, required: false, validate: function (v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
-                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
                 }
             },
             command_query_humiditysetting: {
@@ -2458,17 +2458,17 @@
                 value: true, required: false
             },
             rotation_degrees_min: {
-                value: 0, required: false, function(v) {
+                value: 0, required: false, validate: function (v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
-                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
                 }
             },
             rotation_degrees_max: {
-                value: 360, required: false, function(v) {
+                value: 360, required: false, validate: function (v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
-                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
                 }
             },
             supports_continuous_rotation: {
@@ -2481,17 +2481,17 @@
                 value: false, required: false
             },
             default_sleep_duration: {
-                value: 1800, required: false, function(v) {
+                value: 1800, required: false, validate: function (v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
-                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
                 }
             },
             default_wake_duration: {
-                value: 1800, required: false, function(v) {
+                value: 1800, required: false, validate: function (v) {
                     const n = parseInt(v);
                     const f = parseFloat(v);
-                    return !isNaN(v) && Number.isInteger(f) && n > 0;
+                    return !isNaN(v) && Number.isInteger(f) && n >= 0;
                 }
             },
             supported_effects: {
