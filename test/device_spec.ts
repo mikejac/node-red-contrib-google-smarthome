@@ -20,9 +20,13 @@ import fs from 'fs';
 import path from 'path';
 import helper from 'node-red-node-test-helper';
 import { describe, beforeEach, afterEach, it } from 'mocha';
-import { DeviceNode } from '../devices/device';
-import { GoogleSmartHomeNode } from '../google-smarthome';
-import { MgmtNode } from '../google-mgmt';
+
+// @ts-expect-error Silence warning about missing default export ("export default ..."), as Node-RED expocts CommonJS export ("module.exports = ...")
+import DeviceNode from '../devices/device';
+// @ts-expect-error Silence warning about missing default export ("export default ..."), as Node-RED expocts CommonJS export ("module.exports = ...")
+import GoogleSmartHomeNode from '../google-smarthome';
+// @ts-expect-error Silence warning about missing default export ("export default ..."), as Node-RED expocts CommonJS export ("module.exports = ...")
+import MgmtNode from '../google-mgmt';
 
 helper.init();
 
