@@ -19,7 +19,7 @@
 import path from 'path';
 import fs from 'fs';
 import util from 'util';
-import UidGenerator from 'uid-generator';
+import { nanoid } from 'nanoid'
 import { GoogleSmartHome } from './SmartHome';
 
 /******************************************************************************************************************
@@ -49,7 +49,6 @@ export default class Auth {
         this._authFilename   = null;
         this._jwtkey         = null;
         this._accessTokenDuration = 60;
-        this._tokenGen       = new UidGenerator(256, UidGenerator.BASE58);
         this._clearAllTokens();
     }
 
@@ -516,7 +515,7 @@ export default class Auth {
      * @returns {string} Random string
      */
     genRandomString() {
-        return this._tokenGen.generateSync();
+        return nanoid(48);
     }
 
     /**
