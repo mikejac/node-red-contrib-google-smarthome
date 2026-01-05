@@ -166,9 +166,9 @@ export default class HttpAuth {
             me._smarthome.debug('HttpAuth:httpAuthRegister(/token): body = ' + JSON.stringify(req.body));
             const my_uri = req.protocol + '://' + req.get('Host') + me._smarthome.Path_join(httpRoot, 'oauth');
 
-            let clientId     = req.query.client_id     ? req.query.client_id     : req.body.client_id;
-            let clientSecret = req.query.client_secret ? req.query.client_secret : req.body.client_secret;
-            let grantType    = req.query.grant_type    ? req.query.grant_type    : req.body.grant_type;
+            const clientId = (req.query?.client_id as string | undefined) ?? (req.body?.client_id as string | undefined);
+            const clientSecret = (req.query?.client_secret as string | undefined) ?? (req.body?.client_secret as string | undefined);
+            const grantType = (req.query?.grant_type as string | undefined) ?? (req.body?.grant_type as string | undefined);
 
             if (!me._smarthome.auth.isValidClient(clientId, clientSecret)) {
                 me._smarthome.error('HttpAuth:httpAuthRegister(/token): invalid client id or secret');
