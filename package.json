@@ -43,7 +43,7 @@
     "cors": "^2.8.x",
     "express": "^5.2.x",
     "google-auth-library": "^10.5.0",
-    "googleapis": "^169.0.x",
+    "googleapis": "^170.0.x",
     "helmet": "^8.1.0",
     "ip-range-check": "^0.2.x",
     "morgan": "^1.10.x",
