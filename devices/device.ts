@@ -19,6 +19,7 @@
 import fs from 'fs';
 import path from 'path';
 import util from 'util';
+import { Node, NodeAPI } from 'node-red';
 import { Formats } from '../lib/Formats';
 import { setRED, RED } from '../lib/SmartHome';
 import { GoogleSmartHomeNode } from '../google-smarthome';
@@ -27,6 +28,8 @@ const COOK_SUPPORTED_UNITS = ["UNKNOWN_UNITS", "NO_UNITS", "CENTIMETERS", "CUPS"
 const DISPENSE_SUPPORTED_UNITS = ["CENTIMETERS", "CUPS", "DECILITERS", "FLUID_OUNCES", "GALLONS", "GRAMS", "KILOGRAMS", "LITERS", "MILLIGRAMS", "MILLILITERS", "MILLIMETERS", "NO_UNITS", "OUNCES", "PINCH", "PINTS", "PORTION", "POUNDS", "QUARTS", "TABLESPOONS", "TEASPOONS"];
 const ENERGY_STORAGE_UNITS = ['SECONDS', 'MILES', 'KILOMETERS', 'PERCENTAGE', 'KILOWATT_HOURS'];
 const LANGUAGES = ["da", "nl", "en", "fr", "de", "hi", "id", "it", "ja", "ko", "no", "pt-BR", "es", "sv", "th", "zh-TW"];
+
+export interface DeviceNode extends Node {}
 
 /******************************************************************************************************************
  *

@@ -25,10 +25,12 @@
  */
 
 import https from 'https';
-import { NodeAPI } from 'node-red';
+import { Node, NodeAPI } from 'node-red';
 import { GoogleSmartHome, setRED, RED } from './lib/SmartHome';
 import { MgmtNode } from './google-mgmt';
 import { DeviceNode } from './devices/device';
+
+export interface GoogleSmartHomeNode extends Node {}
 
 export class GoogleSmartHomeNode {
     public app: GoogleSmartHome;

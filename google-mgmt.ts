@@ -16,9 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NodeAPI } from "node-red";
+import { Node, NodeAPI } from "node-red";
 import { setRED, RED } from "./lib/SmartHome";
 import { GoogleSmartHomeNode } from "./google-smarthome";
+
+export interface MgmtNode extends Node {}
 
 /******************************************************************************************************************
  *
