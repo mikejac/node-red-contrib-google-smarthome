@@ -53,7 +53,7 @@ export class GoogleSmartHome {
     private _localScanType: string;
 
 
-    constructor(configNode: GoogleSmartHomeNode, nodeId, userDir, httpNodeRoot, useGoogleLogin, googleClientId, emails, username, password, accessTokenDuration, usehttpnoderoot,
+    constructor(configNode: GoogleSmartHomeNode, userDir, httpNodeRoot, useGoogleLogin, googleClientId, emails, username, password, accessTokenDuration, usehttpnoderoot,
         httpPath, httpPort, localScanType, localScanPort, httpLocalPort, nodeRedUsesHttps, ssloffload, publicKey, privateKey, jwtkeyFile, clientid,
         clientsecret, reportStateInterval, requestSyncDelay, setStateDelay, debug, debug_function, error_function) {
 
@@ -62,7 +62,6 @@ export class GoogleSmartHome {
         this.httpActions            = new HttpActions(this);
         this.httpAuth               = new HttpAuth(this);
 
-        this._nodeId                = nodeId;
         this.configNode             = configNode;
         this._reportStateTimer      = null;
         this._reportStateInterval   = reportStateInterval;  // minutes
@@ -100,7 +99,7 @@ export class GoogleSmartHome {
         }
 
         this.debug('GoogleSmartHome.constructor');
-        this.auth.loadAuthStorage(nodeId, userDir);
+        this.auth.loadAuthStorage(configNode.id, userDir);
         this.auth.setClientIdSecret(clientid, clientsecret);
         if (useGoogleLogin) {
             this.auth.setGoogleClientIdAndEmails(googleClientId, emails);
@@ -291,7 +290,7 @@ export class GoogleSmartHome {
             const data = msg.toString().trim();
             // Accept packet with quotes too in case user sends test packet with quotes (echo "..." | nc -...)
             if (data === me._localScanPacket || data === '"' + me._localScanPacket + '"') {
-                const sync_res = Buffer.from(JSON.stringify({clientId: me._nodeId}), 'utf8');
+                const sync_res = Buffer.from(JSON.stringify({clientId: me.configNode.id}), 'utf8');
                 this.send(sync_res, info.port, info.address, function(error){
                     if(error) {
                         me.debug("Service Scan UDP server: error sending message " + error);
@@ -341,7 +340,7 @@ export class GoogleSmartHome {
         const me = this;
         this.StopMDNSAdvertisement();
 
-        this.dnssdAd = dnssd.Advertisement(dnssd.tcp('nodered-google'), this._localDiscoveryPort, {txt: {clientId: this._nodeId}})
+        this.dnssdAd = dnssd.Advertisement(dnssd.tcp('nodered-google'), this._localDiscoveryPort, {txt: {clientId: this.configNode.id}})
         this.dnssdAd.start();
         this._dnssdAdRunning = true;
 
@@ -597,7 +596,7 @@ export class GoogleSmartHome {
             return {
                 httpPort: this._localExecutionPort,
                 httpPathPrefix: this.Path_join(this._httpLocalPath, ""),
-                clientId: this._nodeId,
+                clientId: this.configNode.id,
                 accessToken: this.auth.getLocalAuthCode(),
             }
         }

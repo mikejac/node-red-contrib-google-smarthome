@@ -47,7 +47,6 @@ export class GoogleSmartHomeNode {
 
         this.app = new GoogleSmartHome(
             this,
-            config.id,
             RED.settings.userDir,
             RED.settings.httpNodeRoot,
             config.usegooglelogin,
