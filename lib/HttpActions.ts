@@ -684,7 +684,7 @@ export default class HttpActions {
         }
 
         if (notifications) {
-            postData.eventId = this._reqGen.generateSync();
+            postData.eventId = nanoid();
             postData.payload.devices.notifications = {};
             postData.payload.devices.notifications[deviceId] = notifications;     // single device
         }
