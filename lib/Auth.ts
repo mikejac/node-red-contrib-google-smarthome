@@ -305,12 +305,12 @@ export default class Auth {
      */
     isValidClient(clientId: string, clientSecret: string|undefined = undefined): boolean {
         if (this._clientId !== clientId) {
-            this._smarthome.mgmtNode.error(util.format('Auth:isValidClient(): clientId does not match (expected "%s", got "%s")!', this._clientId, clientId));
+            this._smarthome.configNode.error(util.format('Auth:isValidClient(): clientId does not match (expected "%s", got "%s")!', this._clientId, clientId));
             return false;
         }
 
         if (clientSecret !== undefined && this._clientSecret !== clientSecret) {
-            this._smarthome.mgmtNode.error(util.format('Auth:isValidClient(): clientSecret does not match (expected "%s", got "%s")!', this._clientSecret, clientSecret));
+            this._smarthome.configNode.error(util.format('Auth:isValidClient(): clientSecret does not match (expected "%s", got "%s")!', this._clientSecret, clientSecret));
             return false;
         }
 
@@ -343,7 +343,7 @@ export default class Auth {
         let project_id = this.getProjectId();
         if ('https://oauth-redirect.googleusercontent.com/r/' + project_id !== redirect_uri &&
             'https://oauth-redirect-sandbox.googleusercontent.com/r/' + project_id !== redirect_uri) {
-            this._smarthome.mgmtNode.error('Auth:isValidRedirectUri(): invalid redirect uri!');
+            this._smarthome.configNode.error('Auth:isValidRedirectUri(): invalid redirect uri!');
             return false;
         }
 
@@ -477,7 +477,7 @@ export default class Auth {
     isValidRefreshToken(refreshToken: string): boolean {
         const refreshTokenInfo = this._authStorage.refreshTokens[refreshToken];
         if (typeof refreshTokenInfo === 'undefined') {
-            this._smarthome.mgmtNode.error('Auth:isValidRefreshToken(): refreshToken not found ' + JSON.stringify(refreshToken));
+            this._smarthome.configNode.error('Auth:isValidRefreshToken(): refreshToken not found ' + JSON.stringify(refreshToken));
             return false;
         }
         this._smarthome.debug('Auth:isValidRefreshToken(): valid refreshToken ' + JSON.stringify(refreshToken) + " for user " + refreshTokenInfo);
@@ -640,7 +640,7 @@ export default class Auth {
             fs.writeFileSync(this._authFilename, JSON.stringify(this._authStorage))
         }
         catch (err) {
-            this._smarthome.mgmtNode.error('Auth:_persistAuthStorage(): Failed to write auth file: ' + err);
+            this._smarthome.configNode.error('Auth:_persistAuthStorage(): Failed to write auth file: ' + err);
         }
     }
 

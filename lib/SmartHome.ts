@@ -34,7 +34,7 @@ import Auth from './Auth';
 import Devices from './Devices';
 import HttpAuth from './HttpAuth';
 import HttpActions from './HttpActions';
-import { MgmtNode } from '../google-mgmt';
+import { GoogleSmartHomeNode } from '../google-smarthome';
 
 /******************************************************************************************************************
  * GoogleSmartHome
@@ -45,7 +45,7 @@ export class GoogleSmartHome {
     public devices: Devices;
     public httpActions: HttpActions;
     public httpAuth: HttpAuth;
-    public mgmtNode: MgmtNode;
+    public configNode: GoogleSmartHomeNode;
     public app: express.Express;
     public localApp: express.Express;
     private _httpLocalPath: string
@@ -53,7 +53,7 @@ export class GoogleSmartHome {
     private _localScanType: string;
 
 
-    constructor(mgmtNode: MgmtNode, nodeId, userDir, httpNodeRoot, useGoogleLogin, googleClientId, emails, username, password, accessTokenDuration, usehttpnoderoot,
+    constructor(configNode: GoogleSmartHomeNode, nodeId, userDir, httpNodeRoot, useGoogleLogin, googleClientId, emails, username, password, accessTokenDuration, usehttpnoderoot,
         httpPath, httpPort, localScanType, localScanPort, httpLocalPort, nodeRedUsesHttps, ssloffload, publicKey, privateKey, jwtkeyFile, clientid,
         clientsecret, reportStateInterval, requestSyncDelay, setStateDelay, debug, debug_function, error_function) {
 
@@ -63,7 +63,7 @@ export class GoogleSmartHome {
         this.httpAuth               = new HttpAuth(this);
 
         this._nodeId                = nodeId;
-        this.mgmtNode              = mgmtNode;
+        this.configNode             = configNode;
         this._reportStateTimer      = null;
         this._reportStateInterval   = reportStateInterval;  // minutes
         this._httpNodeRoot          = httpNodeRoot;
@@ -646,7 +646,7 @@ export class GoogleSmartHome {
             me._getStateScheduled = true;
             setTimeout(() => {
                 me._getStateScheduled = false;
-                Object.keys(me.mgmtNode.mgmtNodes).forEach(key => me.mgmtNode.mgmtNodes[key].sendSetState());
+                Object.keys(me.configNode.mgmtNodes).forEach(key => me.configNode.mgmtNodes[key].sendSetState());
             }, me._setStateDelay);
         }
     }
@@ -680,9 +680,9 @@ export class GoogleSmartHome {
             if(remoteAppJsVersion === localAppJsVersion) {
                 this.debug('SmartHome:checkAppJsVersion(): app.js on smart speaker is up to date (v' + localAppJsVersion + ')');
             } else if(typeof remoteAppJsVersion === 'undefined') {
-                this.mgmtNode.warn('SmartHome:checkAppJsVersion(): app.js on smart speaker did not report version number. Please upload latest app.js as explained on https://github.com/mikejac/node-red-contrib-google-smarthome/blob/master/docs/local_fulfillment.md#updating-appjs.');
+                this.configNode.warn('SmartHome:checkAppJsVersion(): app.js on smart speaker did not report version number. Please upload latest app.js as explained on https://github.com/mikejac/node-red-contrib-google-smarthome/blob/master/docs/local_fulfillment.md#updating-appjs.');
             } else {
-                this.mgmtNode.warn('SmartHome:checkAppJsVersion(): app.js version on smart speaker did not match local app. Expected ' + localAppJsVersion + ', got ' + remoteAppJsVersion + '. Please upload latest app.js as explained on https://github.com/mikejac/node-red-contrib-google-smarthome/blob/master/docs/local_fulfillment.md#updating-appjs.');
+                this.configNode.warn('SmartHome:checkAppJsVersion(): app.js version on smart speaker did not match local app. Expected ' + localAppJsVersion + ', got ' + remoteAppJsVersion + '. Please upload latest app.js as explained on https://github.com/mikejac/node-red-contrib-google-smarthome/blob/master/docs/local_fulfillment.md#updating-appjs.');
             }
         });
     }
