@@ -16,10 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import util from 'util';
 import { OAuth2Client } from 'google-auth-library';
+import { Request, Response } from 'express';
 
 import { GoogleSmartHome } from './SmartHome';
 
@@ -42,7 +44,7 @@ export default class HttpAuth {
     //
     //
     //
-    httpAuthRegister(httpRoot, appHttp) {
+    httpAuthRegister(httpRoot: string, appHttp: express.Express | undefined): void {
         let me = this;
         let use_decode = false;
         if (typeof appHttp === 'undefined') {
@@ -64,7 +66,7 @@ export default class HttpAuth {
          *   &response_type=code
          *      - The string code
          */
-        appHttp.get(me._smarthome.Path_join(httpRoot, 'oauth'), function(req, res) {
+        appHttp.get(me._smarthome.Path_join(httpRoot, 'oauth'), function(req: Request, res: Response) {
             me._smarthome.debug('HttpAuth:httpAuthRegister(GET /oauth) query ' + JSON.stringify(req.query));
 
             if (req.query.response_type !== 'code') {
@@ -95,7 +97,7 @@ export default class HttpAuth {
         //
         //
         //
-        appHttp.post(me._smarthome.Path_join(httpRoot, 'oauth'), function(req, res) {
+        appHttp.post(me._smarthome.Path_join(httpRoot, 'oauth'), function(req: Request, res: Response) {
             me._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): body = ' + JSON.stringify(req.body));
             const my_uri = req.protocol + '://' + req.get('Host') + me._smarthome.Path_join(httpRoot, 'oauth');
 
@@ -161,7 +163,7 @@ export default class HttpAuth {
          * &grant_type=refresh_token
          * &refresh_token=REFRESH_TOKEN
          */
-        appHttp.all(me._smarthome.Path_join(httpRoot, 'token'), function(req, res) {
+        appHttp.all(me._smarthome.Path_join(httpRoot, 'token'), function(req: Request, res: Response) {
             me._smarthome.debug('HttpAuth:httpAuthRegister(/token): query = ' + JSON.stringify(req.query));
             me._smarthome.debug('HttpAuth:httpAuthRegister(/token): body = ' + JSON.stringify(req.body));
             const my_uri = req.protocol + '://' + req.get('Host') + me._smarthome.Path_join(httpRoot, 'oauth');
@@ -197,7 +199,7 @@ export default class HttpAuth {
      * }
      * @private
      */
-    _handleUserAuth(req, res, username, password, isValidUser, httpRoot) {
+    _handleUserAuth(req: Request, res: Response, username, password, isValidUser, httpRoot) {
         if (!isValidUser) {
             let redirectUrl = util.format('%s?client_id=%s&redirect_uri=%s&state=%s&response_type=code&error=invalid_user',
                 this._smarthome.Path_join(httpRoot, 'oauth'), req.body.client_id, encodeURIComponent(req.body.redirect_uri), req.body.state);
@@ -234,7 +236,7 @@ export default class HttpAuth {
      * }
      * @private
      */
-    _handleAuthCode(req, res, my_uri) {
+    _handleAuthCode(req: Request, res: Response, my_uri) {
         let code         = req.query.code          ? req.query.code          : req.body.code;
         let redirect_uri = req.query.redirect_uri  ? req.query.redirect_uri  : req.body.redirect_uri;
 
@@ -259,7 +261,7 @@ export default class HttpAuth {
      * }
      * @private
      */
-    _handleRefreshToken(req, res) {
+    _handleRefreshToken(req: Request, res: Response) {
         let refreshToken = req.query.refresh_token ? req.query.refresh_token : req.body.refresh_token;
 
         try {

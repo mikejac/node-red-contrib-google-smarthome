@@ -22,12 +22,25 @@ import util from 'util';
 import { nanoid } from 'nanoid'
 import { GoogleSmartHome } from './SmartHome';
 
+type AuthAccessTokenInfo = {
+    user: string;
+    expiresAt: number;
+};
+
+type AuthStorage = {
+    accessTokens: Record<string, AuthAccessTokenInfo>;
+    refreshTokens: Record<string, string>;
+    localAuthCode: string;
+    nextLocalAuthCode: string;
+};
+
 /******************************************************************************************************************
  * Auth
  *
  */
 export default class Auth {
     private _smarthome: GoogleSmartHome;
+    private _authStorage!: AuthStorage;
 
 
     /**
@@ -45,7 +58,6 @@ export default class Auth {
         this._googleClientId = "";
         this._emails         = [];
         this._authCode       = new Map();
-        this._authStorage    = null;
         this._authFilename   = null;
         this._jwtkey         = null;
         this._accessTokenDuration = 60;
@@ -58,7 +70,7 @@ export default class Auth {
      * @param {string} nodeId - ID of the config node
      * @param {string} userDir - Node-RED's user directory
      */
-    loadAuthStorage(nodeId, userDir) {
+    loadAuthStorage(nodeId: string, userDir: string): void {
         const me = this;
 
         try {
@@ -102,7 +114,7 @@ export default class Auth {
      * @param {string} jwtkeyFile - File name of the JWT key
      * @param {string} dir - Directory (if file name is not already given with path)
      */
-    loadJwtKeyFile(jwtkeyFile, dir) {
+    loadJwtKeyFile(jwtkeyFile: string, dir: string): void {
         if (!jwtkeyFile.startsWith(path.sep)) {
             jwtkeyFile = path.join(dir, jwtkeyFile);
         }
@@ -116,7 +128,7 @@ export default class Auth {
      * @param {string} clientid - Client ID
      * @param {string} clientsecret - Client secret
      */
-    setClientIdSecret(clientid, clientsecret) {
+    setClientIdSecret(clientid: string, clientsecret: string): void {
         this._clientId     = clientid;
         this._clientSecret = clientsecret;
     }
@@ -127,7 +139,7 @@ export default class Auth {
      * @param {string} username - Username
      * @param {string} password - Password
      */
-    setUsernamePassword(username, password) {
+    setUsernamePassword(username: string, password: string): void {
         this._useGoogleClientAuth = false;
         this._username = username;
         this._password = password;
@@ -137,9 +149,9 @@ export default class Auth {
      * Sets Client ID and authorized email addresses for Google client authentication (a.k.a. Google Login).
      *
      * @param {string} clientid - Google Client ID
-     * @param {Array|string} emails - Authorized email addresses as array or string separated by ";"
+     * @param {string[]|string} emails - Authorized email addresses as array or string separated by ";"
      */
-    setGoogleClientIdAndEmails(clientid, emails) {
+    setGoogleClientIdAndEmails(clientid: string, emails: string[] | string) {
         this._useGoogleClientAuth = true;
         this._googleClientId = clientid;
         if (typeof emails === "string") {
@@ -154,7 +166,7 @@ export default class Auth {
      *
      * @returns {boolean} True if Google Client authentication is used, false otherwise
      */
-    useGoogleClientAuth() {
+    useGoogleClientAuth(): boolean {
         return this._useGoogleClientAuth;
     }
 
@@ -163,7 +175,7 @@ export default class Auth {
      *
      * @returns {string} Google Client ID
      */
-    getGoogleClientId() {
+    getGoogleClientId(): string {
         return this._googleClientId;
     }
 
@@ -172,7 +184,7 @@ export default class Auth {
      *
      * @returns {string[]} Authorized email addresses
      */
-    getGoogleClientEmails() {
+    getGoogleClientEmails(): string[] {
         return this._emails;
     }
 
@@ -182,7 +194,7 @@ export default class Auth {
      * @param {string} email - Email to check
      * @returns {boolean} True if the email is valid, false otherwise
      */
-    isGoogleClientEmailValid(email) {
+    isGoogleClientEmailValid(email): boolean {
         if (this._useGoogleClientAuth) {
             return this._emails.includes(email);
         }
@@ -194,7 +206,7 @@ export default class Auth {
      *
      * @param {number} duration - The duration in minutes.
      */
-    setAccessTokenDuration(duration) {
+    setAccessTokenDuration(duration: number) {
         this._accessTokenDuration = duration;
     }
 
@@ -203,7 +215,7 @@ export default class Auth {
      *
      * @returns {number} The duration in minutes.
      */
-    getAccessTokenDuration() {
+    getAccessTokenDuration(): number {
         return this._accessTokenDuration;
     }
 
@@ -214,7 +226,7 @@ export default class Auth {
      * @param {string} password - Password to check
      * @returns {boolean} True if the username and password are valid, false otherwise.
      */
-    isValidUser(username, password) {
+    isValidUser(username: string, password: string): boolean {
         if (this._username !== username) {
             this._smarthome.debug('Auth:isValidUser(): username does not match!');
             return false;
@@ -230,7 +242,7 @@ export default class Auth {
     //
     //
     //
-    getLocalAuthCode() {
+    getLocalAuthCode(): string {
         return this._authStorage.nextLocalAuthCode;
     }
 
@@ -240,7 +252,7 @@ export default class Auth {
      * @param {string} username - Username, for which the auth code should be generated
      * @returns {string} The newly generated auth code
      */
-    generateAuthCode(username) {
+    generateAuthCode(username: string): string {
         this.removeExpiredAuthCode();
 
         while (true) {
@@ -260,7 +272,7 @@ export default class Auth {
     /**
      * Removes all expired auth codes from auth code storage.
      */
-    removeExpiredAuthCode() {
+    removeExpiredAuthCode(): void {
         const now = Date.now();
         let toDel = [];
         for (let authCode of this._authCode.keys()) {
@@ -280,7 +292,7 @@ export default class Auth {
      *
      * @returns {boolean} True if account is linked (we have refresh tokens), false otherwise.
      */
-    isAccountLinked() {
+    isAccountLinked(): boolean {
         return Object.keys(this._authStorage.refreshTokens).length > 0;
     }
 
@@ -288,10 +300,10 @@ export default class Auth {
      * Checks if the provided client ID and secret are valid.
      *
      * @param {string} clientId - Client ID to check
-     * @param {string} [clientSecret] - Client secret to check
+     * @param {?string} [clientSecret] - Client secret to check
      * @returns {boolean} True if the client ID and secret are valid, false otherwise
      */
-    isValidClient(clientId, clientSecret = undefined) {
+    isValidClient(clientId: string, clientSecret: string|undefined = undefined): boolean {
         if (this._clientId !== clientId) {
             this._smarthome.mgmtNode.error(util.format('Auth:isValidClient(): clientId does not match (expected "%s", got "%s")!', this._clientId, clientId));
             return false;
@@ -318,7 +330,7 @@ export default class Auth {
      * @param {string} my_uri - Own URL (e.g. https://example.com:3001)
      * @returns {boolean} true if the URI is valid, false otherwise
      */
-    isValidRedirectUri(redirect_uri, my_uri) {
+    isValidRedirectUri(redirect_uri: string, my_uri: string): boolean {
         if (my_uri) {
             // Remove port from URI to allow different ports (due to port forwarding or proxying)
             let my_uri_without_port = my_uri.replace(/:\d+/, '');
@@ -340,7 +352,7 @@ export default class Auth {
     //
     //
     //
-    exchangeAuthCode(authCode, redirect_uri, my_uri) {
+    exchangeAuthCode(authCode: string, redirect_uri: string, my_uri: string) {
         let me = this;
         let authCodeInfo = this._authCode.get(authCode);
 
@@ -383,7 +395,7 @@ export default class Auth {
      * @param {string} refreshToken - Refresh token
      * @returns {object} Tokens
      */
-    refreshAccessToken(refreshToken) {
+    refreshAccessToken(refreshToken: string): { token_type: string; access_token: string; expires_in: number; } {
         let me = this;
         if (!this.isValidRefreshToken(refreshToken)) {
             throw 'invalid refresh token ' + refreshToken;
@@ -409,7 +421,7 @@ export default class Auth {
      * @param {string} accessToken - Access token to check
      * @returns {boolean} True if the access token is valid, false otherwise
      */
-    isValidAccessToken(accessToken) {
+    isValidAccessToken(accessToken: string): boolean {
         return this.getuserForAccessToken(accessToken) !== null;
     }
 
@@ -419,7 +431,7 @@ export default class Auth {
      * @param {string} accessToken - Local access token to check
      * @returns {boolean} True if the local access token is valid, false otherwise
      */
-    isValidLocalAccessToken(accessToken) {
+    isValidLocalAccessToken(accessToken: string): boolean {
         if (accessToken === this._authStorage.nextLocalAuthCode) {
             this._authStorage.localAuthCode = this._authStorage.nextLocalAuthCode;
             this._authStorage.nextLocalAuthCode = this._generateNewAccessToken();
@@ -435,7 +447,7 @@ export default class Auth {
      * @param {string} accessToken - Access token
      * @returns {string|null} User or null if the access token is invalid
      */
-    getuserForAccessToken(accessToken) {
+    getuserForAccessToken(accessToken: string): string | null {
         if (accessToken === this._authStorage.localAuthCode || accessToken === this._authStorage.nextLocalAuthCode) {
             return "local execution";
         }
@@ -462,7 +474,7 @@ export default class Auth {
      * @param {string} refreshToken - Refresh token to check
      * @returns {boolean} True if the refresh token is valid, false otherwise
      */
-    isValidRefreshToken(refreshToken) {
+    isValidRefreshToken(refreshToken: string): boolean {
         const refreshTokenInfo = this._authStorage.refreshTokens[refreshToken];
         if (typeof refreshTokenInfo === 'undefined') {
             this._smarthome.mgmtNode.error('Auth:isValidRefreshToken(): refreshToken not found ' + JSON.stringify(refreshToken));
@@ -477,7 +489,7 @@ export default class Auth {
      *
      * @param {string} user - User whose tokens should be removed
      */
-    removeAllTokensForUser(user) {
+    removeAllTokensForUser(user: string): void {
         this._removeAllTokensForUser(user);
         this._persistAuthStorage();
     }
@@ -487,7 +499,7 @@ export default class Auth {
      *
      * @returns {string} JWT client email
      */
-    getJwtClientEmail() {
+    getJwtClientEmail(): string {
         return this._jwtkey.client_email;
     }
 
@@ -496,7 +508,7 @@ export default class Auth {
      *
      * @returns {string} JWT private key
      */
-    getJwtPrivateKey() {
+    getJwtPrivateKey(): string {
         return this._jwtkey.private_key;
     }
 
@@ -505,7 +517,7 @@ export default class Auth {
      *
      * @returns {string} JWT Project ID
      */
-    getProjectId() {
+    getProjectId(): string {
         return this._jwtkey.project_id;
     }
 
@@ -514,7 +526,7 @@ export default class Auth {
      *
      * @returns {string} Random string
      */
-    genRandomString() {
+    genRandomString(): string {
         return nanoid(48);
     }
 
@@ -523,7 +535,7 @@ export default class Auth {
      *
      * @returns {object} Auth storage
      */
-    getAuthStorage() {
+    getAuthStorage(): AuthStorage {
         return this._authStorage;
     }
     //

@@ -34,7 +34,7 @@ const LANGUAGES = ["da", "nl", "en", "fr", "de", "hi", "id", "it", "ja", "ko", "
  */
 export class DeviceNode {
     private clientConn: GoogleSmartHomeNode;
-
+    private device_type: string;
 
     constructor(config) {
         RED.nodes.createNode(this, config);
@@ -1963,7 +1963,7 @@ export class DeviceNode {
      *
      * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
      */
-    updateStatusIcon(is_local) {
+    updateStatusIcon(is_local: boolean) {
         const me = this;
         let text = [];
         let fill = 'red';
@@ -2129,8 +2129,9 @@ export class DeviceNode {
     /******************************************************************************************************************
      * called when state is updated from Google Assistant
      *
+     * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
      */
-    updated(g_command, exe_result, is_local) {
+    updated(g_command, exe_result, is_local: boolean) {
         const me = this;
         let command = g_command.command.startsWith('action.devices.commands.') ? g_command.command.substr(24) : g_command.command;
         let params = exe_result.params || {};
@@ -4913,7 +4914,7 @@ export class DeviceNode {
         return ok_result;
     }
 
-    getStreamUrl(protocol_type) {
+    getStreamUrl(protocol_type: string) {
         switch (protocol_type) {
             case 'hls':
                 return this.hls;
@@ -4929,7 +4930,7 @@ export class DeviceNode {
         return '';
     }
 
-    getAppId(protocol_type) {
+    getAppId(protocol_type: string) {
         switch (protocol_type) {
             case 'hls':
                 return this.hls_app_id;

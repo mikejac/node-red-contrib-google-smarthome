@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { DeviceNode } from '../devices/device';
 import { GoogleSmartHome } from './SmartHome';
 
 const syncRequestDelay = 5000;
@@ -26,7 +27,7 @@ const syncRequestDelay = 5000;
  */
 export default class Devices {
     private _smarthome: GoogleSmartHome;
-
+    private _nodes: Record<string, DeviceNode>;
 
     /**
      * Constructor
@@ -56,7 +57,7 @@ export default class Devices {
     //
     //
     //
-    ReportState(deviceId) {
+    ReportState(deviceId: string) {
         let me = this;
 
         if (!this._nodes[deviceId]) {
@@ -69,7 +70,7 @@ export default class Devices {
     //
     //
     //
-    SendNotifications(deviceId, notifications) {
+    SendNotifications(deviceId: string, notifications) {
         let me = this;
 
         this._smarthome.debug('Devices:SendNotifications(): notifications = ' + JSON.stringify(notifications));
@@ -84,7 +85,7 @@ export default class Devices {
     //
     //
     //
-    GetIdFromName(name) {
+    GetIdFromName(name: string) {
         let nodeId;
         if (name) {
             Object.keys(this._nodes).forEach(nid => {
@@ -112,7 +113,7 @@ export default class Devices {
     //
     // Executed in HttpActions:_execDevice
     //
-    getDevice(deviceId) {
+    getDevice(deviceId: string) {
         return this._nodes[deviceId] ||  undefined;
     }
     //

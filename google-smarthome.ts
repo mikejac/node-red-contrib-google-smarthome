@@ -28,6 +28,7 @@ import https from 'https';
 import { NodeAPI } from 'node-red';
 import { GoogleSmartHome, setRED, RED } from './lib/SmartHome';
 import { MgmtNode } from './google-mgmt';
+import { DeviceNode } from './devices/device';
 
 export class GoogleSmartHomeNode {
     public app: GoogleSmartHome;
@@ -198,13 +199,13 @@ export class GoogleSmartHomeNode {
         }
     }
 
-    sendNotifications(client, notifications) {
+    sendNotifications(client: DeviceNode, notifications) {
         const node = this;
         node._debug("GoogleSmartHomeNode:sendNotifications(): notifications = " + JSON.stringify(notifications));
         node.app.devices.SendNotifications(client.id, notifications);
     }
 
-    reportState(deviceId) {
+    reportState(deviceId: string) {
         const node = this;
         node.app.devices.ReportState(deviceId);
     }

@@ -16,16 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @typedef {import('express').Request} Request
- * @typedef {import('express').Response} Response
- */
-
+import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { nanoid } from 'nanoid';
 import { google } from 'googleapis';
 import ipRangeCheck from 'ip-range-check';
+import { Request, Response } from 'express';
 import { GoogleSmartHome } from './SmartHome';
 
 const userId = '0';
@@ -65,7 +62,7 @@ export default class HttpActions {
     //
     //
     //
-    httpActionsRegister(httpRoot, appHttp) {
+    httpActionsRegister(httpRoot: string, appHttp: express.Express | undefined): void {
         let me = this;
         if (typeof appHttp === 'undefined') {
             appHttp = this._smarthome.app;
@@ -89,14 +86,14 @@ export default class HttpActions {
          *   }
          * }
          */
-        appHttp.post(me._smarthome.Path_join(httpRoot, 'smarthome'), function (request, response) {
+        appHttp.post(me._smarthome.Path_join(httpRoot, 'smarthome'), function (request: Request, response: Response) {
             me._post(request, response, 'smarthome');
         });
 
         /**
          * Endpoint to check HTTP(S) reachability.
          */
-        appHttp.get(me._smarthome.Path_join(httpRoot, 'check'), function (request, response) {
+        appHttp.get(me._smarthome.Path_join(httpRoot, 'check'), function (request: Request, response: Response) {
             me._smarthome.debug('HttpActions:httpActionsRegister(/check)');
             if (me._smarthome._debug) {
                 fs.readFile(path.join(__dirname, 'frontend/check.html'), 'utf8', function (err, data) {
@@ -116,7 +113,7 @@ export default class HttpActions {
         /**
          * Enables preflight (OPTIONS) requests made cross-domain.
          */
-        appHttp.options(me._smarthome.Path_join(httpRoot, 'smarthome'), function (request, response) {
+        appHttp.options(me._smarthome.Path_join(httpRoot, 'smarthome'), function (request: Request, response: Response) {
             me._options(request, response);
         });
     }
@@ -137,7 +134,7 @@ export default class HttpActions {
          *   },
          * }
          */
-        appHttp.post(me._smarthome.Path_join(httpLocalRoot, 'smarthome'), function (request, response) {
+        appHttp.post(me._smarthome.Path_join(httpLocalRoot, 'smarthome'), function (request: Request, response: Response) {
             me._smarthome.debug('local smarthome: request.headers = ' + JSON.stringify(request.headers));
             if (!isLocalIP(request.ip)) {
                 response.status(200).set({
@@ -150,14 +147,14 @@ export default class HttpActions {
         /**
          * Enables preflight (OPTIONS) requests made cross-domain.
          */
-        appHttp.options(me._smarthome.Path_join(httpLocalRoot, 'smarthome'), function (request, response) {
+        appHttp.options(me._smarthome.Path_join(httpLocalRoot, 'smarthome'), function (request: Request, response: Response) {
             me._options(request, response);
         });
 
         /**
          * Endpoint to check HTTP reachability.
          */
-        appHttp.get(me._smarthome.Path_join(httpLocalRoot, 'check'), function (request, response) {
+        appHttp.get(me._smarthome.Path_join(httpLocalRoot, 'check'), function (request: Request, response: Response) {
             me._smarthome.debug('HttpActions:httpLocalActionsRegister(/check)');
             response.send('SUCCESS');
         });
@@ -168,7 +165,7 @@ export default class HttpActions {
      * @param {Response} response - Express response object
      * @private
      */
-    _options(request, response) {
+    _options(request: Request, response: Response) {
         response.status(200).set({
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         }).send('null');
@@ -179,7 +176,7 @@ export default class HttpActions {
      * @param {Response} response - Express response object
      * @private
      */
-    _post(request, response, url) {
+    _post(request: Request, response: Response, url: string) {
         let me = this;
         let reqdata = request.body;
 
@@ -391,7 +388,7 @@ export default class HttpActions {
      * @param {Response} response - Express response object
      * @private
      */
-    _sync(requestId, response) {
+    _sync(requestId, response: Response) {
         this._smarthome.debug('HttpActions:_sync()');
 
         let devices = this._smarthome.devices.getProperties();
@@ -459,7 +456,7 @@ export default class HttpActions {
      * @param {Response} response - Express response object
      * @private
      */
-    _query(requestId, devices, response) {
+    _query(requestId, devices, response: Response) {
         this._smarthome.debug('HttpActions:_query()');
 
         let deviceIds = this._smarthome.devices.getDeviceIds(devices);
@@ -488,9 +485,10 @@ export default class HttpActions {
 
     /**
      * @param {Response} response - Express response object
+     * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
      * @private
      */
-    _exec(requestId, commands, response, is_local) {
+    _exec(requestId, commands, response: Response, is_local: boolean) {
         this._smarthome.debug('HttpActions:_exec()');
 
         // Prevent loop bound injection (https://codeql.github.com/codeql-query-help/javascript/js-loop-bound-injection/)
@@ -548,9 +546,10 @@ export default class HttpActions {
     }
 
     /**
+     * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
      * @private
      */
-    _execDevice(command, device, is_local) {
+    _execDevice(command, device, is_local: boolean) {
         let me = this;
 
         me._smarthome.debug('HttpActions:_execDevice(): command = ' + JSON.stringify(command));
@@ -618,7 +617,7 @@ export default class HttpActions {
      * @param {Response} response - Express response object
      * @private
      */
-    _reachable_devices(requestId, response) {
+    _reachable_devices(requestId, response: Response) {
         this._smarthome.debug('HttpActions:_reachable_devices()');
 
         let reachableDevices = this._smarthome.devices.getReachableDeviceIds();
@@ -647,7 +646,7 @@ export default class HttpActions {
     //
     //
     //
-    reportState(deviceId, states, notifications) {
+    reportState(deviceId: string, states, notifications) {
         let me = this;
 
         if (deviceId == undefined && Object.keys(states).length === 0 && notifications == undefined) {

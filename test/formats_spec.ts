@@ -43,7 +43,7 @@ function outputValue(value)
  * @param {mixed} targetValue - The expected result of the conversion for each input value
  * @param {string} targetDescription - Description of the target value for log output
  */
-function testConvertsToValue(inputValues, targetType, targetValue, targetDescription)
+function testConvertsToValue(inputValues, targetType, targetValue, targetDescription: string)
 {
     inputValues.forEach((value) => {
         it(`${outputValue(value)} converts to ${targetDescription}`, function () {
@@ -62,7 +62,7 @@ function testConvertsToValue(inputValues, targetType, targetValue, targetDescrip
  * @param {number} targetType - The target type to which the values will be converted
  * @param {string} targetDescription - Description of the target value for log output
  */
-function testForError(inputValues, targetType, targetDescription)
+function testForError(inputValues, targetType, targetDescription: string)
 {
     inputValues.forEach((value) => {
         it(`${outputValue(value)} throws error when converted to ${targetDescription}`, function () {
