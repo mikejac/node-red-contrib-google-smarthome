@@ -25,19 +25,51 @@
  */
 
 import https from 'https';
-import { Node, NodeAPI } from 'node-red';
+import { Node, NodeAPI, NodeDef } from 'node-red';
 import { GoogleSmartHome, setRED, RED } from './lib/SmartHome';
 import { MgmtNode } from './google-mgmt';
 import { DeviceNode } from './devices/device';
 
-export interface GoogleSmartHomeNode extends Node {}
+
+interface GoogleSmartHomeNodeConfig extends NodeDef {
+    id: string;
+    name: string;
+    enabledebug: boolean;
+    default_lang: string;
+    usegooglelogin: boolean;
+    port: string;
+    httppath: string;
+    usehttpnoderoot: boolean;
+    ssloffload: boolean;
+    local_scan_port: string;
+    local_scan_type: string;
+    localport: string;
+    accesstokenduration: string;
+    reportinterval: string;
+    request_sync_delay: string;
+    set_state_delay: string;
+}
+
+interface GoogleSmartHomeCredentials {
+    loginclientid: string;
+    emails: string[];
+    username: string;
+    password: string;
+    clientid: string;
+    clientsecret: string;
+    jwtkey: string;
+    publickey: string;
+    privatekey: string;
+}
+
+export interface GoogleSmartHomeNode extends Node<GoogleSmartHomeCredentials> {}
 
 export class GoogleSmartHomeNode {
     public app: GoogleSmartHome;
     private mgmtNodes: Record<string, MgmtNode>;
 
 
-    constructor(config) {
+    constructor(config: GoogleSmartHomeNodeConfig) {
 
         RED.nodes.createNode(this, config);
 

@@ -16,9 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Node, NodeAPI } from "node-red";
+import { Node, NodeAPI, NodeDef } from "node-red";
 import { setRED, RED } from "./lib/SmartHome";
 import { GoogleSmartHomeNode } from "./google-smarthome";
+
+
+interface MgmtNodeConfig extends NodeDef {
+    id: string;
+    name: string;
+    client: string;
+    set_state_type: string;
+}
 
 export interface MgmtNode extends Node {}
 
@@ -30,7 +38,7 @@ export class MgmtNode {
     private clientConn: GoogleSmartHomeNode;
 
 
-    constructor(config) {
+    constructor(config: MgmtNodeConfig) {
         RED.nodes.createNode(this, config);
 
         this.client = config.client;
