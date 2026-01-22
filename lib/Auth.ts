@@ -553,9 +553,8 @@ export default class Auth {
      * Generates a new access token.
      *
      * @returns {string} New access token
-     * @private
      */
-    _generateNewAccessToken() {
+    private _generateNewAccessToken() {
         while (true) {
             let accessToken = this.genRandomString();
             if (accessToken !== this._authStorage.localAuthCode && accessToken !== this._authStorage.nextLocalAuthCode && typeof this._authStorage.accessTokens[accessToken] == 'undefined') {
@@ -569,9 +568,8 @@ export default class Auth {
      *
      * @param {string} user - User for whom the access token should be generated
      * @returns {string} Access token
-     * @private
      */
-    _generateAccessToken(user) {
+    private _generateAccessToken(user) {
         let accessToken = this._generateNewAccessToken();
         this._authStorage.accessTokens[accessToken] = {
             user: user,
@@ -585,9 +583,8 @@ export default class Auth {
      *
      * @param {string} user - User for whom the refresh token should be generated
      * @returns {string} Refresh token
-     * @private
      */
-    _generateRefreshToken(user) {
+    private _generateRefreshToken(user) {
         while (true) {
             let refreshToken = this.genRandomString();
             if (typeof this._authStorage.refreshTokens[refreshToken] == 'undefined') {
@@ -601,9 +598,8 @@ export default class Auth {
      * Removes all access tokens for a specific user and all expired tokens.
      *
      * @param {string} user - Username of the user whose access tokens should be removed
-     * @private
      */
-    _removeAllAccessTokensExpiredAndForUser(user) {
+    private _removeAllAccessTokensExpiredAndForUser(user) {
         for (let token in this._authStorage.accessTokens) {
             let tokenInfo = this._authStorage.accessTokens[token];
             let expiresAt = tokenInfo.expiresAt;
@@ -618,9 +614,8 @@ export default class Auth {
      * Removes all access and refresh tokens for a specific user and all expired tokens.
      *
      * @param {string} user - Username of the user whose tokens should be removed
-     * @private
      */
-    _removeAllTokensForUser(user) {
+    private _removeAllTokensForUser(user) {
         this._removeAllAccessTokensExpiredAndForUser(user);
         for (let token in this._authStorage.refreshTokens) {
             let tokenUser = this._authStorage.refreshTokens[token];
@@ -632,10 +627,8 @@ export default class Auth {
 
     /**
      * Persists the auth storage to file.
-     *
-     * @private
      */
-    _persistAuthStorage() {
+    private _persistAuthStorage() {
         try {
             fs.writeFileSync(this._authFilename, JSON.stringify(this._authStorage))
         }
@@ -646,10 +639,8 @@ export default class Auth {
 
     /**
      * Clear all tokens from the auth storage.
-     *
-     * @private
      */
-    _clearAllTokens() {
+    private _clearAllTokens() {
         this._authStorage = {
             "accessTokens" : {},
             "refreshTokens" : {},

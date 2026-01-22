@@ -163,9 +163,8 @@ export default class HttpActions {
     /**
      * @param {Request} request   - Express request object
      * @param {Response} response - Express response object
-     * @private
      */
-    _options(request: Request, response: Response) {
+    private _options(request: Request, response: Response) {
         response.status(200).set({
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         }).send('null');
@@ -174,9 +173,8 @@ export default class HttpActions {
     /**
      * @param {Request} request   - Express request object
      * @param {Response} response - Express response object
-     * @private
      */
-    _post(request: Request, response: Response, url: string) {
+    private _post(request: Request, response: Response, url: string) {
         let me = this;
         let reqdata = request.body;
 
@@ -386,9 +384,8 @@ export default class HttpActions {
 
     /**
      * @param {Response} response - Express response object
-     * @private
      */
-    _sync(requestId, response: Response) {
+    private _sync(requestId, response: Response) {
         this._smarthome.debug('HttpActions:_sync()');
 
         let devices = this._smarthome.devices.getProperties();
@@ -454,9 +451,8 @@ export default class HttpActions {
 
     /**
      * @param {Response} response - Express response object
-     * @private
      */
-    _query(requestId, devices, response: Response) {
+    private _query(requestId, devices, response: Response) {
         this._smarthome.debug('HttpActions:_query()');
 
         let deviceIds = this._smarthome.devices.getDeviceIds(devices);
@@ -486,9 +482,8 @@ export default class HttpActions {
     /**
      * @param {Response} response - Express response object
      * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
-     * @private
      */
-    _exec(requestId, commands, response: Response, is_local: boolean) {
+    private _exec(requestId, commands, response: Response, is_local: boolean) {
         this._smarthome.debug('HttpActions:_exec()');
 
         // Prevent loop bound injection (https://codeql.github.com/codeql-query-help/javascript/js-loop-bound-injection/)
@@ -547,9 +542,8 @@ export default class HttpActions {
 
     /**
      * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
-     * @private
      */
-    _execDevice(command, device, is_local: boolean) {
+    private _execDevice(command, device, is_local: boolean) {
         let me = this;
 
         me._smarthome.debug('HttpActions:_execDevice(): command = ' + JSON.stringify(command));
@@ -615,9 +609,8 @@ export default class HttpActions {
 
     /**
      * @param {Response} response - Express response object
-     * @private
      */
-    _reachable_devices(requestId, response: Response) {
+    private _reachable_devices(requestId, response: Response) {
         this._smarthome.debug('HttpActions:_reachable_devices()');
 
         let reachableDevices = this._smarthome.devices.getReachableDeviceIds();

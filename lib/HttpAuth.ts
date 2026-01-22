@@ -197,9 +197,8 @@ export default class HttpAuth {
      * @returns {{}}
      * {
      * }
-     * @private
      */
-    _handleUserAuth(req: Request, res: Response, username, password, isValidUser, httpRoot) {
+    private _handleUserAuth(req: Request, res: Response, username, password, isValidUser, httpRoot) {
         if (!isValidUser) {
             let redirectUrl = util.format('%s?client_id=%s&redirect_uri=%s&state=%s&response_type=code&error=invalid_user',
                 this._smarthome.Path_join(httpRoot, 'oauth'), req.body.client_id, encodeURIComponent(req.body.redirect_uri), req.body.state);
@@ -234,9 +233,8 @@ export default class HttpAuth {
      *   refresh_token: "REFRESH_TOKEN"
      *   expires_in: "EXPIRATION_SECONDS",
      * }
-     * @private
      */
-    _handleAuthCode(req: Request, res: Response, my_uri) {
+    private _handleAuthCode(req: Request, res: Response, my_uri) {
         let code         = req.query.code          ? req.query.code          : req.body.code;
         let redirect_uri = req.query.redirect_uri  ? req.query.redirect_uri  : req.body.redirect_uri;
 
@@ -259,9 +257,8 @@ export default class HttpAuth {
      *   access_token: "ACCESS_TOKEN",
      *   expires_in: "EXPIRATION_SECONDS",
      * }
-     * @private
      */
-    _handleRefreshToken(req: Request, res: Response) {
+    private _handleRefreshToken(req: Request, res: Response) {
         let refreshToken = req.query.refresh_token ? req.query.refresh_token : req.body.refresh_token;
 
         try {
