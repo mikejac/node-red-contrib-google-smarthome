@@ -178,12 +178,12 @@ export default class HttpActions {
         let me = this;
         let reqdata = request.body;
 
-        me._smarthome.debug('HttpActions:httpActionsRegister(/' + url + '): request.headers = ' + JSON.stringify(request.headers));
-        me._smarthome.debug('HttpActions:httpActionsRegister(/' + url + '): reqdata = ' + JSON.stringify(reqdata));
+        me._smarthome.debug('HttpActions:_post(/' + url + '): request.headers = ' + JSON.stringify(request.headers));
+        me._smarthome.debug('HttpActions:_post(/' + url + '): reqdata = ' + JSON.stringify(reqdata));
 
         let res = request.headers.authorization;
         if (!res) {
-            me._smarthome.error('HttpActions:httpActionsRegister(/' + url + '): missing authorization header; res = ' + JSON.stringify(res));
+            me._smarthome.error('HttpActions:_post(/' + url + '): missing authorization header; res = ' + JSON.stringify(res));
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -194,7 +194,7 @@ export default class HttpActions {
 
         res = res.split(" ");
         if (res.length != 2 || res[0] !== 'Bearer') {
-            me._smarthome.error('HttpActions:httpActionsRegister(/' + url + '): invalid authorization data; res = ' + JSON.stringify(res));
+            me._smarthome.error('HttpActions:_post(/' + url + '): invalid authorization data; res = ' + JSON.stringify(res));
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -207,7 +207,7 @@ export default class HttpActions {
         const is_local_execution = me._smarthome.auth.isValidLocalAccessToken(accessToken);
         const user = me._smarthome.auth.getuserForAccessToken(accessToken);
         if (user === null) {
-            me._smarthome.error('HttpActions:httpActionsRegister(/' + url + '): no user found for access token "' + accessToken + '"');
+            me._smarthome.error('HttpActions:_post(/' + url + '): no user found for access token "' + accessToken + '"');
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -223,10 +223,10 @@ export default class HttpActions {
             }
         }
 
-        me._smarthome.debug('HttpActions:httpActionsRegister(/' + url + '): user: ' + user);
+        me._smarthome.debug('HttpActions:_post(/' + url + '): user: ' + user);
 
         if (!reqdata.inputs) {
-            me._smarthome.error('HttpActions:httpActionsRegister(/' + url + '): missing reqdata.inputs');
+            me._smarthome.error('HttpActions:_post(/' + url + '): missing reqdata.inputs');
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -240,7 +240,7 @@ export default class HttpActions {
             let intent = input.intent;
 
             if (!intent) {
-                me._smarthome.error('HttpActions:httpActionsRegister(/' + url + '): missing intent');
+                me._smarthome.error('HttpActions:_post(/' + url + '): missing intent');
 
                 response.status(401).set({
                     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -251,7 +251,7 @@ export default class HttpActions {
 
             switch (intent) {
                 case 'action.devices.SYNC':
-                    me._smarthome.debug('HttpActions:httpActionsRegister(/' + url + '): SYNC');
+                    me._smarthome.debug('HttpActions:_post(/' + url + '): SYNC');
                     /**
                      * request:
                      * {
@@ -265,7 +265,7 @@ export default class HttpActions {
                     break;
 
                 case 'action.devices.QUERY':
-                    me._smarthome.debug('HttpActions:httpActionsRegister(/' + url + '): QUERY');
+                    me._smarthome.debug('HttpActions:_post(/' + url + '): QUERY');
                     /**
                      * request:
                      * {
@@ -296,7 +296,7 @@ export default class HttpActions {
                     break;
 
                 case 'action.devices.EXECUTE':
-                    me._smarthome.debug('HttpActions:httpActionsRegister(/' + url + '): EXECUTE');
+                    me._smarthome.debug('HttpActions:_post(/' + url + '): EXECUTE');
                     /**
                      * request:
                      * {
@@ -335,7 +335,7 @@ export default class HttpActions {
                     break;
 
                 case 'action.devices.DISCONNECT':
-                    me._smarthome.debug('HttpActions:httpActionsRegister(/' + url + '): DISCONNECT');
+                    me._smarthome.debug('HttpActions:_post(/' + url + '): DISCONNECT');
                     me._smarthome.auth.removeAllTokensForUser(user);
 
                     response.status(200).set({
@@ -344,7 +344,7 @@ export default class HttpActions {
                     break;
 
                 case 'action.devices.IDENTIFY':
-                    me._smarthome.debug('HttpActions:httpActionsRegister(/' + url + '): IDENTIFY');
+                    me._smarthome.debug('HttpActions:_post(/' + url + '): IDENTIFY');
 
                     me._smarthome.checkAppJsVersion(reqdata.appJsVersion);
 
@@ -367,12 +367,12 @@ export default class HttpActions {
                     break;
 
                 case 'action.devices.REACHABLE_DEVICES':
-                    me._smarthome.debug('HttpActions:httpActionsRegister(/' + url + '): REACHABLE_DEVICES');
+                    me._smarthome.debug('HttpActions:_post(/' + url + '): REACHABLE_DEVICES');
                     me._reachable_devices(reqdata.requestId, response);
                     break;
 
                 default:
-                    me._smarthome.error('HttpActions:httpActionsRegister(/' + url + '): invalid intent');
+                    me._smarthome.error('HttpActions:_post(/' + url + '): invalid intent');
 
                     response.status(401).set({
                         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
