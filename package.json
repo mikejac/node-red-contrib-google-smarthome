@@ -83,6 +83,7 @@
     "!dist/test/",
     "!dist/tsconfig.tsbuildinfo",
     "examples/**/*",
+    "local-execution/app.js",
     "README.md",
     "LICENSE"
   ]
