@@ -28,7 +28,7 @@ import GoogleSmartHomeNode from '../google-smarthome';
 // @ts-expect-error Silence warning about missing default export ("export default ..."), as Node-RED expocts CommonJS export ("module.exports = ...")
 import MgmtNode from '../google-mgmt';
 
-helper.init();
+helper.init(require.resolve('node-red'));
 
 describe('Device Node', function () {
     beforeEach(function (done) {
