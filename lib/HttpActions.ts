@@ -352,7 +352,7 @@ export default class HttpActions {
                         requestId: reqdata.requestId,
                         payload: {
                             device: {
-                                id: me._smarthome._nodeId,
+                                id: this._smarthome.configNode.id,
                                 isLocalOnly: true,
                                 isProxy: true,
                                 deviceInfo: {
