@@ -8,7 +8,7 @@ on:
 
 permissions:
   id-token: write  # Required for OIDC trusted publishing to NPM
-  contents: read
+  contents: write  # Required for adding the tarball to the GitHub release
 
 jobs:
   publish-npm:
@@ -26,6 +26,16 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Create npm package tarball
+        run: |
+          TGZ="$(npm pack)"
+          echo "TGZ=$TGZ" >> $GITHUB_ENV
+      - name: Upload tgz to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          gh release upload "$TAG" "$TGZ" --clobber
       - name: npm Publish
         run: npm publish
       - name: Publish to Node-RED Library
