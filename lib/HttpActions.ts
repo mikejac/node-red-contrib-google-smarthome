@@ -59,112 +59,125 @@ export default class HttpActions {
     constructor(smarthome: GoogleSmartHome) {
         this._smarthome = smarthome;
     }
-    //
-    //
-    //
+
+    /**
+     * Register HTTP endpoints for cloud fulfillment.
+     *
+     * @param httpRoot - URL prefix for HTTP endpoints.
+     * @param appHttp - Express application instance.
+     */
     httpActionsRegister(httpRoot: string, appHttp: express.Express | undefined): void {
         if (typeof appHttp === 'undefined') {
             appHttp = this._smarthome.app;
         }
 
-        /**
-         *
-         * action: {
-         *   initialTrigger: {
-         *     intent: [
-         *       "action.devices.SYNC",
-         *       "action.devices.QUERY",
-         *       "action.devices.EXECUTE"
-         *       "action.devices.IDENTIFY",
-         *       "action.devices.REACHABLE_DEVICES",
-         *     ]
-         *   },
-         *   httpExecution: "https://example.org/device/agent",
-         *   accountLinking: {
-         *     authenticationUrl: "https://example.org/device/auth"
-         *   }
-         * }
-         */
-        appHttp.post(this._smarthome.Path_join(httpRoot, 'smarthome'), (request: Request, response: Response) => {
-            this._post(request, response, 'smarthome');
-        });
+        // POST /smarthome
+        appHttp.post(this._smarthome.Path_join(httpRoot, 'smarthome'), (request, response) => this._handlePostSmarthome(request, response));
 
-        /**
-         * Endpoint to check HTTP(S) reachability.
-         */
-        appHttp.get(this._smarthome.Path_join(httpRoot, 'check'), (request: Request, response: Response) => {
-            this._smarthome.debug('HttpActions:httpActionsRegister(/check)');
-            if (this._smarthome._debug) {
-                fs.readFile(path.join(__dirname, 'frontend/check.html'), 'utf8', (err, data) => {
-                    if (err) {
-                        response.end();
-                        throw (err);
-                    }
-                    response
-                        .set("Content-Security-Policy", "default-src 'self' 'unsafe-inline' code.jquery.com")
-                        .send(data);
-                });
-            } else {
-                response.send('SUCCESS - Cloud fulfillment HTTP server is reachable');
-            }
-        });
+        // GET /check
+        appHttp.get(this._smarthome.Path_join(httpRoot, 'check'), (request, response) => this._handleGetCheck(request, response));
 
-        /**
-         * Enables preflight (OPTIONS) requests made cross-domain.
-         */
-        appHttp.options(this._smarthome.Path_join(httpRoot, 'smarthome'), (request: Request, response: Response) => {
-            this._options(request, response);
-        });
-    }
-
-    httpLocalActionsRegister(httpLocalRoot, appHttp) {
-        /**
-         *
-         * action: {
-         *   initialTrigger: {
-         *     intent: [
-         *       "action.devices.IDENTIFY",
-         *       "action.devices.REACHABLE_DEVICES",
-         *       "action.devices.QUERY",
-         *       "action.devices.EXECUTE"
-         *     ]
-         *   },
-         * }
-         */
-        appHttp.post(this._smarthome.Path_join(httpLocalRoot, 'smarthome'), (request: Request, response: Response) => {
-            this._smarthome.debug('local smarthome: request.headers = ' + JSON.stringify(request.headers));
-            if (!isLocalIP(request.ip)) {
-                response.status(200).set({
-                    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-                }).json({});
-            }
-            this._post(request, response, 'smarthome');
-        });
-
-        /**
-         * Enables preflight (OPTIONS) requests made cross-domain.
-         */
-        appHttp.options(this._smarthome.Path_join(httpLocalRoot, 'smarthome'), (request: Request, response: Response) => {
-            this._options(request, response);
-        });
-
-        /**
-         * Endpoint to check HTTP reachability.
-         */
-        appHttp.get(this._smarthome.Path_join(httpLocalRoot, 'check'), (request: Request, response: Response) => {
-            this._smarthome.debug('HttpActions:httpLocalActionsRegister(/check)');
-            response.send('SUCCESS - Local fulfillment HTTP server is reachable');
-        });
+        // OPTIONS /smarthome
+        appHttp.options(this._smarthome.Path_join(httpRoot, 'smarthome'), (request, response) => this._handleOptionsSmarthome(request, response));
     }
 
     /**
-     * @param {Request} request   - Express request object
-     * @param {Response} response - Express response object
+     * Register HTTP endpoints for local fulfillment.
+     * 
+     * @param httpLocalRoot - URL prefix for local HTTP endpoints.
+     * @param appHttp - Express application instance.
      */
-    private _options(request: Request, response: Response) {
-        response.status(200).set({
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        }).send('null');
+    httpLocalActionsRegister(httpLocalRoot: string, appHttp: express.Express): void {
+        // POST /smarthome
+        appHttp.post(this._smarthome.Path_join(httpLocalRoot, 'smarthome'), (request, response) => this._handleLocalPostSmarthome(request, response));
+
+        // OPTIONS /smarthome
+        appHttp.options(this._smarthome.Path_join(httpLocalRoot, 'smarthome'), (request, response) => this._handleOptionsSmarthome(request, response));
+
+        // GET /check
+        appHttp.get(this._smarthome.Path_join(httpLocalRoot, 'check'), (request, response) => this._handleLocalGetCheck(request, response));
+    }
+
+    /**
+     * Handle POST requests to the /smarthome endpoint.
+     * These requests contain the SYNC, QUERY, EXECUTE, IDENTIFY and REACHABLE_DEVICES intents
+     * to query and control devices via cloud fulfillment.
+     * 
+     * @param request  - Express request object
+     * @param response - Express response object
+     */
+    private _handlePostSmarthome(request: Request, response: Response) {
+        this._post(request, response, 'smarthome');
+    }
+
+    /**
+     * Handle GET requests to the /check endpoint.
+     * This endpoint can be used to verify that the HTTP server for cloud fulfillment
+     * is reachable.
+     *
+     * @param request  - Express request object
+     * @param response - Express response object
+     */
+    private _handleGetCheck(request: Request, response: Response) {
+        this._smarthome.debug('HttpActions:_handleGetCheck()');
+        if (this._smarthome._debug) {
+            fs.readFile(path.join(__dirname, 'frontend/check.html'), 'utf8', function (err, data) {
+                if (err) {
+                    response.end();
+                    throw (err);
+                }
+                response
+                    .set("Content-Security-Policy", "default-src 'self' 'unsafe-inline' code.jquery.com")
+                    .send(data);
+            });
+        } else {
+            response.send('SUCCESS - Cloud fulfillment HTTP server is reachable');
+        }
+    }
+
+    /**
+     * Handle Google's preflight check.
+     * Used for both cloud and local fulfillment.
+     *
+     * @param request  - Express request object
+     * @param response - Express response object
+     */
+    private _handleOptionsSmarthome(request: Request, response: Response): void {
+        response
+            .status(200)
+            .set({'Access-Control-Allow-Headers': 'Content-Type, Authorization'})
+            .send('null');
+    }
+
+    /**
+     * Handle POST requests to the /smarthome endpoint for local fulfillment.
+     * These requests contain the IDENTIFY, REACHABLE_DEVICES, QUERY and EXECUTE intents
+     * to query and control devices via local fulfillment.
+     * 
+     * @param request  - Express request object
+     * @param response - Express response object
+     */
+    private _handleLocalPostSmarthome(request: Request, response: Response): void {
+        this._smarthome.debug('local smarthome: request.headers = ' + JSON.stringify(request.headers));
+        if (!isLocalIP(request.ip)) {
+            response.status(200).set({
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            }).json({});
+        }
+        this._post(request, response, 'smarthome');
+    }
+
+    /**
+     * Handle GET requests to the /check endpoint for local fulfillment.
+     * This endpoint can be used to verify that the HTTP server for
+     * local fulfillment is reachable.
+     * 
+     * @param request  - Express request object
+     * @param response - Express response object
+     */
+    private _handleLocalGetCheck(request: Request, response: Response): void {
+        this._smarthome.debug('HttpActions:_handleLocalGetCheck()');
+        response.send('SUCCESS - Local fulfillment HTTP server is reachable');
     }
 
     /**

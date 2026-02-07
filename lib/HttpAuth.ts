@@ -41,9 +41,13 @@ export default class HttpAuth {
     constructor(smarthome: GoogleSmartHome) {
         this._smarthome = smarthome;
     }
-    //
-    //
-    //
+
+    /**
+     * Register HTTP endpoints for authentication.
+     *
+     * @param httpRoot - URL prefix for HTTP endpoints.
+     * @param appHttp - Express application instance.
+     */
     httpAuthRegister(httpRoot: string, appHttp: express.Express | undefined): void {
         let use_decode = false;
         if (typeof appHttp === 'undefined') {
@@ -51,145 +55,178 @@ export default class HttpAuth {
             use_decode = true;
         }
 
-        /**
-         * expecting something like the following:
-         *
-         * GET https://myservice.example.com/auth? \
-         *   client_id=GOOGLE_CLIENT_ID
-         *      - The Google client ID you registered with Google.
-         *   &redirect_uri=REDIRECT_URI
-         *      - The URL to which to send the response to this request
-         *   &state=STATE_STRING
-         *      - A bookkeeping value that is passed back to Google unchanged
-         *          in the result
-         *   &response_type=code
-         *      - The string code
-         */
-        appHttp.get(this._smarthome.Path_join(httpRoot, 'oauth'), (req: Request, res: Response) => {
-            this._smarthome.debug('HttpAuth:httpAuthRegister(GET /oauth) query ' + JSON.stringify(req.query));
+        // GET /oauth
+        appHttp.get(this._smarthome.Path_join(httpRoot, 'oauth'), (request, response) => this._handleGetOauth(request, response));
 
-            if (req.query.response_type !== 'code') {
-                this._smarthome.error('HttpAuth:httpAuthRegister(GET /oauth): response_type ' + req.query.response_type + ' must equal "code"');
-                return res.status(500)
-                    .send('response_type ' + req.query.response_type + ' must equal "code"');
+        // POST /oauth
+        appHttp.post(this._smarthome.Path_join(httpRoot, 'oauth'), (request, response) => this._handlePostOauth(request, response, httpRoot, use_decode));
+
+        // ALL /token
+        appHttp.all(this._smarthome.Path_join(httpRoot, 'token'), (request, response) => this._handleAllToken(request, response, httpRoot));
+    }
+
+    /**
+     * Handle GET requests to the /oauth endpoint.
+     * This is called by the Google Home app to start the login process.
+     * It shows the login page to the user.
+     *
+     * Expects something like this:
+     *
+     * GET https://myservice.example.com/auth? \
+     *   client_id=GOOGLE_CLIENT_ID
+     *      - The Google client ID you registered with Google.
+     *   &redirect_uri=REDIRECT_URI
+     *      - The URL to which to send the response to this request
+     *   &state=STATE_STRING
+     *      - A bookkeeping value that is passed back to Google unchanged in the result
+     *   &response_type=code
+     *      - The oAuth response type. Must be "code".
+     * 
+     * @param request - The HTTP request object.
+     * @param response - The HTTP response object.
+     */
+    private _handleGetOauth(request: Request, response: Response): void {
+        this._smarthome.debug('HttpAuth:_handleGetOauth() query ' + JSON.stringify(request.query));
+
+        if (request.query.response_type !== 'code') {
+            this._smarthome.error('HttpAuth:_handleGetOauth(): response_type ' + request.query.response_type + ' must equal "code"');
+            response.status(500).send('response_type ' + request.query.response_type + ' must equal "code"');
+        }
+
+        if (!this._smarthome.auth.isValidClient(request.query.client_id)) {
+            this._smarthome.error('HttpAuth:_handleGetOauth(): client_id ' + request.query.client_id + ' invalid');
+            response.status(500).send('client_id ' + request.query.client_id + ' invalid');
+        }
+
+        const useGoogleClientAuth = this._smarthome.auth.useGoogleClientAuth();
+        const googleClientId = useGoogleClientAuth ? this._smarthome.auth.getGoogleClientId() : '';
+
+        // User is not logged in. Show login page.
+        this._smarthome.debug('HttpAuth:_handleGetOauth() User is not logged in, showing login page');
+        fs.readFile(path.join(__dirname, 'frontend/login.html'), 'utf8', function (err, data) {
+            if (err) {
+                response.end();
+                throw(err);
             }
-
-            if (!this._smarthome.auth.isValidClient(req.query.client_id)) {
-                this._smarthome.error('HttpAuth:httpAuthRegister(GET /oauth): client_id ' + req.query.client_id + ' invalid');
-                return res.status(500).send('client_id ' + req.query.client_id + ' invalid');
-            }
-
-            const useGoogleClientAuth = this._smarthome.auth.useGoogleClientAuth();
-            const googleClientId = useGoogleClientAuth ? this._smarthome.auth.getGoogleClientId() : '';
-            // User is not logged in. Show login page.
-            this._smarthome.debug('HttpAuth:httpAuthRegister(GET /oauth) User is not logged in, showing login page');
-            fs.readFile(path.join(__dirname, 'frontend/login.html'), 'utf8', function (err, data) {
-                if (err) {
-                    res.end();
-                    throw(err);
-                }
-                res
-                    .set("Content-Security-Policy", "default-src 'self' 'unsafe-inline' *.google.com")
-                    .send(data.replace(/GOOGLE_CLIENT_ID/g, googleClientId).replace(/USE_GOOGLE_LOGIN/g, '' + useGoogleClientAuth));
-            });
+            response
+                .set("Content-Security-Policy", "default-src 'self' 'unsafe-inline' *.google.com")
+                .send(data.replace(/GOOGLE_CLIENT_ID/g, googleClientId).replace(/USE_GOOGLE_LOGIN/g, '' + useGoogleClientAuth));
         });
-        //
-        //
-        //
-        appHttp.post(this._smarthome.Path_join(httpRoot, 'oauth'), (req: Request, res: Response) => {
-            this._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): body = ' + JSON.stringify(req.body));
-            const my_uri = req.protocol + '://' + req.get('Host') + this._smarthome.Path_join(httpRoot, 'oauth');
+    }
 
-            // client_id in POST date is not decoded automatically by bodyParser and needs to be decoded manually
-            let client_id = use_decode ? decodeURIComponent(req.body.client_id) : req.body.client_id;
-            if (!this._smarthome.auth.isValidClient(client_id)) {
-                this._smarthome.error('HttpAuth:httpAuthRegister(POST /oauth): client_id ' + client_id + ' invalid');
-                res.status(500).send('client_id ' + client_id + ' invalid');
-                return;
-            }
+    /**
+     * Handle POST requests to the /oauth endpoint.
+     * This is called when the user submits the login form.
+     * 
+     * @param request - The HTTP request object.
+     * @param response - The HTTP response object.
+     * @param httpRoot - URL prefix for HTTP endpoints.
+     * @param use_decode - Whether to decode the client_id from the request body.
+     */
+    private _handlePostOauth(request: Request, response: Response, httpRoot: string, use_decode: boolean) {
+        this._smarthome.debug('HttpAuth:_handlePostOauth(): body = ' + JSON.stringify(request.body));
+        const my_uri = request.protocol + '://' + request.get('Host') + this._smarthome.Path_join(httpRoot, 'oauth');
 
-            if (!this._smarthome.auth.isValidRedirectUri(req.body.redirect_uri || '', this._smarthome._debug ? my_uri : '')) {
-                this._smarthome.error('HttpAuth:httpAuthRegister(POST /oauth): redirect_uri ' + req.body.redirect_uri + ' invalid');
-                res.status(500).send('redirect_uri ' + req.body.redirect_uri + ' invalid');
-                return;
-            }
+        // client_id in POST date is not decoded automatically by bodyParser and needs to be decoded manually
+        let client_id = use_decode ? decodeURIComponent(request.body.client_id) : request.body.client_id;
+        if (!this._smarthome.auth.isValidClient(client_id)) {
+            this._smarthome.error('HttpAuth:_handlePostOauth(): client_id ' + client_id + ' invalid');
+            response.status(500).send('client_id ' + client_id + ' invalid');
+            return;
+        }
 
-            if (this._smarthome.auth.useGoogleClientAuth()) {
-                this._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): Google login');
-                if (req.body.id_token) {
-                    const googleClientId = this._smarthome.auth.getGoogleClientId();
-                    const client = new OAuth2Client(googleClientId);
-                    client
-                        .verifyIdToken({
-                            idToken: req.body.id_token,
-                            audience: googleClientId,
-                        })
-                        .then((ticket) => {
-                            const payload = ticket.getPayload();
-                            // const userid = payload['sub'];
-                            const email = payload['email'];
-                            const isValidUser = this._smarthome.auth.isGoogleClientEmailValid(email);
-                            this._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): email ' + email + " valid: " + isValidUser);
-                            this._handleUserAuth(req, res, email, '', isValidUser, httpRoot);
-                        })
-                        .catch((err) => {
-                            this._smarthome.error('HttpAuth:httpAuthRegister(POST /oauth): verifyIdToken error ' + err);
-                            this._handleUserAuth(req, res, 'google', '', false, httpRoot);
-                        });
-                } else {
-                    this._handleUserAuth(req, res, 'google', '', false, httpRoot);
-                }
+        if (!this._smarthome.auth.isValidRedirectUri(request.body.redirect_uri || '', this._smarthome._debug ? my_uri : '')) {
+            this._smarthome.error('HttpAuth:_handlePostOauth(): redirect_uri ' + request.body.redirect_uri + ' invalid');
+            response.status(500).send('redirect_uri ' + request.body.redirect_uri + ' invalid');
+            return;
+        }
+
+        if (this._smarthome.auth.useGoogleClientAuth()) {
+            this._smarthome.debug('HttpAuth:_handlePostOauth(): Google login');
+            if (request.body.id_token) {
+                const googleClientId = this._smarthome.auth.getGoogleClientId();
+                const client = new OAuth2Client(googleClientId);
+                client
+                    .verifyIdToken({
+                        idToken: request.body.id_token,
+                        audience: googleClientId,
+                    })
+                    .then((ticket) => {
+                        const payload = ticket.getPayload();
+                        // const userid = payload['sub'];
+                        const email = payload['email'];
+                        const isValidUser = this._smarthome.auth.isGoogleClientEmailValid(email);
+                        this._smarthome.debug('HttpAuth:_handlePostOauth(): email ' + email + " valid: " + isValidUser);
+                        this._handleUserAuth(request, response, email, '', isValidUser, httpRoot);
+                    })
+                    .catch((err) => {
+                        this._smarthome.error('HttpAuth:_handlePostOauth(): verifyIdToken error ' + err);
+                        this._handleUserAuth(request, response, 'google', '', false, httpRoot);
+                    });
             } else {
-                this._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): Local login');
-                let isValidUser = this._smarthome.auth.isValidUser(req.body.username, req.body.password);
-                this._handleUserAuth(req, res, req.body.username, req.body.password, isValidUser, httpRoot);
+                this._handleUserAuth(request, response, 'google', '', false, httpRoot);
             }
-        });
+        } else {
+            this._smarthome.debug('HttpAuth:_handlePostOauth(): Local login');
+            let isValidUser = this._smarthome.auth.isValidUser(request.body.username, request.body.password);
+            this._handleUserAuth(request, response, request.body.username, request.body.password, isValidUser, httpRoot);
+        }
+    }
 
-        /**
-         * client_id=GOOGLE_CLIENT_ID
-         * &client_secret=GOOGLE_CLIENT_SECRET
-         * &response_type=token
-         * &grant_type=authorization_code
-         * &code=AUTHORIZATION_CODE
-         *
-         * OR
-         *
-         *
-         * client_id=GOOGLE_CLIENT_ID
-         * &client_secret=GOOGLE_CLIENT_SECRET
-         * &response_type=token
-         * &grant_type=refresh_token
-         * &refresh_token=REFRESH_TOKEN
-         */
-        appHttp.all(this._smarthome.Path_join(httpRoot, 'token'), (req: Request, res: Response) => {
-            this._smarthome.debug('HttpAuth:httpAuthRegister(/token): query = ' + JSON.stringify(req.query));
-            this._smarthome.debug('HttpAuth:httpAuthRegister(/token): body = ' + JSON.stringify(req.body));
-            const my_uri = req.protocol + '://' + req.get('Host') + this._smarthome.Path_join(httpRoot, 'oauth');
+    /**
+     * Handle GET and POST requests to the /token endpoint.
+     * 
+     * This is called by Google servers to exchange an authorization code for an access token
+     * or to refresh an access token.
+     * 
+     * 
+     * This endpoint expects either:
+     *
+     * client_id=GOOGLE_CLIENT_ID
+     * &client_secret=GOOGLE_CLIENT_SECRET
+     * &response_type=token
+     * &grant_type=authorization_code
+     * &code=AUTHORIZATION_CODE
+     *
+     * OR
+     *
+     * client_id=GOOGLE_CLIENT_ID
+     * &client_secret=GOOGLE_CLIENT_SECRET
+     * &response_type=token
+     * &grant_type=refresh_token
+     * &refresh_token=REFRESH_TOKEN
+     * 
+     * @param request - The HTTP request object.
+     * @param response - The HTTP response object.
+     * @param httpRoot - URL prefix for HTTP endpoints.
+     */
+    private _handleAllToken(request: Request, response: Response, httpRoot: string): void {
+        this._smarthome.debug('HttpAuth:_handleAllToken(): query = ' + JSON.stringify(request.query));
+        this._smarthome.debug('HttpAuth:_handleAllToken(): body = ' + JSON.stringify(request.body));
+        const my_uri = request.protocol + '://' + request.get('Host') + this._smarthome.Path_join(httpRoot, 'oauth');
 
-            const clientId = (req.query?.client_id as string | undefined) ?? (req.body?.client_id as string | undefined);
-            const clientSecret = (req.query?.client_secret as string | undefined) ?? (req.body?.client_secret as string | undefined);
-            const grantType = (req.query?.grant_type as string | undefined) ?? (req.body?.grant_type as string | undefined);
+        const clientId = (request.query?.client_id as string | undefined) ?? (request.body?.client_id as string | undefined);
+        const clientSecret = (request.query?.client_secret as string | undefined) ?? (request.body?.client_secret as string | undefined);
+        const grantType = (request.query?.grant_type as string | undefined) ?? (request.body?.grant_type as string | undefined);
 
-            if (!this._smarthome.auth.isValidClient(clientId, clientSecret)) {
-                this._smarthome.error('HttpAuth:httpAuthRegister(/token): invalid client id or secret');
-                res.status(400).send('invalid client id or secret');
-                return;
-            }
+        if (!this._smarthome.auth.isValidClient(clientId, clientSecret)) {
+            this._smarthome.error('HttpAuth:_handleAllToken(): invalid client id or secret');
+            response.status(400).send('invalid client id or secret');
+            return;
+        }
 
-            if (grantType === 'authorization_code') {
-                this._handleAuthCode(req, res, this._smarthome._debug ? my_uri : '');
-                return;
-            } else if (grantType === 'refresh_token') {
-                this._handleRefreshToken(req, res);
-                return;
-            } else {
-                this._smarthome.error('HttpAuth:httpAuthRegister(/token): grant_type ' + grantType + ' is not supported');
-                let error_result = {"error": "invalid_grant"};
-                res.status(400).send(error_result);
-                return;
-            }
-        });
+        if (grantType === 'authorization_code') {
+            this._handleAuthCode(request, response, this._smarthome._debug ? my_uri : '');
+            return;
+        } else if (grantType === 'refresh_token') {
+            this._handleRefreshToken(request, response);
+            return;
+        } else {
+            this._smarthome.error('HttpAuth:_handleAllToken(): grant_type ' + grantType + ' is not supported');
+            let error_result = {"error": "invalid_grant"};
+            response.status(400).send(error_result);
+            return;
+        }
     }
 
     /**
