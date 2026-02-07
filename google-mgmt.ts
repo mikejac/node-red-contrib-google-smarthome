@@ -196,7 +196,7 @@ export class MgmtNode {
     }
 }
 
-module.exports = function(RED:NodeAPI) {
+export default module.exports = function(RED:NodeAPI) {
     setRED(RED);
 
     RED.nodes.registerType("google-mgmt", MgmtNode);

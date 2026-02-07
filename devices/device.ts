@@ -5195,7 +5195,7 @@ export class DeviceNode {
 }
 
 
-module.exports = function(RED:NodeAPI) {
+export default module.exports = function(RED:NodeAPI) {
     setRED(RED);
 
     RED.nodes.registerType('google-device', DeviceNode);
