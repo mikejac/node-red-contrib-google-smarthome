@@ -75,7 +75,6 @@ export class GoogleSmartHomeNode {
 
         this.mgmtNodes = {};
 
-        const node = this;
         this.default_lang = config.default_lang || 'en';
         this.enabledebug = config.enabledebug;
 
@@ -84,10 +83,10 @@ export class GoogleSmartHomeNode {
             RED.settings.userDir,
             RED.settings.httpNodeRoot,
             config.usegooglelogin,
-            node.credentials.loginclientid || '',
-            node.credentials.emails || [],
-            node.credentials.username || '',
-            node.credentials.password || '',
+            this.credentials.loginclientid || '',
+            this.credentials.emails || [],
+            this.credentials.username || '',
+            this.credentials.password || '',
             parseInt(config.accesstokenduration || '60'), // minutes
             config.usehttpnoderoot,
             config.httppath,
@@ -97,31 +96,34 @@ export class GoogleSmartHomeNode {
             parseInt(config.localport || '0'),
             RED.server instanceof https.Server,
             config.ssloffload,
-            node.credentials.publickey || '',
-            node.credentials.privatekey || '',
-            node.credentials.jwtkey || '',
-            node.credentials.clientid || '',
-            node.credentials.clientsecret || '',
+            this.credentials.publickey || '',
+            this.credentials.privatekey || '',
+            this.credentials.jwtkey || '',
+            this.credentials.clientid || '',
+            this.credentials.clientsecret || '',
             config.reportinterval,     // minutes
             parseInt(config.request_sync_delay || '10'),
             parseInt(config.set_state_delay || '0'),
-            this.enabledebug, function (msg) { node._debug(msg); }, function (msg) { node._error(msg); });
+            this.enabledebug,
+            (msg) => { this._debug(msg); },
+            (msg) => { this._error(msg); }
+        );
 
         let err = this.app.Start(RED.httpNode || RED.httpAdmin, RED.server);
         if (err !== true) {
-            node._debug("GoogleSmartHomeNode(constructor): error " + JSON.stringify(err));
+            this._debug("GoogleSmartHomeNode(constructor): error " + JSON.stringify(err));
             RED.log.error(err);
             return;
         }
 
-        this.on('close', function (removed, done) {
-            node.app.Stop(RED.httpNode || RED.httpAdmin, done);
+        this.on('close', (removed, done) => {
+            this.app.Stop(RED.httpNode || RED.httpAdmin, done);
 
             if (removed) {
                 // this node has been deleted
             } else {
                 // this node is being restarted
-                node._debug("GoogleSmartHomeNode(on-close): restarting");
+                this._debug("GoogleSmartHomeNode(on-close): restarting");
             }
         });
 
@@ -129,41 +131,41 @@ export class GoogleSmartHomeNode {
          * notifications coming from the application server
          *
          */
-        this.app.emitter.on('server', function (state, param1) {
-            node._debug("GoogleSmartHomeNode(on-server): state  = " + state);
-            node._debug("GoogleSmartHomeNode(on-server): param1 = " + param1);
+        this.app.emitter.on('server', (state, param1) => {
+            this._debug("GoogleSmartHomeNode(on-server): state  = " + state);
+            this._debug("GoogleSmartHomeNode(on-server): param1 = " + param1);
 
-            node.callMgmtFuncs({
+            this.callMgmtFuncs({
                 _type: 'server',
                 state: state,
                 param1: param1
             });
         });
 
-        this.app.emitter.on('actions-reportstate', function (msg) {
-            node._debug("GoogleSmartHomeNode(on-actions-reportstate): msg = " + JSON.stringify(msg));
+        this.app.emitter.on('actions-reportstate', (msg) => {
+            this._debug("GoogleSmartHomeNode(on-actions-reportstate): msg = " + JSON.stringify(msg));
 
-            node.callMgmtFuncs({
+            this.callMgmtFuncs({
                 _type: 'actions-reportstate',
                 msg: msg
             });
         });
 
-        this.app.emitter.on('actions-requestsync', function (msg) {
-            node._debug("GoogleSmartHomeNode(on-actions-requestsync): msg = " + JSON.stringify(msg));
+        this.app.emitter.on('actions-requestsync', (msg) => {
+            this._debug("GoogleSmartHomeNode(on-actions-requestsync): msg = " + JSON.stringify(msg));
 
-            node.callMgmtFuncs({
+            this.callMgmtFuncs({
                 _type: 'actions-requestsync',
                 msg: msg
             });
         });
 
-        this.app.emitter.on('/login', function (msg, username, password) {
-            node._debug("GoogleSmartHomeNode(on-login): msg      = " + msg);
-            node._debug("GoogleSmartHomeNode(on-login): username = " + username);
-            node._debug("GoogleSmartHomeNode(on-login): password = " + password);
+        this.app.emitter.on('/login', (msg, username, password) => {
+            this._debug("GoogleSmartHomeNode(on-login): msg      = " + msg);
+            this._debug("GoogleSmartHomeNode(on-login): username = " + username);
+            this._debug("GoogleSmartHomeNode(on-login): password = " + password);
 
-            node.callMgmtFuncs({
+            this.callMgmtFuncs({
                 _type: 'login',
                 msg: msg
             });
@@ -187,12 +189,11 @@ export class GoogleSmartHomeNode {
 
     // call all management nodes
     callMgmtFuncs(obj) {
-        const node = this;
-        Object.keys(node.mgmtNodes).forEach(function (key) {
-            if (Object.prototype.hasOwnProperty.call(node.mgmtNodes, key)) {
-                node._debug("GoogleSmartHomeNode(on-server): found mgmt client");
+        Object.keys(this.mgmtNodes).forEach((key) => {
+            if (Object.prototype.hasOwnProperty.call(this.mgmtNodes, key)) {
+                this._debug("GoogleSmartHomeNode(on-server): found mgmt client");
 
-                node.mgmtNodes[key].updated(obj);
+                this.mgmtNodes[key].updated(obj);
             }
         });
     }
@@ -202,55 +203,48 @@ export class GoogleSmartHomeNode {
      *
      */
     register(client, type) {
-        const node = this;
-        node._debug("GoogleSmartHomeNode(): register; type = " + type + ' ' + client.id);
+        this._debug("GoogleSmartHomeNode(): register; type = " + type + ' ' + client.id);
 
         if (type === 'mgmt') {
-            node.mgmtNodes[client.id] = client;
+            this.mgmtNodes[client.id] = client;
         } else {
-            node.app.devices.registerDevice(client);
+            this.app.devices.registerDevice(client);
         }
     }
 
     deregister(client, type) {
-        const node = this;
-        node._debug("GoogleSmartHomeNode(): deregister; type = " + type);
+        this._debug("GoogleSmartHomeNode(): deregister; type = " + type);
 
-        if (type === 'mgmt' && node.mgmtNodes[client.id]) {
-            delete node.mgmtNodes[client.id];
+        if (type === 'mgmt' && this.mgmtNodes[client.id]) {
+            delete this.mgmtNodes[client.id];
         }
     }
 
     remove(client, type) {
-        const node = this;
-        node._debug("GoogleSmartHomeNode(): remove; type = " + type);
+        this._debug("GoogleSmartHomeNode(): remove; type = " + type);
 
-        if (type === 'mgmt' && node.mgmtNodes[client.id]) {
-            delete node.mgmtNodes[client.id];
+        if (type === 'mgmt' && this.mgmtNodes[client.id]) {
+            delete this.mgmtNodes[client.id];
         } else {
-            node.app.devices.DeleteDevice(client);
+            this.app.devices.DeleteDevice(client);
         }
     }
 
     sendNotifications(client: DeviceNode, notifications) {
-        const node = this;
-        node._debug("GoogleSmartHomeNode:sendNotifications(): notifications = " + JSON.stringify(notifications));
-        node.app.devices.SendNotifications(client.id, notifications);
+        this._debug("GoogleSmartHomeNode:sendNotifications(): notifications = " + JSON.stringify(notifications));
+        this.app.devices.SendNotifications(client.id, notifications);
     }
 
     reportState(deviceId: string) {
-        const node = this;
-        node.app.devices.ReportState(deviceId);
+        this.app.devices.ReportState(deviceId);
     }
 
     getIdFromName(name) {
-        const node = this;
-        return node.app.devices.GetIdFromName(name);
+        return this.app.devices.GetIdFromName(name);
     }
 
     getProperties(deviceIds) {
-        const node = this;
-        return node.app.devices.getProperties(deviceIds);
+        return this.app.devices.getProperties(deviceIds);
     }
 }
 

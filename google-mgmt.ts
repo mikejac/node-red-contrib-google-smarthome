@@ -77,15 +77,14 @@ export class MgmtNode {
      *
      */
     updated(data) {   // this must be defined before the call to clientConn.register()
-        const me = this;
-        me._debug("MgmtNode(updated): data = " + JSON.stringify(data));
+        this._debug("MgmtNode(updated): data = " + JSON.stringify(data));
 
         let msg = {
             topic: "management",
             payload: data
         };
 
-        me.send(msg);
+        this.send(msg);
     }
 
     /**
@@ -96,30 +95,24 @@ export class MgmtNode {
      * @param {Function} done - Function to inform the runtime that this node has finished its operation
      */
     onInput(msg, send, done) {
-        const me = this;
-
-        let topicArr = (msg.topic || '').split(me.topicDelim);
+        let topicArr = (msg.topic || '').split(this.topicDelim);
         let topic = topicArr[topicArr.length - 1];   // get last part of topic
         const topic_upper = topic.toUpperCase();
 
         try {
             if (topic_upper === 'RESTART_SERVER') {
-                me._debug("MgmtNode(input): RESTART_SERVER");
-
+                this._debug("MgmtNode(input): RESTART_SERVER");
                 this.clientConn.app.Restart(RED.httpNode || RED.httpAdmin, RED.server);
             } else if (topic_upper === 'REPORT_STATE') {
-                me._debug("MgmtNode(input): REPORT_STATE");
-
+                this._debug("MgmtNode(input): REPORT_STATE");
                 this.clientConn.app.ReportAllStates();
             } else if (topic_upper === 'REQUEST_SYNC') {
-                me._debug("MgmtNode(input): REQUEST_SYNC");
-
+                this._debug("MgmtNode(input): REQUEST_SYNC");
                 this.clientConn.app.RequestSync();
             } else if (topic_upper === 'GET_STATE' || topic_upper === 'GETSTATE') {
-                me._debug("MgmtNode(input): GET_STATE");
-
-                let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(me.set_state_type );
-                let useNames = ['all_by_name', 'filtered_by_name'].includes(me.set_state_type );
+                this._debug("MgmtNode(input): GET_STATE");
+                let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.set_state_type );
+                let useNames = ['all_by_name', 'filtered_by_name'].includes(this.set_state_type );
                 let deviceIds = undefined;
                 if (typeof msg.payload === 'boolean') {
                     onlyPersistent = msg.payload;
@@ -148,7 +141,7 @@ export class MgmtNode {
                     });
                 }
             } else if (topic_upper === 'SET_STATE' || topic_upper === 'SETSTATE') {
-                me._debug("MgmtNode(input): SET_STATE");
+                this._debug("MgmtNode(input): SET_STATE");
 
                 if (typeof msg.payload === 'object') {
                     this.clientConn.app.devices.setStates(msg.payload);

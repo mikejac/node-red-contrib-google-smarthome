@@ -58,25 +58,21 @@ export default class Devices {
     //
     //
     ReportState(deviceId: string) {
-        let me = this;
-
         if (!this._nodes[deviceId]) {
-            me._smarthome.debug('Device:ReportState(): device ' + deviceId + ' does not exist');
+            this._smarthome.debug('Device:ReportState(): device ' + deviceId + ' does not exist');
             return false;
         }
 
-        this._smarthome.httpActions.reportState(deviceId, me._nodes[deviceId].states);
+        this._smarthome.httpActions.reportState(deviceId, this._nodes[deviceId].states);
     }
     //
     //
     //
     SendNotifications(deviceId: string, notifications) {
-        let me = this;
-
         this._smarthome.debug('Devices:SendNotifications(): notifications = ' + JSON.stringify(notifications));
 
         if (!this._nodes[deviceId]) {
-            me._smarthome.debug('Device:SendNotifications(): device does not exist');
+            this._smarthome.debug('Device:SendNotifications(): device does not exist');
             return false;
         }
 
@@ -120,21 +116,20 @@ export default class Devices {
     //
     //
     getProperties(deviceIds = undefined) {
-        let me = this;
         let properties = {};
 
         if (!deviceIds) {
-            Object.keys(me._nodes).forEach(function (deviceId) {
-                if (Object.prototype.hasOwnProperty.call(me._nodes, deviceId)) {
-                    properties[deviceId] = me._nodes[deviceId].device.properties;
+            Object.keys(this._nodes).forEach((deviceId) => {
+                if (Object.prototype.hasOwnProperty.call(this._nodes, deviceId)) {
+                    properties[deviceId] = this._nodes[deviceId].device.properties;
                 }
             });
         } else {
             for (let i = 0; i < deviceIds.length; i++) {
                 let deviceId = deviceIds[i];
 
-                if (Object.prototype.hasOwnProperty.call(me._nodes, deviceId)) {
-                    properties[deviceId] = me._nodes[deviceId].device.properties;
+                if (Object.prototype.hasOwnProperty.call(this._nodes, deviceId)) {
+                    properties[deviceId] = this._nodes[deviceId].device.properties;
                 }
             }
         }
@@ -152,20 +147,19 @@ export default class Devices {
             this._smarthome.debug('Device:getStates(): deviceIds = ' + JSON.stringify(deviceIds));
         }
 
-        let me = this;
         let states = {};
 
         if (!deviceIds) {
-            Object.keys(me._nodes).forEach(function (deviceId) {
-                if (Object.prototype.hasOwnProperty.call(me._nodes, deviceId)) {
+            Object.keys(this._nodes).forEach((deviceId) => {
+                if (Object.prototype.hasOwnProperty.call(this._nodes, deviceId)) {
                     let include = true;
-                    let node = me._nodes[deviceId];
+                    let node = this._nodes[deviceId];
                     let key = useNames === true ? node.name : deviceId;
                     if (onlyPersistent === true) {
                         include = node.persistent_state || false;
                     } 
                     if (include) {
-                        states[key] = me._nodes[deviceId].states;
+                        states[key] = this._nodes[deviceId].states;
                     }
                 }
             });
@@ -174,8 +168,8 @@ export default class Devices {
                 let deviceId = deviceIds[i];
                 this._smarthome.debug('Device:getStates(with-deviceIds): deviceId = ' + JSON.stringify(deviceId));
 
-                if (Object.prototype.hasOwnProperty.call(me._nodes, deviceId)) {
-                    states[deviceId] = me._nodes[deviceId].states;
+                if (Object.prototype.hasOwnProperty.call(this._nodes, deviceId)) {
+                    states[deviceId] = this._nodes[deviceId].states;
                     this._smarthome.debug('Device:getStates(with-deviceIds): states[deviceId] = ' + JSON.stringify(states[deviceId]));
                 }
             }
@@ -199,15 +193,14 @@ export default class Devices {
     setStates(states) {
         this._smarthome.debug('Device:setStates()');
 
-        let me = this;
         Object.keys(states).forEach(deviceId => {
             this._smarthome.debug('Device:setStates(): deviceId = ' + JSON.stringify(deviceId));
-            if (Object.prototype.hasOwnProperty.call(me._nodes, deviceId)) {
-                me._nodes[deviceId].onInput({topic: me._nodes[deviceId].topicOut, payload: states[deviceId]});
+            if (Object.prototype.hasOwnProperty.call(this._nodes, deviceId)) {
+                this._nodes[deviceId].onInput({topic: this._nodes[deviceId].topicOut, payload: states[deviceId]});
             } else {
-                let id = me.GetIdFromName(deviceId);
+                let id = this.GetIdFromName(deviceId);
                 if (id !== undefined) {
-                    me._nodes[id].onInput({topic: me._nodes[id].topicOut, payload: states[deviceId]});
+                    this._nodes[id].onInput({topic: this._nodes[id].topicOut, payload: states[deviceId]});
                 }
             }
         });
@@ -237,10 +230,9 @@ export default class Devices {
     //
     //
     getReachableDeviceIds() {
-        let me = this;
         let reachableDevices = [];
 
-        Object.keys(me._nodes).forEach(function (deviceId) {
+        Object.keys(this._nodes).forEach(function (deviceId) {
             reachableDevices.push({verificationId: deviceId});
         });
 
@@ -250,20 +242,18 @@ export default class Devices {
     //
     //
     _devicesDoTimedSync() {
-        let me = this;
-
         if (this._devicesSyncTimer !== null) {
             clearTimeout(this._devicesSyncTimer);
         }
 
-        this._devicesSyncTimer = setTimeout(function () {
-            if (me._smarthome.auth.isAccountLinked()) {
-                me._smarthome.debug('Device:_devicesDoTimedSync(_devicesSyncTimer)');
-                me._smarthome.httpActions.requestSync();
+        this._devicesSyncTimer = setTimeout(() => {
+            if (this._smarthome.auth.isAccountLinked()) {
+                this._smarthome.debug('Device:_devicesDoTimedSync(_devicesSyncTimer)');
+                this._smarthome.httpActions.requestSync();
             } else {
-                me._smarthome.debug('Device:_devicesDoTimedSync(_devicesSyncTimer) skipped timed sync, no account linked yet');
+                this._smarthome.debug('Device:_devicesDoTimedSync(_devicesSyncTimer) skipped timed sync, no account linked yet');
             }
-            me._devicesSyncTimer = null;
+            this._devicesSyncTimer = null;
         }, syncRequestDelay);
     }
 }

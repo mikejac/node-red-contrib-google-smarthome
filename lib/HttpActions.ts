@@ -63,7 +63,6 @@ export default class HttpActions {
     //
     //
     httpActionsRegister(httpRoot: string, appHttp: express.Express | undefined): void {
-        let me = this;
         if (typeof appHttp === 'undefined') {
             appHttp = this._smarthome.app;
         }
@@ -86,17 +85,17 @@ export default class HttpActions {
          *   }
          * }
          */
-        appHttp.post(me._smarthome.Path_join(httpRoot, 'smarthome'), function (request: Request, response: Response) {
-            me._post(request, response, 'smarthome');
+        appHttp.post(this._smarthome.Path_join(httpRoot, 'smarthome'), (request: Request, response: Response) => {
+            this._post(request, response, 'smarthome');
         });
 
         /**
          * Endpoint to check HTTP(S) reachability.
          */
-        appHttp.get(me._smarthome.Path_join(httpRoot, 'check'), function (request: Request, response: Response) {
-            me._smarthome.debug('HttpActions:httpActionsRegister(/check)');
-            if (me._smarthome._debug) {
-                fs.readFile(path.join(__dirname, 'frontend/check.html'), 'utf8', function (err, data) {
+        appHttp.get(this._smarthome.Path_join(httpRoot, 'check'), (request: Request, response: Response) => {
+            this._smarthome.debug('HttpActions:httpActionsRegister(/check)');
+            if (this._smarthome._debug) {
+                fs.readFile(path.join(__dirname, 'frontend/check.html'), 'utf8', (err, data) => {
                     if (err) {
                         response.end();
                         throw (err);
@@ -113,14 +112,12 @@ export default class HttpActions {
         /**
          * Enables preflight (OPTIONS) requests made cross-domain.
          */
-        appHttp.options(me._smarthome.Path_join(httpRoot, 'smarthome'), function (request: Request, response: Response) {
-            me._options(request, response);
+        appHttp.options(this._smarthome.Path_join(httpRoot, 'smarthome'), (request: Request, response: Response) => {
+            this._options(request, response);
         });
     }
 
     httpLocalActionsRegister(httpLocalRoot, appHttp) {
-        let me = this;
-
         /**
          *
          * action: {
@@ -134,28 +131,28 @@ export default class HttpActions {
          *   },
          * }
          */
-        appHttp.post(me._smarthome.Path_join(httpLocalRoot, 'smarthome'), function (request: Request, response: Response) {
-            me._smarthome.debug('local smarthome: request.headers = ' + JSON.stringify(request.headers));
+        appHttp.post(this._smarthome.Path_join(httpLocalRoot, 'smarthome'), (request: Request, response: Response) => {
+            this._smarthome.debug('local smarthome: request.headers = ' + JSON.stringify(request.headers));
             if (!isLocalIP(request.ip)) {
                 response.status(200).set({
                     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
                 }).json({});
             }
-            me._post(request, response, 'smarthome');
+            this._post(request, response, 'smarthome');
         });
 
         /**
          * Enables preflight (OPTIONS) requests made cross-domain.
          */
-        appHttp.options(me._smarthome.Path_join(httpLocalRoot, 'smarthome'), function (request: Request, response: Response) {
-            me._options(request, response);
+        appHttp.options(this._smarthome.Path_join(httpLocalRoot, 'smarthome'), (request: Request, response: Response) => {
+            this._options(request, response);
         });
 
         /**
          * Endpoint to check HTTP reachability.
          */
-        appHttp.get(me._smarthome.Path_join(httpLocalRoot, 'check'), function (request: Request, response: Response) {
-            me._smarthome.debug('HttpActions:httpLocalActionsRegister(/check)');
+        appHttp.get(this._smarthome.Path_join(httpLocalRoot, 'check'), (request: Request, response: Response) => {
+            this._smarthome.debug('HttpActions:httpLocalActionsRegister(/check)');
             response.send('SUCCESS - Local fulfillment HTTP server is reachable');
         });
     }
@@ -175,15 +172,14 @@ export default class HttpActions {
      * @param {Response} response - Express response object
      */
     private _post(request: Request, response: Response, url: string) {
-        let me = this;
         let reqdata = request.body;
 
-        me._smarthome.debug('HttpActions:_post(/' + url + '): request.headers = ' + JSON.stringify(request.headers));
-        me._smarthome.debug('HttpActions:_post(/' + url + '): reqdata = ' + JSON.stringify(reqdata));
+        this._smarthome.debug('HttpActions:_post(/' + url + '): request.headers = ' + JSON.stringify(request.headers));
+        this._smarthome.debug('HttpActions:_post(/' + url + '): reqdata = ' + JSON.stringify(reqdata));
 
         let res = request.headers.authorization;
         if (!res) {
-            me._smarthome.error('HttpActions:_post(/' + url + '): missing authorization header; res = ' + JSON.stringify(res));
+            this._smarthome.error('HttpActions:_post(/' + url + '): missing authorization header; res = ' + JSON.stringify(res));
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -194,7 +190,7 @@ export default class HttpActions {
 
         res = res.split(" ");
         if (res.length != 2 || res[0] !== 'Bearer') {
-            me._smarthome.error('HttpActions:_post(/' + url + '): invalid authorization data; res = ' + JSON.stringify(res));
+            this._smarthome.error('HttpActions:_post(/' + url + '): invalid authorization data; res = ' + JSON.stringify(res));
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -204,10 +200,10 @@ export default class HttpActions {
         }
 
         let accessToken = res[1];
-        const is_local_execution = me._smarthome.auth.isValidLocalAccessToken(accessToken);
-        const user = me._smarthome.auth.getuserForAccessToken(accessToken);
+        const is_local_execution = this._smarthome.auth.isValidLocalAccessToken(accessToken);
+        const user = this._smarthome.auth.getuserForAccessToken(accessToken);
         if (user === null) {
-            me._smarthome.error('HttpActions:_post(/' + url + '): no user found for access token "' + accessToken + '"');
+            this._smarthome.error('HttpActions:_post(/' + url + '): no user found for access token "' + accessToken + '"');
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -223,10 +219,10 @@ export default class HttpActions {
             }
         }
 
-        me._smarthome.debug('HttpActions:_post(/' + url + '): user: ' + user);
+        this._smarthome.debug('HttpActions:_post(/' + url + '): user: ' + user);
 
         if (!reqdata.inputs) {
-            me._smarthome.error('HttpActions:_post(/' + url + '): missing reqdata.inputs');
+            this._smarthome.error('HttpActions:_post(/' + url + '): missing reqdata.inputs');
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -240,7 +236,7 @@ export default class HttpActions {
             let intent = input.intent;
 
             if (!intent) {
-                me._smarthome.error('HttpActions:_post(/' + url + '): missing intent');
+                this._smarthome.error('HttpActions:_post(/' + url + '): missing intent');
 
                 response.status(401).set({
                     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -251,7 +247,7 @@ export default class HttpActions {
 
             switch (intent) {
                 case 'action.devices.SYNC':
-                    me._smarthome.debug('HttpActions:_post(/' + url + '): SYNC');
+                    this._smarthome.debug('HttpActions:_post(/' + url + '): SYNC');
                     /**
                      * request:
                      * {
@@ -261,11 +257,11 @@ export default class HttpActions {
                      *  }]
                      * }
                      */
-                    me._sync(reqdata.requestId, response);
+                    this._sync(reqdata.requestId, response);
                     break;
 
                 case 'action.devices.QUERY':
-                    me._smarthome.debug('HttpActions:_post(/' + url + '): QUERY');
+                    this._smarthome.debug('HttpActions:_post(/' + url + '): QUERY');
                     /**
                      * request:
                      * {
@@ -292,11 +288,11 @@ export default class HttpActions {
                      *   }]
                      * }
                      */
-                    me._query(reqdata.requestId, reqdata.inputs[i].payload.devices, response);
+                    this._query(reqdata.requestId, reqdata.inputs[i].payload.devices, response);
                     break;
 
                 case 'action.devices.EXECUTE':
-                    me._smarthome.debug('HttpActions:_post(/' + url + '): EXECUTE');
+                    this._smarthome.debug('HttpActions:_post(/' + url + '): EXECUTE');
                     /**
                      * request:
                      * {
@@ -331,12 +327,12 @@ export default class HttpActions {
                      *   }]
                      * }
                      */
-                    me._exec(reqdata.requestId, reqdata.inputs[i].payload.commands, response, is_local_execution);
+                    this._exec(reqdata.requestId, reqdata.inputs[i].payload.commands, response, is_local_execution);
                     break;
 
                 case 'action.devices.DISCONNECT':
-                    me._smarthome.debug('HttpActions:_post(/' + url + '): DISCONNECT');
-                    me._smarthome.auth.removeAllTokensForUser(user);
+                    this._smarthome.debug('HttpActions:_post(/' + url + '): DISCONNECT');
+                    this._smarthome.auth.removeAllTokensForUser(user);
 
                     response.status(200).set({
                         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -344,9 +340,9 @@ export default class HttpActions {
                     break;
 
                 case 'action.devices.IDENTIFY':
-                    me._smarthome.debug('HttpActions:_post(/' + url + '): IDENTIFY');
+                    this._smarthome.debug('HttpActions:_post(/' + url + '): IDENTIFY');
 
-                    me._smarthome.checkAppJsVersion(reqdata.appJsVersion);
+                    this._smarthome.checkAppJsVersion(reqdata.appJsVersion);
 
                     response.status(200).json({
                         requestId: reqdata.requestId,
@@ -367,12 +363,12 @@ export default class HttpActions {
                     break;
 
                 case 'action.devices.REACHABLE_DEVICES':
-                    me._smarthome.debug('HttpActions:_post(/' + url + '): REACHABLE_DEVICES');
-                    me._reachable_devices(reqdata.requestId, response);
+                    this._smarthome.debug('HttpActions:_post(/' + url + '): REACHABLE_DEVICES');
+                    this._reachable_devices(reqdata.requestId, response);
                     break;
 
                 default:
-                    me._smarthome.error('HttpActions:_post(/' + url + '): invalid intent');
+                    this._smarthome.error('HttpActions:_post(/' + url + '): invalid intent');
 
                     response.status(401).set({
                         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -397,7 +393,6 @@ export default class HttpActions {
             return;
         }
 
-        let me = this;
         let deviceList = [];
 
         Object.keys(devices).forEach(function (key) {
@@ -442,7 +437,7 @@ export default class HttpActions {
             },
         };
 
-        me._smarthome.debug('HttpActions:_sync(): response = ' + JSON.stringify(deviceProps));
+        this._smarthome.debug('HttpActions:_sync(): response = ' + JSON.stringify(deviceProps));
 
         response.status(200).json(deviceProps);
 
@@ -544,16 +539,14 @@ export default class HttpActions {
      * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
      */
     private _execDevice(command, device, is_local: boolean) {
-        let me = this;
-
-        me._smarthome.debug('HttpActions:_execDevice(): command = ' + JSON.stringify(command));
+        this._smarthome.debug('HttpActions:_execDevice(): command = ' + JSON.stringify(command));
 
         const deviceId = device.id;
 
-        const cur_device = me._smarthome.devices.getDevice(deviceId);
+        const cur_device = this._smarthome.devices.getDevice(deviceId);
         // check whether the device exists or whether it exists and it is disconnected.
         if (!cur_device || !cur_device.states.online) {
-            me._smarthome.configNode.warn('HttpActions:_execDevice(): the device you want to control is offline');
+            this._smarthome.configNode.warn('HttpActions:_execDevice(): the device you want to control is offline');
             return { status: 'ERROR', errorCode: 'deviceOffline' };
         }
 
@@ -590,8 +583,8 @@ export default class HttpActions {
         if (reportState) {
             // update states in HomeGraph
             process.nextTick(() => {
-                let s = me._smarthome.devices.getStates([deviceId]);
-                me.reportState(deviceId, s[deviceId]);
+                let s = this._smarthome.devices.getStates([deviceId]);
+                this.reportState(deviceId, s[deviceId]);
             });
         }
 
@@ -640,25 +633,23 @@ export default class HttpActions {
     //
     //
     reportState(deviceId: string, states, notifications) {
-        let me = this;
-
         if (deviceId == undefined && Object.keys(states).length === 0 && notifications == undefined) {
-            me._smarthome.error('HttpActions:reportState(): skipped reporting states, no devices registered');
+            this._smarthome.error('HttpActions:reportState(): skipped reporting states, no devices registered');
             return;
         }
 
         if (!this._smarthome.IsHttpServerRunning()) {
-            me._smarthome.error('HttpActions:reportState(): skipped reporting states, http server is not running');
+            this._smarthome.error('HttpActions:reportState(): skipped reporting states, http server is not running');
             return;
         }
 
         if (!this._smarthome.auth.isAccountLinked()) {
-            me._smarthome.error('HttpActions:reportState(): skipped reporting states, account is not linked. (Re-)link your account in the app.');
+            this._smarthome.error('HttpActions:reportState(): skipped reporting states, account is not linked. (Re-)link your account in the app.');
             return;
         }
 
         if (!this._smarthome.auth._jwtkey || !this._smarthome.auth._jwtkey.private_key) {
-            me._smarthome.error('HttpActions:reportState(): skipped reporting states, JWT key is not loaded');
+            this._smarthome.error('HttpActions:reportState(): skipped reporting states, JWT key is not loaded');
             return;
         }
 
@@ -702,7 +693,7 @@ export default class HttpActions {
 
         homegraph.devices.reportStateAndNotification({ 'requestBody': postData })
             .then(() => {
-                me._smarthome.debug('HttpActions:reportState(): successfully reported state to Google: ' + JSON.stringify(postData));
+                this._smarthome.debug('HttpActions:reportState(): successfully reported state to Google: ' + JSON.stringify(postData));
             })
             .catch(error => {
                 let myError = {
@@ -713,7 +704,7 @@ export default class HttpActions {
                     },
                 };
 
-                me._smarthome.error(myError);
+                this._smarthome.error(myError);
             });
     }
 
@@ -721,22 +712,20 @@ export default class HttpActions {
      * Sends a request to Google to sync devices.
      */
     requestSync() {
-        let me = this;
-
         this._smarthome.debug('HttpActions:requestSync()');
 
         if (!this._smarthome.IsHttpServerRunning()) {
-            me._smarthome.error('HttpActions:requestSync(): skipped requested sync, http server is not running');
+            this._smarthome.error('HttpActions:requestSync(): skipped requested sync, http server is not running');
             return;
         }
 
         if (!this._smarthome.auth.isAccountLinked()) {
-            me._smarthome.error('HttpActions:requestSync(): skipped requested sync, account is not linked. (Re-)link your account in the app.');
+            this._smarthome.error('HttpActions:requestSync(): skipped requested sync, account is not linked. (Re-)link your account in the app.');
             return;
         }
 
         if (!this._smarthome.auth._jwtkey || !this._smarthome.auth._jwtkey.private_key) {
-            me._smarthome.error('HttpActions:requestSync(): skipped requested sync, JWT is not loaded');
+            this._smarthome.error('HttpActions:requestSync(): skipped requested sync, JWT is not loaded');
             return;
         }
 
@@ -759,7 +748,7 @@ export default class HttpActions {
 
         homegraph.devices.requestSync({ 'requestBody': postData })
             .then(() => {
-                me._smarthome.debug('HttpActions:requestSync(): success');
+                this._smarthome.debug('HttpActions:requestSync(): success');
             })
             .catch(error => {
                 let myError = {
@@ -770,7 +759,7 @@ export default class HttpActions {
                     },
                 };
 
-                me._smarthome.error(myError);
+                this._smarthome.error(myError);
             });
     }
 }

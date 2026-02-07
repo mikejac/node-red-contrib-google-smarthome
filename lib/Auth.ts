@@ -71,40 +71,38 @@ export default class Auth {
      * @param {string} userDir - Node-RED's user directory
      */
     loadAuthStorage(nodeId: string, userDir: string): void {
-        const me = this;
-
         try {
-            me._authFilename = userDir + '/google-smarthome-auth-' + nodeId + '.json';
+            this._authFilename = userDir + '/google-smarthome-auth-' + nodeId + '.json';
 
             let authFile = fs.readFileSync(
-                me._authFilename,
+                this._authFilename,
                 {
                     'encoding': 'utf8',
                     'flag': fs.constants.R_OK | fs.constants.W_OK | fs.constants.O_CREAT
                 });
 
             if (authFile === '') {
-                me._smarthome.debug('Auth:loadAuthStorage(): data not persisted, create new');
-                me._clearAllTokens();
+                this._smarthome.debug('Auth:loadAuthStorage(): data not persisted, create new');
+                this._clearAllTokens();
             } else {
-                me._smarthome.debug('Auth:loadAuthStorage(): data already persisted');
-                me._authStorage = JSON.parse(authFile);
-                if (typeof me._authStorage !== 'object' || Array.isArray(me._authStorage)) {
-                    me._clearAllTokens();
+                this._smarthome.debug('Auth:loadAuthStorage(): data already persisted');
+                this._authStorage = JSON.parse(authFile);
+                if (typeof this._authStorage !== 'object' || Array.isArray(this._authStorage)) {
+                    this._clearAllTokens();
                 }
-                if (!me._authStorage.localAuthCode) {
-                    me.generateLocalAccessToken();
+                if (!this._authStorage.localAuthCode) {
+                    this.generateLocalAccessToken();
                 }
-                if (!me._authStorage.nextLocalAuthCode) {
-                    me._authStorage.nextLocalAuthCode = this._generateNewAccessToken();
+                if (!this._authStorage.nextLocalAuthCode) {
+                    this._authStorage.nextLocalAuthCode = this._generateNewAccessToken();
                 }
-                me._smarthome.debug('Auth:loadAuthStorage(): me._authStorage = ' + JSON.stringify(me._authStorage));
+                this._smarthome.debug('Auth:loadAuthStorage(): this._authStorage = ' + JSON.stringify(this._authStorage));
             }
-            me._persistAuthStorage();
+            this._persistAuthStorage();
         }
         catch (err) {
-            me._smarthome.error('Error on loading auth storage: ' + err.toString());
-            me._clearAllTokens();
+            this._smarthome.error('Error on loading auth storage: ' + err.toString());
+            this._clearAllTokens();
         }
     }
 
@@ -353,7 +351,6 @@ export default class Auth {
     //
     //
     exchangeAuthCode(authCode: string, redirect_uri: string, my_uri: string) {
-        let me = this;
         let authCodeInfo = this._authCode.get(authCode);
 
         if (typeof authCodeInfo === 'undefined') {
@@ -374,12 +371,12 @@ export default class Auth {
 
         this._authCode.delete(authCode);
 
-        me._removeAllTokensForUser(user);
+        this._removeAllTokensForUser(user);
 
-        let refreshToken = me._generateRefreshToken(user);
-        let accessToken = me._generateAccessToken(user);
+        let refreshToken = this._generateRefreshToken(user);
+        let accessToken = this._generateAccessToken(user);
 
-        me._persistAuthStorage();
+        this._persistAuthStorage();
 
         return {
             token_type: 'bearer',
@@ -396,17 +393,16 @@ export default class Auth {
      * @returns {object} Tokens
      */
     refreshAccessToken(refreshToken: string): { token_type: string; access_token: string; expires_in: number; } {
-        let me = this;
         if (!this.isValidRefreshToken(refreshToken)) {
             throw 'invalid refresh token ' + refreshToken;
         }
 
         const user = this._authStorage.refreshTokens[refreshToken];
-        me._removeAllAccessTokensExpiredAndForUser(user);
+        this._removeAllAccessTokensExpiredAndForUser(user);
 
-        let accessToken = me._generateAccessToken(user);
+        let accessToken = this._generateAccessToken(user);
 
-        me._persistAuthStorage();
+        this._persistAuthStorage();
 
         return {
             token_type: 'bearer',

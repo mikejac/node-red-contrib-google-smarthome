@@ -45,7 +45,6 @@ export default class HttpAuth {
     //
     //
     httpAuthRegister(httpRoot: string, appHttp: express.Express | undefined): void {
-        let me = this;
         let use_decode = false;
         if (typeof appHttp === 'undefined') {
             appHttp = this._smarthome.app;
@@ -66,24 +65,24 @@ export default class HttpAuth {
          *   &response_type=code
          *      - The string code
          */
-        appHttp.get(me._smarthome.Path_join(httpRoot, 'oauth'), function(req: Request, res: Response) {
-            me._smarthome.debug('HttpAuth:httpAuthRegister(GET /oauth) query ' + JSON.stringify(req.query));
+        appHttp.get(this._smarthome.Path_join(httpRoot, 'oauth'), (req: Request, res: Response) => {
+            this._smarthome.debug('HttpAuth:httpAuthRegister(GET /oauth) query ' + JSON.stringify(req.query));
 
             if (req.query.response_type !== 'code') {
-                me._smarthome.error('HttpAuth:httpAuthRegister(GET /oauth): response_type ' + req.query.response_type + ' must equal "code"');
+                this._smarthome.error('HttpAuth:httpAuthRegister(GET /oauth): response_type ' + req.query.response_type + ' must equal "code"');
                 return res.status(500)
                     .send('response_type ' + req.query.response_type + ' must equal "code"');
             }
 
-            if (!me._smarthome.auth.isValidClient(req.query.client_id)) {
-                me._smarthome.error('HttpAuth:httpAuthRegister(GET /oauth): client_id ' + req.query.client_id + ' invalid');
+            if (!this._smarthome.auth.isValidClient(req.query.client_id)) {
+                this._smarthome.error('HttpAuth:httpAuthRegister(GET /oauth): client_id ' + req.query.client_id + ' invalid');
                 return res.status(500).send('client_id ' + req.query.client_id + ' invalid');
             }
 
-            const useGoogleClientAuth = me._smarthome.auth.useGoogleClientAuth();
-            const googleClientId = useGoogleClientAuth ? me._smarthome.auth.getGoogleClientId() : '';
+            const useGoogleClientAuth = this._smarthome.auth.useGoogleClientAuth();
+            const googleClientId = useGoogleClientAuth ? this._smarthome.auth.getGoogleClientId() : '';
             // User is not logged in. Show login page.
-            me._smarthome.debug('HttpAuth:httpAuthRegister(GET /oauth) User is not logged in, showing login page');
+            this._smarthome.debug('HttpAuth:httpAuthRegister(GET /oauth) User is not logged in, showing login page');
             fs.readFile(path.join(__dirname, 'frontend/login.html'), 'utf8', function (err, data) {
                 if (err) {
                     res.end();
@@ -97,53 +96,53 @@ export default class HttpAuth {
         //
         //
         //
-        appHttp.post(me._smarthome.Path_join(httpRoot, 'oauth'), function(req: Request, res: Response) {
-            me._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): body = ' + JSON.stringify(req.body));
-            const my_uri = req.protocol + '://' + req.get('Host') + me._smarthome.Path_join(httpRoot, 'oauth');
+        appHttp.post(this._smarthome.Path_join(httpRoot, 'oauth'), (req: Request, res: Response) => {
+            this._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): body = ' + JSON.stringify(req.body));
+            const my_uri = req.protocol + '://' + req.get('Host') + this._smarthome.Path_join(httpRoot, 'oauth');
 
             // client_id in POST date is not decoded automatically by bodyParser and needs to be decoded manually
             let client_id = use_decode ? decodeURIComponent(req.body.client_id) : req.body.client_id;
-            if (!me._smarthome.auth.isValidClient(client_id)) {
-                me._smarthome.error('HttpAuth:httpAuthRegister(POST /oauth): client_id ' + client_id + ' invalid');
+            if (!this._smarthome.auth.isValidClient(client_id)) {
+                this._smarthome.error('HttpAuth:httpAuthRegister(POST /oauth): client_id ' + client_id + ' invalid');
                 res.status(500).send('client_id ' + client_id + ' invalid');
                 return;
             }
 
-            if (!me._smarthome.auth.isValidRedirectUri(req.body.redirect_uri || '', me._smarthome._debug ? my_uri : '')) {
-                me._smarthome.error('HttpAuth:httpAuthRegister(POST /oauth): redirect_uri ' + req.body.redirect_uri + ' invalid');
+            if (!this._smarthome.auth.isValidRedirectUri(req.body.redirect_uri || '', this._smarthome._debug ? my_uri : '')) {
+                this._smarthome.error('HttpAuth:httpAuthRegister(POST /oauth): redirect_uri ' + req.body.redirect_uri + ' invalid');
                 res.status(500).send('redirect_uri ' + req.body.redirect_uri + ' invalid');
                 return;
             }
 
-            if (me._smarthome.auth.useGoogleClientAuth()) {
-                me._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): Google login');
+            if (this._smarthome.auth.useGoogleClientAuth()) {
+                this._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): Google login');
                 if (req.body.id_token) {
-                    const googleClientId = me._smarthome.auth.getGoogleClientId();
+                    const googleClientId = this._smarthome.auth.getGoogleClientId();
                     const client = new OAuth2Client(googleClientId);
                     client
                         .verifyIdToken({
                             idToken: req.body.id_token,
                             audience: googleClientId,
                         })
-                        .then(function(ticket) {
+                        .then((ticket) => {
                             const payload = ticket.getPayload();
                             // const userid = payload['sub'];
                             const email = payload['email'];
-                            const isValidUser = me._smarthome.auth.isGoogleClientEmailValid(email);
-                            me._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): email ' + email + " valid: " + isValidUser);
-                            me._handleUserAuth(req, res, email, '', isValidUser, httpRoot);
+                            const isValidUser = this._smarthome.auth.isGoogleClientEmailValid(email);
+                            this._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): email ' + email + " valid: " + isValidUser);
+                            this._handleUserAuth(req, res, email, '', isValidUser, httpRoot);
                         })
-                        .catch(function(err) {
-                            me._smarthome.error('HttpAuth:httpAuthRegister(POST /oauth): verifyIdToken error ' + err);
-                            me._handleUserAuth(req, res, 'google', '', false, httpRoot);
+                        .catch((err) => {
+                            this._smarthome.error('HttpAuth:httpAuthRegister(POST /oauth): verifyIdToken error ' + err);
+                            this._handleUserAuth(req, res, 'google', '', false, httpRoot);
                         });
                 } else {
-                    me._handleUserAuth(req, res, 'google', '', false, httpRoot);
+                    this._handleUserAuth(req, res, 'google', '', false, httpRoot);
                 }
             } else {
-                me._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): Local login');
-                let isValidUser = me._smarthome.auth.isValidUser(req.body.username, req.body.password);
-                me._handleUserAuth(req, res, req.body.username, req.body.password, isValidUser, httpRoot);
+                this._smarthome.debug('HttpAuth:httpAuthRegister(POST /oauth): Local login');
+                let isValidUser = this._smarthome.auth.isValidUser(req.body.username, req.body.password);
+                this._handleUserAuth(req, res, req.body.username, req.body.password, isValidUser, httpRoot);
             }
         });
 
@@ -163,29 +162,29 @@ export default class HttpAuth {
          * &grant_type=refresh_token
          * &refresh_token=REFRESH_TOKEN
          */
-        appHttp.all(me._smarthome.Path_join(httpRoot, 'token'), function(req: Request, res: Response) {
-            me._smarthome.debug('HttpAuth:httpAuthRegister(/token): query = ' + JSON.stringify(req.query));
-            me._smarthome.debug('HttpAuth:httpAuthRegister(/token): body = ' + JSON.stringify(req.body));
-            const my_uri = req.protocol + '://' + req.get('Host') + me._smarthome.Path_join(httpRoot, 'oauth');
+        appHttp.all(this._smarthome.Path_join(httpRoot, 'token'), (req: Request, res: Response) => {
+            this._smarthome.debug('HttpAuth:httpAuthRegister(/token): query = ' + JSON.stringify(req.query));
+            this._smarthome.debug('HttpAuth:httpAuthRegister(/token): body = ' + JSON.stringify(req.body));
+            const my_uri = req.protocol + '://' + req.get('Host') + this._smarthome.Path_join(httpRoot, 'oauth');
 
             const clientId = (req.query?.client_id as string | undefined) ?? (req.body?.client_id as string | undefined);
             const clientSecret = (req.query?.client_secret as string | undefined) ?? (req.body?.client_secret as string | undefined);
             const grantType = (req.query?.grant_type as string | undefined) ?? (req.body?.grant_type as string | undefined);
 
-            if (!me._smarthome.auth.isValidClient(clientId, clientSecret)) {
-                me._smarthome.error('HttpAuth:httpAuthRegister(/token): invalid client id or secret');
+            if (!this._smarthome.auth.isValidClient(clientId, clientSecret)) {
+                this._smarthome.error('HttpAuth:httpAuthRegister(/token): invalid client id or secret');
                 res.status(400).send('invalid client id or secret');
                 return;
             }
 
             if (grantType === 'authorization_code') {
-                me._handleAuthCode(req, res, me._smarthome._debug ? my_uri : '');
+                this._handleAuthCode(req, res, this._smarthome._debug ? my_uri : '');
                 return;
             } else if (grantType === 'refresh_token') {
-                me._handleRefreshToken(req, res);
+                this._handleRefreshToken(req, res);
                 return;
             } else {
-                me._smarthome.error('HttpAuth:httpAuthRegister(/token): grant_type ' + grantType + ' is not supported');
+                this._smarthome.error('HttpAuth:httpAuthRegister(/token): grant_type ' + grantType + ' is not supported');
                 let error_result = {"error": "invalid_grant"};
                 res.status(400).send(error_result);
                 return;

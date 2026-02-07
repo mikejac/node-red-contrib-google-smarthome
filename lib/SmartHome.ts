@@ -216,31 +216,30 @@ export class GoogleSmartHome {
             return;
         }
 
-        const me = this;
         const redAppRouter = this.getRouter(REDapp);
 
         if (redAppRouter) {
-            me.debug("SmartHome:UnregisterUrl(): use the Node-RED server port, path '" + this._httpPath + "' local path '" + this._httpLocalPath + "'");
-            let get_urls = [me.Path_join(me._httpPath, 'oauth'), me.Path_join(me._httpPath, 'check')];
-            let post_urls = [me.Path_join(me._httpPath, 'oauth'), me.Path_join(me._httpPath, 'smarthome')];
-            let options_urls = [me.Path_join(me._httpPath, 'smarthome')];
-            let all_urls = [me.Path_join(me._httpPath, 'token')];
+            this.debug("SmartHome:UnregisterUrl(): use the Node-RED server port, path '" + this._httpPath + "' local path '" + this._httpLocalPath + "'");
+            let get_urls = [this.Path_join(this._httpPath, 'oauth'), this.Path_join(this._httpPath, 'check')];
+            let post_urls = [this.Path_join(this._httpPath, 'oauth'), this.Path_join(this._httpPath, 'smarthome')];
+            let options_urls = [this.Path_join(this._httpPath, 'smarthome')];
+            let all_urls = [this.Path_join(this._httpPath, 'token')];
 
             let to_remove = [];
-            redAppRouter.stack.forEach(function (route, i) {
+            redAppRouter.stack.forEach((route, i) => {
                 if (route.route && (
                     (route.route.methods['get'] && get_urls.includes(route.route.path)) ||
                     (route.route.methods['post'] && post_urls.includes(route.route.path)) ||
                     (route.route.methods['options'] && options_urls.includes(route.route.path)) ||
                     (all_urls.includes(route.route.path))
                 )) {
-                    me.debug('SmartHome:Stop(): removing url: ' + route.route.path + " registered for " + me.GetRouteType(route));
+                    this.debug('SmartHome:Stop(): removing url: ' + route.route.path + " registered for " + this.GetRouteType(route));
                     to_remove.unshift(i);
                 }
             });
             to_remove.forEach(i => redAppRouter.stack.splice(i, 1));
-            redAppRouter.stack.forEach(function (route) {
-                if (route.route) me.debug('SmartHome:Stop(): remaining url: ' + route.route.path + " registered for " + me.GetRouteType(route));
+            redAppRouter.stack.forEach((route) => {
+                if (route.route) this.debug('SmartHome:Stop(): remaining url: ' + route.route.path + " registered for " + this.GetRouteType(route));
             });
         }
     }
@@ -277,9 +276,9 @@ export class GoogleSmartHome {
     //
     StartUDPDeviceScanServer() {
         const me = this;
-        me.debug('Starting service Scan UDP server on port ' + me._localDiscoveryPort);
+        this.debug('Starting service Scan UDP server on port ' + this._localDiscoveryPort);
 
-        me.StopUDPDeviceScanServer();
+        this.StopUDPDeviceScanServer();
 
         function onError(error) {
             me.debug('Service Scan UDP server: ' + error);
@@ -312,12 +311,12 @@ export class GoogleSmartHome {
         }
 
         ['udp4', /*'udp6'*/].forEach((type) => {
-            me._localUDPServers[type] = dgram.createSocket({type: type, ipv6Only: type === 'udp6'});
-            me._localUDPServers[type].on('error', onError);
-            me._localUDPServers[type].on('message', onMessage);
-            me._localUDPServers[type].on('listening', onListening);
-            me._localUDPServers[type].on('close', onClose);
-            me._localUDPServers[type].bind(me._localDiscoveryPort);
+            this._localUDPServers[type] = dgram.createSocket({type: type, ipv6Only: type === 'udp6'});
+            this._localUDPServers[type].on('error', onError);
+            this._localUDPServers[type].on('message', onMessage);
+            this._localUDPServers[type].on('listening', onListening);
+            this._localUDPServers[type].on('close', onClose);
+            this._localUDPServers[type].bind(this._localDiscoveryPort);
         });
     }
 
@@ -344,9 +343,9 @@ export class GoogleSmartHome {
         this.dnssdAd.start();
         this._dnssdAdRunning = true;
 
-        me.debug('SmartHome:Start(): dnssd-ad: port:' + this._localDiscoveryPort);
-        this.dnssdAd.on('error', function (err) {
-            me.error('SmartHome:Start(): dnssd-ad: err:' + err);
+        this.debug('SmartHome:Start(): dnssd-ad: port:' + this._localDiscoveryPort);
+        this.dnssdAd.on('error', (err) => {
+            this.error('SmartHome:Start(): dnssd-ad: err:' + err);
         });
     }
     //
@@ -368,11 +367,11 @@ export class GoogleSmartHome {
 
                 if (this._reportStateInterval > 0) {
                 
-                    this._reportStateTimer = setInterval(function() { 
-                        let states = me.devices.getStates();
+                    this._reportStateTimer = setInterval(() => { 
+                        let states = this.devices.getStates();
 
                         if (states) {
-                            me.httpActions.reportState(undefined, states);
+                            this.httpActions.reportState(undefined, states);
                         }
                     }, this._reportStateInterval * 60 * 1000);
                 }
@@ -380,12 +379,12 @@ export class GoogleSmartHome {
 
             if (this._httpPort > 0) {
                 if (this._sslOffload) {
-                    me.debug('SmartHome:Start(listen): using external SSL offload');
+                    this.debug('SmartHome:Start(listen): using external SSL offload');
 
                     // create our HTTP server
                     this.httpServer = stoppable(http.createServer(this.app), graceMilliseconds);
                 } else {
-                    me.debug('SmartHome:Start(listen): using internal SSL');
+                    this.debug('SmartHome:Start(listen): using internal SSL');
 
                     let httpsOptions = {};
 
@@ -416,7 +415,7 @@ export class GoogleSmartHome {
                     // timeout is used to give certbot enough time to renew private and public key
                     let waitForRenewalTimeout;
                     fs.watch(this._publicKey, () => {
-                        me.debug('SmartHome:Start(listen): Certificate file change detected. Updating HTTPS server in 30 seconds.');
+                        this.debug('SmartHome:Start(listen): Certificate file change detected. Updating HTTPS server in 30 seconds.');
                         clearTimeout(waitForRenewalTimeout);
                         waitForRenewalTimeout = setTimeout(() => {
                             let context = {
@@ -424,76 +423,76 @@ export class GoogleSmartHome {
                                 cert: fs.readFileSync(this._publicKey)
                             }
                             this.httpServer.setSecureContext(context);
-                            me.debug('SmartHome:Start(listen): HTTPS server updated after certificate file change');
+                            this.debug('SmartHome:Start(listen): HTTPS server updated after certificate file change');
                         }, 30000);
                     });
                 }
 
                 // start server
                 this.httpServer.listen(this._httpPort, () => {
-                    me._httpServerRunning = true;
+                    this._httpServerRunning = true;
 
-                    const host = me.httpServer.address().address;
-                    const port = me.httpServer.address().port;
+                    const host = this.httpServer.address().address;
+                    const port = this.httpServer.address().port;
 
-                    me.debug('SmartHome:Start(listen): listening at ' + host + ':' + port);
+                    this.debug('SmartHome:Start(listen): listening at ' + host + ':' + port);
 
                     process.nextTick(() => {
-                        me.emitter.emit('server', 'start', me._httpPort);
+                        this.emitter.emit('server', 'start', this._httpPort);
                     });
                 });
 
-                this.httpServer.on('error', function (err) {
-                    me.error('SmartHome:Start(): err:' + err);
+                this.httpServer.on('error', (err) => {
+                    this.error('SmartHome:Start(): err:' + err);
 
                     process.nextTick(() => {
-                        me.emitter.emit('server', 'error', err);
+                        this.emitter.emit('server', 'error', err);
                     });
                 });
 
-                me.debug('SmartHome:Start(): registered routes:');
+                this.debug('SmartHome:Start(): registered routes:');
                 const appRouter = this.getRouter(this.app);
                 appRouter.stack.forEach((r) => {
                     if (r.route && r.route.path) {
-                        me.debug('SmartHome:Start(): url ' + r.route.path + " registered for " + me.GetRouteType(r));
+                        this.debug('SmartHome:Start(): url ' + r.route.path + " registered for " + this.GetRouteType(r));
                     }
                 });
             }
 
             if (this._httpLocalPort > 0) {
-                me.debug('SmartHome:Start(listen): starting local fulfillment');
+                this.debug('SmartHome:Start(listen): starting local fulfillment');
                 this.localHttpServer = stoppable(http.createServer(this.localApp), graceMilliseconds);
 
                 // start server
                 this.localHttpServer.listen(this._httpLocalPort, () => {
-                    me._localHttpServerRunning = true;
+                    this._localHttpServerRunning = true;
 
-                    const host = me.localHttpServer.address().address;
-                    const port = me.localHttpServer.address().port;
+                    const host = this.localHttpServer.address().address;
+                    const port = this.localHttpServer.address().port;
 
-                    me.debug('SmartHome:Start(listen): listening for local fullfullment at ' + host + ':' + port);
+                    this.debug('SmartHome:Start(listen): listening for local fullfullment at ' + host + ':' + port);
                 });
 
-                this.localHttpServer.on('error', function (err) {
-                    me.error('SmartHome:Start(): local err:' + err);
+                this.localHttpServer.on('error', (err) => {
+                    this.error('SmartHome:Start(): local err:' + err);
                 });
 
-                me.debug('SmartHome:Start(): local registered routes:');
+                this.debug('SmartHome:Start(): local registered routes:');
                 const localAppRouter = this.getRouter(this.localApp);
                 localAppRouter.stack.forEach((r) => {
                     if (r.route && r.route.path) {
-                        me.debug('SmartHome:Start(): url ' + r.route.path + " registered for " + me.GetRouteType(r));
+                        this.debug('SmartHome:Start(): url ' + r.route.path + " registered for " + this.GetRouteType(r));
                     }
                 });
             }
 
-            me.StartDeviceScanServer();
+            this.StartDeviceScanServer();
             
             if (this._httpPort <= 0) {
-                me.UnregisterUrl(REDapp);
+                this.UnregisterUrl(REDapp);
 
                 if (this._httpPort <= 0) {
-                    me.debug("SmartHome:Start(): use the Node-RED server port, path " + this._httpPath);
+                    this.debug("SmartHome:Start(): use the Node-RED server port, path " + this._httpPath);
                     this.httpAuth.httpAuthRegister(this._httpPath, REDapp);        // login and oauth http interface
                     this.httpActions.httpActionsRegister(this._httpPath, REDapp);     // actual SmartHome http interface
                 }
@@ -501,7 +500,7 @@ export class GoogleSmartHome {
                 const redAppRouter = this.getRouter(REDapp);
                 redAppRouter.stack.forEach((r) => {
                     if (r.route && r.route.path && (r.route.path.startsWith(this._httpPath) || r.route.path.startsWith(this._httpLocalPath))) {
-                        me.debug('SmartHome:Start(): url ' + r.route.path + " registered for " + me.GetRouteType(r));
+                        this.debug('SmartHome:Start(): url ' + r.route.path + " registered for " + this.GetRouteType(r));
                     }
                 });
             }
@@ -524,9 +523,9 @@ export class GoogleSmartHome {
             this._reportStateTimer  = null;
         }
         
-        me.UnregisterUrl(REDapp);
+        this.UnregisterUrl(REDapp);
 
-        me.StopDeviceScanServer();
+        this.StopDeviceScanServer();
 
         if (this._httpLocalPort > 0) {
             if (this._localHttpServerRunning) {
@@ -534,8 +533,8 @@ export class GoogleSmartHome {
 
                 this.localHttpServer.stop();
 
-                setImmediate(function(){
-                    me.localHttpServer.emit('close');
+                setImmediate(() => {
+                    this.localHttpServer.emit('close');
                 });
             }
         }
@@ -544,9 +543,9 @@ export class GoogleSmartHome {
             if (this._httpServerRunning) {
                 this._httpServerRunning = false;
 
-                this.httpServer.stop(function() {
+                this.httpServer.stop(() => {
                     process.nextTick(() => {
-                        me.emitter.emit('server', 'stop', 0);
+                        this.emitter.emit('server', 'stop', 0);
                     });
 
                     if (typeof done === 'function') {
@@ -554,12 +553,12 @@ export class GoogleSmartHome {
                     }
                 });
 
-                setImmediate(function(){
-                    me.httpServer.emit('close');
+                setImmediate(() => {
+                    this.httpServer.emit('close');
                 });
             } else {
                 process.nextTick(() => {
-                    me.emitter.emit('server', 'stop', 0);
+                    this.emitter.emit('server', 'stop', 0);
                 });
 
                 if (typeof done === 'function') {
@@ -568,7 +567,7 @@ export class GoogleSmartHome {
             }
         } else {
             process.nextTick(() => {
-                me.emitter.emit('server', 'stop', 0);
+                this.emitter.emit('server', 'stop', 0);
             });
 
             if (typeof done === 'function') {
@@ -580,14 +579,12 @@ export class GoogleSmartHome {
     //
     //
     Restart(REDapp: express.Express, REDserver) {
-        let me = this;
+        this.Stop(REDapp, () => {
+            this.debug('SmartHome:Restart(): Stop done');
 
-        this.Stop(REDapp, function() {
-            me.debug('SmartHome:Restart(): Stop done');
+            this.Start(REDapp, REDserver);
 
-            me.Start(REDapp, REDserver);
-
-            me.debug('SmartHome:Restart(): Start done');
+            this.debug('SmartHome:Restart(): Start done');
         });
     }
 
@@ -627,26 +624,24 @@ export class GoogleSmartHome {
      * Multiple calls to this method during the delay are buffered into the same SYNC call.
      */
     ScheduleRequestSync() {
-        const me = this;
-        if (me._requestSyncDelay && !me._syncScheduled) {
-            me._syncScheduled = true;
+        if (this._requestSyncDelay && !this._syncScheduled) {
+            this._syncScheduled = true;
             setTimeout(() => {
-                me._syncScheduled = false;
-                me.httpActions.requestSync();
-            }, me._requestSyncDelay);
+                this._syncScheduled = false;
+                this.httpActions.requestSync();
+            }, this._requestSyncDelay);
         }
     }
     //
     //
     //
     ScheduleGetState() {
-        const me = this;
-        if (me._setStateDelay && !me._getStateScheduled) {
-            me._getStateScheduled = true;
+        if (this._setStateDelay && !this._getStateScheduled) {
+            this._getStateScheduled = true;
             setTimeout(() => {
-                me._getStateScheduled = false;
-                Object.keys(me.configNode.mgmtNodes).forEach(key => me.configNode.mgmtNodes[key].sendSetState());
-            }, me._setStateDelay);
+                this._getStateScheduled = false;
+                Object.keys(this.configNode.mgmtNodes).forEach(key => this.configNode.mgmtNodes[key].sendSetState());
+            }, this._setStateDelay);
         }
     }
 

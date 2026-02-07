@@ -1053,12 +1053,11 @@ export class DeviceNode {
     }
 
     updateStateTypesForTraits() {
-        let me = this;
-        let state_types = me.state_types;
+        let state_types = this.state_types;
         state_types['online'] = Formats.BOOL + Formats.MANDATORY;
 
-        if (me.trait.appselector) {
-            let values = me.available_applications.map(application => application.key);
+        if (this.trait.appselector) {
+            let values = this.available_applications.map(application => application.key);
             if (values.length > 0) {
                 state_types['currentApplication'] = {
                     type: Formats.STRING + Formats.MANDATORY,
@@ -1067,8 +1066,8 @@ export class DeviceNode {
                 };
             }
         }
-        if (me.trait.armdisarm) {
-            let values = me.available_arm_levels.map(al => al.level_name);
+        if (this.trait.armdisarm) {
+            let values = this.available_arm_levels.map(al => al.level_name);
             if (values.length > 0) {
                 state_types['isArmed'] = Formats.BOOL + Formats.MANDATORY;
                 state_types['currentArmLevel'] = {
@@ -1079,16 +1078,16 @@ export class DeviceNode {
                 state_types['exitAllowance'] = Formats.INT;
             }
         }
-        if (me.trait.brightness && !me.command_only_brightness) {
+        if (this.trait.brightness && !this.command_only_brightness) {
             state_types['brightness'] = {
                 type: Formats.INT,
                 min: 0,
                 max: 100,
             };
         }
-        if (me.trait.colorsetting) {
-            if (!me.command_only_colorsetting) {
-                if ((me.color_model === "rgb") || (me.color_model === 'rgb_temp')) {
+        if (this.trait.colorsetting) {
+            if (!this.command_only_colorsetting) {
+                if ((this.color_model === "rgb") || (this.color_model === 'rgb_temp')) {
                     state_types['color'] = {
                         type: Formats.OBJECT + Formats.DELETE_MISSING,
                         attributes: {
@@ -1098,7 +1097,7 @@ export class DeviceNode {
                             },
                         }
                     };
-                } else if ((me.color_model === "hsv") || (me.color_model === "hsv_temp")) {
+                } else if ((this.color_model === "hsv") || (this.color_model === "hsv_temp")) {
                     state_types['color'] = {
                         type: Formats.OBJECT,
                         attributes: {
@@ -1131,25 +1130,25 @@ export class DeviceNode {
                         attributes: {}
                     };
                 }
-                if (me.color_model !== "rgb" && me.color_model !== "hsv") {
+                if (this.color_model !== "rgb" && this.color_model !== "hsv") {
                     state_types.color.attributes.temperatureK = {
                         type: Formats.INT + Formats.MANDATORY,
-                        min: me.temperature_min_k,
-                        max: me.temperature_max_k,
+                        min: this.temperature_min_k,
+                        max: this.temperature_max_k,
                         exclusiveStates: ['spectrumRgb', 'spectrumHsv']
                     };
                 }
             }
         }
-        if (me.trait.cook) {
+        if (this.trait.cook) {
             let cooking_mode_values = ['NONE'];
-            cooking_mode_values.push(...me.supported_cooking_modes);
+            cooking_mode_values.push(...this.supported_cooking_modes);
             state_types['currentCookingMode'] = {
                 type: Formats.STRING + Formats.MANDATORY,
                 values: cooking_mode_values,
             };
             let food_preset_values = ['NONE'];
-            food_preset_values.push(...me.food_presets.map(food_preset => food_preset.food_preset_name));
+            food_preset_values.push(...this.food_presets.map(food_preset => food_preset.food_preset_name));
             state_types['currentFoodPreset'] = {
                 type: Formats.STRING + Formats.MANDATORY,
                 values: food_preset_values,
@@ -1160,8 +1159,8 @@ export class DeviceNode {
                 values: COOK_SUPPORTED_UNITS,
             };
         }
-        if (me.trait.dispense) {
-            let dispense_items_values = me.supported_dispense_items.map(item => item.item_name);
+        if (this.trait.dispense) {
+            let dispense_items_values = this.supported_dispense_items.map(item => item.item_name);
             state_types['dispenseItems'] = {
                 type: Formats.OBJECT + Formats.ARRAY,
                 attributes: {
@@ -1195,10 +1194,10 @@ export class DeviceNode {
                 removeIfNoData: true,
             };
         }
-        if (me.trait.dock) {
+        if (this.trait.dock) {
             state_types['isDocked'] = Formats.BOOL;
         }
-        if (me.trait.energystorage) {
+        if (this.trait.energystorage) {
             state_types['descriptiveCapacityRemaining'] = Formats.STRING + Formats.MANDATORY;
             state_types['capacityRemaining'] = {
                 type: Formats.OBJECT + Formats.ARRAY,
@@ -1217,7 +1216,7 @@ export class DeviceNode {
                 replaceAll: true,
                 isValidKey: unit => ENERGY_STORAGE_UNITS.includes(unit)
             };
-            if (me.is_rechargeable) {
+            if (this.is_rechargeable) {
                 state_types['capacityUntilFull'] = {
                     type: Formats.OBJECT + Formats.ARRAY,
                     attributes: {
@@ -1239,15 +1238,15 @@ export class DeviceNode {
             }
             state_types['isPluggedIn'] = Formats.BOOL;
         }
-        if (me.trait.fanspeed) {
-            if (!me.command_only_fanspeed) {
-                if (me.supports_fan_speed_percent) {
+        if (this.trait.fanspeed) {
+            if (!this.command_only_fanspeed) {
+                if (this.supports_fan_speed_percent) {
                     state_types['currentFanSpeedPercent'] = Formats.INT + Formats.MANDATORY;
                 } else {
                     state_types['currentFanSpeedPercent'] = Formats.INT;
                 }
-                if (me.available_fan_speeds.length > 0) {
-                    let values = me.available_fan_speeds.map(fanspeed => fanspeed.speed_name);
+                if (this.available_fan_speeds.length > 0) {
+                    let values = this.available_fan_speeds.map(fanspeed => fanspeed.speed_name);
                     state_types['currentFanSpeedSetting'] = {
                         type: Formats.STRING,
                         values: values,
@@ -1256,31 +1255,31 @@ export class DeviceNode {
                 }
             }
         }
-        if (me.trait.fill) {
+        if (this.trait.fill) {
             state_types['isFilled'] = Formats.BOOL + Formats.MANDATORY;
-            if (me.available_fill_levels.length > 0) {
-                let values = me.available_fill_levels.map(fl => fl.level_name);
+            if (this.available_fill_levels.length > 0) {
+                let values = this.available_fill_levels.map(fl => fl.level_name);
                 state_types['currentFillLevel'] = {
                     type: Formats.STRING + Formats.MANDATORY,
                     values: values,
                     defaultValue: values[0],
                 };
             }
-            if (me.supports_fill_percent) {
+            if (this.supports_fill_percent) {
                 state_types['currentFillPercent'] = Formats.FLOAT + Formats.MANDATORY;
             } else {
                 state_types['currentFillPercent'] = Formats.FLOAT;
             }
         }
-        if (me.trait.humiditysetting) {
-            if (!me.command_only_humiditysetting) {
+        if (this.trait.humiditysetting) {
+            if (!this.command_only_humiditysetting) {
                 state_types['humiditySetpointPercent'] = Formats.INT;
                 state_types['humidityAmbientPercent'] = Formats.INT;
             }
         }
-        if (me.trait.inputselector) {
-            if (!me.command_only_input_selector) {
-                let values = me.available_inputs.map(input => input.key);
+        if (this.trait.inputselector) {
+            if (!this.command_only_input_selector) {
+                let values = this.available_inputs.map(input => input.key);
                 if (values.length > 0) {
                     state_types['currentInput'] = {
                         type: Formats.STRING + Formats.MANDATORY,
@@ -1289,9 +1288,9 @@ export class DeviceNode {
                 }
             }
         }
-        if (me.trait.lighteffects) {
+        if (this.trait.lighteffects) {
             let light_effect_value = [''];
-            light_effect_value.push(...me.supported_effects);
+            light_effect_value.push(...this.supported_effects);
             if (light_effect_value.length > 0) {
                 state_types['activeLightEffect'] = {
                     type: Formats.STRING + Formats.MANDATORY,
@@ -1301,11 +1300,11 @@ export class DeviceNode {
             }
         }
         // Locator
-        if (me.trait.lockunlock) {
+        if (this.trait.lockunlock) {
             state_types['isLocked'] = Formats.BOOL;
             state_types['isJammed'] = Formats.BOOL;
         }
-        if (me.trait.mediastate) {
+        if (this.trait.mediastate) {
             state_types['activityState'] = {
                 type: Formats.STRING,
                 values: ["INACTIVE", "STANDBY", "ACTIVE"],
@@ -1317,11 +1316,11 @@ export class DeviceNode {
                 upperCase: true,
             };
         }
-        if (me.trait.modes) {
-            if (!me.command_only_modes) {
+        if (this.trait.modes) {
+            if (!this.command_only_modes) {
                 let attributes = {};
                 let ok = false;
-                me.available_modes.forEach(function (mode) {
+                this.available_modes.forEach(function (mode) {
                     let values = mode.settings.map(setting => setting.setting_name);
                     if (values.length > 0) {
                         ok = true;
@@ -1340,7 +1339,7 @@ export class DeviceNode {
                 }
             }
         }
-        if (me.trait.networkcontrol) {
+        if (this.trait.networkcontrol) {
             state_types['networkEnabled'] = Formats.BOOL;
             state_types['networkSettings'] = {
                 type: Formats.OBJECT,
@@ -1385,8 +1384,8 @@ export class DeviceNode {
         }
         // ObjectDetection
         // OccupancySensing
-        if (me.trait.occupancysensing) {
-            if (me.occupancy_sensing_pir || me.occupancy_sensing_ultrasonic || me.occupancy_sensing_physical_contact) {
+        if (this.trait.occupancysensing) {
+            if (this.occupancy_sensing_pir || this.occupancy_sensing_ultrasonic || this.occupancy_sensing_physical_contact) {
                 state_types['occupancy'] = {
                     type: Formats.STRING + Formats.MANDATORY,
                     values: ['OCCUPIED', 'UNOCCUPIED', 'UNKNOWN_OCCUPANCY_STATE'],
@@ -1394,17 +1393,17 @@ export class DeviceNode {
                     upperCase: true,
                 }
             } else {
-                me.trait.occupancysensing = false;
+                this.trait.occupancysensing = false;
             }
         }
-        if (me.trait.onoff) {
-            if (!me.command_only_onoff) {
+        if (this.trait.onoff) {
+            if (!this.command_only_onoff) {
                 state_types['on'] = Formats.BOOL;
             }
         }
-        if (me.trait.openclose) {
-            if (!me.command_only_openclose) {
-                if (me.open_direction.length < 2) {
+        if (this.trait.openclose) {
+            if (!this.command_only_openclose) {
+                if (this.open_direction.length < 2) {
                     state_types['openPercent'] = Formats.FLOAT + Formats.MANDATORY;
                 } else {
                     state_types['openState'] = {
@@ -1413,30 +1412,30 @@ export class DeviceNode {
                             openPercent: Formats.FLOAT + Formats.MANDATORY,
                             openDirection: {
                                 type: Formats.STRING + Formats.MANDATORY,
-                                values: me.open_direction,
+                                values: this.open_direction,
                                 upperCase: true,
                             },
                         },
                         keyId: 'openDirection',
                         removeIfNoData: true,
                         replaceAll: false,
-                        isValidKey: direction => me.open_direction.includes(direction.trim()) ? direction.trim() : undefined
+                        isValidKey: direction => this.open_direction.includes(direction.trim()) ? direction.trim() : undefined
                     };
                 }
             }
         }
         // Reboot, no state
-        if (me.trait.rotation) {
-            if (!me.command_only_rotation) {
-                if (me.supports_degrees) {
+        if (this.trait.rotation) {
+            if (!this.command_only_rotation) {
+                if (this.supports_degrees) {
                     state_types['rotationDegrees'] = Formats.FLOAT;
                 }
-                if (me.supports_percent) {
+                if (this.supports_percent) {
                     state_types['rotationPercent'] = Formats.FLOAT;
                 }
             }
         }
-        if (me.trait.runcycle) {
+        if (this.trait.runcycle) {
             state_types['currentRunCycle'] = {
                 type: Formats.OBJECT + Formats.ARRAY,
                 attributes: {
@@ -1444,7 +1443,7 @@ export class DeviceNode {
                     nextCycle: Formats.STRING,
                     lang: {
                         type: Formats.STRING + Formats.MANDATORY,
-                        defaultValue: me.lang,
+                        defaultValue: this.lang,
                         values: LANGUAGES,
                     }
                 },
@@ -1457,13 +1456,13 @@ export class DeviceNode {
             state_types['currentCycleRemainingTime'] = Formats.INT + Formats.MANDATORY;
         }
         // Scene
-        if (me.trait.sensorstate) {
+        if (this.trait.sensorstate) {
             state_types['currentSensorStateData'] = {
                 type: Formats.OBJECT + Formats.ARRAY,
                 attributes: {
                     name: {
                         type: Formats.STRING + Formats.MANDATORY,
-                        values: me.sensor_states_supported,
+                        values: this.sensor_states_supported,
                     },
                     currentSensorState: Formats.STRING,
                     rawValue: Formats.FLOAT
@@ -1472,25 +1471,25 @@ export class DeviceNode {
                 addIfMissing: true,
                 removeIfNoData: true,
                 replaceAll: false,
-                isValidKey: name => me.sensor_states_supported.includes(name.trim()) ? name.trim() : undefined
+                isValidKey: name => this.sensor_states_supported.includes(name.trim()) ? name.trim() : undefined
             };
         }
-        if (me.trait.softwareupdate) {
+        if (this.trait.softwareupdate) {
             state_types['lastSoftwareUpdateUnixTimestampSec'] = Formats.INT + Formats.MANDATORY;
         }
-        if (me.trait.startstop) {
+        if (this.trait.startstop) {
             state_types['isRunning'] = Formats.BOOL + Formats.MANDATORY;
             state_types['isPaused'] = Formats.BOOL;
             state_types['activeZones'] = {
                 type: Formats.STRING + Formats.ARRAY,
-                values: me.available_zones,
+                values: this.available_zones,
                 addIfMissing: true,
                 removeIfNoData: true,
                 replaceAll: true,
-                isValidKey: zone => me.available_zones.includes(zone.trim()) ? zone.trim() : undefined
+                isValidKey: zone => this.available_zones.includes(zone.trim()) ? zone.trim() : undefined
             };
         }
-        if (me.trait.statusreport) {
+        if (this.trait.statusreport) {
             state_types['currentStatusReport'] = {
                 type: Formats.OBJECT + Formats.ARRAY,
                 attributes: {
@@ -1503,12 +1502,12 @@ export class DeviceNode {
                 addIfMissing: true,
                 removeIfNoData: true,
                 replaceAll: true,
-                isValidKey: nodeId => Object.keys(me.clientConn.getProperties([nodeId])).length > 0 ? nodeId : me.clientConn.getIdFromName(nodeId)
+                isValidKey: nodeId => Object.keys(this.clientConn.getProperties([nodeId])).length > 0 ? nodeId : this.clientConn.getIdFromName(nodeId)
             };
         }
-        if (me.trait.temperaturecontrol) {
-            if (!me.command_only_temperaturecontrol) {
-                if (me.query_only_temperaturecontrol) { // Required if queryOnlyTemperatureControl set to false
+        if (this.trait.temperaturecontrol) {
+            if (!this.command_only_temperaturecontrol) {
+                if (this.query_only_temperaturecontrol) { // Required if queryOnlyTemperatureControl set to false
                     state_types['temperatureSetpointCelsius'] = Formats.FLOAT;
                 } else {
                     state_types['temperatureSetpointCelsius'] = Formats.FLOAT + Formats.MANDATORY;
@@ -1516,14 +1515,14 @@ export class DeviceNode {
                 state_types['temperatureAmbientCelsius'] = Formats.FLOAT;
             }
         }
-        if (me.trait.temperaturesetting) {
-            if (!me.command_only_temperaturesetting) {
+        if (this.trait.temperaturesetting) {
+            if (!this.command_only_temperaturesetting) {
                 state_types['activeThermostatMode'] = Formats.STRING;
                 state_types['targetTempReachedEstimateUnixTimestampSec'] = Formats.INT;
                 state_types['thermostatHumidityAmbient'] = Formats.FLOAT;
                 state_types['thermostatMode'] = {
                     type: Formats.STRING + Formats.MANDATORY,
-                    values: me.available_thermostat_modes,
+                    values: this.available_thermostat_modes,
                 };
                 state_types['thermostatTemperatureAmbient'] = Formats.FLOAT + Formats.MANDATORY;
                 state_types['thermostatTemperatureSetpoint'] = {       // 0 One of
@@ -1540,16 +1539,16 @@ export class DeviceNode {
                 };
             }
         }
-        if (me.trait.timer) {
-            if (!me.command_only_timer) {
+        if (this.trait.timer) {
+            if (!this.command_only_timer) {
                 state_types['timerRemainingSec'] = Formats.INT + Formats.MANDATORY;
                 state_types['timerPaused'] = Formats.BOOL;
             }
         }
-        if (me.trait.toggles) {
-            if (!me.command_only_toggles) {
+        if (this.trait.toggles) {
+            if (!this.command_only_toggles) {
                 let attributes = {};
-                me.available_toggles.forEach(function (toggle) {
+                this.available_toggles.forEach(function (toggle) {
                     attributes[toggle.name] = Formats.BOOL + Formats.MANDATORY;
                 });
                 state_types['currentToggleSettings'] = {
@@ -1559,10 +1558,10 @@ export class DeviceNode {
             }
         }
         // TransportControl
-        if (me.trait.volume) {
-            if (!me.command_only_volume) {
+        if (this.trait.volume) {
+            if (!this.command_only_volume) {
                 state_types['currentVolume'] = Formats.INT + Formats.MANDATORY;
-                if (me.volume_can_mute_and_unmute) {
+                if (this.volume_can_mute_and_unmute) {
                     state_types['isMuted'] = Formats.BOOL + Formats.MANDATORY;
                 } else {
                     state_types['isMuted'] = Formats.BOOL;
@@ -1572,120 +1571,119 @@ export class DeviceNode {
     }
 
     updateAttributesForTraits(device) {
-        let me = this;
         let attributes = device.properties.attributes;
 
-        if (me.trait.appselector) {
-            attributes['availableApplications'] = me.available_applications;
+        if (this.trait.appselector) {
+            attributes['availableApplications'] = this.available_applications;
         }
-        if (me.trait.armdisarm) {
+        if (this.trait.armdisarm) {
             attributes['availableArmLevels'] = {
-                levels: me.available_arm_levels,
-                ordered: me.arm_levels_ordered
+                levels: this.available_arm_levels,
+                ordered: this.arm_levels_ordered
             };
         }
-        if (me.trait.brightness) {
-            attributes['commandOnlyBrightness'] = me.command_only_brightness;
+        if (this.trait.brightness) {
+            attributes['commandOnlyBrightness'] = this.command_only_brightness;
         }
-        if (me.trait.channel) {
-            attributes['availableChannels'] = me.available_channels;
+        if (this.trait.channel) {
+            attributes['availableChannels'] = this.available_channels;
         }
-        if (me.trait.colorsetting) {
-            attributes["commandOnlyColorSetting"] = me.command_only_colorsetting;
-            if (me.color_model === "rgb" || me.color_model === "rgb_temp") {
+        if (this.trait.colorsetting) {
+            attributes["commandOnlyColorSetting"] = this.command_only_colorsetting;
+            if (this.color_model === "rgb" || this.color_model === "rgb_temp") {
                 attributes['colorModel'] = "rgb";
             }
-            else if (me.color_model === "hsv" || me.color_model === "hsv_temp") {
+            else if (this.color_model === "hsv" || this.color_model === "hsv_temp") {
                 attributes['colorModel'] = "hsv";
             }
-            if (me.color_model !== "rgb" && me.color_model !== "hsv") {
+            if (this.color_model !== "rgb" && this.color_model !== "hsv") {
                 attributes['colorTemperatureRange'] = {
-                    "temperatureMinK": me.temperature_min_k,
-                    "temperatureMaxK": me.temperature_max_k
+                    "temperatureMinK": this.temperature_min_k,
+                    "temperatureMaxK": this.temperature_max_k
                 };
             }
         }
-        if (me.trait.camerastream) {
-            attributes['cameraStreamSupportedProtocols'] = me.camera_stream_supported_protocols;
-            attributes['cameraStreamNeedAuthToken'] = me.need_auth_token;
+        if (this.trait.camerastream) {
+            attributes['cameraStreamSupportedProtocols'] = this.camera_stream_supported_protocols;
+            attributes['cameraStreamNeedAuthToken'] = this.need_auth_token;
         }
-        if (me.trait.cook) {
-            attributes['supportedCookingModes'] = me.supported_cooking_modes;
-            attributes['foodPresets'] = me.food_presets;
+        if (this.trait.cook) {
+            attributes['supportedCookingModes'] = this.supported_cooking_modes;
+            attributes['foodPresets'] = this.food_presets;
         }
-        if (me.trait.dispense) {
-            attributes['supportedDispenseItems'] = me.supported_dispense_items;
-            attributes['supportedDispensePresets'] = me.supported_dispense_presets;
+        if (this.trait.dispense) {
+            attributes['supportedDispenseItems'] = this.supported_dispense_items;
+            attributes['supportedDispensePresets'] = this.supported_dispense_presets;
         }
-        if (me.trait.energystorage) {
-            attributes['queryOnlyEnergyStorage'] = me.query_only_energy_storage;
-            if (me.energy_storage_distance_unit_for_ux) {
-                attributes['energyStorageDistanceUnitForUX'] = me.energy_storage_distance_unit_for_ux;
+        if (this.trait.energystorage) {
+            attributes['queryOnlyEnergyStorage'] = this.query_only_energy_storage;
+            if (this.energy_storage_distance_unit_for_ux) {
+                attributes['energyStorageDistanceUnitForUX'] = this.energy_storage_distance_unit_for_ux;
             }
-            attributes['isRechargeable'] = me.is_rechargeable;
+            attributes['isRechargeable'] = this.is_rechargeable;
         }
-        if (me.trait.fanspeed) {
-            attributes['reversible'] = me.reversible;
-            attributes['commandOnlyFanSpeed'] = me.command_only_fanspeed;
-            attributes['supportsFanSpeedPercent'] = me.supports_fan_speed_percent;
+        if (this.trait.fanspeed) {
+            attributes['reversible'] = this.reversible;
+            attributes['commandOnlyFanSpeed'] = this.command_only_fanspeed;
+            attributes['supportsFanSpeedPercent'] = this.supports_fan_speed_percent;
             attributes['availableFanSpeeds'] = {
-                speeds: me.available_fan_speeds,
-                ordered: me.fan_speeds_ordered
+                speeds: this.available_fan_speeds,
+                ordered: this.fan_speeds_ordered
             };
         }
-        if (me.trait.fill) {
+        if (this.trait.fill) {
             attributes['availableFillLevels'] = {
-                levels: me.available_fill_levels,
-                ordered: me.ordered_fill_levels,
-                supportsFillPercent: me.supports_fill_percent
+                levels: this.available_fill_levels,
+                ordered: this.ordered_fill_levels,
+                supportsFillPercent: this.supports_fill_percent
             };
         }
-        if (me.trait.humiditysetting) {
+        if (this.trait.humiditysetting) {
             attributes['humiditySetpointRange'] = {
-                minPercent: me.min_percent,
-                maxPercent: me.max_percent
+                minPercent: this.min_percent,
+                maxPercent: this.max_percent
             };
-            attributes['commandOnlyHumiditySetting'] = me.command_only_humiditysetting;
-            attributes['queryOnlyHumiditySetting'] = me.query_only_humiditysetting;
+            attributes['commandOnlyHumiditySetting'] = this.command_only_humiditysetting;
+            attributes['queryOnlyHumiditySetting'] = this.query_only_humiditysetting;
         }
-        if (me.trait.inputselector) {
-            attributes['availableInputs'] = me.available_inputs;
-            attributes['commandOnlyInputSelector'] = me.command_only_input_selector;
-            attributes['orderedInputs'] = me.ordered_inputs;
+        if (this.trait.inputselector) {
+            attributes['availableInputs'] = this.available_inputs;
+            attributes['commandOnlyInputSelector'] = this.command_only_input_selector;
+            attributes['orderedInputs'] = this.ordered_inputs;
         }
-        if (me.trait.lighteffects) {
-            attributes['defaultSleepDuration'] = me.default_sleep_duration;
-            attributes['defaultWakeDuration'] = me.default_wake_duration;
-            attributes['supportedEffects'] = me.supported_effects;
+        if (this.trait.lighteffects) {
+            attributes['defaultSleepDuration'] = this.default_sleep_duration;
+            attributes['defaultWakeDuration'] = this.default_wake_duration;
+            attributes['supportedEffects'] = this.supported_effects;
         }
-        if (me.trait.mediastate) {
-            attributes['supportActivityState'] = me.support_activity_state;
-            attributes['supportPlaybackState'] = me.support_playback_state;
+        if (this.trait.mediastate) {
+            attributes['supportActivityState'] = this.support_activity_state;
+            attributes['supportPlaybackState'] = this.support_playback_state;
         }
-        if (me.trait.modes) {
-            attributes['availableModes'] = me.available_modes;
-            attributes['commandOnlyModes'] = me.command_only_modes;
-            attributes['queryOnlyModes'] = me.query_only_modes;
+        if (this.trait.modes) {
+            attributes['availableModes'] = this.available_modes;
+            attributes['commandOnlyModes'] = this.command_only_modes;
+            attributes['queryOnlyModes'] = this.query_only_modes;
         }
-        if (me.trait.networkcontrol) {
-            attributes['supportsEnablingGuestNetwork'] = me.supports_enabling_guest_network;
-            attributes['supportsDisablingGuestNetwork'] = me.supports_disabling_guest_network;
-            attributes['supportsGettingGuestNetworkPassword'] = me.supports_getting_guest_network_password;
-            attributes['networkProfiles'] = me.network_profiles;
-            attributes['supportsEnablingNetworkProfile'] = me.supports_enabling_network_profile;
-            attributes['supportsDisablingNetworkProfile'] = me.supports_disabling_network_profile;
-            attributes['supportsNetworkDownloadSpeedTest'] = me.supports_network_download_speedtest;
-            attributes['supportsNetworkUploadSpeedTest'] = me.supports_network_upload_speedtest;
+        if (this.trait.networkcontrol) {
+            attributes['supportsEnablingGuestNetwork'] = this.supports_enabling_guest_network;
+            attributes['supportsDisablingGuestNetwork'] = this.supports_disabling_guest_network;
+            attributes['supportsGettingGuestNetworkPassword'] = this.supports_getting_guest_network_password;
+            attributes['networkProfiles'] = this.network_profiles;
+            attributes['supportsEnablingNetworkProfile'] = this.supports_enabling_network_profile;
+            attributes['supportsDisablingNetworkProfile'] = this.supports_disabling_network_profile;
+            attributes['supportsNetworkDownloadSpeedTest'] = this.supports_network_download_speedtest;
+            attributes['supportsNetworkUploadSpeedTest'] = this.supports_network_upload_speedtest;
         }
-        if (me.trait.occupancysensing) {
+        if (this.trait.occupancysensing) {
             let occupancysensingattributes = [];
-            if (me.occupancy_sensing_pir) {
-                if (me.occupied_to_unoccupied_delay_sec_pir) {
+            if (this.occupancy_sensing_pir) {
+                if (this.occupied_to_unoccupied_delay_sec_pir) {
                     occupancysensingattributes.push({
                         occupancySensorType: "PIR",
-                        occupiedToUnoccupiedDelaySec: me.occupied_to_unoccupied_delay_sec_pir,
-                        unoccupiedToOccupiedDelaySec: me.unoccupied_to_occupied_delay_sec_pir,
-                        unoccupiedToOccupiedEventThreshold: me.unoccupied_to_occupied_event_threshold_pir
+                        occupiedToUnoccupiedDelaySec: this.occupied_to_unoccupied_delay_sec_pir,
+                        unoccupiedToOccupiedDelaySec: this.unoccupied_to_occupied_delay_sec_pir,
+                        unoccupiedToOccupiedEventThreshold: this.unoccupied_to_occupied_event_threshold_pir
                     });
                 } else {
                     occupancysensingattributes.push({
@@ -1693,13 +1691,13 @@ export class DeviceNode {
                     });
                 }
             }
-            if (me.occupancy_sensing_ultrasonic) {
-                if (me.occupied_to_unoccupied_delay_sec_ultrasonic) {
+            if (this.occupancy_sensing_ultrasonic) {
+                if (this.occupied_to_unoccupied_delay_sec_ultrasonic) {
                     occupancysensingattributes.push({
                         occupancySensorType: "ULTRASONIC",
-                        occupiedToUnoccupiedDelaySec: me.occupied_to_unoccupied_delay_sec_ultrasonic,
-                        unoccupiedToOccupiedDelaySec: me.unoccupied_to_occupied_delay_sec_ultrasonic,
-                        unoccupiedToOccupiedEventThreshold: me.unoccupied_to_occupied_event_threshold_ultrasonic
+                        occupiedToUnoccupiedDelaySec: this.occupied_to_unoccupied_delay_sec_ultrasonic,
+                        unoccupiedToOccupiedDelaySec: this.unoccupied_to_occupied_delay_sec_ultrasonic,
+                        unoccupiedToOccupiedEventThreshold: this.unoccupied_to_occupied_event_threshold_ultrasonic
                     });
                 } else {
                     occupancysensingattributes.push({
@@ -1707,13 +1705,13 @@ export class DeviceNode {
                     });
                 }
             }
-            if (me.occupancy_sensing_physical_contact) {
-                if (me.occupied_to_unoccupied_delay_sec_physical_contact) {
+            if (this.occupancy_sensing_physical_contact) {
+                if (this.occupied_to_unoccupied_delay_sec_physical_contact) {
                     occupancysensingattributes.push({
                         occupancySensorType: "PHYSICAL_CONTACT",
-                        occupiedToUnoccupiedDelaySec: me.occupied_to_unoccupied_delay_sec_physical_contact,
-                        unoccupiedToOccupiedDelaySec: me.unoccupied_to_occupied_delay_sec_physical_contact,
-                        unoccupiedToOccupiedEventThreshold: me.unoccupied_to_occupied_event_threshold_physical_contact
+                        occupiedToUnoccupiedDelaySec: this.occupied_to_unoccupied_delay_sec_physical_contact,
+                        unoccupiedToOccupiedDelaySec: this.unoccupied_to_occupied_delay_sec_physical_contact,
+                        unoccupiedToOccupiedEventThreshold: this.unoccupied_to_occupied_event_threshold_physical_contact
                     });
                 } else {
                     occupancysensingattributes.push({
@@ -1723,32 +1721,32 @@ export class DeviceNode {
             }
             attributes['occupancySensorConfiguration'] = occupancysensingattributes;
         }
-        if (me.trait.onoff) {
-            attributes['commandOnlyOnOff'] = me.command_only_onoff;
-            attributes['queryOnlyOnOff'] = me.query_only_onoff;
+        if (this.trait.onoff) {
+            attributes['commandOnlyOnOff'] = this.command_only_onoff;
+            attributes['queryOnlyOnOff'] = this.query_only_onoff;
         }
-        if (me.trait.openclose) {
-            attributes['discreteOnlyOpenClose'] = me.discrete_only_openclose;
-            attributes['openDirection'] = me.open_direction;
-            attributes['commandOnlyOpenClose'] = me.command_only_openclose;
-            attributes['queryOnlyOpenClose'] = me.query_only_openclose;
+        if (this.trait.openclose) {
+            attributes['discreteOnlyOpenClose'] = this.discrete_only_openclose;
+            attributes['openDirection'] = this.open_direction;
+            attributes['commandOnlyOpenClose'] = this.command_only_openclose;
+            attributes['queryOnlyOpenClose'] = this.query_only_openclose;
         }
-        if (me.trait.rotation) {
-            attributes['supportsDegrees'] = me.supports_degrees;
-            attributes['supportsPercent'] = me.supports_percent;
+        if (this.trait.rotation) {
+            attributes['supportsDegrees'] = this.supports_degrees;
+            attributes['supportsPercent'] = this.supports_percent;
             attributes['rotationDegreesRange'] = [{
-                rotationDegreesMin: me.rotation_degrees_min,
-                rotationDegreesMax: me.rotation_degrees_max
+                rotationDegreesMin: this.rotation_degrees_min,
+                rotationDegreesMax: this.rotation_degrees_max
             }];
-            attributes['supportsContinuousRotation'] = me.supports_continuous_rotation;
-            attributes['commandOnlyRotation'] = me.command_only_rotation;
+            attributes['supportsContinuousRotation'] = this.supports_continuous_rotation;
+            attributes['commandOnlyRotation'] = this.command_only_rotation;
         }
-        if (me.trait.scene) {
-            attributes['sceneReversible'] = me.scene_reversible;
+        if (this.trait.scene) {
+            attributes['sceneReversible'] = this.scene_reversible;
         }
-        if (me.trait.sensorstate) {
+        if (this.trait.sensorstate) {
             let sensor_states_supported = [];
-            me.sensor_states_supported.forEach(function (sensor_state_name) {
+            this.sensor_states_supported.forEach(function (sensor_state_name) {
                 let sensor_state_supported = { name: sensor_state_name };
                 let available_states = undefined;
                 let raw_value_uUnit = undefined;
@@ -1850,56 +1848,55 @@ export class DeviceNode {
             });
             attributes['sensorStatesSupported'] = sensor_states_supported;
         }
-        if (me.trait.startstop) {
-            attributes['pausable'] = me.pausable;
-            attributes['availableZones'] = me.available_zones;
+        if (this.trait.startstop) {
+            attributes['pausable'] = this.pausable;
+            attributes['availableZones'] = this.available_zones;
         }
-        if (me.trait.temperaturecontrol) {
+        if (this.trait.temperaturecontrol) {
             attributes['temperatureRange'] = {
-                minThresholdCelsius: me.tc_min_threshold_celsius,
-                maxThresholdCelsius: me.tc_max_threshold_celsius
+                minThresholdCelsius: this.tc_min_threshold_celsius,
+                maxThresholdCelsius: this.tc_max_threshold_celsius
             };
-            attributes['temperatureStepCelsius'] = me.tc_temperature_step_celsius;
-            attributes['temperatureUnitForUX'] = me.tc_temperature_unit_for_ux;
-            attributes['commandOnlyTemperatureControl'] = me.command_only_temperaturecontrol;
-            attributes['queryOnlyTemperatureControl'] = me.query_only_temperaturecontrol;
+            attributes['temperatureStepCelsius'] = this.tc_temperature_step_celsius;
+            attributes['temperatureUnitForUX'] = this.tc_temperature_unit_for_ux;
+            attributes['commandOnlyTemperatureControl'] = this.command_only_temperaturecontrol;
+            attributes['queryOnlyTemperatureControl'] = this.query_only_temperaturecontrol;
         }
-        if (me.trait.temperaturesetting) {
-            attributes['availableThermostatModes'] = me.available_thermostat_modes;
+        if (this.trait.temperaturesetting) {
+            attributes['availableThermostatModes'] = this.available_thermostat_modes;
             attributes['thermostatTemperatureRange'] = {
-                minThresholdCelsius: me.min_threshold_celsius,
-                maxThresholdCelsius: me.max_threshold_celsius
+                minThresholdCelsius: this.min_threshold_celsius,
+                maxThresholdCelsius: this.max_threshold_celsius
             };
-            attributes['thermostatTemperatureUnit'] = me.thermostat_temperature_unit;
-            attributes['bufferRangeCelsius'] = me.buffer_range_celsius;
-            attributes['commandOnlyTemperatureSetting'] = me.command_only_temperaturesetting;
-            attributes['queryOnlyTemperatureSetting'] = me.query_only_temperaturesetting;
+            attributes['thermostatTemperatureUnit'] = this.thermostat_temperature_unit;
+            attributes['bufferRangeCelsius'] = this.buffer_range_celsius;
+            attributes['commandOnlyTemperatureSetting'] = this.command_only_temperaturesetting;
+            attributes['queryOnlyTemperatureSetting'] = this.query_only_temperaturesetting;
         }
-        if (me.trait.timer) {
-            attributes['maxTimerLimitSec'] = me.max_timer_limit_sec;
-            attributes['commandOnlyTimer'] = me.command_only_timer;
+        if (this.trait.timer) {
+            attributes['maxTimerLimitSec'] = this.max_timer_limit_sec;
+            attributes['commandOnlyTimer'] = this.command_only_timer;
         }
-        if (me.trait.toggles) {
-            attributes['availableToggles'] = me.available_toggles;
-            attributes['commandOnlyToggles'] = me.command_only_toggles;
-            attributes['queryOnlyToggles'] = me.query_only_toggles;
+        if (this.trait.toggles) {
+            attributes['availableToggles'] = this.available_toggles;
+            attributes['commandOnlyToggles'] = this.command_only_toggles;
+            attributes['queryOnlyToggles'] = this.query_only_toggles;
         }
-        if (me.trait.transportcontrol) {
-            attributes['transportControlSupportedCommands'] = me.supported_commands;
+        if (this.trait.transportcontrol) {
+            attributes['transportControlSupportedCommands'] = this.supported_commands;
         }
-        if (me.trait.volume) {
-            attributes['volumeMaxLevel'] = me.volume_max_level;
-            attributes['volumeCanMuteAndUnmute'] = me.volume_can_mute_and_unmute;
-            attributes['volumeDefaultPercentage'] = me.volume_default_percentage;
-            attributes['levelStepSize'] = me.level_step_size;
-            attributes['commandOnlyVolume'] = me.command_only_volume;
+        if (this.trait.volume) {
+            attributes['volumeMaxLevel'] = this.volume_max_level;
+            attributes['volumeCanMuteAndUnmute'] = this.volume_can_mute_and_unmute;
+            attributes['volumeDefaultPercentage'] = this.volume_default_percentage;
+            attributes['levelStepSize'] = this.level_step_size;
+            attributes['commandOnlyVolume'] = this.command_only_volume;
         }
     }
 
     getDispenseNewState() {
-        let me = this;
         let dispense = [];
-        me.supported_dispense_items.forEach(function (item) {
+        this.supported_dispense_items.forEach(function (item) {
             dispense.push({
                 itemName: item.item_name,
                 amountRemaining: {
@@ -1913,7 +1910,7 @@ export class DeviceNode {
                 isCurrentlyDispensing: false
             })
         });
-        me.supported_dispense_presets.forEach(function (item) {
+        this.supported_dispense_presets.forEach(function (item) {
             dispense.push({
                 itemName: item.preset_name,
                 amountRemaining: {
@@ -1936,25 +1933,24 @@ export class DeviceNode {
      * @returns {object}
      */
     initializeStates(device) {
-        let me = this;
         let states = device.states;
 
-        if (me.trait.appselector) {
+        if (this.trait.appselector) {
             states['currentApplication'] = '';
         }
-        if (me.trait.armdisarm) {
+        if (this.trait.armdisarm) {
             states['isArmed'] = false;
             states['currentArmLevel'] = '';
             // states['exitAllowance'] = 60;
         }
-        if (me.trait.brightness) {
+        if (this.trait.brightness) {
             // states['brightness'] = 50;
         }
-        if (me.trait.colorsetting) {
-            if (!me.command_only_colorsetting) {
-                if (me.color_model === "rgb") {
+        if (this.trait.colorsetting) {
+            if (!this.command_only_colorsetting) {
+                if (this.color_model === "rgb") {
                     states['color'] = { spectrumRgb: 16777215 };
-                } else if (me.color_model === "hsv") {
+                } else if (this.color_model === "hsv") {
                     states['color'] = {
                         spectrumHsv: {
                             hue: 0.0,           // float, representing hue as positive degrees in the range of [0.0, 360.0)
@@ -1963,80 +1959,80 @@ export class DeviceNode {
                         }
                     };
                 } else {
-                    states['color'] = { temperatureK: me.temperature_max_k || 6000 };
+                    states['color'] = { temperatureK: this.temperature_max_k || 6000 };
                 }
             }
         }
-        if (me.trait.cook) {
+        if (this.trait.cook) {
             states['currentCookingMode'] = "NONE";
             states['currentFoodPreset'] = "NONE";
             // states['currentFoodQuantity'] = 0;
             // states['currentFoodUnit'] = "UNKNOWN_UNITS";
         }
-        if (me.trait.dispense) {
+        if (this.trait.dispense) {
             states['dispenseItems'] = this.getDispenseNewState();
         }
-        if (me.trait.dock) {
+        if (this.trait.dock) {
             // states['isDocked'] = false;
         }
-        if (me.trait.energystorage) {
+        if (this.trait.energystorage) {
             states['descriptiveCapacityRemaining'] = "FULL";
             // states['capacityRemaining'] = [];
-            if (me.is_rechargeable) {
+            if (this.is_rechargeable) {
                 // states['capacityUntilFull'] = [];
                 states['isCharging'] = false;
             }
             // states['isPluggedIn'] = false;
         }
-        if (me.trait.fanspeed) {
+        if (this.trait.fanspeed) {
             // states['currentFanSpeedSetting'] = "";
-            if (!me.command_only_fanspeed && me.supports_fan_speed_percent) {
+            if (!this.command_only_fanspeed && this.supports_fan_speed_percent) {
                 states['currentFanSpeedPercent'] = 0;
             }
         }
-        if (me.trait.fill) {
+        if (this.trait.fill) {
             states['isFilled'] = false;
-            if (me.available_fill_levels.length > 0) {
+            if (this.available_fill_levels.length > 0) {
                 states['currentFillLevel'] = "";
             }
-            if (me.supports_fill_percent) {
+            if (this.supports_fill_percent) {
                 states['currentFillPercent'] = 0;
             }
         }
-        if (me.trait.humiditysetting) {
+        if (this.trait.humiditysetting) {
             // states['humiditySetpointPercent'] = 52;
             // states['humidityAmbientPercent'] = 52;
         }
-        if (me.trait.inputselector) {
-            if (!me.command_only_input_selector) {
-                if (me.availableInputs && me.availableInputs.length > 0) {
-                    states['currentInput'] = me.availableInputs[0].key;
+        if (this.trait.inputselector) {
+            if (!this.command_only_input_selector) {
+                if (this.availableInputs && this.availableInputs.length > 0) {
+                    states['currentInput'] = this.availableInputs[0].key;
                 } else {
                     states['currentInput'] = '';
                 }
             }
         }
-        if (me.trait.lighteffects) {
+        if (this.trait.lighteffects) {
             states['activeLightEffect'] = "";
             // states['lightEffectEndUnixTimestampSec'] = 60;
         }
-        //if (me.trait.lockunlock) {
+        //if (this.trait.lockunlock) {
         // states['isLocked'] = false;
         // states['isJammed'] = false;
         //}
-        //if (me.trait.mediastate) {
+        //if (this.trait.mediastate) {
         // INACTIVE STANDBY ACTIVE
         // states['activityState'] = 'INACTIVE';
         // PAUSED PLAYING FAST_FORWARDING REWINDING BUFFERING STOPPED
         // states['playbackState'] = 'STOPPED';
         //}
-        if (me.trait.modes) {
-            if (!me.command_only_modes) {
+        if (this.trait.modes) {
+            if (!this.command_only_modes) {
                 states['currentModeSettings'] = {};
                 this.updateModesState(device);
             }
         }
-        //if (me.trait.networkcontrol) {
+        //if (this.trait.networkcontrol) {
         // states['networkEnabled'] = true;
         // states['networkSettings'] = { ssid: '' };
         // states['guestNetworkEnabled'] = false;
@@ -2057,17 +2053,17 @@ export class DeviceNode {
         };*/
         // states['networkSpeedTestInProgress'] = false;
         //}
-        //if (me.trait.onoff) {
+        //if (this.trait.onoff) {
         // states['on'] = false;
         //}
-        if (me.trait.openclose) {
-            if (!me.command_only_openclose) {
-                if (me.open_direction.length < 2) {
+        if (this.trait.openclose) {
+            if (!this.command_only_openclose) {
+                if (this.open_direction.length < 2) {
                     states['openPercent'] = 0;
                 } else {
                     let openState = [];
                     states['openState'] = openState;
-                    me.open_direction.forEach(direction => {
+                    this.open_direction.forEach(direction => {
                         openState.push({
                             openPercent: 0,
                             openDirection: direction
@@ -2076,25 +2072,25 @@ export class DeviceNode {
                 }
             }
         }
-        /*if (me.trait.rotation) {
-            if (me.supports_degrees) {
+        /*if (this.trait.rotation) {
+            if (this.supports_degrees) {
                 // states['rotationDegrees'] = 0;
             }
-            if (me.supports_percent) {
+            if (this.supports_percent) {
                 // states['rotationPercent'] = 0;
             }
         }*/
-        if (me.trait.runcycle) {
+        if (this.trait.runcycle) {
             states['currentRunCycle'] = [{
                 currentCycle: "unknown",
-                lang: me.lang
+                lang: this.lang
             }];
             states['currentTotalRemainingTime'] = 0;
             states['currentCycleRemainingTime'] = 0;
         }
-        if (me.trait.sensorstate) {
+        if (this.trait.sensorstate) {
             let current_sensor_state_data = [];
-            me.sensor_states_supported.forEach(function (sensor_state_name) {
+            this.sensor_states_supported.forEach(function (sensor_state_name) {
                 let current_sensor = { name: sensor_state_name };
                 let current_sensor_state = undefined;
                 let raw_value = undefined;
@@ -2151,56 +2147,56 @@ export class DeviceNode {
             if (current_sensor_state_data.length > 0) {
                 states['currentSensorStateData'] = current_sensor_state_data;
             } else {
-                delete me.state_types['currentSensorStateData'];
+                delete this.state_types['currentSensorStateData'];
             }
         }
-        if (me.trait.softwareupdate) {
+        if (this.trait.softwareupdate) {
             states['lastSoftwareUpdateUnixTimestampSec'] = 0;
         }
-        if (me.trait.startstop) {
+        if (this.trait.startstop) {
             states['isRunning'] = false;
             // states['isPaused'] = false;
             // states['activeZones'] = [];
         }
-        /*if (me.trait.statusreport) {
+        /*if (this.trait.statusreport) {
             states['currentStatusReport'] = [];
         }*/
-        if (me.trait.temperaturecontrol) {
-            if (!me.query_only_temperaturecontrol) { // Required if queryOnlyTemperatureControl set to false
-                states['temperatureSetpointCelsius'] = me.tc_min_threshold_celsius;
+        if (this.trait.temperaturecontrol) {
+            if (!this.query_only_temperaturecontrol) { // Required if queryOnlyTemperatureControl set to false
+                states['temperatureSetpointCelsius'] = this.tc_min_threshold_celsius;
             }
-            // states['temperatureAmbientCelsius'] = me.tc_min_threshold_celsius;
+            // states['temperatureAmbientCelsius'] = this.tc_min_threshold_celsius;
         }
-        if (me.trait.temperaturesetting) {
-            if (!me.command_only_temperaturesetting) {
+        if (this.trait.temperaturesetting) {
+            if (!this.command_only_temperaturesetting) {
                 // states['activeThermostatMode'] = "none";
-                // states['targetTempReachedEstimateUnixTimestampSec'] = me.target_temp_reached_estimate_unix_timestamp_sec;
-                // states['thermostatHumidityAmbient'] = me.thermostat_humidity_ambient;
-                states['thermostatMode'] = me.available_thermostat_modes.length > 0 ? me.available_thermostat_modes[0] : "";
-                states['thermostatTemperatureAmbient'] = me.thermostat_temperature_setpoint;
+                // states['targetTempReachedEstimateUnixTimestampSec'] = this.target_temp_reached_estimate_unix_timestamp_sec;
+                // states['thermostatHumidityAmbient'] = this.thermostat_humidity_ambient;
+                states['thermostatMode'] = this.available_thermostat_modes.length > 0 ? this.available_thermostat_modes[0] : "";
+                states['thermostatTemperatureAmbient'] = this.thermostat_temperature_setpoint;
                 // 0
-                states['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
+                states['thermostatTemperatureSetpoint'] = this.thermostat_temperature_setpoint;
                 // 1
-                // states['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
-                // states['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
+                // states['thermostatTemperatureSetpointHigh'] = this.thermostat_temperature_setpoint_hight;
+                // states['thermostatTemperatureSetpointLow'] = this.thermostat_temperature_setpoint_low;
             }
         }
-        if (me.trait.timer) {
-            if (!me.command_only_timer) {
+        if (this.trait.timer) {
+            if (!this.command_only_timer) {
                 states['timerRemainingSec'] = -1;
                 // states['timerPaused'] = false;
             }
         }
-        if (me.trait.toggles) {
-            if (!me.command_only_toggles) {
+        if (this.trait.toggles) {
+            if (!this.command_only_toggles) {
                 states['currentToggleSettings'] = {};
                 this.updateTogglesState(device);
             }
         }
-        if (me.trait.volume) {
-            if (!me.command_only_volume) {
-                states['currentVolume'] = me.volume_default_percentage;
-                if (me.volume_can_mute_and_unmute) {
+        if (this.trait.volume) {
+            if (!this.command_only_volume) {
+                states['currentVolume'] = this.volume_default_percentage;
+                if (this.volume_can_mute_and_unmute) {
                     states['isMuted'] = false;
                 }
             }
@@ -2213,18 +2209,17 @@ export class DeviceNode {
      * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
      */
     updateStatusIcon(is_local: boolean) {
-        const me = this;
         let text = [];
         let fill = 'red';
         let shape = 'dot';
-        if (me.states.online) {
-            if (me.trait.scene) {
+        if (this.states.online) {
+            if (this.trait.scene) {
                 text.push('OK');
                 fill = 'green';
             }
-            if (me.trait.onoff) {
-                if (me.states.on !== undefined) {
-                    if (me.states.on) {
+            if (this.trait.onoff) {
+                if (this.states.on !== undefined) {
+                    if (this.states.on) {
                         text.push('ON');
                         fill = 'green';
                     } else {
@@ -2236,58 +2231,58 @@ export class DeviceNode {
             } else {
                 fill = 'blue';
             }
-            if (me.trait.brightness && me.states.brightness !== undefined) {
-                text.push(`${me.states.brightness} %`);
+            if (this.trait.brightness && this.states.brightness !== undefined) {
+                text.push(`${this.states.brightness} %`);
             }
-            if (me.trait.colorsetting && me.states.color.temperatureK !== undefined) {
-                text.push(`${me.states.color.temperatureK} K`);
+            if (this.trait.colorsetting && this.states.color.temperatureK !== undefined) {
+                text.push(`${this.states.color.temperatureK} K`);
             }
-            if (me.trait.colorsetting && me.states.color.spectrumRgb !== undefined) {
-                text.push('#' + me.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0'));
+            if (this.trait.colorsetting && this.states.color.spectrumRgb !== undefined) {
+                text.push('#' + this.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0'));
             }
-            if (me.trait.colorsetting && me.states.color.spectrumHsv !== undefined) {
-                text.push('H: ' + me.states.color.spectrumHsv.hue +
-                    ' S: ' + me.states.color.spectrumHsv.saturation +
-                    ' V: ' + me.states.color.spectrumHsv.value);
+            if (this.trait.colorsetting && this.states.color.spectrumHsv !== undefined) {
+                text.push('H: ' + this.states.color.spectrumHsv.hue +
+                    ' S: ' + this.states.color.spectrumHsv.saturation +
+                    ' V: ' + this.states.color.spectrumHsv.value);
             }
-            if (me.trait.openclose) {
-                if (me.states.openPercent !== undefined) {
-                    if (me.states.openPercent === 0) {
+            if (this.trait.openclose) {
+                if (this.states.openPercent !== undefined) {
+                    if (this.states.openPercent === 0) {
                         text.push('CLOSED');
                         fill = 'green';
                     } else {
-                        text.push(me.discrete_only_openclose ? 'OPEN' : util.format("OPEN %d%%", me.states.openPercent));
+                        text.push(this.discrete_only_openclose ? 'OPEN' : util.format("OPEN %d%%", this.states.openPercent));
                     }
                 }
             }
-            if (me.trait.startstop) {
-                if (me.pausable && me.states.isPaused) {
+            if (this.trait.startstop) {
+                if (this.pausable && this.states.isPaused) {
                     text.push('Paused');
                     fill = 'yellow';
                 } else {
-                    text.push(me.states.isRunning ? 'Started' : 'Stopped');
-                    fill = me.states.isRunning ? 'green' : 'red';
+                    text.push(this.states.isRunning ? 'Started' : 'Stopped');
+                    fill = this.states.isRunning ? 'green' : 'red';
                 }
             }
-            if (me.trait.humiditysetting) {
-                if (me.states.humidityAmbientPercent !== undefined) {
-                    text.push('H: ' + me.states.humidityAmbientPercent + "% ");
+            if (this.trait.humiditysetting) {
+                if (this.states.humidityAmbientPercent !== undefined) {
+                    text.push('H: ' + this.states.humidityAmbientPercent + "% ");
                 }
-                if (me.states.humiditySetpointPercent !== undefined) {
-                    text.push('TH: ' + me.states.humiditySetpointPercent + "% ");
-                }
-            }
-            if (me.trait.temperaturecontrol) {
-                if (me.states.temperatureAmbientCelsius !== undefined) {
-                    text.push('TC: ' + me.states.temperatureAmbientCelsius);
-                }
-                if (me.states.temperatureSetpointCelsius !== undefined) {
-                    text.push(' SC: ' + me.states.temperatureSetpointCelsius);
+                if (this.states.humiditySetpointPercent !== undefined) {
+                    text.push('TH: ' + this.states.humiditySetpointPercent + "% ");
                 }
             }
-            if (me.trait.temperaturesetting) {
-                const thermostat_mode = me.states.thermostatMode;
-                const st = " T: " + (me.states.thermostatTemperatureAmbient || '?') + "°C | S: " + (me.states.thermostatTemperatureSetpoint || '?');
+            if (this.trait.temperaturecontrol) {
+                if (this.states.temperatureAmbientCelsius !== undefined) {
+                    text.push('TC: ' + this.states.temperatureAmbientCelsius);
+                }
+                if (this.states.temperatureSetpointCelsius !== undefined) {
+                    text.push(' SC: ' + this.states.temperatureSetpointCelsius);
+                }
+            }
+            if (this.trait.temperaturesetting) {
+                const thermostat_mode = this.states.thermostatMode;
+                const st = " T: " + (this.states.thermostatTemperatureAmbient || '?') + "°C | S: " + (this.states.thermostatTemperatureSetpoint || '?');
                 if (thermostat_mode === "off") {
                     text.push('OFF ' + st);
                 } else if (thermostat_mode === "heat" || thermostat_mode === "cool") {
@@ -2295,38 +2290,38 @@ export class DeviceNode {
                     text.push(thermostat_mode.substring(0, 1).toUpperCase() + st);
                 } else if (thermostat_mode === "heatcool") {
                     fill = "green";
-                    text.push('H/C T: ' + (me.states.thermostatTemperatureAmbient || '?') + "°C | S: [" + (me.states.thermostatTemperatureSetpointLow || '') + " - " + (me.states.thermostatTemperatureSetpointHigh || ''));
+                    text.push('H/C T: ' + (this.states.thermostatTemperatureAmbient || '?') + "°C | S: [" + (this.states.thermostatTemperatureSetpointLow || '') + " - " + (this.states.thermostatTemperatureSetpointHigh || ''));
                 } else {
                     fill = "green";
                     text.push(thermostat_mode.substring(0, 1).toUpperCase() + st);
                 }
-                if (me.states.thermostatHumidityAmbient !== undefined) {
-                    text.push(me.states.thermostatHumidityAmbient + "%");
+                if (this.states.thermostatHumidityAmbient !== undefined) {
+                    text.push(this.states.thermostatHumidityAmbient + "%");
                 }
             }
-            if (me.trait.energystorage) {
-                text.push(me.states.descriptiveCapacityRemaining);
+            if (this.trait.energystorage) {
+                text.push(this.states.descriptiveCapacityRemaining);
             }
-            if (me.trait.armdisarm) {
-                if (me.states.isArmed) {
-                    if (me.states.currentArmLevel) {
-                        text.push(me.states.currentArmLevel);
+            if (this.trait.armdisarm) {
+                if (this.states.isArmed) {
+                    if (this.states.currentArmLevel) {
+                        text.push(this.states.currentArmLevel);
                     }
                 } else {
                     text.push('DISARMED');
                 }
             }
-            if (me.trait.fanspeed) {
-                if (typeof me.states.currentFanSpeedPercent === 'number') {
-                    text.push(me.states.currentFanSpeedPercent + '%');
+            if (this.trait.fanspeed) {
+                if (typeof this.states.currentFanSpeedPercent === 'number') {
+                    text.push(this.states.currentFanSpeedPercent + '%');
                 }
-                if (typeof me.states.currentFanSpeedSetting === 'string') {
-                    text.push(me.states.currentFanSpeedSetting);
+                if (typeof this.states.currentFanSpeedSetting === 'string') {
+                    text.push(this.states.currentFanSpeedSetting);
                 }
             }
-            if (me.trait.sensorstate) {
-                if (Array.isArray(me.states.currentSensorStateData)) {
-                    me.states.currentSensorStateData.forEach(sensor => {
+            if (this.trait.sensorstate) {
+                if (Array.isArray(this.states.currentSensorStateData)) {
+                    this.states.currentSensorStateData.forEach(sensor => {
                         const currentSensorStateSet = sensor.currentSensorState !== undefined && sensor.currentSensorState !== 'unknown';
                         if (currentSensorStateSet || sensor.rawValue !== undefined) {
                             text.push(sensor.name);
@@ -2340,26 +2335,26 @@ export class DeviceNode {
                     });
                 }
             }
-            if (me.trait.lockunlock) {
-                if (me.states.isJammed) {
+            if (this.trait.lockunlock) {
+                if (this.states.isJammed) {
                     text.push('JAMMED');
-                } else if (typeof me.states.isLocked === 'boolean') {
-                    text.push(me.states.isLocked ? ' LOCKED' : ' UNLOCKED');
+                } else if (typeof this.states.isLocked === 'boolean') {
+                    text.push(this.states.isLocked ? ' LOCKED' : ' UNLOCKED');
                 }
             }
-            if (me.trait.runcycle) {
+            if (this.trait.runcycle) {
                 if(
-                    typeof me.states.currentRunCycle !== 'undefined' &&
-                    typeof me.states.currentRunCycle[0] !== 'undefined' &&
-                    typeof me.states.currentRunCycle[0].currentCycle !== 'undefined' &&
-                    me.states.currentRunCycle[0].currentCycle !== 'unknown'
+                    typeof this.states.currentRunCycle !== 'undefined' &&
+                    typeof this.states.currentRunCycle[0] !== 'undefined' &&
+                    typeof this.states.currentRunCycle[0].currentCycle !== 'undefined' &&
+                    this.states.currentRunCycle[0].currentCycle !== 'unknown'
                 ) {
-                    text.push(me.states.currentRunCycle[0].currentCycle);
+                    text.push(this.states.currentRunCycle[0].currentCycle);
                 }
             }
-            if (me.trait.occupancysensing) {
-                if(typeof me.states.occupancy !== 'undefined')
-                    text.push(me.states.occupancy);
+            if (this.trait.occupancysensing) {
+                if(typeof this.states.occupancy !== 'undefined')
+                    text.push(this.states.occupancy);
             }
         } else {
             shape = 'ring';
@@ -2372,7 +2367,7 @@ export class DeviceNode {
             shape = 'ring';
         }
         text = text.join(' | ');
-        me.status({ fill: fill, shape: shape, text: text });
+        this.status({ fill: fill, shape: shape, text: text });
     }
 
     /******************************************************************************************************************
@@ -2381,33 +2376,32 @@ export class DeviceNode {
      * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
      */
     updated(g_command, exe_result, is_local: boolean) {
-        const me = this;
         let command = g_command.command.startsWith('action.devices.commands.') ? g_command.command.substr(24) : g_command.command;
         let params = exe_result.params || {};
-        me._debug(".updated: g_command = " + JSON.stringify(g_command));
-        me._debug(".updated: exe_result = " + JSON.stringify(exe_result));
+        this._debug(".updated: g_command = " + JSON.stringify(g_command));
+        this._debug(".updated: exe_result = " + JSON.stringify(exe_result));
 
-        const modified = me.updateState(params);
+        const modified = this.updateState(params);
         if (modified) {
-            if (me.persistent_state) {
-                me.clientConn.app.ScheduleGetState();
+            if (this.persistent_state) {
+                this.clientConn.app.ScheduleGetState();
             }
         }
 
-        me.updateStatusIcon(is_local);
+        this.updateStatusIcon(is_local);
 
         let msg = {
-            device_name: me.device.properties.name.name,
+            device_name: this.device.properties.name.name,
             command: command,
             params: g_command.params,
             payload: {},
         };
 
-        if (me.topicOut)
-            msg.topic = me.topicOut;
+        if (this.topicOut)
+            msg.topic = this.topicOut;
 
         // Copy the device state to the payload
-        me.cloneObject(msg.payload, me.states, me.state_types);
+        this.cloneObject(msg.payload, this.states, this.state_types);
 
         // Copy the exe_result params to the payload
         if (exe_result.params) {
@@ -2418,7 +2412,7 @@ export class DeviceNode {
             });
         }
 
-        me.send(msg);
+        this.send(msg);
     }
 
     /**
@@ -2429,21 +2423,20 @@ export class DeviceNode {
      * @param {Function} done - Function to inform the runtime that this node has finished its operation
      */
     onInput(msgi, send, done) {
-        const me = this;
-        if(!send) send = function() { me.send.apply(me, arguments) };
+        if(!send) send = () => { this.send.apply(this, arguments) };
         let msg = msgi;
-        if (me.topic_filter && !(msg.topic || '').toString().startsWith(me.topicOut)) {
+        if (this.topic_filter && !(msg.topic || '').toString().startsWith(this.topicOut)) {
             if(done) done();
             return;
         }
-        if (me.topic_filter && msg.payload.topic && (msg.topic || '').toString().startsWith(me.topicOut)) {
+        if (this.topic_filter && msg.payload.topic && (msg.topic || '').toString().startsWith(this.topicOut)) {
             msg.topic = msg.payload.topic;
         }
-        me._debug(".input: topic = " + msg.topic);
+        this._debug(".input: topic = " + msg.topic);
 
         let upper_topic = '';
         if (msg.topic) {
-            let topicArr = String(msg.topic).split(me.topicDelim);
+            let topicArr = String(msg.topic).split(this.topicDelim);
             let topic = topicArr[topicArr.length - 1].trim();   // get last part of topic
             upper_topic = topic.toUpperCase();
         }
@@ -2451,268 +2444,268 @@ export class DeviceNode {
         try {
             if (upper_topic === 'GETSTATE') {
                 let states = {};
-                me.cloneObject(states, me.states, me.state_types);
+                this.cloneObject(states, this.states, this.state_types);
                 send({
                     topic: msg.topic,
                     payload: states,
-                    device_id: me.device.id
+                    device_id: this.device.id
                 });
             } else if (upper_topic === 'ERRORCODE') {
                 if (typeof msg.payload === 'string' && msg.payload.trim()) {
-                    me.errorCode = msg.payload.trim();
+                    this.errorCode = msg.payload.trim();
                 } else {
-                    me.errorCode = undefined;
+                    this.errorCode = undefined;
                 }
             } else if (upper_topic === 'AVAILABLEAPPLICATIONS') {
-                if (me.trait.appselector) {
-                    if (me.appselector_type === 'str') {
-                        const filename = me.appselector_file.replace(/<id>/g, me.id);
+                if (this.trait.appselector) {
+                    if (this.appselector_type === 'str') {
+                        const filename = this.appselector_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_applications = me.to_available_applications(msg.payload);
-                            me.writeJson('Applications', filename, me.available_applications);
+                            this.available_applications = this.to_available_applications(msg.payload);
+                            this.writeJson('Applications', filename, this.available_applications);
                         } else {
-                            me.available_applications = me.to_available_applications(me.loadJson('Applications', filename, []));
+                            this.available_applications = this.to_available_applications(this.loadJson('Applications', filename, []));
                         }
                     } else {
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_applications = me.to_available_applications(msg.payload);
+                            this.available_applications = this.to_available_applications(msg.payload);
                         }
                     }
-                    me.device.properties.attributes.availableApplications = me.available_applications;
-                    me.updateStateTypesForTraits();
-                    me.clientConn.app.ScheduleRequestSync();
+                    this.device.properties.attributes.availableApplications = this.available_applications;
+                    this.updateStateTypesForTraits();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else {
-                    me.error("Got AVAILABLEAPPLICATIONS message, but AppSelector trait is disabled");
+                    this.error("Got AVAILABLEAPPLICATIONS message, but AppSelector trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLEARMLEVELS') {
-                if (me.trait.armdisarm) {
-                    if (me.available_arm_levels_type === 'str') {
-                        const filename = me.available_arm_levels_file.replace(/<id>/g, me.id)
+                if (this.trait.armdisarm) {
+                    if (this.available_arm_levels_type === 'str') {
+                        const filename = this.available_arm_levels_file.replace(/<id>/g, this.id)
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_arm_levels = me.to_available_arm_levels(msg.payload);
-                            me.writeJson('Arm levels', filename, me.available_arm_levels);
+                            this.available_arm_levels = this.to_available_arm_levels(msg.payload);
+                            this.writeJson('Arm levels', filename, this.available_arm_levels);
                         } else {
-                            me.available_arm_levels = me.to_available_arm_levels(me.loadJson('Arm levels', filename, []));
+                            this.available_arm_levels = this.to_available_arm_levels(this.loadJson('Arm levels', filename, []));
                         }
                     } else {
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_arm_levels = me.to_available_arm_levels(msg.payload);
+                            this.available_arm_levels = this.to_available_arm_levels(msg.payload);
                         }
                     }
-                    me.device.properties.attributes.availableArmLevels.levels = me.available_arm_levels;
-                    me.updateStateTypesForTraits();
-                    me.clientConn.app.ScheduleRequestSync();
+                    this.device.properties.attributes.availableArmLevels.levels = this.available_arm_levels;
+                    this.updateStateTypesForTraits();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else {
-                    me.error("Got AVAILABLEARMLEVELS message, but ArmDisarm trait is disabled");
+                    this.error("Got AVAILABLEARMLEVELS message, but ArmDisarm trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLECHANNELS') {
-                if (me.trait.channel) {
-                    if (me.channel_type === 'str') {
-                        const filename = me.channel_file.replace(/<id>/g, me.id);
+                if (this.trait.channel) {
+                    if (this.channel_type === 'str') {
+                        const filename = this.channel_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_channels = me.to_available_channels(msg.payload);
-                            me.writeJson('Channels', filename, me.available_channels);
+                            this.available_channels = this.to_available_channels(msg.payload);
+                            this.writeJson('Channels', filename, this.available_channels);
                         } else {
-                            me.available_channels = me.to_available_channels(me.loadJson('Channels', filename, []));
+                            this.available_channels = this.to_available_channels(this.loadJson('Channels', filename, []));
                         }
                     } else {
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_channels = [];
+                            this.available_channels = [];
                         }
                     }
-                    me.device.properties.attributes.availableChannels = me.available_channels;
-                    me.updateStateTypesForTraits();
-                    me.clientConn.app.ScheduleRequestSync();
+                    this.device.properties.attributes.availableChannels = this.available_channels;
+                    this.updateStateTypesForTraits();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else {
-                    me.error("Got AVAILABLECHANNELS message, but Channel trait is disabled");
+                    this.error("Got AVAILABLECHANNELS message, but Channel trait is disabled");
                 }
             } else if (upper_topic === 'SUPPORTEDDISPENSEITEMS') {
-                if (me.trait.dispense) {
-                    if (me.supported_dispense_items_type === 'str') {
-                        const filename = me.supported_dispense_items_file.replace(/<id>/g, me.id);
+                if (this.trait.dispense) {
+                    if (this.supported_dispense_items_type === 'str') {
+                        const filename = this.supported_dispense_items_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
-                            me.supported_dispense_items = me.to_supported_dispense_items(msg.payload);
-                            me.writeJson('Dispense items', filename, me.supported_dispense_items);
+                            this.supported_dispense_items = this.to_supported_dispense_items(msg.payload);
+                            this.writeJson('Dispense items', filename, this.supported_dispense_items);
                         } else {
-                            me.supported_dispense_items = me.to_supported_dispense_items(me.loadJson('Dispense items', filename, []));
+                            this.supported_dispense_items = this.to_supported_dispense_items(this.loadJson('Dispense items', filename, []));
                         }
                     } else {
                         if (typeof msg.payload !== 'undefined') {
-                            me.supported_dispense_items = me.to_supported_dispense_items(msg.payload);
+                            this.supported_dispense_items = this.to_supported_dispense_items(msg.payload);
                         }
                     }
-                    me.device.properties.attributes.supportedDispenseItems = me.supported_dispense_items;
-                    me.states['dispenseItems'] = me.getDispenseNewState();
-                    me.updateStateTypesForTraits();
-                    me.clientConn.app.ScheduleRequestSync();
+                    this.device.properties.attributes.supportedDispenseItems = this.supported_dispense_items;
+                    this.states['dispenseItems'] = this.getDispenseNewState();
+                    this.updateStateTypesForTraits();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else {
-                    me.error("Got SUPPORTEDDISPENSEITEMS message, but Dispense trait is disabled");
+                    this.error("Got SUPPORTEDDISPENSEITEMS message, but Dispense trait is disabled");
                 }
             } else if (upper_topic === 'SUPPORTEDDISPENSEPRESETS') {
-                if (me.trait.dispense) {
-                    if (me.supported_dispense_presets_type === 'str') {
-                        const filename = me.supported_dispense_presets_file.replace(/<id>/g, me.id);
+                if (this.trait.dispense) {
+                    if (this.supported_dispense_presets_type === 'str') {
+                        const filename = this.supported_dispense_presets_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
-                            me.supported_dispense_presets = me.to_supported_dispense_presets(msg.payload);
-                            me.writeJson('Dispense presets', filename, me.supported_dispense_presets);
+                            this.supported_dispense_presets = this.to_supported_dispense_presets(msg.payload);
+                            this.writeJson('Dispense presets', filename, this.supported_dispense_presets);
                         } else {
-                            me.supported_dispense_presets = me.to_supported_dispense_presets(me.loadJson('Dispense presets', filename, []));
+                            this.supported_dispense_presets = this.to_supported_dispense_presets(this.loadJson('Dispense presets', filename, []));
                         }
                     } else {
                         if (typeof msg.payload !== 'undefined') {
-                            me.supported_dispense_presets = me.to_supported_dispense_presets(msg.payload);
+                            this.supported_dispense_presets = this.to_supported_dispense_presets(msg.payload);
                         }
                     }
-                    me.device.properties.attributes.supportedDispensePresets = me.supported_dispense_presets;
-                    me.states['dispenseItems'] = me.getDispenseNewState();
-                    me.updateStateTypesForTraits();
-                    me.clientConn.app.ScheduleRequestSync();
+                    this.device.properties.attributes.supportedDispensePresets = this.supported_dispense_presets;
+                    this.states['dispenseItems'] = this.getDispenseNewState();
+                    this.updateStateTypesForTraits();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else {
-                    me.error("Got SUPPORTEDDISPENSEPRESETS message, but Dispense trait is disabled");
+                    this.error("Got SUPPORTEDDISPENSEPRESETS message, but Dispense trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLEFANSPEEDS') {
-                if (me.trait.fanspeed) {
-                    if (me.available_fan_speeds_type === 'str') {
-                        const filename = me.available_fan_speeds_file.replace(/<id>/g, me.id);
+                if (this.trait.fanspeed) {
+                    if (this.available_fan_speeds_type === 'str') {
+                        const filename = this.available_fan_speeds_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_fan_speeds = me.to_available_fan_speeds(msg.payload);
-                            me.writeJson('Fan speeds', filename, me.available_fan_speeds);
+                            this.available_fan_speeds = this.to_available_fan_speeds(msg.payload);
+                            this.writeJson('Fan speeds', filename, this.available_fan_speeds);
                         } else {
-                            me.available_fan_speeds = me.to_available_fan_speeds(me.loadJson('Fan speeds', filename, []));
+                            this.available_fan_speeds = this.to_available_fan_speeds(this.loadJson('Fan speeds', filename, []));
                         }
                     } else {
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_fan_speeds = me.to_available_fan_speeds(msg.payload);
+                            this.available_fan_speeds = this.to_available_fan_speeds(msg.payload);
                         }
                     }
-                    me.device.properties.attributes.availableFanSpeeds.speeds = me.available_fan_speeds;
-                    me.updateStateTypesForTraits();
-                    me.clientConn.app.ScheduleRequestSync();
+                    this.device.properties.attributes.availableFanSpeeds.speeds = this.available_fan_speeds;
+                    this.updateStateTypesForTraits();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else {
-                    me.error("Got AVAILABLEFANSPEEDS message, but FanSpeed trait is disabled");
+                    this.error("Got AVAILABLEFANSPEEDS message, but FanSpeed trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLEFILLLEVELS') {
-                if (me.trait.dispense) {
-                    if (me.available_fill_levels_type === 'str') {
-                        const filename = me.available_fill_levels_file.replace(/<id>/g, me.id);
+                if (this.trait.dispense) {
+                    if (this.available_fill_levels_type === 'str') {
+                        const filename = this.available_fill_levels_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_fill_levels = me.to_available_fill_levels(msg.payload);
-                            me.writeJson(' Fill levels', filename, me.available_fill_levels);
+                            this.available_fill_levels = this.to_available_fill_levels(msg.payload);
+                            this.writeJson(' Fill levels', filename, this.available_fill_levels);
                         } else {
-                            me.available_fill_levels = me.to_available_fill_levels(me.loadJson(' Fill levels', filename, []));
+                            this.available_fill_levels = this.to_available_fill_levels(this.loadJson(' Fill levels', filename, []));
                         }
                     } else {
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_fill_levels = me.to_available_fill_levels(msg.payload);
+                            this.available_fill_levels = this.to_available_fill_levels(msg.payload);
                         }
                     }
-                    me.device.properties.attributes.availableFillLevels.levels = me.available_fill_levels;
-                    me.updateStateTypesForTraits();
-                    me.clientConn.app.ScheduleRequestSync();
+                    this.device.properties.attributes.availableFillLevels.levels = this.available_fill_levels;
+                    this.updateStateTypesForTraits();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else {
-                    me.error("Got AVAILABLEFILLLEVELS message, but Fill trait is disabled");
+                    this.error("Got AVAILABLEFILLLEVELS message, but Fill trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLEFOODPRESETS') {
-                if (me.trait.cook) {
-                    if (me.food_presets_type === 'str') {
-                        const filename = me.food_presets_file.replace(/<id>/g, me.id);
+                if (this.trait.cook) {
+                    if (this.food_presets_type === 'str') {
+                        const filename = this.food_presets_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
-                            me.food_presets = me.to_food_presets(msg.payload);
-                            me.writeJson('Food presets', filename, me.food_presets);
+                            this.food_presets = this.to_food_presets(msg.payload);
+                            this.writeJson('Food presets', filename, this.food_presets);
                         } else {
-                            me.food_presets = me.to_food_presets(me.loadJson('Food presets', filename, []));
+                            this.food_presets = this.to_food_presets(this.loadJson('Food presets', filename, []));
                         }
                     } else {
                         if (typeof msg.payload !== 'undefined') {
-                            me.food_presets = me.to_food_presets(msg.payload);
+                            this.food_presets = this.to_food_presets(msg.payload);
                         }
                     }
-                    me.device.properties.attributes.foodPresets = me.food_presets;
-                    me.updateStateTypesForTraits();
-                    me.clientConn.app.ScheduleRequestSync();
+                    this.device.properties.attributes.foodPresets = this.food_presets;
+                    this.updateStateTypesForTraits();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else {
-                    me.error("Got AVAILABLEFOODPRESETS message, but Cook trait is disabled");
+                    this.error("Got AVAILABLEFOODPRESETS message, but Cook trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLEINPUTS') {
-                if (me.trait.inputselector) {
-                    if (me.inputselector_type === 'json') {
-                        const filename = me.inputselector_file.replace(/<id>/g, me.id)
+                if (this.trait.inputselector) {
+                    if (this.inputselector_type === 'json') {
+                        const filename = this.inputselector_file.replace(/<id>/g, this.id)
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_inputs = me.to_available_inputs(msg.payload);
-                            me.writeJson('Inputs', filename, me.available_inputs);
+                            this.available_inputs = this.to_available_inputs(msg.payload);
+                            this.writeJson('Inputs', filename, this.available_inputs);
                         } else {
-                            me.available_inputs = me.to_available_inputs(me.loadJson('Inputs', filename, []));
+                            this.available_inputs = this.to_available_inputs(this.loadJson('Inputs', filename, []));
                         }
                     } else {
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_inputs = me.to_available_inputs(msg.payload);
+                            this.available_inputs = this.to_available_inputs(msg.payload);
                         }
                     }
-                    me.device.properties.attributes.availableInputs = me.available_inputs;
-                    me.updateStateTypesForTraits();
-                    me.clientConn.app.ScheduleRequestSync();
+                    this.device.properties.attributes.availableInputs = this.available_inputs;
+                    this.updateStateTypesForTraits();
+                    this.clientConn.app.ScheduleRequestSync();
                 } else {
-                    me.error("Got AVAILABLEINPUTS message, but InputSelector trait is disabled");
+                    this.error("Got AVAILABLEINPUTS message, but InputSelector trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLEMODES') {
-                if (me.trait.modes) {
-                    if (me.modes_type !== 'json') {
-                        const filename = me.modes_file.replace(/<id>/g, me.id);
+                if (this.trait.modes) {
+                    if (this.modes_type !== 'json') {
+                        const filename = this.modes_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_modes = me.to_available_modes(msg.payload);
-                            me.writeJson('Modes', filename, me.available_modes);
+                            this.available_modes = this.to_available_modes(msg.payload);
+                            this.writeJson('Modes', filename, this.available_modes);
                         } else {
-                            me.available_modes = me.to_available_modes(me.loadJson('Modes', filename, []));
+                            this.available_modes = this.to_available_modes(this.loadJson('Modes', filename, []));
                         }
                     } else {
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_modes = me.to_available_modes(msg.payload);
+                            this.available_modes = this.to_available_modes(msg.payload);
                         }
                     }
-                    me.device.properties.attributes.availableModes = me.available_modes;
-                    me.updateStateTypesForTraits();
-                    me.updateModesState(me);
-                    me.clientConn.app.ScheduleRequestSync();
+                    this.device.properties.attributes.availableModes = this.available_modes;
+                    this.updateStateTypesForTraits();
+                    this.updateModesState(this);
+                    this.clientConn.app.ScheduleRequestSync();
                 } else {
-                    me.error("Got AVAILABLEMODES message, but Modes trait is disabled");
+                    this.error("Got AVAILABLEMODES message, but Modes trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLETOGGLES') {
-                if (me.trait.toggles) {
-                    if (me.toggles_type === 'str') {
-                        const filename = me.toggles_file.replace(/<id>/g, me.id);
+                if (this.trait.toggles) {
+                    if (this.toggles_type === 'str') {
+                        const filename = this.toggles_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_toggles = me.to_available_toggles(msg.payload);
-                            me.writeJson('Toggles', filename, me.available_toggles);
+                            this.available_toggles = this.to_available_toggles(msg.payload);
+                            this.writeJson('Toggles', filename, this.available_toggles);
                         } else {
-                            me.available_toggles = me.to_available_toggles(me.loadJson('Toggles', filename, []));
+                            this.available_toggles = this.to_available_toggles(this.loadJson('Toggles', filename, []));
                         }
                     } else {
                         if (typeof msg.payload !== 'undefined') {
-                            me.available_toggles = me.to_available_toggles(msg.payload);
+                            this.available_toggles = this.to_available_toggles(msg.payload);
                         }
                     }
-                    me.device.properties.attributes.availableToggles = me.available_toggles;
-                    me.updateStateTypesForTraits();
-                    me.updateTogglesState(me);
-                    me.clientConn.app.ScheduleRequestSync();
+                    this.device.properties.attributes.availableToggles = this.available_toggles;
+                    this.updateStateTypesForTraits();
+                    this.updateTogglesState(this);
+                    this.clientConn.app.ScheduleRequestSync();
                 } else {
-                    me.error("Got AVAILABLETOGGLES message, but Toggles trait is disabled");
+                    this.error("Got AVAILABLETOGGLES message, but Toggles trait is disabled");
                 }
             } else if (upper_topic === 'CAMERASTREAMAUTHTOKEN') {
                 const auth_token = Formats.formatValue('cameraStreamAuthToken', msg.payload, Formats.STRING, '');
-                //if (auth_token != me.auth_token) {
-                me.auth_token = auth_token;
-                /*if (Object.prototype.hasOwnProperty.call(me.device.properties.attributes, "cameraStreamNeedAuthToken")) {
-                    let cameraStreamNeedAuthToken = me.device.properties.attributes.cameraStreamNeedAuthToken;
+                //if (auth_token != this.auth_token) {
+                this.auth_token = auth_token;
+                /*if (Object.prototype.hasOwnProperty.call(this.device.properties.attributes, "cameraStreamNeedAuthToken")) {
+                    let cameraStreamNeedAuthToken = this.device.properties.attributes.cameraStreamNeedAuthToken;
                     if (cameraStreamNeedAuthToken != (auth_token.length > 0)) {
-                        me.device.properties.attributes['cameraStreamNeedAuthToken'] = auth_token.length > 0;
-                        me.clientConn.app.ScheduleRequestSync();
+                        this.device.properties.attributes['cameraStreamNeedAuthToken'] = auth_token.length > 0;
+                        this.clientConn.app.ScheduleRequestSync();
                     }
                 }*/
                 //}
             } else if (upper_topic === 'GUESTNETWORKPASSWORD') {
-                me.guest_network_password = Formats.formatValue('guestNetworkPassword', msg.payload, Formats.STRING);
-            } else if (me.trait.objectdetection && upper_topic === 'OBJECTDETECTION') {
+                this.guest_network_password = Formats.formatValue('guestNetworkPassword', msg.payload, Formats.STRING);
+            } else if (this.trait.objectdetection && upper_topic === 'OBJECTDETECTION') {
                 let payload = {};
                 if (typeof msg.payload.familiar === 'number') {
                     payload.familiar = msg.payload.familiar;
@@ -2728,14 +2721,14 @@ export class DeviceNode {
                 } else if (Array.isArray(msg.payload.named)) {
                     payload.named = msg.payload.named;
                 }
-                me.clientConn.sendNotifications(me, {
+                this.clientConn.sendNotifications(this, {
                     ObjectDetection: {
                         objects: payload,
                         priority: 0,
                         detectionTimestamp: Date.now()
                     }
                 });  // tell Google ...
-            } else if (me.trait.runcycle && upper_topic === 'RUNCYCLE') {
+            } else if (this.trait.runcycle && upper_topic === 'RUNCYCLE') {
                 let payload = { priority: 0 };
                 if (typeof msg.payload.status === 'string') {
                     payload.status = msg.payload.status;
@@ -2746,21 +2739,21 @@ export class DeviceNode {
                 if (typeof msg.payload.errorCode === 'string') {
                     payload.errorCode = msg.payload.errorCode;
                 }
-                me.clientConn.sendNotifications(me, {
+                this.clientConn.sendNotifications(this, {
                     RunCycle: payload
                 });  // tell Google ...
-            } else if (me.trait.sensorstate && upper_topic === 'SENSORSTATE') {
-                if (typeof msg.payload.name === 'string' && msg.payload.name.trim() && me.sensor_states_supported.includes(msg.payload.name.trim())) {
+            } else if (this.trait.sensorstate && upper_topic === 'SENSORSTATE') {
+                if (typeof msg.payload.name === 'string' && msg.payload.name.trim() && this.sensor_states_supported.includes(msg.payload.name.trim())) {
                     let payload = { priority: 0 };
                     payload.name = msg.payload.name.trim();
                     if (typeof msg.payload.currentSensorState === 'string' && msg.payload.currentSensorState.trim()) {
                         payload.currentSensorState = msg.payload.currentSensorState.trim();
-                        me.clientConn.sendNotifications(me, {
+                        this.clientConn.sendNotifications(this, {
                             SensorState: payload
                         });  // tell Google ...
                     }
                 }
-            } else if (me.trait.lockunlock && upper_topic === 'LOCKUNLOCK') {
+            } else if (this.trait.lockunlock && upper_topic === 'LOCKUNLOCK') {
                 let payload = {};
                 if (typeof msg.payload.followUpToken === 'string') {
                     payload.followUpToken = msg.payload.followUpToken;
@@ -2774,20 +2767,20 @@ export class DeviceNode {
                 if (typeof msg.payload.errorCode === 'string') {
                     payload.errorCode = msg.payload.errorCode;
                 }
-                me.clientConn.sendNotifications(me, {
+                this.clientConn.sendNotifications(this, {
                     LockUnlock: {
                         priority: 0,
                         followUpResponse: payload
                     }
                 });  // tell Google ...
-            } else if (me.trait.networkcontrol && upper_topic === 'NETWORKCONTROL') {
-                me.clientConn.sendNotifications(me, {
+            } else if (this.trait.networkcontrol && upper_topic === 'NETWORKCONTROL') {
+                this.clientConn.sendNotifications(this, {
                     NetworkControl: {
                         priority: 0,
                         followUpResponse: msg.payload
                     }
                 });  // tell Google ...
-            } else if (me.trait.openclose && upper_topic === 'OPENCLOSE') {
+            } else if (this.trait.openclose && upper_topic === 'OPENCLOSE') {
                 let payload = {};
                 if (typeof msg.payload.followUpToken === 'string') {
                     payload.followUpToken = msg.payload.followUpToken;
@@ -2801,21 +2794,21 @@ export class DeviceNode {
                 if (typeof msg.payload.errorCode === 'string') {
                     payload.errorCode = msg.payload.errorCode;
                 }
-                me.clientConn.sendNotifications(me, {
+                this.clientConn.sendNotifications(this, {
                     OpenClose: {
                         priority: 0,
                         followUpResponse: payload
                     }
                 });  // tell Google ...
-            } else if (me.trait.statusreport && upper_topic === 'STATUSREPORT') {
+            } else if (this.trait.statusreport && upper_topic === 'STATUSREPORT') {
                 // Update or Add reports based on deviceTarget and statusCode
                 let payload = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
                 let new_payload = [];
-                const status_report_type = me.state_types['currentStatusReport'].attributes;
-                if (typeof me.states.currentStatusReport !== 'undefined') {
-                    me.states.currentStatusReport.forEach(report => {
+                const status_report_type = this.state_types['currentStatusReport'].attributes;
+                if (typeof this.states.currentStatusReport !== 'undefined') {
+                    this.states.currentStatusReport.forEach(report => {
                         let new_report = { priority: 0 };
-                        me.cloneObject(new_report, report, status_report_type);
+                        this.cloneObject(new_report, report, status_report_type);
                         new_payload.push(new_report);
                     });
                 }
@@ -2823,23 +2816,23 @@ export class DeviceNode {
                 payload.forEach(sr => {
                     let nodeId;
                     if (sr.deviceTarget) {
-                        let properties = me.clientConn.getProperties([sr.deviceTarget]);
+                        let properties = this.clientConn.getProperties([sr.deviceTarget]);
                         if (Object.keys(properties).length > 0) {
                             nodeId = sr.deviceTarget;
                         } else {
-                            nodeId = me.clientConn.getIdFromName(sr.deviceTarget);
+                            nodeId = this.clientConn.getIdFromName(sr.deviceTarget);
                         }
                     } else {
-                        nodeId = me.device.id;
+                        nodeId = this.device.id;
                     }
                     if (nodeId) {
                         let new_report = {};
-                        me.cloneObject(new_report, sr, status_report_type);
+                        this.cloneObject(new_report, sr, status_report_type);
                         if (new_report.statusCode) {
                             new_report.deviceTarget = nodeId;
                             let cur_reports = new_payload.filter(report => report.deviceTarget === nodeId && report.statusCode === new_report.statusCode);
                             if (cur_reports.length > 0) {
-                                if (me.cloneObject(cur_reports[0], new_report, status_report_type)) {
+                                if (this.cloneObject(cur_reports[0], new_report, status_report_type)) {
                                     differs = true;
                                 }
                             } else {
@@ -2849,14 +2842,14 @@ export class DeviceNode {
                         }
                     }
                 });
-                if (me.updateState({ currentStatusReport: new_payload }) || differs) {
-                    me.clientConn.reportState(me.id);  // tell Google ...
-                    if (me.persistent_state) {
-                        me.clientConn.app.ScheduleGetState();
+                if (this.updateState({ currentStatusReport: new_payload }) || differs) {
+                    this.clientConn.reportState(this.id);  // tell Google ...
+                    if (this.persistent_state) {
+                        this.clientConn.app.ScheduleGetState();
                     }
-                    // if (me.passthru) {
+                    // if (this.passthru) {
                     //     msg.payload = new_payload;
-                    //     me.send(msg);
+                    //     this.send(msg);
                     // }
                 }
             } else if (upper_topic === 'SETCHALLENGEPIN') {
@@ -2865,117 +2858,117 @@ export class DeviceNode {
                     case 'action.devices.commands.appInstall':
                     case 'action.devices.commands.appSearch':
                     case 'action.devices.commands.appSelect':
-                        me.pin_appselector = pin;
+                        this.pin_appselector = pin;
                         break;
                     case 'action.devices.commands.ArmDisarm':
-                        me.pin_armdisarm = pin;
+                        this.pin_armdisarm = pin;
                         break;
                     case 'action.devices.commands.BrightnessAbsolute':
                     case 'action.devices.commands.BrightnessRelative':
-                        me.pin_brightness = pin;
+                        this.pin_brightness = pin;
                         break;
                     case 'action.devices.commands.GetCameraStream':
-                        me.pin_camerastream = pin;
+                        this.pin_camerastream = pin;
                         break;
                     case 'action.devices.commands.selectChannel':
                     case 'action.devices.commands.relativeChannel':
                     case 'action.devices.commands.returnChannel':
-                        me.pin_channel = pin;
+                        this.pin_channel = pin;
                         break;
                     case 'action.devices.commands.ColorAbsolute':
-                        me.pin_colorsetting = pin;
+                        this.pin_colorsetting = pin;
                         break;
                     case 'action.devices.commands.Cook':
-                        me.pin_cook = pin;
+                        this.pin_cook = pin;
                         break;
                     case 'action.devices.commands.Dispense':
-                        me.pin_dispense = pin;
+                        this.pin_dispense = pin;
                         break;
                     case 'action.devices.commands.Dock':
-                        me.pin_dock = pin;
+                        this.pin_dock = pin;
                         break;
                     case 'action.devices.commands.Charge':
-                        me.pin_energystorage = pin;
+                        this.pin_energystorage = pin;
                         break;
                     case 'action.devices.commands.SetFanSpeed':
                     case 'action.devices.commands.SetFanSpeedRelative':
                     case 'action.devices.commands.Reverse':
-                        me.pin_fanspeed = pin;
+                        this.pin_fanspeed = pin;
                         break;
                     case 'action.devices.commands.Fill':
-                        me.pin_fill = pin;
+                        this.pin_fill = pin;
                         break;
                     case 'action.devices.commands.SetHumidity':
                     case 'action.devices.commands.HumidityRelative':
-                        me.pin_humiditysetting = pin;
+                        this.pin_humiditysetting = pin;
                         break;
                     case 'action.devices.commands.SetInput':
                     case 'action.devices.commands.NextInput':
                     case 'action.devices.commands.PreviousInput':
-                        me.pin_inputselector = pin;
+                        this.pin_inputselector = pin;
                         break;
                     case 'action.devices.commands.ColorLoop':
                     case 'action.devices.commands.Sleep':
                     case 'action.devices.commands.StopEffect':
                     case 'action.devices.commands.Wake':
-                        me.pin_colorsetting = pin;
+                        this.pin_colorsetting = pin;
                         break;
                     case 'action.devices.commands.Locate':
-                        me.pin_locator = pin;
+                        this.pin_locator = pin;
                         break;
                     case 'action.devices.commands.LockUnlock':
-                        me.pin_lockunlock = pin;
+                        this.pin_lockunlock = pin;
                         break;
                     case 'action.devices.commands.SetModes':
-                        me.pin_modes = pin;
+                        this.pin_modes = pin;
                         break;
                     case 'action.devices.commands.EnableDisableGuestNetwork':
                     case 'action.devices.commands.EnableDisableNetworkProfile':
                     case 'action.devices.commands.GetGuestNetworkPassword':
                     case 'action.devices.commands.TestNetworkSpeed':
-                        me.pin_networkcontrol = pin;
+                        this.pin_networkcontrol = pin;
                         break;
                     case 'action.devices.commands.OnOff':
-                        me.pin_onoff = pin;
+                        this.pin_onoff = pin;
                         break;
                     case 'action.devices.commands.OpenClose':
                     case 'action.devices.commands.OpenCloseRelative':
-                        me.pin_openclose = pin;
+                        this.pin_openclose = pin;
                         break;
                     case 'action.devices.commands.Reboot':
-                        me.pin_reboot = pin;
+                        this.pin_reboot = pin;
                         break;
                     case 'action.devices.commands.RotateAbsolute':
-                        me.pin_rotation = pin;
+                        this.pin_rotation = pin;
                         break;
                     case 'action.devices.commands.ActivateScene':
-                        me.pin_scene = pin;
+                        this.pin_scene = pin;
                         break;
                     case 'action.devices.commands.SoftwareUpdate':
-                        me.pin_softwareupdate = pin;
+                        this.pin_softwareupdate = pin;
                         break;
                     case 'action.devices.commands.StartStop':
                     case 'action.devices.commands.PauseUnpause':
-                        me.pin_startstop = pin;
+                        this.pin_startstop = pin;
                         break;
                     case 'action.devices.commands.SetTemperature':
-                        me.pin_temperaturecontrol = pin;
+                        this.pin_temperaturecontrol = pin;
                         break;
                     case 'action.devices.commands.ThermostatTemperatureSetpoint':
                     case 'action.devices.commands.ThermostatTemperatureSetRange':
                     case 'action.devices.commands.ThermostatSetMode':
                     case 'action.devices.commands.TemperatureRelative':
-                        me.pin_temperaturesetting = pin;
+                        this.pin_temperaturesetting = pin;
                         break;
                     case 'action.devices.commands.TimerStart':
                     case 'action.devices.commands.TimerAdjust':
                     case 'action.devices.commands.TimerPause':
                     case 'action.devices.commands.TimerResume':
                     case 'action.devices.commands.TimerCancel':
-                        me.pin_timer = pin;
+                        this.pin_timer = pin;
                         break;
                     case 'action.devices.commands.SetToggles':
-                        me.pin_toggles = pin;
+                        this.pin_toggles = pin;
                         break;
                     case 'action.devices.commands.mediaStop':
                     case 'action.devices.commands.mediaNext':
@@ -2988,20 +2981,20 @@ export class DeviceNode {
                     case 'action.devices.commands.mediaShuffle':
                     case 'action.devices.commands.mediaClosedCaptioningOn':
                     case 'action.devices.commands.mediaClosedCaptioningOff':
-                        me.pin_transportcontrol = pin;
+                        this.pin_transportcontrol = pin;
                         break;
                     case 'action.devices.commands.mute':
                     case 'action.devices.commands.setVolume':
                     case 'action.devices.commands.volumeRelative':
-                        me.pin_volume = pin;
+                        this.pin_volume = pin;
                         break;
                 }
             } else {
                 let state_key = '';
-                Object.keys(me.state_types).forEach(function (key) {
+                Object.keys(this.state_types).forEach((key) => {
                     if (upper_topic === key.toUpperCase()) {
                         state_key = key;
-                        me._debug(".input: found state " + state_key);
+                        this._debug(".input: found state " + state_key);
                     }
                 });
 
@@ -3012,23 +3005,23 @@ export class DeviceNode {
                         payload: payload
                     };
                 } else {
-                    me._debug(".input: some other topic");
+                    this._debug(".input: some other topic");
                 }
-                const differs = me.updateState(msg.payload || {});
+                const differs = this.updateState(msg.payload || {});
 
                 if (differs) {
                     if (msgi.stateOutput) {
                         let states = {};
-                        me.cloneObject(states, me.states, me.state_types);
-                        send({ topic: me.topicOut, payload: states });
+                        this.cloneObject(states, this.states, this.state_types);
+                        send({ topic: this.topicOut, payload: states });
                     }
-                    me.clientConn.reportState(me.id);  // tell Google ...
-                    if (me.persistent_state) {
-                        me.clientConn.app.ScheduleGetState();
+                    this.clientConn.reportState(this.id);  // tell Google ...
+                    if (this.persistent_state) {
+                        this.clientConn.app.ScheduleGetState();
                     }
-                    me.updateStatusIcon(false);
+                    this.updateStatusIcon(false);
                 }
-                if (me.passthru) {
+                if (this.passthru) {
                     send(msgi);
                 }
 
@@ -3038,7 +3031,7 @@ export class DeviceNode {
             if(done)
                 done(err);
             else
-                me.error(err);
+                this.error(err);
         }
     }
 
@@ -3062,12 +3055,11 @@ export class DeviceNode {
 
     updateTogglesState(device) {
         // Key/value pair with the toggle name of the device as the key, and the current state as the value.
-        const me = this;
-        me._debug(".updateTogglesState");
+        this._debug(".updateTogglesState");
         let states = device.states || {};
         const currentToggleSettings = states['currentToggleSettings']
         let new_toggles = {};
-        me.available_toggles.forEach(function (toggle) {
+        this.available_toggles.forEach(function (toggle) {
             let value = false;
             if (typeof currentToggleSettings[toggle.name] === 'boolean') {
                 value = currentToggleSettings[toggle.name];
@@ -3079,12 +3071,11 @@ export class DeviceNode {
 
     updateModesState(device) {
         // Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
-        const me = this;
-        me._debug(".updateModesState");
+        this._debug(".updateModesState");
         let states = device.states || {};
         const currentModeSettings = states['currentModeSettings']
         let new_modes = {};
-        me.available_modes.forEach(function (mode) {
+        this.available_modes.forEach(function (mode) {
             let value = '';
             if (typeof currentModeSettings[mode.name] === 'string') {
                 value = currentModeSettings[mode.name];
@@ -3095,8 +3086,7 @@ export class DeviceNode {
     }
 
     getTraits() {
-        const me = this;
-        const trait = me.trait;
+        const trait = this.trait;
         let traits = [];
 
         if (trait.appselector) {
@@ -3220,53 +3210,52 @@ export class DeviceNode {
      * @returns {string[]} - Array of the state keys that were modified.
      */
     updateState(from_states) {
-        const me = this;
         let modified = [];
-        me._debug('updateState current state ' + JSON.stringify(me.states));
-        Object.keys(me.state_types).forEach(key => {
+        this._debug('updateState current state ' + JSON.stringify(this.states));
+        Object.keys(this.state_types).forEach(key => {
             if (Object.prototype.hasOwnProperty.call(from_states, key)) {
-                let o_modified = me.setState(key, from_states[key], me.states, me.state_types[key]);
+                let o_modified = this.setState(key, from_states[key], this.states, this.state_types[key]);
                 if (o_modified) {
-                    me._debug('.updateState set "' + key + '" to ' + JSON.stringify(from_states[key]));
+                    this._debug('.updateState set "' + key + '" to ' + JSON.stringify(from_states[key]));
                     modified.push(o_modified);
                 }
             }
         });
         let thermostat_modified = false;
         if (modified.includes("thermostatTemperatureSetpoint")) {
-            me.thermostat_temperature_setpoint = me.states.thermostatTemperatureSetpoint;
+            this.thermostat_temperature_setpoint = this.states.thermostatTemperatureSetpoint;
             thermostat_modified = true;
         }
         if (modified.includes("thermostatTemperatureSetpointLow")) {
-            me.thermostat_temperature_setpoint_low = me.states.thermostatTemperatureSetpointLow;
+            this.thermostat_temperature_setpoint_low = this.states.thermostatTemperatureSetpointLow;
             thermostat_modified = true;
         }
         if (modified.includes("thermostatTemperatureSetpointHigh")) {
-            me.thermostat_temperature_setpoint_hight = me.states.thermostatTemperatureSetpointHigh;
+            this.thermostat_temperature_setpoint_hight = this.states.thermostatTemperatureSetpointHigh;
             thermostat_modified = true;
         }
         if (thermostat_modified | modified.includes("thermostatMode")) {
             let keys_to_update = [];
-            if (me.states.thermostatMode === 'heatcool') {
+            if (this.states.thermostatMode === 'heatcool') {
                 keys_to_update = ['thermostatTemperatureSetpointLow', 'thermostatTemperatureSetpointHigh'];
                 from_states = {
-                    thermostatTemperatureSetpointLow: me.thermostat_temperature_setpoint_low,
-                    thermostatTemperatureSetpointHigh: me.thermostat_temperature_setpoint_hight
+                    thermostatTemperatureSetpointLow: this.thermostat_temperature_setpoint_low,
+                    thermostatTemperatureSetpointHigh: this.thermostat_temperature_setpoint_hight
                 };
             } else {
                 keys_to_update = ['thermostatTemperatureSetpoint'];
                 from_states = {
-                    thermostatTemperatureSetpoint: me.thermostat_temperature_setpoint
+                    thermostatTemperatureSetpoint: this.thermostat_temperature_setpoint
                 };
             }
             keys_to_update.forEach(key => {
-                if (me.setState(key, from_states[key], me.states, me.state_types[key])) {
-                    me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(me.states[key]));
+                if (this.setState(key, from_states[key], this.states, this.state_types[key])) {
+                    this._debug('.updateState: set "' + key + '" to ' + JSON.stringify(this.states[key]));
                     modified.push(key);
                 }
             });
         }
-        me._debug('.updateState: new State ' + JSON.stringify(modified) + ' = ' + JSON.stringify(me.states));
+        this._debug('.updateState: new State ' + JSON.stringify(modified) + ' = ' + JSON.stringify(this.states));
         return modified;
     }
 
@@ -3275,14 +3264,13 @@ export class DeviceNode {
     //
     //
     cloneObject(to_obj, from_obj, state_values) {
-        const me = this;
         let differs = false;
-        Object.keys(state_values).forEach(function (key) {
+        Object.keys(state_values).forEach((key) => {
             const value_type = typeof state_values[key] === 'number' ? state_values[key] : state_values[key].type;
             const default_value_defined = typeof state_values[key].defaultValue !== 'undefined';
             const new_value = typeof from_obj[key] !== 'undefined' ? from_obj[key] : state_values[key].defaultValue;
             if ((typeof from_obj[key] !== 'undefined' && from_obj[key] != null) || default_value_defined) {
-                if (me.setState(key, new_value, to_obj, state_values[key] || {})) {
+                if (this.setState(key, new_value, to_obj, state_values[key] || {})) {
                     differs = true;
                 }
             } else if (!(value_type & Formats.MANDATORY)) {
@@ -3297,7 +3285,6 @@ export class DeviceNode {
     //
     //
     setState(key, value, state, state_type) {
-        const me = this;
         let differs = false;
         let old_state = typeof state === 'object' ? state[key] : {};
         let new_state = undefined;
@@ -3309,7 +3296,7 @@ export class DeviceNode {
         const exclusive_states = state_type.exclusiveStates || [];
         if (value == null) {
             if (state_type.type & Formats.MANDATORY) {
-                me.error("key " + key + " is mandatory.");
+                this.error("key " + key + " is mandatory.");
             } else if (Object.prototype.hasOwnProperty.call(state, key)) {
                 delete state[key];
                 differs = key;
@@ -3366,7 +3353,7 @@ export class DeviceNode {
                     if (key_id) {
                         let f_arr;
                         let cloned_net_obj = {};
-                        me.cloneObject(cloned_net_obj, new_obj, state_type.attributes);
+                        this.cloneObject(cloned_net_obj, new_obj, state_type.attributes);
                         if (typeof key_id === 'string') {
                             f_arr = old_arr.filter(obj => { return obj[key_id] === cloned_net_obj[key_id] });
                         } else {
@@ -3381,7 +3368,7 @@ export class DeviceNode {
                             });
                         }
                         if (f_arr.length > 1) {
-                            me.error('More than one "' + key + '" for "' + key_id + '" "' + cloned_net_obj[key_id] + '"');
+                            this.error('More than one "' + key + '" for "' + key_id + '" "' + cloned_net_obj[key_id] + '"');
                         } else if (f_arr.length > 0) {
                             cur_obj = f_arr[0];
                         } else if (add_if_missing) {
@@ -3402,7 +3389,7 @@ export class DeviceNode {
                         }
                     }
                     if (cur_obj !== undefined) {
-                        if (me.cloneObject(cur_obj, new_obj, state_type.attributes)) {
+                        if (this.cloneObject(cur_obj, new_obj, state_type.attributes)) {
                             differs = key;
                         }
                         if (Object.keys(cur_obj).length > 0) {
@@ -3422,7 +3409,7 @@ export class DeviceNode {
             }
         } else if (state_type.type & Formats.OBJECT) {
             if (Array.isArray(value)) {
-                me.error('key "' + key + '" must be an object.');
+                this.error('key "' + key + '" must be an object.');
             } else {
                 if (state[key] === undefined) {
                     state[key] = {};
@@ -3430,13 +3417,13 @@ export class DeviceNode {
                 }
                 let mandatory_to_delete = [];
                 let o_differs = [];
-                Object.keys(state_type.attributes).forEach(function (ikey) {
+                Object.keys(state_type.attributes).forEach((ikey) => {
                     // console.log("---> Attributes key " + ikey + " " + JSON.stringify(value[ikey]));
                     if (typeof value[ikey] !== 'undefined' && value[ikey] != null) {
                         if (typeof old_state[ikey] == 'undefined') {
                             old_state[ikey] = {};
                         }
-                        if (me.setState(ikey, value[ikey], old_state, state_type.attributes[ikey])) {
+                        if (this.setState(ikey, value[ikey], old_state, state_type.attributes[ikey])) {
                             o_differs.push(ikey);
                             differs = o_differs;
                         }
@@ -3469,7 +3456,7 @@ export class DeviceNode {
                         }
                         delete state[key][ikey];
                     } else {
-                        me.error('key "' + key + '.' + ikey + '" is mandatory.');
+                        this.error('key "' + key + '.' + ikey + '" is mandatory.');
                     }
                 });
                 if (Object.keys(differs).length > 0) {
@@ -3478,11 +3465,11 @@ export class DeviceNode {
             }
         } else if (state_type.type & Formats.COPY_OBJECT) {
             if (typeof value !== 'object' || Array.isArray(value)) {
-                me.error('key "' + key + '" must be an object.');
+                this.error('key "' + key + '" must be an object.');
             } else {
-                Object.keys(old_state).forEach(function (ikey) {
+                Object.keys(old_state).forEach((ikey) => {
                     if (typeof value[ikey] !== 'undefined') {
-                        if (me.setState(ikey, value[ikey], old_state, state_type.type - Formats.COPY_OBJECT)) {
+                        if (this.setState(ikey, value[ikey], old_state, state_type.type - Formats.COPY_OBJECT)) {
                             differs = key;
                         }
                     }
@@ -3491,15 +3478,15 @@ export class DeviceNode {
         } else {
             new_state = Formats.formatValue(key, value, state_type.type & Formats.PRIMITIVE, state_type.defaultValue);
             if (state_type.min !== undefined && new_state < state_type.min) {
-                me.error('key "' + key + '" must be greather or equal than ' + state_type.min);
+                this.error('key "' + key + '" must be greather or equal than ' + state_type.min);
                 new_state = undefined;
             }
             if (new_state !== undefined && state_type.max !== undefined && new_state > state_type.max) {
-                me.error('key "' + key + '" must be lower or equal than ' + state_type.max);
+                this.error('key "' + key + '" must be lower or equal than ' + state_type.max);
                 new_state = undefined;
             }
             if (new_state !== undefined && Array.isArray(state_type.values) && !state_type.values.includes(new_state)) {
-                me.error('key "' + key + '" must be one of ' + JSON.stringify(state_type.values));
+                this.error('key "' + key + '" must be one of ' + JSON.stringify(state_type.values));
                 if (state_type.values.includes(state[key])) {
                     new_state = undefined;
                 } else {
@@ -3668,10 +3655,9 @@ export class DeviceNode {
      * @returns {object[]} - Object with items as expected by Google
      */
     to_available_modes(json_data) {
-        let me = this;
-        let f = function (data_in, data_out) {
+        let f = (data_in, data_out) => {
             if (Array.isArray(data_in.settings)) {
-                data_out.settings = me.key_name_synonym("Modes settings", data_in.settings, 'setting_name', 'setting_values', 'setting_synonym');
+                data_out.settings = this.key_name_synonym("Modes settings", data_in.settings, 'setting_name', 'setting_values', 'setting_synonym');
                 if (typeof data_in.ordered === 'boolean') {
                     data_out.ordered = data_in.ordered;
                 }
@@ -3714,8 +3700,7 @@ export class DeviceNode {
      * @returns {object[]} - Object with items as expected by Google
      */
     key_name_synonym(type, json_data, key1, key2, key3, manage_other_fields = undefined) {
-        const me = this;
-        me._debug(".key_name_synonym: Parsing " + type);
+        this._debug(".key_name_synonym: Parsing " + type);
         let new_data = [];
         if (Array.isArray(json_data)) {
             if (typeof manage_other_fields !== 'function') {
@@ -3805,7 +3790,7 @@ export class DeviceNode {
                                 }
                                 let lang = typeof names.lang === 'string' ? names.lang.trim() : '';
                                 if (lang.length === 0) {
-                                    lang = me.lang;
+                                    lang = this.lang;
                                 }
                                 if (Array.isArray(names[key3])) {
                                     let name_synonym = [];
@@ -3823,13 +3808,13 @@ export class DeviceNode {
                                         }
                                     }
                                 } else {
-                                    me.error("key_name_synonym error " + type + ": missing array key " + key3 + " for " + rec[key1]);
+                                    this.error("key_name_synonym error " + type + ": missing array key " + key3 + " for " + rec[key1]);
                                 }
                             } else {
                                 if (typeof names === 'string' && names.trim() && !new_rec[key2].includes(names.trim())) {
                                     new_rec[key2].push(names.trim());
                                 } else {
-                                    me.error("key_name_synonym error " + type + ": missing array key " + key2 + " for " + rec[key1]);
+                                    this.error("key_name_synonym error " + type + ": missing array key " + key2 + " for " + rec[key1]);
                                 }
                             }
                         });
@@ -3838,24 +3823,24 @@ export class DeviceNode {
                             if (!key3) {
                                 ok = manage_other_fields(rec, new_rec);
                                 if (!ok) {
-                                    me.error("key_name_synonym error " + type + ": manage_other_fields error for " + rec[key1]);
+                                    this.error("key_name_synonym error " + type + ": manage_other_fields error for " + rec[key1]);
                                 }
                             }
                             if (ok) {
                                 new_data.push(new_rec);
                             }
                         } else {
-                            me.error("key_name_synonym error " + type + ": " + key2 + " empty for " + rec[key1]);
+                            this.error("key_name_synonym error " + type + ": " + key2 + " empty for " + rec[key1]);
                         }
                     } else {
-                        me.error("key_name_synonym error " + type + ": " + new_rec[key1] + " already exists");
+                        this.error("key_name_synonym error " + type + ": " + new_rec[key1] + " already exists");
                     }
                 } else {
-                    me.error("key_name_synonym error " + type + ": missing key " + key1 + " at position " + pos);
+                    this.error("key_name_synonym error " + type + ": missing key " + key1 + " at position " + pos);
                 }
             });
         }
-        me._debug(".key_name_synonym parser " + type + " : " + JSON.stringify(new_data));
+        this._debug(".key_name_synonym parser " + type + " : " + JSON.stringify(new_data));
         return new_data;
     }
 
@@ -3945,7 +3930,6 @@ export class DeviceNode {
     //
     //
     execCommand(command) {
-        let me = this;
         let params = {};
         let executionStates = ['online'];
         const ok_result = {
@@ -3953,21 +3937,21 @@ export class DeviceNode {
             'executionStates': executionStates
         };
 
-        me._debug(".execCommand: command " + JSON.stringify(command));
+        this._debug(".execCommand: command " + JSON.stringify(command));
 
-        if (me.errorCode) {
-            me._debug(".execCommand: errorCode " + JSON.stringify(me.errorCode));
+        if (this.errorCode) {
+            this._debug(".execCommand: errorCode " + JSON.stringify(this.errorCode));
             return {
                 status: 'ERROR',
-                errorCode: me.errorCode
+                errorCode: this.errorCode
             };
         }
 
-        me._debug(".execCommand: states " + JSON.stringify(me.states));
-        // me._debug(".execCommand: device " +  JSON.stringify(device));
-        // me._debug(".execCommand: me.device " +  JSON.stringify(me.device));
+        this._debug(".execCommand: states " + JSON.stringify(this.states));
+        // this._debug(".execCommand: device " +  JSON.stringify(device));
+        // this._debug(".execCommand: this.device " +  JSON.stringify(this.device));
 
-        if (me.states.online !== true) {
+        if (this.states.online !== true) {
             return {
                 status: 'ERROR',
                 errorCode: 'deviceOffline'
@@ -3980,147 +3964,147 @@ export class DeviceNode {
             case 'action.devices.commands.appInstall':
             case 'action.devices.commands.appSearch':
             case 'action.devices.commands.appSelect':
-                challenge_type = me.ct_appselector;
-                challenge_pin = me.pin_appselector;
+                challenge_type = this.ct_appselector;
+                challenge_pin = this.pin_appselector;
                 break;
             case 'action.devices.commands.ArmDisarm':
-                challenge_type = me.ct_armdisarm;
-                challenge_pin = me.pin_armdisarm;
+                challenge_type = this.ct_armdisarm;
+                challenge_pin = this.pin_armdisarm;
                 break;
             case 'action.devices.commands.BrightnessAbsolute':
             case 'action.devices.commands.BrightnessRelative':
-                challenge_type = me.ct_brightness;
-                challenge_pin = me.pin_brightness;
+                challenge_type = this.ct_brightness;
+                challenge_pin = this.pin_brightness;
                 break;
             case 'action.devices.commands.GetCameraStream':
-                challenge_type = me.ct_camerastream;
-                challenge_pin = me.pin_camerastream;
+                challenge_type = this.ct_camerastream;
+                challenge_pin = this.pin_camerastream;
                 break;
             case 'action.devices.commands.selectChannel':
             case 'action.devices.commands.relativeChannel':
             case 'action.devices.commands.returnChannel':
-                challenge_type = me.ct_channel;
-                challenge_pin = me.pin_channel;
+                challenge_type = this.ct_channel;
+                challenge_pin = this.pin_channel;
                 break;
             case 'action.devices.commands.ColorAbsolute':
-                challenge_type = me.ct_colorsetting;
-                challenge_pin = me.pin_colorsetting;
+                challenge_type = this.ct_colorsetting;
+                challenge_pin = this.pin_colorsetting;
                 break;
             case 'action.devices.commands.Cook':
-                challenge_type = me.ct_cook;
-                challenge_pin = me.pin_cook;
+                challenge_type = this.ct_cook;
+                challenge_pin = this.pin_cook;
                 break;
             case 'action.devices.commands.Dispense':
-                challenge_type = me.ct_dispense;
-                challenge_pin = me.pin_dispense;
+                challenge_type = this.ct_dispense;
+                challenge_pin = this.pin_dispense;
                 break;
             case 'action.devices.commands.Dock':
-                challenge_type = me.ct_dock;
-                challenge_pin = me.pin_dock;
+                challenge_type = this.ct_dock;
+                challenge_pin = this.pin_dock;
                 break;
             case 'action.devices.commands.Charge':
-                challenge_type = me.ct_energystorage;
-                challenge_pin = me.pin_energystorage;
+                challenge_type = this.ct_energystorage;
+                challenge_pin = this.pin_energystorage;
                 break;
             case 'action.devices.commands.SetFanSpeed':
             case 'action.devices.commands.SetFanSpeedRelative':
             case 'action.devices.commands.Reverse':
-                challenge_type = me.ct_fanspeed;
-                challenge_pin = me.pin_fanspeed;
+                challenge_type = this.ct_fanspeed;
+                challenge_pin = this.pin_fanspeed;
                 break;
             case 'action.devices.commands.Fill':
-                challenge_type = me.ct_fill;
-                challenge_pin = me.pin_fill;
+                challenge_type = this.ct_fill;
+                challenge_pin = this.pin_fill;
                 break;
             case 'action.devices.commands.SetHumidity':
             case 'action.devices.commands.HumidityRelative':
-                challenge_type = me.ct_humiditysetting;
-                challenge_pin = me.pin_humiditysetting;
+                challenge_type = this.ct_humiditysetting;
+                challenge_pin = this.pin_humiditysetting;
                 break;
             case 'action.devices.commands.SetInput':
             case 'action.devices.commands.NextInput':
             case 'action.devices.commands.PreviousInput':
-                challenge_type = me.ct_inputselector;
-                challenge_pin = me.pin_inputselector;
+                challenge_type = this.ct_inputselector;
+                challenge_pin = this.pin_inputselector;
                 break;
             case 'action.devices.commands.ColorLoop':
             case 'action.devices.commands.Sleep':
             case 'action.devices.commands.StopEffect':
             case 'action.devices.commands.Wake':
-                challenge_type = me.ct_colorsetting;
-                challenge_pin = me.pin_colorsetting;
+                challenge_type = this.ct_colorsetting;
+                challenge_pin = this.pin_colorsetting;
                 break;
             case 'action.devices.commands.Locate':
-                challenge_type = me.ct_locator;
-                challenge_pin = me.pin_locator;
+                challenge_type = this.ct_locator;
+                challenge_pin = this.pin_locator;
                 break;
             case 'action.devices.commands.LockUnlock':
-                challenge_type = me.ct_lockunlock;
-                challenge_pin = me.pin_lockunlock;
+                challenge_type = this.ct_lockunlock;
+                challenge_pin = this.pin_lockunlock;
                 break;
             case 'action.devices.commands.SetModes':
-                challenge_type = me.ct_modes;
-                challenge_pin = me.pin_modes;
+                challenge_type = this.ct_modes;
+                challenge_pin = this.pin_modes;
                 break;
             case 'action.devices.commands.EnableDisableGuestNetwork':
             case 'action.devices.commands.EnableDisableNetworkProfile':
             case 'action.devices.commands.GetGuestNetworkPassword':
             case 'action.devices.commands.TestNetworkSpeed':
-                challenge_type = me.ct_networkcontrol;
-                challenge_pin = me.pin_networkcontrol;
+                challenge_type = this.ct_networkcontrol;
+                challenge_pin = this.pin_networkcontrol;
                 break;
             case 'action.devices.commands.OnOff':
-                challenge_type = me.ct_onoff;
-                challenge_pin = me.pin_onoff;
+                challenge_type = this.ct_onoff;
+                challenge_pin = this.pin_onoff;
                 break;
             case 'action.devices.commands.OpenClose':
             case 'action.devices.commands.OpenCloseRelative':
-                challenge_type = me.ct_openclose;
-                challenge_pin = me.pin_openclose;
+                challenge_type = this.ct_openclose;
+                challenge_pin = this.pin_openclose;
                 break;
             case 'action.devices.commands.Reboot':
-                challenge_type = me.ct_reboot;
-                challenge_pin = me.pin_reboot;
+                challenge_type = this.ct_reboot;
+                challenge_pin = this.pin_reboot;
                 break;
             case 'action.devices.commands.RotateAbsolute':
-                challenge_type = me.ct_rotation;
-                challenge_pin = me.pin_rotation;
+                challenge_type = this.ct_rotation;
+                challenge_pin = this.pin_rotation;
                 break;
             case 'action.devices.commands.ActivateScene':
-                challenge_type = me.ct_scene;
-                challenge_pin = me.pin_scene;
+                challenge_type = this.ct_scene;
+                challenge_pin = this.pin_scene;
                 break;
             case 'action.devices.commands.SoftwareUpdate':
-                challenge_type = me.ct_softwareupdate;
-                challenge_pin = me.pin_softwareupdate;
+                challenge_type = this.ct_softwareupdate;
+                challenge_pin = this.pin_softwareupdate;
                 break;
             case 'action.devices.commands.StartStop':
             case 'action.devices.commands.PauseUnpause':
-                challenge_type = me.ct_startstop;
-                challenge_pin = me.pin_startstop;
+                challenge_type = this.ct_startstop;
+                challenge_pin = this.pin_startstop;
                 break;
             case 'action.devices.commands.SetTemperature':
-                challenge_type = me.ct_temperaturecontrol;
-                challenge_pin = me.pin_temperaturecontrol;
+                challenge_type = this.ct_temperaturecontrol;
+                challenge_pin = this.pin_temperaturecontrol;
                 break;
             case 'action.devices.commands.ThermostatTemperatureSetpoint':
             case 'action.devices.commands.ThermostatTemperatureSetRange':
             case 'action.devices.commands.ThermostatSetMode':
             case 'action.devices.commands.TemperatureRelative':
-                challenge_type = me.ct_temperaturesetting;
-                challenge_pin = me.pin_temperaturesetting;
+                challenge_type = this.ct_temperaturesetting;
+                challenge_pin = this.pin_temperaturesetting;
                 break;
             case 'action.devices.commands.TimerStart':
             case 'action.devices.commands.TimerAdjust':
             case 'action.devices.commands.TimerPause':
             case 'action.devices.commands.TimerResume':
             case 'action.devices.commands.TimerCancel':
-                challenge_type = me.ct_timer;
-                challenge_pin = me.pin_timer;
+                challenge_type = this.ct_timer;
+                challenge_pin = this.pin_timer;
                 break;
             case 'action.devices.commands.SetToggles':
-                challenge_type = me.ct_toggles;
-                challenge_pin = me.pin_toggles;
+                challenge_type = this.ct_toggles;
+                challenge_pin = this.pin_toggles;
                 break;
             case 'action.devices.commands.mediaStop':
             case 'action.devices.commands.mediaNext':
@@ -4133,14 +4117,14 @@ export class DeviceNode {
             case 'action.devices.commands.mediaShuffle':
             case 'action.devices.commands.mediaClosedCaptioningOn':
             case 'action.devices.commands.mediaClosedCaptioningOff':
-                challenge_type = me.ct_transportcontrol;
-                challenge_pin = me.pin_transportcontrol;
+                challenge_type = this.ct_transportcontrol;
+                challenge_pin = this.pin_transportcontrol;
                 break;
             case 'action.devices.commands.mute':
             case 'action.devices.commands.setVolume':
             case 'action.devices.commands.volumeRelative':
-                challenge_type = me.ct_volume;
-                challenge_pin = me.pin_volume;
+                challenge_type = this.ct_volume;
+                challenge_pin = this.pin_volume;
                 break;
         }
         const challenge = command.challenge || {};
@@ -4165,13 +4149,13 @@ export class DeviceNode {
                 };
             }
             if (challenge.pin === undefined) {
-                me.send({
+                this.send({
                     topic: 'ChallengePin',
                     payload: {
                         name: this.name,
                         pin: challenge_pin,
                         command: command.command,
-                        topic: me.topicOut,
+                        topic: this.topicOut,
                     }
                 });
                 // ackNeeded with trait states
@@ -4262,7 +4246,7 @@ export class DeviceNode {
             //const start = command.params['start'];
             if (Object.prototype.hasOwnProperty.call(command.params, 'cookingMode')) {
                 const cooking_mode = command.params['cookingMode'];
-                if (me.supported_cooking_modes.includes(cooking_mode)) {
+                if (this.supported_cooking_modes.includes(cooking_mode)) {
                     params['currentCookingMode'] = cooking_mode;
                     executionStates.push('currentCookingMode');
                 } else {
@@ -4276,7 +4260,7 @@ export class DeviceNode {
             let selected_preset = undefined;
             if (Object.prototype.hasOwnProperty.call(command.params, 'foodPreset')) {
                 const food_preset_name = command.params['foodPreset'];
-                me.food_presets.forEach(function (food_preset) {
+                this.food_presets.forEach(function (food_preset) {
                     if (food_preset.food_preset_name === food_preset_name) {
                         selected_preset = food_preset;
                     }
@@ -4321,7 +4305,7 @@ export class DeviceNode {
             const preset_name = command.params['presetName'] || '';
             if (preset_name) {
                 let found = false;
-                me.supported_dispense_presets.forEach(function (preset) {
+                this.supported_dispense_presets.forEach(function (preset) {
                     if (preset.preset_name == preset_name) {
                         found = true;
                     }
@@ -4335,7 +4319,7 @@ export class DeviceNode {
             }
             else if (item_name) {
                 let item_found = undefined;
-                me.supported_dispense_items.forEach(function (item) {
+                this.supported_dispense_items.forEach(function (item) {
                     if (item.item_name == item_name) {
                         item_found = item;
                     }
@@ -4426,7 +4410,7 @@ export class DeviceNode {
 
         // FanSpeed
         else if (command.command === 'action.devices.commands.SetFanSpeed') {
-            if (!me.command_only_fanspeed) {
+            if (!this.command_only_fanspeed) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'fanSpeed')) {
                     const fanSpeed = command.params['fanSpeed'];
                     let new_fanspeed = '';
@@ -4454,12 +4438,12 @@ export class DeviceNode {
         else if (command.command === 'action.devices.commands.SetFanSpeedRelative') {
             /*if (Object.prototype.hasOwnProperty.call(command.params, 'fanSpeedRelativeWeight')) {
                 const fanSpeedRelativeWeight = command.params['fanSpeedRelativeWeight'];
-                params['currentFanSpeedPercent'] = me.states['currentFanSpeedPercent'] + fanSpeedRelativeWeight;
+                params['currentFanSpeedPercent'] = this.states['currentFanSpeedPercent'] + fanSpeedRelativeWeight;
                 executionStates.push('currentFanSpeedPercent');
             }
             if (Object.prototype.hasOwnProperty.call(command.params, 'fanSpeedRelativePercent')) {
                 const fanSpeedRelativePercent = command.params['fanSpeedRelativePercent'];
-                params['currentFanSpeedPercent'] = Math.round(me.states['currentFanSpeedPercent'] * (1 + fanSpeedRelativePercent / 100));
+                params['currentFanSpeedPercent'] = Math.round(this.states['currentFanSpeedPercent'] * (1 + fanSpeedRelativePercent / 100));
                 executionStates.push('currentFanSpeedPercent');
             }*/
         }
@@ -4473,7 +4457,7 @@ export class DeviceNode {
 
         // HumiditySetting
         else if (command.command === 'action.devices.commands.SetHumidity') {
-            if (!me.command_only_humiditysetting) {
+            if (!this.command_only_humiditysetting) {
                 const humidity = command.params['humidity'];
                 params['humiditySetpointPercent'] = humidity;
                 executionStates.push('humiditySetpointPercent');
@@ -4482,12 +4466,12 @@ export class DeviceNode {
         else if (command.command === 'action.devices.commands.HumidityRelative') {
             /*if (Object.prototype.hasOwnProperty.call(command.params, 'humidityRelativePercent')) {
                 const humidityRelativePercent = command.params['humidityRelativePercent'];
-                params['humiditySetpointPercent'] = Math.round(me.states['humiditySetpointPercent'] * (1 + humidityRelativePercent / 100));
+                params['humiditySetpointPercent'] = Math.round(this.states['humiditySetpointPercent'] * (1 + humidityRelativePercent / 100));
                 executionStates.push('humiditySetpointPercent');
             }
             if (Object.prototype.hasOwnProperty.call(command.params, 'humidityRelativeWeight')) {
                 const humidityRelativeWeight = command.params['humidityRelativeWeight'];
-                params['humiditySetpointPercent'] = me.states['humiditySetpointPercent'] + humidityRelativeWeight;
+                params['humiditySetpointPercent'] = this.states['humiditySetpointPercent'] + humidityRelativeWeight;
                 executionStates.push('humiditySetpointPercent');
             }*/
         }
@@ -4515,13 +4499,13 @@ export class DeviceNode {
             executionStates.push('guestNetworkEnabled');
         }
         else if (command.command === 'action.devices.commands.GetGuestNetworkPassword') {
-            params['guestNetworkPassword'] = me.guest_network_password;
+            params['guestNetworkPassword'] = this.guest_network_password;
             executionStates.push('guestNetworkPassword');
             return {
                 status: 'SUCCESS',
                 states: {
                     online: true,
-                    guestNetworkPassword: me.guest_network_password
+                    guestNetworkPassword: this.guest_network_password
                 },
                 executionStates: executionStates,
             };
@@ -4529,7 +4513,7 @@ export class DeviceNode {
 
         // Inputs
         else if (command.command === 'action.devices.commands.SetInput') {
-            if (!me.command_only_input_selector) {
+            if (!this.command_only_input_selector) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'newInput')) {
                     const newInput = command.params['newInput'];
                     let current_input_index = -1;
@@ -4551,7 +4535,7 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.NextInput') {
-            if (!me.command_only_input_selector) {
+            if (!this.command_only_input_selector) {
                 this.current_input_index++;
                 if (this.current_input_index >= this.available_inputs.length) {
                     this.current_input_index = 0;
@@ -4561,7 +4545,7 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.PreviousInput') {
-            if (!me.command_only_input_selector) {
+            if (!this.command_only_input_selector) {
                 if (this.current_input_index <= 0) {
                     this.current_input_index = this.available_inputs.length;
                 }
@@ -4573,7 +4557,7 @@ export class DeviceNode {
 
         // On/Off
         else if (command.command === 'action.devices.commands.OnOff') {
-            if (!me.command_only_onoff) {
+            if (!this.command_only_onoff) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'on')) {
                     const on_param = command.params['on'];
                     executionStates.push('on');
@@ -4584,15 +4568,15 @@ export class DeviceNode {
 
         // OpenClose
         else if (command.command === 'action.devices.commands.OpenClose') {
-            if (!me.command_only_openclose) {
+            if (!this.command_only_openclose) {
                 const open_percent = command.params['openPercent'] || 0;
-                if (Object.prototype.hasOwnProperty.call(me.states, 'openPercent')) {
+                if (Object.prototype.hasOwnProperty.call(this.states, 'openPercent')) {
                     executionStates.push('openPercent');
                     params['openPercent'] = open_percent;
                 } else if (Object.prototype.hasOwnProperty.call(command.params, 'openDirection')) {
                     const open_direction = command.params['openDirection'];
                     let new_open_directions = [];
-                    me.states.openState.forEach(element => {
+                    this.states.openState.forEach(element => {
                         new_open_directions.push({
                             "openPercent": element.openDirection == open_direction ? open_percent : element.openPercent,
                             "openDirection": element.openDirection
@@ -4605,13 +4589,13 @@ export class DeviceNode {
         }
         else if (command.command === 'action.devices.commands.OpenCloseRelative') {
             /*const open_percent = command.params['openRelativePercent'] || 0;
-            if (Object.prototype.hasOwnProperty.call(me.states, 'openPercent')) {
+            if (Object.prototype.hasOwnProperty.call(this.states, 'openPercent')) {
                 executionStates.push('openPercent');
                 params['openPercent'] = open_percent;
             } else if (Object.prototype.hasOwnProperty.call(command.params, 'openDirection')) {
                 const open_direction = command.params['openDirection'];
                 let new_open_directions = [];
-                me.states.openState.forEach(element => {
+                this.states.openState.forEach(element => {
                     new_open_directions.push({
                         "openPercent": element.openDirection == open_direction ? element.openPercent + open_percent : element.openPercent,
                         "openDirection": element.openDirection
@@ -4638,8 +4622,8 @@ export class DeviceNode {
                 executionStates.push('isPaused');
                 if (zones !== undefined) {
                     let active_zones = [];
-                    zones.forEach(function (zone) {
-                        if (me.available_zones.includes(zone)) {
+                    zones.forEach((zone) => {
+                        if (this.available_zones.includes(zone)) {
                             active_zones.push(zone);
                         }
                     });
@@ -4702,11 +4686,11 @@ export class DeviceNode {
         else if (command.command === 'action.devices.commands.mediaClosedCaptioningOn') {
             if (Object.prototype.hasOwnProperty.call(command.params, 'closedCaptioningLanguage')) {
                 //const closedCaptioningLanguage = command.params['closedCaptioningLanguage'];
-                params['playbackState'] = me.states['playbackState'];
+                params['playbackState'] = this.states['playbackState'];
             }
             if (Object.prototype.hasOwnProperty.call(command.params, 'userQueryLanguage')) {
                 //const userQueryLanguage = command.params['userQueryLanguage'];
-                params['playbackState'] = me.states['playbackState'];
+                params['playbackState'] = this.states['playbackState'];
             }
             executionStates.push('playbackState');
         }
@@ -4716,7 +4700,7 @@ export class DeviceNode {
 
         // TemperatureControl
         else if (command.command === 'action.devices.commands.SetTemperature') {
-            if (!me.command_only_temperaturecontrol) {
+            if (!this.command_only_temperaturecontrol) {
                 const temperature = command.params['temperature'];
                 params['temperatureSetpointCelsius'] = temperature;
                 executionStates.push('temperatureSetpointCelsius');
@@ -4725,35 +4709,35 @@ export class DeviceNode {
 
         // TemperatureSetting
         else if (command.command === 'action.devices.commands.ThermostatTemperatureSetpoint') {
-            if (!me.command_only_temperaturesetting) {
+            if (!this.command_only_temperaturesetting) {
                 const thermostatTemperatureSetpoint = command.params['thermostatTemperatureSetpoint'];
                 params['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint;
-                me.thermostat_temperature_setpoint = thermostatTemperatureSetpoint;
+                this.thermostat_temperature_setpoint = thermostatTemperatureSetpoint;
                 executionStates.push('thermostatTemperatureSetpoint');
             }
         }
         else if (command.command === 'action.devices.commands.ThermostatTemperatureSetRange') {
-            if (!me.command_only_temperaturesetting) {
+            if (!this.command_only_temperaturesetting) {
                 const thermostatTemperatureSetpointHigh = command.params['thermostatTemperatureSetpointHigh'];
                 const thermostatTemperatureSetpointLow = command.params['thermostatTemperatureSetpointLow'];
                 params['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh;
                 params['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow;
-                me.thermostat_temperature_setpoint_hight = thermostatTemperatureSetpointHigh;
-                me.thermostat_temperature_setpoint_low = thermostatTemperatureSetpointLow;
+                this.thermostat_temperature_setpoint_hight = thermostatTemperatureSetpointHigh;
+                this.thermostat_temperature_setpoint_low = thermostatTemperatureSetpointLow;
                 executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
             }
         }
         else if (command.command === 'action.devices.commands.ThermostatSetMode') {
-            if (!me.command_only_temperaturesetting) {
+            if (!this.command_only_temperaturesetting) {
                 const thermostatMode = command.params.thermostatMode;
                 params['thermostatMode'] = thermostatMode;
                 executionStates.push('thermostatMode');
                 if (thermostatMode === "heatcool") {
-                    params['thermostatTemperatureSetpointHigh'] = me.thermostat_temperature_setpoint_hight;
-                    params['thermostatTemperatureSetpointLow'] = me.thermostat_temperature_setpoint_low;
+                    params['thermostatTemperatureSetpointHigh'] = this.thermostat_temperature_setpoint_hight;
+                    params['thermostatTemperatureSetpointLow'] = this.thermostat_temperature_setpoint_low;
                     executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
                 } else {
-                    params['thermostatTemperatureSetpoint'] = me.thermostat_temperature_setpoint;
+                    params['thermostatTemperatureSetpoint'] = this.thermostat_temperature_setpoint;
                     executionStates.push('thermostatTemperatureSetpoint');
                 }
             }
@@ -4761,36 +4745,36 @@ export class DeviceNode {
         else if (command.command === 'action.devices.commands.TemperatureRelative') {
             /*if (Object.prototype.hasOwnProperty.call(command.params, 'thermostatTemperatureRelativeDegree')) {
                 const thermostatTemperatureRelativeDegree = command.params['thermostatTemperatureRelativeDegree'];
-                params['thermostatTemperatureSetpoint'] = me.states['thermostatTemperatureSetpoint'] + thermostatTemperatureRelativeDegree;
+                params['thermostatTemperatureSetpoint'] = this.states['thermostatTemperatureSetpoint'] + thermostatTemperatureRelativeDegree;
                 executionStates.push('thermostatTemperatureSetpoint');
             }
             if (Object.prototype.hasOwnProperty.call(command.params, 'thermostatTemperatureRelativeWeight')) {
                 const thermostatTemperatureRelativeWeight = command.params['thermostatTemperatureRelativeWeight'];
-                me._debug("C CHI thermostatTemperatureRelativeWeight " + thermostatTemperatureRelativeWeight);
-                me._debug("C CHI thermostatTemperatureSetpoint " + me.states['thermostatTemperatureSetpoint']);
-                params['thermostatTemperatureSetpoint'] = me.states['thermostatTemperatureSetpoint'] + thermostatTemperatureRelativeWeight;
+                this._debug("C CHI thermostatTemperatureRelativeWeight " + thermostatTemperatureRelativeWeight);
+                this._debug("C CHI thermostatTemperatureSetpoint " + this.states['thermostatTemperatureSetpoint']);
+                params['thermostatTemperatureSetpoint'] = this.states['thermostatTemperatureSetpoint'] + thermostatTemperatureRelativeWeight;
                 executionStates.push('thermostatTemperatureSetpoint');
             }*/
         }
 
         // Timer
         else if (command.command === 'action.devices.commands.TimerStart') {
-            if (!me.command_only_timer) {
+            if (!this.command_only_timer) {
                 const timer_time_sec = command.params['timerTimeSec'];
                 const now = Math.floor(Date.now() / 1000);
                 params['timerRemainingSec'] = timer_time_sec;
                 params['timerPaused'] = null;
                 executionStates.push('timerPaused', 'timerRemainingSec');
-                me.timer_end_timestamp = now + timer_time_sec;
+                this.timer_end_timestamp = now + timer_time_sec;
             }
         }
         else if (command.command === 'action.devices.commands.TimerResume') {
-            if (!me.command_only_timer) {
+            if (!this.command_only_timer) {
                 const now = Math.floor(Date.now() / 1000);
-                const timer_remaining_sec = me.states['timerRemainingSec'];
-                if (timer_remaining_sec > 0 && me.states['timerPaused']) {
+                const timer_remaining_sec = this.states['timerRemainingSec'];
+                if (timer_remaining_sec > 0 && this.states['timerPaused']) {
                     params['timerPaused'] = false;
-                    me.timer_end_timestamp = now + timer_remaining_sec;
+                    this.timer_end_timestamp = now + timer_remaining_sec;
                     executionStates.push('timerPaused', 'timerRemainingSec');
                 } else {
                     return {
@@ -4801,14 +4785,14 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.TimerPause') {
-            if (!me.command_only_timer) {
+            if (!this.command_only_timer) {
                 const now = Math.floor(Date.now() / 1000);
-                if (me.states['timerPaused']) {
+                if (this.states['timerPaused']) {
                     executionStates.push('timerPaused');
                 }
-                else if (now < me.timer_end_timestamp) {
+                else if (now < this.timer_end_timestamp) {
                     params['timerPaused'] = true;
-                    params['timerRemainingSec'] = me.timer_end_timestamp - now;
+                    params['timerRemainingSec'] = this.timer_end_timestamp - now;
                     executionStates.push('timerPaused', 'timerRemainingSec');
                 } else {
                     return {
@@ -4819,12 +4803,12 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.TimerCancel') {
-            if (!me.command_only_timer) {
+            if (!this.command_only_timer) {
                 const now = Math.floor(Date.now() / 1000);
-                if (now < me.timer_end_timestamp) {
-                    me.states['timerRemainingSec'] = 0;
+                if (now < this.timer_end_timestamp) {
+                    this.states['timerRemainingSec'] = 0;
                     params['timerPaused'] = false;
-                    me.timer_end_timestamp = -1;
+                    this.timer_end_timestamp = -1;
                     executionStates.push('timerPaused', 'timerRemainingSec');
                 } else {
                     return {
@@ -4835,16 +4819,16 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.TimerAdjust') {
-            if (!me.command_only_timer) {
+            if (!this.command_only_timer) {
                 const now = Math.floor(Date.now() / 1000);
                 const timer_time_sec = command.params['timerTimeSec'];
-                if (me.states['timerPaused']) {
-                    me.states['timerRemainingSec'] = me.states['timerRemainingSec'] + timer_time_sec;
+                if (this.states['timerPaused']) {
+                    this.states['timerRemainingSec'] = this.states['timerRemainingSec'] + timer_time_sec;
                     executionStates.push('timerRemainingSec');
                 }
-                else if (now < me.timer_end_timestamp) {
-                    me.timer_end_timestamp = me.timer_end_timestamp + timer_time_sec;
-                    me.states['timerRemainingSec'] = me.timer_end_timestamp - now;
+                else if (now < this.timer_end_timestamp) {
+                    this.timer_end_timestamp = this.timer_end_timestamp + timer_time_sec;
+                    this.states['timerRemainingSec'] = this.timer_end_timestamp - now;
                     executionStates.push('timerRemainingSec');
                 } else {
                     return {
@@ -4857,7 +4841,7 @@ export class DeviceNode {
 
         // Volume
         else if (command.command === 'action.devices.commands.mute') {
-            if (!me.command_only_volume) {
+            if (!this.command_only_volume) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'mute')) {
                     const mute = command.params['mute'];
                     params['isMuted'] = mute;
@@ -4866,11 +4850,11 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.setVolume') {
-            if (!me.command_only_volume) {
+            if (!this.command_only_volume) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'volumeLevel')) {
                     let volumeLevel = command.params['volumeLevel'];
-                    if (volumeLevel > me.volume_max_level) {
-                        volumeLevel = me.volume_max_level;
+                    if (volumeLevel > this.volume_max_level) {
+                        volumeLevel = this.volume_max_level;
                     }
                     params['currentVolume'] = volumeLevel;
                     params['isMuted'] = false;
@@ -4879,11 +4863,11 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.volumeRelative') {
-            if (!me.command_only_volume) {
+            if (!this.command_only_volume) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'relativeSteps')) {
                     const relativeSteps = command.params['relativeSteps'];
-                    let current_volume = me.states['currentVolume'];
-                    if (current_volume >= me.volume_max_level && relativeSteps > 0) {
+                    let current_volume = this.states['currentVolume'];
+                    if (current_volume >= this.volume_max_level && relativeSteps > 0) {
                         return {
                             status: 'ERROR',
                             errorCode: 'volumeAlreadyMax'
@@ -4895,8 +4879,8 @@ export class DeviceNode {
                         };
                     }
                     current_volume += relativeSteps;
-                    if (current_volume > me.volume_max_level) {
-                        current_volume = me.volume_max_level;
+                    if (current_volume > this.volume_max_level) {
+                        current_volume = this.volume_max_level;
                     } else if (current_volume < 0) {
                         current_volume = 0;
                     }
@@ -4952,7 +4936,7 @@ export class DeviceNode {
                         errorCode: 'noAvailableChannel'
                     };
                 }
-                me.current_channel_index = new_channel_index;
+                this.current_channel_index = new_channel_index;
                 params['currentChannel'] = new_channel_key;
                 params['currentChannelNumber'] = new_channel_number;
                 // executionStates.push('currentChannel');
@@ -4997,10 +4981,10 @@ export class DeviceNode {
 
         // Modes
         else if (command.command === 'action.devices.commands.SetModes') {
-            if (!me.command_only_modes) {
+            if (!this.command_only_modes) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'updateModeSettings')) {
                     const updateModeSettings = command.params['updateModeSettings'];
-                    let current_modes = me.states['currentModeSettings'];
+                    let current_modes = this.states['currentModeSettings'];
                     let new_modes = {};
                     this.available_modes.forEach(function (mode) {
                         if (typeof updateModeSettings[mode.name] === 'string') {
@@ -5023,7 +5007,7 @@ export class DeviceNode {
 
         // Rotation
         else if (command.command === 'action.devices.commands.RotateAbsolute') {
-            if (!me.command_only_rotation) {
+            if (!this.command_only_rotation) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'rotationDegrees')) {
                     const rotationDegrees = command.params['rotationDegrees'];
                     params['rotationDegrees'] = rotationDegrees;
@@ -5039,10 +5023,10 @@ export class DeviceNode {
 
         // Traits
         else if (command.command === 'action.devices.commands.SetToggles') {
-            if (!me.command_only_toggles) {
+            if (!this.command_only_toggles) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'updateToggleSettings')) {
                     const updateToggleSettings = command.params['updateToggleSettings'];
-                    let current_toggle = me.states['currentToggleSettings'];
+                    let current_toggle = this.states['currentToggleSettings'];
                     let toggles = {};
                     this.available_toggles.forEach(function (toggle) {
                         if (typeof updateToggleSettings[toggle.name] === 'boolean') {
@@ -5059,7 +5043,7 @@ export class DeviceNode {
 
         // Brightness
         else if (command.command === 'action.devices.commands.BrightnessAbsolute') {
-            if (!me.command_only_brightness) {
+            if (!this.command_only_brightness) {
                 const brightness = command.params['brightness'];
                 params['brightness'] = brightness;
                 executionStates.push('brightness');
@@ -5067,7 +5051,7 @@ export class DeviceNode {
         }
         else if (command.command === 'action.devices.commands.BrightnessRelative') {
             /*
-            let brightness = me.states['brightness'];
+            let brightness = this.states['brightness'];
             if (Object.prototype.hasOwnProperty.call(command.params, 'brightnessRelativePercent')) {
                 const brightnessRelativePercent = command.params['brightnessRelativePercent'];
                 brightness = Math.round(brightness * (1 + parseInt(brightnessRelativePercent) / 100));
@@ -5083,7 +5067,7 @@ export class DeviceNode {
 
         // ColorSetting
         else if (command.command === 'action.devices.commands.ColorAbsolute') {
-            if (!me.command_only_colorsetting) {
+            if (!this.command_only_colorsetting) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'color')) {
                     if (Object.prototype.hasOwnProperty.call(command.params.color, 'temperature') || Object.prototype.hasOwnProperty.call(command.params.color, 'temperatureK')) {
                         const temperature = Object.prototype.hasOwnProperty.call(command.params.color, 'temperature') ? command.params.color.temperature : command.params.color.temperatureK;
@@ -5112,8 +5096,8 @@ export class DeviceNode {
                 const supported_protocols = command.params['SupportedStreamProtocols'];
                 let protocol = '';
                 let stream_url = '';
-                supported_protocols.forEach(function (supported_protocol) {
-                    let url = me.getStreamUrl(supported_protocol);
+                supported_protocols.forEach((supported_protocol) => {
+                    let url = this.getStreamUrl(supported_protocol);
                     if (url) {
                         protocol = supported_protocol;
                         stream_url = url;
@@ -5121,7 +5105,7 @@ export class DeviceNode {
                 });
                 if (protocol.length > 0) {
                     executionStates.push('cameraStreamProtocol');
-                    if (me.auth_token.length > 0) {
+                    if (this.auth_token.length > 0) {
                         executionStates.push('cameraStreamAuthToken');
                     }
                     if (protocol === 'webrtc') {
@@ -5130,10 +5114,10 @@ export class DeviceNode {
                             reportState: false,
                             states: {
                                 online: true,
-                                cameraStreamAuthToken: me.auth_token,
-                                cameraStreamIceServers: me.webrtc_ice_servers,
+                                cameraStreamAuthToken: this.auth_token,
+                                cameraStreamIceServers: this.webrtc_ice_servers,
                                 cameraStreamSignalingUrl: stream_url,
-                                cameraStreamOffer: me.webrtc_offer,
+                                cameraStreamOffer: this.webrtc_offer,
                                 cameraStreamProtocol: protocol
                             },
                             executionStates: executionStates,
@@ -5150,7 +5134,7 @@ export class DeviceNode {
                                 online: true,
                                 cameraStreamAccessUrl: stream_url,
                                 cameraStreamReceiverAppId: app_id,
-                                cameraStreamAuthToken: me.auth_token,
+                                cameraStreamAuthToken: this.auth_token,
                                 cameraStreamProtocol: protocol
                             },
                             executionStates: executionStates,
