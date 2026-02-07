@@ -43,7 +43,7 @@ export const Formats = {
      * @param {*} default_value - Target value to use if input is undefined
      * @returns {*} Converted value
      */
-    formatValue(key, value, format, default_value = undefined) {
+    formatValue(key: string, value, format, default_value = undefined) {
         if (typeof value === 'undefined') {
             value = default_value;
         }

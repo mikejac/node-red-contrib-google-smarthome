@@ -41,6 +41,15 @@ type AuthStorage = {
 export default class Auth {
     private _smarthome: GoogleSmartHome;
     private _authStorage!: AuthStorage;
+    private _clientId: string;
+    private _clientSecret: string;
+    private _username: string;
+    private _password: string;
+    private _useGoogleClientAuth: boolean;
+    private _googleClientId: string;
+    private _emails: string[];
+    private _authFilename: string | null;
+    private _accessTokenDuration: number;
 
 
     /**
