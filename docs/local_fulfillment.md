@@ -185,7 +185,7 @@ This won't guarantee that local fulfillment will work. But it can give you hints
 1. Take your phone or any other host in your network.
 2. Open http://192.168.178.25:3002/check in the browser (with the IP of Node-RED and the port you chose as "HTTP Port"
    for local fulfillment).
-3. You should see the message "SUCCESS".
+3. You should see the message "SUCCESS - Local fulfillment HTTP server is reachable".
 
 
 ## Verifying UDP discovery

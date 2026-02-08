@@ -199,7 +199,7 @@ Now we will install and configure the module in Node-RED.
 
 6. Also check that the page is reachable from the internet. Use a tool such as https://reqbin.com to send a GET request
    to https://example.com:3001/check (using your domain name and port). It should respond with status 200 and the
-   message "SUCCESS: Smart Home service is reachable!".\
+   message "SUCCESS - Cloud fulfillment HTTP server is reachable".\
    <kbd>![](images/setup_instructions/nodered_reqbin.png)</kbd>
 
 

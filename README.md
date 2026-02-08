@@ -320,7 +320,7 @@ commercial Google Workspace account. If this is the case, you can share access t
 - Check the logs at [Google Cloud Logs](https://console.cloud.google.com/logs/). Make sure you selected the correct project.
 - Check if your service is reachable from the outside. Use [reqbin.com](https://reqbin.com/) or a similar tool to send a
   GET request to https://example.com:3001/check (with your hostname and port). It should respond with status
-  200 (OK) and the message "SUCCESS: Smart Home service is reachable!" as one of the first lines. Use
+  200 (OK) and the message "SUCCESS - Cloud fulfillment HTTP server is reachable" as one of the first lines. Use
   https://www.ssllabs.com/ssltest/ to check your SSL certificate.
 - Check Node-RED's log output. Where you find it depends on how you installed Node-Red. Usually something like
   `journalctl -u nodered`, `docker logs <container>` or a file in `/var/log`.

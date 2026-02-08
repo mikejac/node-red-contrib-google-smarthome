@@ -106,7 +106,7 @@ export default class HttpActions {
                         .send(data);
                 });
             } else {
-                response.send('SUCCESS');
+                response.send('SUCCESS - Cloud fulfillment HTTP server is reachable');
             }
         });
 
@@ -156,7 +156,7 @@ export default class HttpActions {
          */
         appHttp.get(me._smarthome.Path_join(httpLocalRoot, 'check'), function (request: Request, response: Response) {
             me._smarthome.debug('HttpActions:httpLocalActionsRegister(/check)');
-            response.send('SUCCESS');
+            response.send('SUCCESS - Local fulfillment HTTP server is reachable');
         });
     }
 
