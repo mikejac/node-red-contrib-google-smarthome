@@ -21,11 +21,14 @@ import fs from 'fs';
 import path from 'path';
 import { nanoid } from 'nanoid';
 import { google } from 'googleapis';
+import { GaxiosError } from 'googleapis-common';
 import ipRangeCheck from 'ip-range-check';
 import { Request, Response } from 'express';
 import { GoogleSmartHome } from './SmartHome';
 
 const userId = '0';
+const REPORT_STATE_RETRY_DELAY_MS = 2000;
+const REPORT_STATE_MAX_RETRIES = 2;
 
 const LOOPBACK_NETWORKS = [
     "127.0.0.0/8",
@@ -704,21 +707,34 @@ export default class HttpActions {
             auth: auth,
         });
 
-        homegraph.devices.reportStateAndNotification({ 'requestBody': postData })
-            .then(() => {
-                this._smarthome.debug('HttpActions:reportState(): successfully reported state to Google: ' + JSON.stringify(postData));
-            })
-            .catch(error => {
-                let myError = {
-                    "msg": "Error in HttpActions:reportState()",
-                    "org_msg": (error.response !== undefined ? error.response.data.error : error),
-                    "data": {
-                        "postData": postData,
-                    },
-                };
+        const sendReportState = (retryCount: number): void => {
+            homegraph.devices.reportStateAndNotification({ 'requestBody': postData })
+                .then(() => {
+                    this._smarthome.debug('HttpActions:reportState(): successfully reported state to Google: ' + JSON.stringify(postData));
+                })
+                .catch((error: GaxiosError) => {
+                    // Error 503 are temporary outages on Google's side. Retry a few times.
+                    if (error.status === 503 && retryCount < REPORT_STATE_MAX_RETRIES) {
+                        const currentRetry = retryCount + 1;
+                        this._smarthome.debug('HttpActions:reportState(): Google service unavailable (503), retry in ' + REPORT_STATE_RETRY_DELAY_MS + 'ms (attempt ' + currentRetry + '/' + REPORT_STATE_MAX_RETRIES + ')');
+                        setTimeout(() => sendReportState(currentRetry), REPORT_STATE_RETRY_DELAY_MS);
+                        return;
+                    }
 
-                this._smarthome.error(myError);
-            });
+                    let myError = {
+                        "msg": "Error in HttpActions:reportState()",
+                        "org_msg": (error.response !== undefined ? error.response.data.error : error),
+                        "data": {
+                            "postData": postData,
+                            "retries": retryCount,
+                        },
+                    };
+
+                    this._smarthome.error(myError);
+                });
+        };
+
+        sendReportState(0);
     }
 
     /**
