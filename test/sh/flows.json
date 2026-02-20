@@ -17,10 +17,6 @@
         "port": "",
         "httppath": "smarthome",
         "ssloffload": true,
-        "accesstokenduration": "60",
-        "reportinterval": "0",
-        "request_sync_delay": "",
-        "set_state_delay": "5",
         "info": "username: userrname\npassword: password\njwtkey: google-home.json\nclientid: client_id\nclientsecret: client_secred\n"
     },
     {

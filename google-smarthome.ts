@@ -44,10 +44,6 @@ interface GoogleSmartHomeNodeConfig extends NodeDef {
     local_scan_port: string;
     local_scan_type: string;
     localport: string;
-    accesstokenduration: string;
-    reportinterval: string;
-    request_sync_delay: string;
-    set_state_delay: string;
 }
 
 interface GoogleSmartHomeCredentials {
@@ -87,7 +83,6 @@ export class GoogleSmartHomeNode {
             this.credentials.emails || [],
             this.credentials.username || '',
             this.credentials.password || '',
-            parseInt(config.accesstokenduration || '60'), // minutes
             config.usehttpnoderoot,
             config.httppath,
             parseInt(config.port || '0'),
@@ -101,9 +96,6 @@ export class GoogleSmartHomeNode {
             this.credentials.jwtkey || '',
             this.credentials.clientid || '',
             this.credentials.clientsecret || '',
-            config.reportinterval,     // minutes
-            parseInt(config.request_sync_delay || '10'),
-            parseInt(config.set_state_delay || '0'),
             this.enabledebug,
             (msg) => { this._debug(msg); },
             (msg) => { this._error(msg); }

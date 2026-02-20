@@ -36,6 +36,10 @@ import HttpAuth from './HttpAuth';
 import HttpActions from './HttpActions';
 import { GoogleSmartHomeNode } from '../google-smarthome';
 
+const REPORT_STATE_INTERVAL_MINUTES = 60;
+const REQUEST_SYNC_DELAY_MS = 10 * 1000;
+const SET_STATE_DELAY_MS = 0;
+
 /******************************************************************************************************************
  * GoogleSmartHome
  *
@@ -64,9 +68,9 @@ export class GoogleSmartHome {
     private _localScanPacket: string = 'node-red-contrib-google-smarthome';
 
 
-    constructor(configNode: GoogleSmartHomeNode, userDir: string, httpNodeRoot: string, useGoogleLogin, googleClientId, emails, username, password, accessTokenDuration, usehttpnoderoot,
+    constructor(configNode: GoogleSmartHomeNode, userDir: string, httpNodeRoot: string, useGoogleLogin, googleClientId, emails, username, password, usehttpnoderoot,
         httpPath, httpPort, localScanType, localScanPort, httpLocalPort, nodeRedUsesHttps, ssloffload: boolean, publicKey, privateKey, jwtkeyFile, clientid,
-        clientsecret, reportStateInterval: number, requestSyncDelay: number, setStateDelay: number, debug, debug_function: (data: any) => void, error_function: (data: any) => void) {
+        clientsecret, debug, debug_function: (data: any) => void, error_function: (data: any) => void) {
 
         this.auth                   = new Auth(this);
         this.devices                = new Devices(this);
@@ -75,7 +79,6 @@ export class GoogleSmartHome {
 
         this.configNode             = configNode;
         this._reportStateTimer      = null;
-        this._reportStateInterval   = reportStateInterval;  // minutes
         this._httpNodeRoot          = httpNodeRoot;
         this._httpPath              = this.Path_join('/', httpPath || '');
         this._httpPort              = httpPort;
@@ -86,8 +89,6 @@ export class GoogleSmartHome {
         this._publicKey             = publicKey;
         this._privateKey            = privateKey;
         this._jwtKeyFile            = jwtkeyFile;
-        this._requestSyncDelay      = requestSyncDelay * 1000;
-        this._setStateDelay         = setStateDelay * 1000;
         this._debug                 = debug;
         this._userDir               = userDir;
         this._httpLocalPath         = this.Path_join(this._httpNodeRoot || '/', this._httpPath);
@@ -112,7 +113,6 @@ export class GoogleSmartHome {
         } else {
             this.auth.setUsernamePassword(username, password);
         }
-        this.auth.setAccessTokenDuration(accessTokenDuration);
 
         this.emitter = new EventEmitter();
 
@@ -371,7 +371,7 @@ export class GoogleSmartHome {
             if (this._jwtKeyFile) {
                 this.auth.loadJwtKeyFile(this._jwtKeyFile, this._userDir);     // will throw if file cannot be read
 
-                if (this._reportStateInterval > 0) {
+                if (REPORT_STATE_INTERVAL_MINUTES > 0) {
                 
                     this._reportStateTimer = setInterval(() => { 
                         let states = this.devices.getStates();
@@ -379,7 +379,7 @@ export class GoogleSmartHome {
                         if (states) {
                             this.httpActions.reportState(undefined, states);
                         }
-                    }, this._reportStateInterval * 60 * 1000);
+                    }, REPORT_STATE_INTERVAL_MINUTES * 60 * 1000);
                 }
             }
 
@@ -630,24 +630,26 @@ export class GoogleSmartHome {
      * Multiple calls to this method during the delay are buffered into the same SYNC call.
      */
     ScheduleRequestSync(): void {
-        if (this._requestSyncDelay && !this._syncScheduled) {
+        const delay = REQUEST_SYNC_DELAY_MS;
+        if (delay > 0 && !this._syncScheduled) {
             this._syncScheduled = true;
             setTimeout(() => {
                 this._syncScheduled = false;
                 this.httpActions.requestSync();
-            }, this._requestSyncDelay);
+            }, delay);
         }
     }
     //
     //
     //
     ScheduleGetState(): void {
-        if (this._setStateDelay && !this._getStateScheduled) {
+        const delay = SET_STATE_DELAY_MS;
+        if (delay > 0 && !this._getStateScheduled) {
             this._getStateScheduled = true;
             setTimeout(() => {
                 this._getStateScheduled = false;
                 Object.keys(this.configNode.mgmtNodes).forEach(key => this.configNode.mgmtNodes[key].sendSetState());
-            }, this._setStateDelay);
+            }, delay);
         }
     }
 

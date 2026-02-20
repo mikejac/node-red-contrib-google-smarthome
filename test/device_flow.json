@@ -20,12 +20,8 @@
         "publickey": "6",
         "privatekey": "7",
         "jwtkey": "google-home.json",
-        "accesstokenduration": "60",
-        "reportinterval": "60",
         "clientid": "client_id",
-        "clientsecret": "client_secret",
-        "request_sync_delay": "",
-        "set_state_delay": ""
+        "clientsecret": "client_secret"
     },
     {
         "id": "mgmt",

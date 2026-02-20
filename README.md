@@ -247,20 +247,6 @@ Example flow:
                same port as Node-RED. If you are using Node-RED's built-in HTTPS encryption or have a httpAdminRoot set,
                you need to set a port. Don't create a forwarding rule for this port!
 
-
-**Advanced Settings**
-
-  `Token Duration`: The duration of the authorization token used by Google SmartHome to identify itself to the Node-RED
-                    SmartHome plugin. Default is 60 minutes.
-
-  `Report Interval (m)`: Time in minutes between sending report updates to Google (default is 60 minutes).
-
-  `Request sync delay (s)`: Delay in seconds, for requesting devices sync after a deployment. 0 or empty for disable
-                            (default is 0).
-
-  `Set state delay (s)`: Delay, in seconds, for sending the set_state message after state changes, 0 or empty to disable
-                         (default value 0).
-
 ---
 ## Sending spoken notifications
 

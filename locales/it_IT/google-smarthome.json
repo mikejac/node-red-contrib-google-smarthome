@@ -38,12 +38,7 @@
             "pt-BR": "Portughese",
             "es": "Spagnolo",
             "sv": "Svedese",
-            "th": "Tailandese",
-            "advanced_settings": "Impostazioni avanzate",
-            "accesstokenduration": "Durata del token di accesso (m)",
-            "reportinterval": "Intervallo tra i report (m)",
-            "request_sync_delay": "Ritardo richiesta di sincronizzazione (s)",
-            "set_state_delay": "Ritardo invio del messaggio set_state (s)"
+            "th": "Tailandese"
         },
         "placeholder": {
             "name": "Nome",
@@ -55,11 +50,7 @@
             "port": "Porta del server. -1 o vuoto per quella di Node-RED",
             "localport": "Porta locale HTTP. Obbligatoria se Node-RED usa HTTPS",
             "local_scan_port": "Porta locale per pubblicizzare il servizio",
-            "emails": "Email autorizzate, separate da punto e virgola",
-            "accesstokenduration": "Intervallo in minuti",
-            "reportinterval": "Intervallo in minuti. -1 per disabilitare",
-            "request_sync_delay": "Ritardo richiesta di sincronizzazione dopo un deploy",
-            "set_state_delay": "Ritardo invio del messaggio set_state dopo un cambio di stato"
+            "emails": "Email autorizzate, separate da punto e virgola"
         }
     }
 }

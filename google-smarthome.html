@@ -183,42 +183,10 @@
         </div>
     </fieldset>
 
-    <fieldset>
-        <legend data-i18n="googlesmarthome.label.advanced_settings"></legend>
-
-        <div class="form-row">
-            <label for="node-config-input-accesstokenduration"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.accesstokenduration"></span></label>
-            <input type="text" id="node-config-input-accesstokenduration" data-i18n="[placeholder]googlesmarthome.placeholder.accesstokenduration">
-        </div>
-
-        <div class="form-row">
-            <label for="node-config-input-reportinterval"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.reportinterval"></span></label>
-            <input type="text" id="node-config-input-reportinterval" data-i18n="[placeholder]googlesmarthome.placeholder.reportinterval">
-        </div>
-
-        <div class="form-row">
-            <label for="node-config-input-request_sync_delay"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.request_sync_delay"></span></label>
-            <input type="text" id="node-config-input-request_sync_delay" data-i18n="[placeholder]googlesmarthome.placeholder.request_sync_delay">
-        </div>
-
-        <div class="form-row">
-            <label for="node-config-input-set_state_delay"><i class="fa fa-globe"></i> <span data-i18n="googlesmarthome.label.set_state_delay"></span></label>
-            <input type="text" id="node-config-input-set_state_delay" data-i18n="[placeholder]googlesmarthome.placeholder.set_state_delay">
-        </div>
-
-    </fieldset>
 </script>
 
 <script type="text/javascript">
     (function () {
-        function isNonNegativeInteger(v) {
-            const n = parseInt(v);
-            const f = parseFloat(v);
-            return !isNaN(v) && Number.isInteger(f) && n >= 0;
-        }
-        function isOptionalNonNegativeInteger(v) {
-            return v.trim().length == 0 || isNonNegativeInteger(v);
-        }
         RED.nodes.registerType('googlesmarthome-client', {
             category: 'config',
             defaults: {
@@ -324,18 +292,6 @@
                     value:"", required:true
                 }
                 */
-                accesstokenduration: {
-                    value: 60, required: true, validate: RED.validators.number(true)
-                },
-                reportinterval: {
-                    value: 60, required: true, validate: RED.validators.number(true)
-                },
-                request_sync_delay: {
-                    value: '', required: false, validate: isOptionalNonNegativeInteger
-                },
-                set_state_delay: {
-                    value: '', required: false, validate: isOptionalNonNegativeInteger
-                }
             },
 
             credentials: {

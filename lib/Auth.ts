@@ -34,6 +34,8 @@ type AuthStorage = {
     nextLocalAuthCode: string;
 };
 
+const ACCESS_TOKEN_DURATION_MINUTES = 60;
+
 /******************************************************************************************************************
  * Auth
  *
@@ -49,7 +51,6 @@ export default class Auth {
     private _googleClientId: string;
     private _emails: string[];
     private _authFilename: string | null;
-    private _accessTokenDuration: number;
 
 
     /**
@@ -69,7 +70,6 @@ export default class Auth {
         this._authCode       = new Map();
         this._authFilename   = null;
         this._jwtkey         = null;
-        this._accessTokenDuration = 60;
         this._clearAllTokens();
     }
 
@@ -206,24 +206,6 @@ export default class Auth {
             return this._emails.includes(email);
         }
         return false;
-    }
-
-    /**
-     * Sets the duration (in minutes) for which an access token is valid.
-     *
-     * @param {number} duration - The duration in minutes.
-     */
-    setAccessTokenDuration(duration: number) {
-        this._accessTokenDuration = duration;
-    }
-
-    /**
-     * Retrieves the duration (in minutes) for which an access token is valid.
-     *
-     * @returns {number} The duration in minutes.
-     */
-    getAccessTokenDuration(): number {
-        return this._accessTokenDuration;
     }
 
     /**
@@ -391,7 +373,7 @@ export default class Auth {
             token_type: 'bearer',
             access_token: accessToken,
             refresh_token: refreshToken,
-            expires_in: 60 * this._accessTokenDuration,
+            expires_in: 60 * ACCESS_TOKEN_DURATION_MINUTES,
         };
     }
 
@@ -416,7 +398,7 @@ export default class Auth {
         return {
             token_type: 'bearer',
             access_token: accessToken,
-            expires_in: 60 * this._accessTokenDuration,
+            expires_in: 60 * ACCESS_TOKEN_DURATION_MINUTES,
         };
     }
 
@@ -578,7 +560,7 @@ export default class Auth {
         let accessToken = this._generateNewAccessToken();
         this._authStorage.accessTokens[accessToken] = {
             user: user,
-            expiresAt: Date.now() + (this._accessTokenDuration * 60000),
+            expiresAt: Date.now() + (ACCESS_TOKEN_DURATION_MINUTES * 60000),
         };
         return accessToken;
     }

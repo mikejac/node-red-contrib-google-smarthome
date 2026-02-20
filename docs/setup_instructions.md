@@ -183,8 +183,6 @@ Now we will install and configure the module in Node-RED.
         * Certificates are automatically reloaded after renewal. You don't need to restart Node-RED.
     * Scan Type: Specifies how your smart speaker will search for Node-RED instances on your local network to use for
       local fulfillment. You can set up local fulfillment later, so set it to "Disabled" for now.
-    * Access Token Duration, Report Interval, Request sync delay, set_state message delay: Usually you don't need to
-      change these values. Leave them at their default values.\
     <kbd>![](images/setup_instructions/nodered_configuration.png)</kbd>
     
 
