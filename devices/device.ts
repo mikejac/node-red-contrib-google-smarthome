@@ -283,7 +283,6 @@ export interface DeviceNode extends Node {}
  */
 export class DeviceNode {
     private clientConn: GoogleSmartHomeNode;
-    private client: string;
     public  config: DeviceNodeConfig;
     private device_type: string;
     private lang: string;
@@ -295,11 +294,10 @@ export class DeviceNode {
 
         this.config = config;
         this.device = {};
-        this.client = config.client;
         this.name = config.name || config.id;
         this.device_type = config.device_type;
         this.nicknames = config.nicknames;
-        this.clientConn = RED.nodes.getNode(this.client);
+        this.clientConn = RED.nodes.getNode(this.config.client);
         this._debug(".constructor config " + JSON.stringify(config));
 
         if (!this.clientConn) {

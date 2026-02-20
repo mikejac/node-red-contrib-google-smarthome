@@ -54,9 +54,8 @@ describe('Device Node', function () {
             try {
                 const device1 = helper.getNode("device1");
                 device1.should.have.property('type', 'google-device');
-                device1.should.have.property('client');
                 device1.should.have.property('clientConn');
-                const client = helper.getNode(device1.client);
+                const client = helper.getNode(device1.config.client);
                 client.should.have.property('type', 'googlesmarthome-client');
                 const mgmt = helper.getNode("mgmt");
                 mgmt.should.have.property('type', 'google-mgmt');
