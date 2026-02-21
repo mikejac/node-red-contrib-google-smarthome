@@ -36,11 +36,13 @@ export interface MgmtNode extends Node {}
  */
 export class MgmtNode {
     private clientConn: GoogleSmartHomeNode;
+    public  config: MgmtNodeConfig;
 
 
     constructor(config: MgmtNodeConfig) {
         RED.nodes.createNode(this, config);
 
+        this.config = config;
         this.client = config.client;
         this.clientConn = RED.nodes.getNode(this.client);
 
