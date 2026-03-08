@@ -199,7 +199,7 @@ export default class HttpActions {
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            }).json({ error: 'missing inputs' });
+            }).json({ error: 'missing authorization header' });
 
             return;
         }
@@ -210,7 +210,7 @@ export default class HttpActions {
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            }).json({ error: 'missing inputs' });
+            }).json({ error: 'invalid authorization header' });
 
             return;
         }
@@ -223,7 +223,7 @@ export default class HttpActions {
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            }).json({ error: 'missing inputs' });
+            }).json({ error: 'no user found for access token' });
 
             return;
         }
@@ -242,7 +242,7 @@ export default class HttpActions {
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            }).json({ error: 'missing inputs' });
+            }).json({ error: 'missing inputs in request' });
 
             return;
         }
@@ -256,7 +256,7 @@ export default class HttpActions {
 
                 response.status(401).set({
                     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-                }).json({ error: 'missing inputs' });
+                }).json({ error: 'missing intent' });
 
                 continue;
             }
