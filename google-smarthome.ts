@@ -118,50 +118,6 @@ export class GoogleSmartHomeNode {
                 this._debug("GoogleSmartHomeNode(on-close): restarting");
             }
         });
-
-        /******************************************************************************************************************
-         * notifications coming from the application server
-         *
-         */
-        this.app.emitter.on('server', (state, param1) => {
-            this._debug("GoogleSmartHomeNode(on-server): state  = " + state);
-            this._debug("GoogleSmartHomeNode(on-server): param1 = " + param1);
-
-            this.callMgmtFuncs({
-                _type: 'server',
-                state: state,
-                param1: param1
-            });
-        });
-
-        this.app.emitter.on('actions-reportstate', (msg) => {
-            this._debug("GoogleSmartHomeNode(on-actions-reportstate): msg = " + JSON.stringify(msg));
-
-            this.callMgmtFuncs({
-                _type: 'actions-reportstate',
-                msg: msg
-            });
-        });
-
-        this.app.emitter.on('actions-requestsync', (msg) => {
-            this._debug("GoogleSmartHomeNode(on-actions-requestsync): msg = " + JSON.stringify(msg));
-
-            this.callMgmtFuncs({
-                _type: 'actions-requestsync',
-                msg: msg
-            });
-        });
-
-        this.app.emitter.on('/login', (msg, username, password) => {
-            this._debug("GoogleSmartHomeNode(on-login): msg      = " + msg);
-            this._debug("GoogleSmartHomeNode(on-login): username = " + username);
-            this._debug("GoogleSmartHomeNode(on-login): password = " + password);
-
-            this.callMgmtFuncs({
-                _type: 'login',
-                msg: msg
-            });
-        });
     }
 
     _debug(msg) {
@@ -177,17 +133,6 @@ export class GoogleSmartHomeNode {
             this._debug(JSON.stringify(msg));
         }
         RED.log.error(msg);
-    }
-
-    // call all management nodes
-    callMgmtFuncs(obj) {
-        Object.keys(this.mgmtNodes).forEach((key) => {
-            if (Object.prototype.hasOwnProperty.call(this.mgmtNodes, key)) {
-                this._debug("GoogleSmartHomeNode(on-server): found mgmt client");
-
-                this.mgmtNodes[key].updated(obj);
-            }
-        });
     }
 
     /******************************************************************************************************************
