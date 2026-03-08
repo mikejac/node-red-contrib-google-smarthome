@@ -345,7 +345,11 @@ export class GoogleSmartHome {
         const me = this;
         this.StopMDNSAdvertisement();
 
-        this.dnssdAd = dnssd.Advertisement(dnssd.tcp('nodered-google'), this._localDiscoveryPort, {txt: {clientId: this.configNode.id}})
+        this.dnssdAd = dnssd.Advertisement(
+            dnssd.tcp('nodered-google'),
+            this._localExecutionPort,
+            {txt: {clientId: this.configNode.id}}
+        );
         this.dnssdAd.start();
         this._dnssdAdRunning = true;
 
