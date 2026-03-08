@@ -91,11 +91,13 @@ export default class HttpAuth {
         if (request.query.response_type !== 'code') {
             this._smarthome.error('HttpAuth:_handleGetOauth(): response_type ' + request.query.response_type + ' must equal "code"');
             response.status(500).send('response_type ' + request.query.response_type + ' must equal "code"');
+            return;
         }
 
         if (!this._smarthome.auth.isValidClient(request.query.client_id)) {
             this._smarthome.error('HttpAuth:_handleGetOauth(): client_id ' + request.query.client_id + ' invalid');
             response.status(500).send('client_id ' + request.query.client_id + ' invalid');
+            return;
         }
 
         const useGoogleClientAuth = this._smarthome.auth.useGoogleClientAuth();
