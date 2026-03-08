@@ -49,7 +49,7 @@ function testConvertsToValue(inputValues, targetType, targetValue, targetDescrip
         it(`${outputValue(value)} converts to ${targetDescription}`, function () {
             this.timeout(1000);
 
-            let result = Formats.formatValue('value', value, targetType);
+            const result = Formats.formatValue('value', value, targetType);
             assert.strictEqual(result, targetValue);
         });
     });
@@ -81,12 +81,12 @@ describe('Format Conversion', function () {
     it(`default value is returned for undefined`, function () {
         this.timeout(1000);
 
-        let result = Formats.formatValue('value', undefined, Formats.STRING, 'default value for test');
+        const result = Formats.formatValue('value', undefined, Formats.STRING, 'default value for test');
         assert.strictEqual(result, 'default value for test');
     });
 
 
-    let convertToTrue = [
+    const convertToTrue = [
         true,
         'true',
         'on',
@@ -99,7 +99,7 @@ describe('Format Conversion', function () {
     testConvertsToValue(convertToTrue, Formats.BOOL, true, 'boolean true');
 
 
-    let convertToFalse = [
+    const convertToFalse = [
         false,
         'false',
         'off',
@@ -110,21 +110,21 @@ describe('Format Conversion', function () {
     testConvertsToValue(convertToFalse, Formats.BOOL, false, 'boolean false');
 
 
-    let convertToString10 = [
+    const convertToString10 = [
         10,
         '10',
     ];
     testConvertsToValue(convertToString10, Formats.STRING, '10', 'string "10"');
 
 
-    let convertToFloat10point5 = [
+    const convertToFloat10point5 = [
         10.5,
         '10.5',
     ];
     testConvertsToValue(convertToFloat10point5, Formats.FLOAT, 10.5, 'float 10.5');
 
 
-    let convertToInt10 = [
+    const convertToInt10 = [
         10,
         '10',
         10.5,
@@ -134,27 +134,27 @@ describe('Format Conversion', function () {
     ];
     testConvertsToValue(convertToInt10, Formats.INT, 10, 'int 10');
 
-    let convertToStringTrue = [
+    const convertToStringTrue = [
         true,
         'true',
     ];
     testConvertsToValue(convertToStringTrue, Formats.STRING, 'true', 'string true');
 
-    let convertToStringFalse = [
+    const convertToStringFalse = [
         false,
         'false',
     ];
     testConvertsToValue(convertToStringFalse, Formats.STRING, 'false', 'string false');
 
 
-    let errorWhenConvertedToBool = [
+    const errorWhenConvertedToBool = [
         undefined,
         'somevalue',
     ];
     testForError(errorWhenConvertedToBool, Formats.BOOL, 'bool');
 
 
-    let errorWhenConvertedToFloat = [
+    const errorWhenConvertedToFloat = [
         undefined,
         'somevalue',
     ];

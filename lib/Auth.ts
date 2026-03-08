@@ -83,7 +83,7 @@ export default class Auth {
         try {
             this._authFilename = userDir + '/google-smarthome-auth-' + nodeId + '.json';
 
-            let authFile = fs.readFileSync(
+            const authFile = fs.readFileSync(
                 this._authFilename,
                 {
                     'encoding': 'utf8',
@@ -125,7 +125,7 @@ export default class Auth {
         if (!jwtkeyFile.startsWith(path.sep)) {
             jwtkeyFile = path.join(dir, jwtkeyFile);
         }
-        let jk       = fs.readFileSync(jwtkeyFile);
+        const jk       = fs.readFileSync(jwtkeyFile);
         this._jwtkey = JSON.parse(jk.toString());
     }
 
@@ -245,7 +245,7 @@ export default class Auth {
         this.removeExpiredAuthCode();
 
         while (true) {
-            let authCode = this.genRandomString();
+            const authCode = this.genRandomString();
             const authCodeInfo = this._authCode.get(authCode);
             if (typeof authCodeInfo === 'undefined') {
                 this._authCode.set(authCode, {
@@ -263,15 +263,15 @@ export default class Auth {
      */
     removeExpiredAuthCode(): void {
         const now = Date.now();
-        let toDel = [];
-        for (let authCode of this._authCode.keys()) {
+        const toDel = [];
+        for (const authCode of this._authCode.keys()) {
             const authCodeInfo = this._authCode.get(authCode);
             const expirationDate = new Date(authCodeInfo.expiresAt);
             if (expirationDate < now) {
                 toDel.push(authCode);
             }
         }
-        for (let authCode of toDel) {
+        for (const authCode of toDel) {
             this._authCode.delete(authCode);
         }
     }
@@ -322,14 +322,14 @@ export default class Auth {
     isValidRedirectUri(redirect_uri: string, my_uri: string): boolean {
         if (my_uri) {
             // Remove port from URI to allow different ports (due to port forwarding or proxying)
-            let my_uri_without_port = my_uri.replace(/:\d+/, '');
-            let redirect_uri_without_port = redirect_uri.replace(/:\d+/, '');
+            const my_uri_without_port = my_uri.replace(/:\d+/, '');
+            const redirect_uri_without_port = redirect_uri.replace(/:\d+/, '');
             if(redirect_uri_without_port.startsWith(my_uri_without_port)) {
                 return true;
             }
         }
 
-        let project_id = this.getProjectId();
+        const project_id = this.getProjectId();
         if ('https://oauth-redirect.googleusercontent.com/r/' + project_id !== redirect_uri &&
             'https://oauth-redirect-sandbox.googleusercontent.com/r/' + project_id !== redirect_uri) {
             this._smarthome.configNode.error('Auth:isValidRedirectUri(): invalid redirect uri!');
@@ -342,7 +342,7 @@ export default class Auth {
     //
     //
     exchangeAuthCode(authCode: string, redirect_uri: string, my_uri: string) {
-        let authCodeInfo = this._authCode.get(authCode);
+        const authCodeInfo = this._authCode.get(authCode);
 
         if (typeof authCodeInfo === 'undefined') {
             throw 'invalid authCode ' + authCode;
@@ -364,8 +364,8 @@ export default class Auth {
 
         this._removeAllTokensForUser(user);
 
-        let refreshToken = this._generateRefreshToken(user);
-        let accessToken = this._generateAccessToken(user);
+        const refreshToken = this._generateRefreshToken(user);
+        const accessToken = this._generateAccessToken(user);
 
         this._persistAuthStorage();
 
@@ -391,7 +391,7 @@ export default class Auth {
         const user = this._authStorage.refreshTokens[refreshToken];
         this._removeAllAccessTokensExpiredAndForUser(user);
 
-        let accessToken = this._generateAccessToken(user);
+        const accessToken = this._generateAccessToken(user);
 
         this._persistAuthStorage();
 
@@ -543,7 +543,7 @@ export default class Auth {
      */
     private _generateNewAccessToken() {
         while (true) {
-            let accessToken = this.genRandomString();
+            const accessToken = this.genRandomString();
             if (accessToken !== this._authStorage.localAuthCode && accessToken !== this._authStorage.nextLocalAuthCode && typeof this._authStorage.accessTokens[accessToken] == 'undefined') {
                 return accessToken;
             }
@@ -557,7 +557,7 @@ export default class Auth {
      * @returns {string} Access token
      */
     private _generateAccessToken(user) {
-        let accessToken = this._generateNewAccessToken();
+        const accessToken = this._generateNewAccessToken();
         this._authStorage.accessTokens[accessToken] = {
             user: user,
             expiresAt: Date.now() + (ACCESS_TOKEN_DURATION_MINUTES * 60000),
@@ -573,7 +573,7 @@ export default class Auth {
      */
     private _generateRefreshToken(user) {
         while (true) {
-            let refreshToken = this.genRandomString();
+            const refreshToken = this.genRandomString();
             if (typeof this._authStorage.refreshTokens[refreshToken] == 'undefined') {
                 this._authStorage.refreshTokens[refreshToken] = user;
                 return refreshToken;
@@ -587,10 +587,10 @@ export default class Auth {
      * @param {string} user - Username of the user whose access tokens should be removed
      */
     private _removeAllAccessTokensExpiredAndForUser(user) {
-        for (let token in this._authStorage.accessTokens) {
-            let tokenInfo = this._authStorage.accessTokens[token];
-            let expiresAt = tokenInfo.expiresAt;
-            let tokenUser = tokenInfo.user;
+        for (const token in this._authStorage.accessTokens) {
+            const tokenInfo = this._authStorage.accessTokens[token];
+            const expiresAt = tokenInfo.expiresAt;
+            const tokenUser = tokenInfo.user;
             if ((tokenUser === user) || (new Date(expiresAt) < new Date())) {
                 delete this._authStorage.accessTokens[token];
             }
@@ -604,8 +604,8 @@ export default class Auth {
      */
     private _removeAllTokensForUser(user) {
         this._removeAllAccessTokensExpiredAndForUser(user);
-        for (let token in this._authStorage.refreshTokens) {
-            let tokenUser = this._authStorage.refreshTokens[token];
+        for (const token in this._authStorage.refreshTokens) {
+            const tokenUser = this._authStorage.refreshTokens[token];
             if (tokenUser === user) {
                 delete this._authStorage.refreshTokens[token];
             }

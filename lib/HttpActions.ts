@@ -188,7 +188,7 @@ export default class HttpActions {
      * @param {Response} response - Express response object
      */
     private _post(request: Request, response: Response, url: string) {
-        let reqdata = request.body;
+        const reqdata = request.body;
 
         this._smarthome.debug('HttpActions:_post(/' + url + '): request.headers = ' + JSON.stringify(request.headers));
         this._smarthome.debug('HttpActions:_post(/' + url + '): reqdata = ' + JSON.stringify(reqdata));
@@ -215,7 +215,7 @@ export default class HttpActions {
             return;
         }
 
-        let accessToken = res[1];
+        const accessToken = res[1];
         const is_local_execution = this._smarthome.auth.isValidLocalAccessToken(accessToken);
         const user = this._smarthome.auth.getuserForAccessToken(accessToken);
         if (user === null) {
@@ -248,8 +248,8 @@ export default class HttpActions {
         }
 
         for (let i = 0; i < reqdata.inputs.length; i++) {
-            let input = reqdata.inputs[i];
-            let intent = input.intent;
+            const input = reqdata.inputs[i];
+            const intent = input.intent;
 
             if (!intent) {
                 this._smarthome.error('HttpActions:_post(/' + url + '): missing intent');
@@ -400,7 +400,7 @@ export default class HttpActions {
     private _sync(requestId: string, response: Response) {
         this._smarthome.debug('HttpActions:_sync()');
 
-        let devices = this._smarthome.devices.getProperties();
+        const devices = this._smarthome.devices.getProperties();
         if (!devices) {
             response.status(500).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -409,11 +409,11 @@ export default class HttpActions {
             return;
         }
 
-        let deviceList = [];
+        const deviceList = [];
 
         Object.keys(devices).forEach(function (key) {
             if (Object.prototype.hasOwnProperty.call(devices, key) && devices[key]) {
-                let device = devices[key];
+                const device = devices[key];
                 device.id = key;
                 deviceList.push(device);
             }
@@ -445,7 +445,7 @@ export default class HttpActions {
             });
         }
 
-        let deviceProps = {
+        const deviceProps = {
             requestId: requestId,
             payload: {
                 agentUserId: userId,
@@ -466,9 +466,9 @@ export default class HttpActions {
     private _query(requestId: string, devices, response: Response) {
         this._smarthome.debug('HttpActions:_query()');
 
-        let deviceIds = this._smarthome.devices.getDeviceIds(devices);
+        const deviceIds = this._smarthome.devices.getDeviceIds(devices);
 
-        let states = this._smarthome.devices.getStates(deviceIds);
+        const states = this._smarthome.devices.getStates(deviceIds);
         if (!states) {
             response.status(500).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -477,7 +477,7 @@ export default class HttpActions {
             return;
         }
 
-        let deviceStates = {
+        const deviceStates = {
             requestId: requestId,
             payload: {
                 devices: states,
@@ -502,17 +502,17 @@ export default class HttpActions {
             throw new Error('Parameter "commands" must be of type Array');
         }
 
-        let respCommands = [];
+        const respCommands = [];
 
         for (let i = 0; i < commands.length; i++) {
-            let curCommand = commands[i];
+            const curCommand = commands[i];
 
             for (let j = 0; j < curCommand.execution.length; j++) {
-                let curExec = curCommand.execution[j];
-                let devices = curCommand.devices;
+                const curExec = curCommand.execution[j];
+                const devices = curCommand.devices;
 
                 for (let k = 0; k < devices.length; k++) {
-                    let executionResponse = this._execDevice(curExec, devices[k], is_local);
+                    const executionResponse = this._execDevice(curExec, devices[k], is_local);
 
                     this._smarthome.debug('HttpActions:_exec(): executionResponse = ' + JSON.stringify(executionResponse));
 
@@ -537,7 +537,7 @@ export default class HttpActions {
             }
         }
 
-        let resBody = {
+        const resBody = {
             requestId: requestId,
             payload: {
                 commands: respCommands,
@@ -566,7 +566,7 @@ export default class HttpActions {
             return { status: 'ERROR', errorCode: 'deviceOffline' };
         }
 
-        let curDevice = {
+        const curDevice = {
             id: deviceId,
             states: {},
         };
@@ -599,7 +599,7 @@ export default class HttpActions {
         if (reportState) {
             // update states in HomeGraph
             process.nextTick(() => {
-                let s = this._smarthome.devices.getStates([deviceId]);
+                const s = this._smarthome.devices.getStates([deviceId]);
                 this.reportState(deviceId, s[deviceId]);
             });
         }
@@ -622,7 +622,7 @@ export default class HttpActions {
     private _reachable_devices(requestId, response: Response) {
         this._smarthome.debug('HttpActions:_reachable_devices()');
 
-        let reachableDevices = this._smarthome.devices.getReachableDeviceIds();
+        const reachableDevices = this._smarthome.devices.getReachableDeviceIds();
         if (!reachableDevices) {
             response.status(500).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -631,7 +631,7 @@ export default class HttpActions {
             return;
         }
 
-        let resBody = {
+        const resBody = {
             requestId: requestId,
             payload: {
                 devices: reachableDevices,
@@ -721,7 +721,7 @@ export default class HttpActions {
                         return;
                     }
 
-                    let myError = {
+                    const myError = {
                         "msg": "Error in HttpActions:reportState()",
                         "org_msg": (error.response !== undefined ? error.response.data.error : error),
                         "data": {
@@ -780,7 +780,7 @@ export default class HttpActions {
                 this._smarthome.debug('HttpActions:requestSync(): success');
             })
             .catch(error => {
-                let myError = {
+                const myError = {
                     "msg": "Error in HttpActions:requestSync()",
                     "org_msg": (error.response !== undefined ? error.response.data.error : error),
                     "data": {

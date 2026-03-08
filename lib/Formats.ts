@@ -54,7 +54,7 @@ export const Formats = {
                     if(!isNaN(parseFloat(value)))
                         return this.formatValue(key, parseFloat(value), format, default_value);
 
-                    let t = value.toUpperCase();
+                    const t = value.toUpperCase();
 
                     if (t === "TRUE" || t === "ON" || t === "YES" || t === "1") {
                         return true;
@@ -68,7 +68,7 @@ export const Formats = {
                     return value;
                 }
                 case this.FLOAT: {
-                    let fval = parseFloat(value);
+                    const fval = parseFloat(value);
 
                     if (isNaN(fval)) {
                         throw new Error('Type of ' + key + ' is string but it cannot be converted to a float');
@@ -85,7 +85,7 @@ export const Formats = {
                         value = value.replace('#', '0x');
                     }
 
-                    let val = parseInt(value);
+                    const val = parseInt(value);
 
                     if (isNaN(val)) {
                         throw new Error('Type of ' + key + ' is string but it cannot be converted to a integer');
@@ -106,7 +106,7 @@ export const Formats = {
                     return parseInt(value);
                 }
                 case this.DATETIME: {
-                    let dval = new Date(value);
+                    const dval = new Date(value);
                     return dval.toISOString();
                 }
                 default: {

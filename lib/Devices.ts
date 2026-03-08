@@ -86,7 +86,7 @@ export default class Devices {
         let nodeId;
         if (name) {
             Object.keys(this._nodes).forEach(nid => {
-                let elm = this._nodes[nid];
+                const elm = this._nodes[nid];
                 if (elm.device.properties.name.name === name) {
                     nodeId = nid;
                 }
@@ -117,7 +117,7 @@ export default class Devices {
     //
     //
     getProperties(deviceIds = undefined) {
-        let properties = {};
+        const properties = {};
 
         if (!deviceIds) {
             Object.keys(this._nodes).forEach((deviceId) => {
@@ -127,7 +127,7 @@ export default class Devices {
             });
         } else {
             for (let i = 0; i < deviceIds.length; i++) {
-                let deviceId = deviceIds[i];
+                const deviceId = deviceIds[i];
 
                 if (Object.prototype.hasOwnProperty.call(this._nodes, deviceId)) {
                     properties[deviceId] = this._nodes[deviceId].device.properties;
@@ -148,14 +148,14 @@ export default class Devices {
             this._smarthome.debug('Device:getStates(): deviceIds = ' + JSON.stringify(deviceIds));
         }
 
-        let states = {};
+        const states = {};
 
         if (!deviceIds) {
             Object.keys(this._nodes).forEach((deviceId) => {
                 if (Object.prototype.hasOwnProperty.call(this._nodes, deviceId)) {
                     let include = true;
-                    let node = this._nodes[deviceId];
-                    let key = useNames === true ? node.name : deviceId;
+                    const node = this._nodes[deviceId];
+                    const key = useNames === true ? node.name : deviceId;
                     if (onlyPersistent === true) {
                         include = node.persistent_state || false;
                     } 
@@ -166,7 +166,7 @@ export default class Devices {
             });
         } else {
             for (let i = 0; i < deviceIds.length; i++) {
-                let deviceId = deviceIds[i];
+                const deviceId = deviceIds[i];
                 this._smarthome.debug('Device:getStates(with-deviceIds): deviceId = ' + JSON.stringify(deviceId));
 
                 if (Object.prototype.hasOwnProperty.call(this._nodes, deviceId)) {
@@ -199,7 +199,7 @@ export default class Devices {
             if (Object.prototype.hasOwnProperty.call(this._nodes, deviceId)) {
                 this._nodes[deviceId].onInput({topic: this._nodes[deviceId].topicOut, payload: states[deviceId]});
             } else {
-                let id = this.GetIdFromName(deviceId);
+                const id = this.GetIdFromName(deviceId);
                 if (id !== undefined) {
                     this._nodes[id].onInput({topic: this._nodes[id].topicOut, payload: states[deviceId]});
                 }
@@ -217,7 +217,7 @@ export default class Devices {
      * @returns {string[]} ["123", "234"]
      */
     getDeviceIds(devices) {
-        let deviceIds = [];
+        const deviceIds = [];
 
         for (let i = 0; i < devices.length; i++) {
             if (devices[i] && devices[i].id) {
@@ -231,7 +231,7 @@ export default class Devices {
     //
     //
     getReachableDeviceIds() {
-        let reachableDevices = [];
+        const reachableDevices = [];
 
         Object.keys(this._nodes).forEach(function (deviceId) {
             reachableDevices.push({verificationId: deviceId});

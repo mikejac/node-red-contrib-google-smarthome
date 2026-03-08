@@ -101,7 +101,7 @@ export class GoogleSmartHomeNode {
             (msg) => { this._error(msg); }
         );
 
-        let err = this.app.Start(RED.httpNode || RED.httpAdmin, RED.server);
+        const err = this.app.Start(RED.httpNode || RED.httpAdmin, RED.server);
         if (err !== true) {
             this._debug("GoogleSmartHomeNode(constructor): error " + JSON.stringify(err));
             RED.log.error(err);

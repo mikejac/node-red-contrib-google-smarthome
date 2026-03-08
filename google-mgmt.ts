@@ -80,7 +80,7 @@ export class MgmtNode {
     updated(data) {   // this must be defined before the call to clientConn.register()
         this._debug("MgmtNode(updated): data = " + JSON.stringify(data));
 
-        let msg = {
+        const msg = {
             topic: "management",
             payload: data
         };
@@ -96,8 +96,8 @@ export class MgmtNode {
      * @param {Function} done - Function to inform the runtime that this node has finished its operation
      */
     onInput(msg, send, done) {
-        let topicArr = (msg.topic || '').split(this.topicDelim);
-        let topic = topicArr[topicArr.length - 1];   // get last part of topic
+        const topicArr = (msg.topic || '').split(this.topicDelim);
+        const topic = topicArr[topicArr.length - 1];   // get last part of topic
         const topic_upper = topic.toUpperCase();
 
         try {
@@ -134,7 +134,7 @@ export class MgmtNode {
                         deviceIds = msg.payload.devices;
                     }
                 }
-                let states = this.clientConn.app.devices.getStates(deviceIds, onlyPersistent, useNames);
+                const states = this.clientConn.app.devices.getStates(deviceIds, onlyPersistent, useNames);
                 if (states) {
                     send({
                         topic: topic,
@@ -178,9 +178,9 @@ export class MgmtNode {
 
     sendSetState() {
         if (this.set_state_type === 'no_nodes') return;
-        let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.set_state_type);
-        let useNames = ['all_by_name', 'filtered_by_name'].includes(this.set_state_type);
-        let states = this.clientConn.app.devices.getStates(undefined, onlyPersistent, useNames);
+        const onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.set_state_type);
+        const useNames = ['all_by_name', 'filtered_by_name'].includes(this.set_state_type);
+        const states = this.clientConn.app.devices.getStates(undefined, onlyPersistent, useNames);
         if (states) {
             this.send({
                 topic: 'set_state',

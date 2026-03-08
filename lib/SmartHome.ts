@@ -223,12 +223,12 @@ export class GoogleSmartHome {
 
         if (redAppRouter) {
             this.debug("SmartHome:UnregisterUrl(): use the Node-RED server port, path '" + this._httpPath + "' local path '" + this._httpLocalPath + "'");
-            let get_urls = [this.Path_join(this._httpPath, 'oauth'), this.Path_join(this._httpPath, 'check')];
-            let post_urls = [this.Path_join(this._httpPath, 'oauth'), this.Path_join(this._httpPath, 'smarthome')];
-            let options_urls = [this.Path_join(this._httpPath, 'smarthome')];
-            let all_urls = [this.Path_join(this._httpPath, 'token')];
+            const get_urls = [this.Path_join(this._httpPath, 'oauth'), this.Path_join(this._httpPath, 'check')];
+            const post_urls = [this.Path_join(this._httpPath, 'oauth'), this.Path_join(this._httpPath, 'smarthome')];
+            const options_urls = [this.Path_join(this._httpPath, 'smarthome')];
+            const all_urls = [this.Path_join(this._httpPath, 'token')];
 
-            let to_remove = [];
+            const to_remove = [];
             redAppRouter.stack.forEach((route, i) => {
                 if (route.route && (
                     (route.route.methods['get'] && get_urls.includes(route.route.path)) ||
@@ -375,7 +375,7 @@ export class GoogleSmartHome {
                 if (REPORT_STATE_INTERVAL_MINUTES > 0) {
                 
                     this._reportStateTimer = setInterval(() => { 
-                        let states = this.devices.getStates();
+                        const states = this.devices.getStates();
 
                         if (states) {
                             this.httpActions.reportState(undefined, states);
@@ -393,7 +393,7 @@ export class GoogleSmartHome {
                 } else {
                     this.debug('SmartHome:Start(listen): using internal SSL');
 
-                    let httpsOptions = {};
+                    const httpsOptions = {};
 
                     try {
                         if(!this._privateKey) {
@@ -425,7 +425,7 @@ export class GoogleSmartHome {
                         this.debug('SmartHome:Start(listen): Certificate file change detected. Updating HTTPS server in 30 seconds.');
                         clearTimeout(waitForRenewalTimeout);
                         waitForRenewalTimeout = setTimeout(() => {
-                            let context = {
+                            const context = {
                                 key: fs.readFileSync(this._privateKey),
                                 cert: fs.readFileSync(this._publicKey)
                             }
@@ -591,7 +591,7 @@ export class GoogleSmartHome {
      * Reports the states of all devices to Google.
      */
     ReportAllStates(): void {
-        let states = this.devices.getStates();
+        const states = this.devices.getStates();
 
         if (states) {
             this.httpActions.reportState(undefined, states);

@@ -1061,11 +1061,11 @@ export class DeviceNode {
     }
 
     updateStateTypesForTraits() {
-        let state_types = this.state_types;
+        const state_types = this.state_types;
         state_types['online'] = Formats.BOOL + Formats.MANDATORY;
 
         if (this.config.trait_appselector) {
-            let values = this.available_applications.map(application => application.key);
+            const values = this.available_applications.map(application => application.key);
             if (values.length > 0) {
                 state_types['currentApplication'] = {
                     type: Formats.STRING + Formats.MANDATORY,
@@ -1075,7 +1075,7 @@ export class DeviceNode {
             }
         }
         if (this.config.trait_armdisarm) {
-            let values = this.available_arm_levels.map(al => al.level_name);
+            const values = this.available_arm_levels.map(al => al.level_name);
             if (values.length > 0) {
                 state_types['isArmed'] = Formats.BOOL + Formats.MANDATORY;
                 state_types['currentArmLevel'] = {
@@ -1149,13 +1149,13 @@ export class DeviceNode {
             }
         }
         if (this.config.trait_cook) {
-            let cooking_mode_values = ['NONE'];
+            const cooking_mode_values = ['NONE'];
             cooking_mode_values.push(...this.supported_cooking_modes);
             state_types['currentCookingMode'] = {
                 type: Formats.STRING + Formats.MANDATORY,
                 values: cooking_mode_values,
             };
-            let food_preset_values = ['NONE'];
+            const food_preset_values = ['NONE'];
             food_preset_values.push(...this.food_presets.map(food_preset => food_preset.food_preset_name));
             state_types['currentFoodPreset'] = {
                 type: Formats.STRING + Formats.MANDATORY,
@@ -1168,7 +1168,7 @@ export class DeviceNode {
             };
         }
         if (this.config.trait_dispense) {
-            let dispense_items_values = this.supported_dispense_items.map(item => item.item_name);
+            const dispense_items_values = this.supported_dispense_items.map(item => item.item_name);
             state_types['dispenseItems'] = {
                 type: Formats.OBJECT + Formats.ARRAY,
                 attributes: {
@@ -1254,7 +1254,7 @@ export class DeviceNode {
                     state_types['currentFanSpeedPercent'] = Formats.INT;
                 }
                 if (this.available_fan_speeds.length > 0) {
-                    let values = this.available_fan_speeds.map(fanspeed => fanspeed.speed_name);
+                    const values = this.available_fan_speeds.map(fanspeed => fanspeed.speed_name);
                     state_types['currentFanSpeedSetting'] = {
                         type: Formats.STRING,
                         values: values,
@@ -1266,7 +1266,7 @@ export class DeviceNode {
         if (this.config.trait_fill) {
             state_types['isFilled'] = Formats.BOOL + Formats.MANDATORY;
             if (this.available_fill_levels.length > 0) {
-                let values = this.available_fill_levels.map(fl => fl.level_name);
+                const values = this.available_fill_levels.map(fl => fl.level_name);
                 state_types['currentFillLevel'] = {
                     type: Formats.STRING + Formats.MANDATORY,
                     values: values,
@@ -1287,7 +1287,7 @@ export class DeviceNode {
         }
         if (this.config.trait_inputselector) {
             if (!this.command_only_input_selector) {
-                let values = this.available_inputs.map(input => input.key);
+                const values = this.available_inputs.map(input => input.key);
                 if (values.length > 0) {
                     state_types['currentInput'] = {
                         type: Formats.STRING + Formats.MANDATORY,
@@ -1297,7 +1297,7 @@ export class DeviceNode {
             }
         }
         if (this.config.trait_lighteffects) {
-            let light_effect_value = [''];
+            const light_effect_value = [''];
             light_effect_value.push(...this.supported_effects);
             if (light_effect_value.length > 0) {
                 state_types['activeLightEffect'] = {
@@ -1326,10 +1326,10 @@ export class DeviceNode {
         }
         if (this.config.trait_modes) {
             if (!this.command_only_modes) {
-                let attributes = {};
+                const attributes = {};
                 let ok = false;
                 this.available_modes.forEach(function (mode) {
-                    let values = mode.settings.map(setting => setting.setting_name);
+                    const values = mode.settings.map(setting => setting.setting_name);
                     if (values.length > 0) {
                         ok = true;
                         attributes[mode.name] = {
@@ -1555,7 +1555,7 @@ export class DeviceNode {
         }
         if (this.config.trait_toggles) {
             if (!this.command_only_toggles) {
-                let attributes = {};
+                const attributes = {};
                 this.available_toggles.forEach(function (toggle) {
                     attributes[toggle.name] = Formats.BOOL + Formats.MANDATORY;
                 });
@@ -1579,7 +1579,7 @@ export class DeviceNode {
     }
 
     updateAttributesForTraits(device) {
-        let attributes = device.properties.attributes;
+        const attributes = device.properties.attributes;
 
         if (this.config.trait_appselector) {
             attributes['availableApplications'] = this.available_applications;
@@ -1684,7 +1684,7 @@ export class DeviceNode {
             attributes['supportsNetworkUploadSpeedTest'] = this.supports_network_upload_speedtest;
         }
         if (this.config.trait_occupancysensing) {
-            let occupancysensingattributes = [];
+            const occupancysensingattributes = [];
             if (this.occupancy_sensing_pir) {
                 if (this.occupied_to_unoccupied_delay_sec_pir) {
                     occupancysensingattributes.push({
@@ -1753,9 +1753,9 @@ export class DeviceNode {
             attributes['sceneReversible'] = this.scene_reversible;
         }
         if (this.config.trait_sensorstate) {
-            let sensor_states_supported = [];
+            const sensor_states_supported = [];
             this.sensor_states_supported.forEach(function (sensor_state_name) {
-                let sensor_state_supported = { name: sensor_state_name };
+                const sensor_state_supported = { name: sensor_state_name };
                 let available_states = undefined;
                 let raw_value_uUnit = undefined;
                 switch (sensor_state_name) {
@@ -1903,7 +1903,7 @@ export class DeviceNode {
     }
 
     getDispenseNewState() {
-        let dispense = [];
+        const dispense = [];
         this.supported_dispense_items.forEach(function (item) {
             dispense.push({
                 itemName: item.item_name,
@@ -1938,10 +1938,11 @@ export class DeviceNode {
     /**
      * Initializes states to their default values.
      *
+     * @param device
      * @returns {object}
      */
     initializeStates(device) {
-        let states = device.states;
+        const states = device.states;
 
         if (this.config.trait_appselector) {
             states['currentApplication'] = '';
@@ -2069,7 +2070,7 @@ export class DeviceNode {
                 if (this.open_direction.length < 2) {
                     states['openPercent'] = 0;
                 } else {
-                    let openState = [];
+                    const openState = [];
                     states['openState'] = openState;
                     this.open_direction.forEach(direction => {
                         openState.push({
@@ -2097,9 +2098,9 @@ export class DeviceNode {
             states['currentCycleRemainingTime'] = 0;
         }
         if (this.config.trait_sensorstate) {
-            let current_sensor_state_data = [];
+            const current_sensor_state_data = [];
             this.sensor_states_supported.forEach(function (sensor_state_name) {
-                let current_sensor = { name: sensor_state_name };
+                const current_sensor = { name: sensor_state_name };
                 let current_sensor_state = undefined;
                 let raw_value = undefined;
                 switch (sensor_state_name) {
@@ -2384,8 +2385,8 @@ export class DeviceNode {
      * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
      */
     updated(g_command, exe_result, is_local: boolean) {
-        let command = g_command.command.startsWith('action.devices.commands.') ? g_command.command.substr(24) : g_command.command;
-        let params = exe_result.params || {};
+        const command = g_command.command.startsWith('action.devices.commands.') ? g_command.command.substr(24) : g_command.command;
+        const params = exe_result.params || {};
         this._debug(".updated: g_command = " + JSON.stringify(g_command));
         this._debug(".updated: exe_result = " + JSON.stringify(exe_result));
 
@@ -2398,7 +2399,7 @@ export class DeviceNode {
 
         this.updateStatusIcon(is_local);
 
-        let msg = {
+        const msg = {
             device_name: this.device.properties.name.name,
             command: command,
             params: g_command.params,
@@ -2444,14 +2445,14 @@ export class DeviceNode {
 
         let upper_topic = '';
         if (msg.topic) {
-            let topicArr = String(msg.topic).split(this.topicDelim);
-            let topic = topicArr[topicArr.length - 1].trim();   // get last part of topic
+            const topicArr = String(msg.topic).split(this.topicDelim);
+            const topic = topicArr[topicArr.length - 1].trim();   // get last part of topic
             upper_topic = topic.toUpperCase();
         }
 
         try {
             if (upper_topic === 'GETSTATE') {
-                let states = {};
+                const states = {};
                 this.cloneObject(states, this.states, this.state_types);
                 send({
                     topic: msg.topic,
@@ -2714,7 +2715,7 @@ export class DeviceNode {
             } else if (upper_topic === 'GUESTNETWORKPASSWORD') {
                 this.guest_network_password = Formats.formatValue('guestNetworkPassword', msg.payload, Formats.STRING);
             } else if (this.config.trait_objectdetection && upper_topic === 'OBJECTDETECTION') {
-                let payload = {};
+                const payload = {};
                 if (typeof msg.payload.familiar === 'number') {
                     payload.familiar = msg.payload.familiar;
                 }
@@ -2737,7 +2738,7 @@ export class DeviceNode {
                     }
                 });  // tell Google ...
             } else if (this.config.trait_runcycle && upper_topic === 'RUNCYCLE') {
-                let payload = { priority: 0 };
+                const payload = { priority: 0 };
                 if (typeof msg.payload.status === 'string') {
                     payload.status = msg.payload.status;
                 }
@@ -2752,7 +2753,7 @@ export class DeviceNode {
                 });  // tell Google ...
             } else if (this.config.trait_sensorstate && upper_topic === 'SENSORSTATE') {
                 if (typeof msg.payload.name === 'string' && msg.payload.name.trim() && this.sensor_states_supported.includes(msg.payload.name.trim())) {
-                    let payload = { priority: 0 };
+                    const payload = { priority: 0 };
                     payload.name = msg.payload.name.trim();
                     if (typeof msg.payload.currentSensorState === 'string' && msg.payload.currentSensorState.trim()) {
                         payload.currentSensorState = msg.payload.currentSensorState.trim();
@@ -2762,7 +2763,7 @@ export class DeviceNode {
                     }
                 }
             } else if (this.config.trait_lockunlock && upper_topic === 'LOCKUNLOCK') {
-                let payload = {};
+                const payload = {};
                 if (typeof msg.payload.followUpToken === 'string') {
                     payload.followUpToken = msg.payload.followUpToken;
                 }
@@ -2789,7 +2790,7 @@ export class DeviceNode {
                     }
                 });  // tell Google ...
             } else if (this.config.trait_openclose && upper_topic === 'OPENCLOSE') {
-                let payload = {};
+                const payload = {};
                 if (typeof msg.payload.followUpToken === 'string') {
                     payload.followUpToken = msg.payload.followUpToken;
                 }
@@ -2810,12 +2811,12 @@ export class DeviceNode {
                 });  // tell Google ...
             } else if (this.config.trait_statusreport && upper_topic === 'STATUSREPORT') {
                 // Update or Add reports based on deviceTarget and statusCode
-                let payload = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
-                let new_payload = [];
+                const payload = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
+                const new_payload = [];
                 const status_report_type = this.state_types['currentStatusReport'].attributes;
                 if (typeof this.states.currentStatusReport !== 'undefined') {
                     this.states.currentStatusReport.forEach(report => {
-                        let new_report = { priority: 0 };
+                        const new_report = { priority: 0 };
                         this.cloneObject(new_report, report, status_report_type);
                         new_payload.push(new_report);
                     });
@@ -2824,7 +2825,7 @@ export class DeviceNode {
                 payload.forEach(sr => {
                     let nodeId;
                     if (sr.deviceTarget) {
-                        let properties = this.clientConn.getProperties([sr.deviceTarget]);
+                        const properties = this.clientConn.getProperties([sr.deviceTarget]);
                         if (Object.keys(properties).length > 0) {
                             nodeId = sr.deviceTarget;
                         } else {
@@ -2834,11 +2835,11 @@ export class DeviceNode {
                         nodeId = this.device.id;
                     }
                     if (nodeId) {
-                        let new_report = {};
+                        const new_report = {};
                         this.cloneObject(new_report, sr, status_report_type);
                         if (new_report.statusCode) {
                             new_report.deviceTarget = nodeId;
-                            let cur_reports = new_payload.filter(report => report.deviceTarget === nodeId && report.statusCode === new_report.statusCode);
+                            const cur_reports = new_payload.filter(report => report.deviceTarget === nodeId && report.statusCode === new_report.statusCode);
                             if (cur_reports.length > 0) {
                                 if (this.cloneObject(cur_reports[0], new_report, status_report_type)) {
                                     differs = true;
@@ -3007,7 +3008,7 @@ export class DeviceNode {
                 });
 
                 if (state_key !== '') {
-                    let payload = {};
+                    const payload = {};
                     payload[state_key] = msg.payload;
                     msg = {
                         payload: payload
@@ -3019,7 +3020,7 @@ export class DeviceNode {
 
                 if (differs) {
                     if (msgi.stateOutput) {
-                        let states = {};
+                        const states = {};
                         this.cloneObject(states, this.states, this.state_types);
                         send({ topic: this.topicOut, payload: states });
                     }
@@ -3064,9 +3065,9 @@ export class DeviceNode {
     updateTogglesState(device) {
         // Key/value pair with the toggle name of the device as the key, and the current state as the value.
         this._debug(".updateTogglesState");
-        let states = device.states || {};
+        const states = device.states || {};
         const currentToggleSettings = states['currentToggleSettings']
-        let new_toggles = {};
+        const new_toggles = {};
         this.available_toggles.forEach(function (toggle) {
             let value = false;
             if (typeof currentToggleSettings[toggle.name] === 'boolean') {
@@ -3080,9 +3081,9 @@ export class DeviceNode {
     updateModesState(device) {
         // Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
         this._debug(".updateModesState");
-        let states = device.states || {};
+        const states = device.states || {};
         const currentModeSettings = states['currentModeSettings']
-        let new_modes = {};
+        const new_modes = {};
         this.available_modes.forEach(function (mode) {
             let value = '';
             if (typeof currentModeSettings[mode.name] === 'string') {
@@ -3094,7 +3095,7 @@ export class DeviceNode {
     }
 
     getTraits() {
-        let traits = [];
+        const traits = [];
 
         if (this.config.trait_appselector) {
             traits.push("action.devices.traits.AppSelector");
@@ -3217,11 +3218,11 @@ export class DeviceNode {
      * @returns {string[]} - Array of the state keys that were modified.
      */
     updateState(from_states) {
-        let modified = [];
+        const modified = [];
         this._debug('updateState current state ' + JSON.stringify(this.states));
         Object.keys(this.state_types).forEach(key => {
             if (Object.prototype.hasOwnProperty.call(from_states, key)) {
-                let o_modified = this.setState(key, from_states[key], this.states, this.state_types[key]);
+                const o_modified = this.setState(key, from_states[key], this.states, this.state_types[key]);
                 if (o_modified) {
                     this._debug('.updateState set "' + key + '" to ' + JSON.stringify(from_states[key]));
                     modified.push(o_modified);
@@ -3314,8 +3315,8 @@ export class DeviceNode {
             }
             // checks array
             if (!(state_type.type & Formats.OBJECT)) {
-                let new_arr = [];
-                let old_arr = Array.isArray(old_state) ? old_state : [];
+                const new_arr = [];
+                const old_arr = Array.isArray(old_state) ? old_state : [];
                 const allowed_values = state_type.values;
                 value.forEach((elm, idx) => {
                     let new_val = Formats.formatValue(key + '[' + idx + ']', elm, state_type.type & Formats.PRIMITIVE);
@@ -3338,10 +3339,10 @@ export class DeviceNode {
                 state[key] = new_arr;
             } else {
                 // structure check
-                let new_arr = [];
-                let old_arr = Array.isArray(old_state) ? old_state : [];
-                let key_id = state_type.keyId || undefined;
-                let add_if_missing = typeof state_type.addIfMissing === 'boolean' ? state_type.addIfMissing : true;
+                const new_arr = [];
+                const old_arr = Array.isArray(old_state) ? old_state : [];
+                const key_id = state_type.keyId || undefined;
+                const add_if_missing = typeof state_type.addIfMissing === 'boolean' ? state_type.addIfMissing : true;
                 let remove_if_no_data;
                 if (typeof state_type.removeIfNoData === 'boolean') {
                     remove_if_no_data = state_type.removeIfNoData;
@@ -3349,7 +3350,7 @@ export class DeviceNode {
                     remove_if_no_data = !(state_type.type & Formats.MANDATORY);
                 }
                 let is_valid_key;
-                let replace_all = state_type.replaceAll || key_id === undefined;
+                const replace_all = state_type.replaceAll || key_id === undefined;
                 if (typeof state_type.isValidKey === 'function') {
                     is_valid_key = state_type.isValidKey;
                 } else {
@@ -3359,7 +3360,7 @@ export class DeviceNode {
                     let cur_obj;
                     if (key_id) {
                         let f_arr;
-                        let cloned_net_obj = {};
+                        const cloned_net_obj = {};
                         this.cloneObject(cloned_net_obj, new_obj, state_type.attributes);
                         if (typeof key_id === 'string') {
                             f_arr = old_arr.filter(obj => { return obj[key_id] === cloned_net_obj[key_id] });
@@ -3379,8 +3380,8 @@ export class DeviceNode {
                         } else if (f_arr.length > 0) {
                             cur_obj = f_arr[0];
                         } else if (add_if_missing) {
-                            let key_id0 = typeof key_id === 'string' ? key_id : key_id[0];
-                            let key1 = is_valid_key(cloned_net_obj[key_id0]);
+                            const key_id0 = typeof key_id === 'string' ? key_id : key_id[0];
+                            const key1 = is_valid_key(cloned_net_obj[key_id0]);
                             if (key1) {
                                 cur_obj = {};
                                 if (typeof key1 === 'string') {
@@ -3422,8 +3423,8 @@ export class DeviceNode {
                     state[key] = {};
                     old_state = state[key];
                 }
-                let mandatory_to_delete = [];
-                let o_differs = [];
+                const mandatory_to_delete = [];
+                const o_differs = [];
                 Object.keys(state_type.attributes).forEach((ikey) => {
                     // console.log("---> Attributes key " + ikey + " " + JSON.stringify(value[ikey]));
                     if (typeof value[ikey] !== 'undefined' && value[ikey] != null) {
@@ -3511,7 +3512,7 @@ export class DeviceNode {
             exclusive_states.forEach(rkey => delete state[rkey]);
         }
         if (Array.isArray(differs)) {
-            let o_differs = {};
+            const o_differs = {};
             o_differs[key] = differs;
             return o_differs;
         }
@@ -3548,7 +3549,7 @@ export class DeviceNode {
      * @returns {object[]} - Object with items as expected by Google
      */
     to_available_channels(json_data) {
-        let f = function (data_in, data_out) {
+        const f = function (data_in, data_out) {
             if (typeof data_in.number === 'string') {
                 data_out.number = data_in.number;
             }
@@ -3565,7 +3566,7 @@ export class DeviceNode {
      * @returns {object[]} - Object with items as expected by Google
      */
     to_food_presets(json_data) {
-        let f = function (data_in, data_out) {
+        const f = function (data_in, data_out) {
             if (Array.isArray(data_in.supported_units)) {
                 data_out.supported_units = [];
                 data_in.supported_units.forEach(unit => {
@@ -3588,7 +3589,7 @@ export class DeviceNode {
      * @returns {object[]} - Object with items as expected by Google
      */
     to_supported_dispense_items(json_data) {
-        let f = function (data_in, data_out) {
+        const f = function (data_in, data_out) {
             if (Array.isArray(data_in.supported_units)) {
                 data_out.supported_units = [];
                 data_in.supported_units.forEach(unit => {
@@ -3662,7 +3663,7 @@ export class DeviceNode {
      * @returns {object[]} - Object with items as expected by Google
      */
     to_available_modes(json_data) {
-        let f = (data_in, data_out) => {
+        const f = (data_in, data_out) => {
             if (Array.isArray(data_in.settings)) {
                 data_out.settings = this.key_name_synonym("Modes settings", data_in.settings, 'setting_name', 'setting_values', 'setting_synonym');
                 if (typeof data_in.ordered === 'boolean') {
@@ -3706,21 +3707,21 @@ export class DeviceNode {
      * @param {Function} manage_other_fields - Optional callback function to handle other fields
      * @returns {object[]} - Object with items as expected by Google
      */
-    key_name_synonym(type, json_data, key1, key2, key3, manage_other_fields = undefined) {
+    key_name_synonym(type, json_data, key1, key2, key3, manage_other_fields) {
         this._debug(".key_name_synonym: Parsing " + type);
-        let new_data = [];
+        const new_data = [];
         if (Array.isArray(json_data)) {
             if (typeof manage_other_fields !== 'function') {
                 manage_other_fields = function () { return true; }
             }
             json_data.forEach((rec, pos) => {
                 if (typeof rec === 'string') {
-                    let val = rec;
+                    const val = rec;
                     rec = {};
                     rec[key1] = val;
                 } else if (Array.isArray(rec)) {
                     if (rec.length > 0) {
-                        let arr = rec.filter(element => typeof element === 'string' && element.trim().length > 0);
+                        const arr = rec.filter(element => typeof element === 'string' && element.trim().length > 0);
                         if (arr.length > 0) {
                             rec = {};
                             rec[key1] = arr[0];
@@ -3738,7 +3739,7 @@ export class DeviceNode {
                         val2 = [val2];
                     }
                     if (Array.isArray(val2)) {
-                        let arr = val2.filter(element => typeof element === 'string' && element.trim().length > 0);
+                        const arr = val2.filter(element => typeof element === 'string' && element.trim().length > 0);
                         if (arr.length > 0) {
                             if (key3) {
                                 rec[key2] = [{}];
@@ -3757,15 +3758,15 @@ export class DeviceNode {
                     if (typeof val2 === 'string') {
                         val2 = [val2];
                     }
-                    let arr = val2.filter(element => typeof element === 'string' && element.trim().length > 0);
+                    const arr = val2.filter(element => typeof element === 'string' && element.trim().length > 0);
                     if (arr.length > 0 && arr[0]) {
                         rec[rec1] = arr[0];
                     }
                 }
                 if (typeof rec[key1] === 'string' && rec[key1].trim()) {
-                    let new_rec = {};
+                    const new_rec = {};
                     new_rec[key1] = rec[key1].trim();
-                    let found = new_data.filter(element => element[key1] === new_rec[key1]);
+                    const found = new_data.filter(element => element[key1] === new_rec[key1]);
                     if (found.length === 0) {
                         let val3;
                         if (typeof rec[key2] === 'string') {
@@ -3791,7 +3792,7 @@ export class DeviceNode {
                         rec[key2].forEach(names => {
                             if (key3) {
                                 if (typeof names === 'string') {
-                                    let val2 = names;
+                                    const val2 = names;
                                     names = {};
                                     names[key3] = [val2];
                                 }
@@ -3800,14 +3801,14 @@ export class DeviceNode {
                                     lang = this.lang;
                                 }
                                 if (Array.isArray(names[key3])) {
-                                    let name_synonym = [];
+                                    const name_synonym = [];
                                     names[key3].forEach(name => {
                                         if (typeof name === 'string' && name.trim().length > 0 && !name_synonym.includes(name.trim())) {
                                             name_synonym.push(name.trim());
                                         }
                                     });
                                     if (name_synonym.length > 0) {
-                                        let new_key2 = {};
+                                        const new_key2 = {};
                                         new_key2['lang'] = lang;
                                         new_key2[key3] = name_synonym;
                                         if (manage_other_fields(rec, new_rec)) {
@@ -3877,7 +3878,7 @@ export class DeviceNode {
             this._debug('.loadJson: filename ' + full_filename);
 
             try {
-                let jsonFile = fs.readFileSync(
+                const jsonFile = fs.readFileSync(
                     full_filename,
                     {
                         'encoding': 'utf8',
@@ -3937,8 +3938,8 @@ export class DeviceNode {
     //
     //
     execCommand(command) {
-        let params = {};
-        let executionStates = ['online'];
+        const params = {};
+        const executionStates = ['online'];
         const ok_result = {
             'params': params,
             'executionStates': executionStates
@@ -4582,7 +4583,7 @@ export class DeviceNode {
                     params['openPercent'] = open_percent;
                 } else if (Object.prototype.hasOwnProperty.call(command.params, 'openDirection')) {
                     const open_direction = command.params['openDirection'];
-                    let new_open_directions = [];
+                    const new_open_directions = [];
                     this.states.openState.forEach(element => {
                         new_open_directions.push({
                             "openPercent": element.openDirection == open_direction ? open_percent : element.openPercent,
@@ -4628,7 +4629,7 @@ export class DeviceNode {
                 params['isPaused'] = false;
                 executionStates.push('isPaused');
                 if (zones !== undefined) {
-                    let active_zones = [];
+                    const active_zones = [];
                     zones.forEach((zone) => {
                         if (this.available_zones.includes(zone)) {
                             active_zones.push(zone);
@@ -4991,11 +4992,11 @@ export class DeviceNode {
             if (!this.command_only_modes) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'updateModeSettings')) {
                     const updateModeSettings = command.params['updateModeSettings'];
-                    let current_modes = this.states['currentModeSettings'];
-                    let new_modes = {};
+                    const current_modes = this.states['currentModeSettings'];
+                    const new_modes = {};
                     this.available_modes.forEach(function (mode) {
                         if (typeof updateModeSettings[mode.name] === 'string') {
-                            let mode_value = updateModeSettings[mode.name];
+                            const mode_value = updateModeSettings[mode.name];
                             mode.settings.forEach(function (setting) {
                                 if (setting.setting_name === mode_value) {
                                     new_modes[mode.name] = mode_value;
@@ -5033,8 +5034,8 @@ export class DeviceNode {
             if (!this.command_only_toggles) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'updateToggleSettings')) {
                     const updateToggleSettings = command.params['updateToggleSettings'];
-                    let current_toggle = this.states['currentToggleSettings'];
-                    let toggles = {};
+                    const current_toggle = this.states['currentToggleSettings'];
+                    const toggles = {};
                     this.available_toggles.forEach(function (toggle) {
                         if (typeof updateToggleSettings[toggle.name] === 'boolean') {
                             toggles[toggle.name] = updateToggleSettings[toggle.name];
@@ -5104,7 +5105,7 @@ export class DeviceNode {
                 let protocol = '';
                 let stream_url = '';
                 supported_protocols.forEach((supported_protocol) => {
-                    let url = this.getStreamUrl(supported_protocol);
+                    const url = this.getStreamUrl(supported_protocol);
                     if (url) {
                         protocol = supported_protocol;
                         stream_url = url;
