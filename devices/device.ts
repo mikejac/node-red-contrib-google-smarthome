@@ -313,321 +313,325 @@ export class DeviceNode {
         this.lang = this.clientConn.default_lang || 'en';
         this.state_types = {};
         this.errorCode = undefined;
-        this.trait = {
-            appselector: config.trait_appselector || false,
-            armdisarm: config.trait_armdisarm || false,
-            brightness: config.trait_brightness || false,
-            camerastream: config.trait_camerastream || false,
-            channel: config.trait_channel || false,
-            colorsetting: config.trait_colorsetting || false,
-            cook: config.trait_cook || false,
-            dispense: config.trait_dispense || false,
-            dock: config.trait_dock || false,
-            energystorage: config.trait_energystorage || false,
-            fanspeed: config.trait_fanspeed || false,
-            fill: config.trait_fill || false,
-            humiditysetting: config.trait_humiditysetting || false,
-            inputselector: config.trait_inputselector || false,
-            lighteffects: config.trait_lighteffects || false,
-            locator: config.trait_locator || false,
-            lockunlock: config.trait_lockunlock || false,
-            mediastate: config.trait_mediastate || false,
-            modes: config.trait_modes || false,
-            networkcontrol: config.trait_networkcontrol || false,
-            objectdetection: config.trait_objectdetection || false,
-            occupancysensing: config.trait_occupancysensing || false,
-            onoff: config.trait_onoff || false,
-            openclose: config.trait_openclose || false,
-            reboot: config.trait_reboot || false,
-            rotation: config.trait_rotation || false,
-            runcycle: config.trait_runcycle || false,
-            sensorstate: config.trait_sensorstate || false,
-            scene: config.trait_scene || false,
-            softwareupdate: config.trait_softwareupdate || false,
-            startstop: config.trait_startstop || false,
-            statusreport: config.trait_statusreport || false,
-            temperaturecontrol: config.trait_temperaturecontrol || false,
-            temperaturesetting: config.trait_temperaturesetting || false,
-            timer: config.trait_timer || false,
-            toggles: config.trait_toggles || false,
-            transportcontrol: config.trait_transportcontrol || false,
-            volume: config.trait_volume || false,
-        };
+        this.config.trait_appselector = config.trait_appselector || false;
+        this.config.trait_armdisarm = config.trait_armdisarm || false;
+        this.config.trait_brightness = config.trait_brightness || false;
+        this.config.trait_camerastream = config.trait_camerastream || false;
+        this.config.trait_channel = config.trait_channel || false;
+        this.config.trait_colorsetting = config.trait_colorsetting || false;
+        this.config.trait_cook = config.trait_cook || false;
+        this.config.trait_dispense = config.trait_dispense || false;
+        this.config.trait_dock = config.trait_dock || false;
+        this.config.trait_energystorage = config.trait_energystorage || false;
+        this.config.trait_fanspeed = config.trait_fanspeed || false;
+        this.config.trait_fill = config.trait_fill || false;
+        this.config.trait_humiditysetting = config.trait_humiditysetting || false;
+        this.config.trait_inputselector = config.trait_inputselector || false;
+        this.config.trait_lighteffects = config.trait_lighteffects || false;
+        this.config.trait_locator = config.trait_locator || false;
+        this.config.trait_lockunlock = config.trait_lockunlock || false;
+        this.config.trait_mediastate = config.trait_mediastate || false;
+        this.config.trait_modes = config.trait_modes || false;
+        this.config.trait_networkcontrol = config.trait_networkcontrol || false;
+        this.config.trait_objectdetection = config.trait_objectdetection || false;
+        this.config.trait_occupancysensing = config.trait_occupancysensing || false;
+        this.config.trait_onoff = config.trait_onoff || false;
+        this.config.trait_openclose = config.trait_openclose || false;
+        this.config.trait_reboot = config.trait_reboot || false;
+        this.config.trait_rotation = config.trait_rotation || false;
+        this.config.trait_runcycle = config.trait_runcycle || false;
+        this.config.trait_scene = config.trait_scene || false;
+        this.config.trait_sensorstate = config.trait_sensorstate || false;
+        this.config.trait_softwareupdate = config.trait_softwareupdate || false;
+        this.config.trait_startstop = config.trait_startstop || false;
+        this.config.trait_statusreport = config.trait_statusreport || false;
+        this.config.trait_temperaturecontrol = config.trait_temperaturecontrol || false;
+        this.config.trait_temperaturesetting = config.trait_temperaturesetting || false;
+        this.config.trait_timer = config.trait_timer || false;
+        this.config.trait_toggles = config.trait_toggles || false;
+        this.config.trait_transportcontrol = config.trait_transportcontrol || false;
+        this.config.trait_volume = config.trait_volume || false;
 
-        if (this.device_type !== 'SCENE') {
-            this.trait.scene = false;
-        }
-
-        // Sets required traits
+        // Set traits required by device types
         switch (this.device_type) {
             case "AC_UNIT": // Air conditioning unit
-                this.trait.temperaturesetting = true;
+                this.config.trait_temperaturesetting = true;
                 break;
             case "AIRCOOLER": // Air cooler
-                this.trait.temperaturesetting = true;
+                this.config.trait_temperaturesetting = true;
                 break;
             case "AIRFRESHENER": // Air freshener
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "AIRPURIFIER": // Air purifier
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "AUDIO_VIDEO_RECEIVER": // Audio-Video receiver
-                this.trait.inputselector = true;
-                this.trait.onoff = true;
-                this.trait.volume = true;
+                this.config.trait_inputselector = true;
+                this.config.trait_onoff = true;
+                this.config.trait_volume = true;
                 break;
             case "AWNING": // Awning
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "BATHTUB": // Bathtub
-                this.trait.fill = true;
-                this.trait.temperaturecontrol = true;
-                this.trait.startstop = true;
+                this.config.trait_fill = true;
+                this.config.trait_temperaturecontrol = true;
+                this.config.trait_startstop = true;
                 break;
             case "BED": // Bed
-                this.trait.modes = true;
+                this.config.trait_modes = true;
                 break;
             case "BLENDER": // Blender
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "BLINDS": // Blinds
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "BOILER": // Boiler
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "CAMERA": // Camera
-                this.trait.camerastream = true;
+                this.config.trait_camerastream = true;
                 break;
             case "CARBON_MONOXIDE_DETECTOR": // Carbon monoxide detector
-                this.trait.sensorstate = true;
+                this.config.trait_sensorstate = true;
                 break;
             case "CHARGER": // Charger
-                this.trait.energystorage = true;
+                this.config.trait_energystorage = true;
                 break;
             case "CLOSET": // Closet
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "COFFEE_MAKER": // Coffee Maker
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "COOKTOP": // Cooktop
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "CURTAIN": // Curtain
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "DEHUMIDIFIER": // Dehumidifier
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "DEHYDRATOR": // Dehydrator
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "DISHWASHER": // Dishwasher
-                this.trait.startstop = true;
+                this.config.trait_startstop = true;
                 break;
             case "DOOR": // Door
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "DOORBELL": // Doorbell
                 break;
             case "DRAWER": // Drawer
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "DRYER": // Dryer
-                this.trait.startstop = true;
+                this.config.trait_startstop = true;
                 break;
             case "FAN": // Fan
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "FAUCET": // Faucet
                 break;
             case "FIREPLACE": // Fireplace
                 break;
             case "FREEZER": // Freezer
-                this.trait.temperaturecontrol = true;
+                this.config.trait_temperaturecontrol = true;
                 break;
             case "FRYER": // Fryer
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "GAME_CONSOLE": // Game console
-                this.trait.appselector = true;
-                this.trait.mediastate = true;
-                this.trait.onoff = true;
-                this.trait.transportcontrol = true;
+                this.config.trait_appselector = true;
+                this.config.trait_mediastate = true;
+                this.config.trait_onoff = true;
+                this.config.trait_transportcontrol = true;
                 break;
             case "GARAGE": // Garage
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "GATE": // Gate
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "GRILL": // Grill
-                this.trait.startstop = true;
+                this.config.trait_startstop = true;
                 break;
             case "HEATER": // Heater
-                this.trait.temperaturesetting = true;
+                this.config.trait_temperaturesetting = true;
                 break;
             case "HOOD": // Hood
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "HUMIDIFIER": // Humidifier
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "KETTLE": // Kettle
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "LIGHT": // Light
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "LOCK": // Lock
-                this.trait.lockunlock = true;
+                this.config.trait_lockunlock = true;
                 break;
             case "MICROWAVE": // Microwave
-                this.trait.startstop = true;
+                this.config.trait_startstop = true;
                 break;
             case "MOP": // Mop
-                this.trait.startstop = true;
+                this.config.trait_startstop = true;
                 break;
             case "MOWER": // Mower
-                this.trait.startstop = true;
+                this.config.trait_startstop = true;
                 break;
             case "MULTICOOKER": // Multicooker
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "NETWORK": // Network
-                this.trait.networkcontrol = true;
+                this.config.trait_networkcontrol = true;
                 break;
             case "OUTLET": // Outlet
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "OVEN": // Oven
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "PERGOLA": // Pergola
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "PETFEEDER": // Pet feeder
-                this.trait.dispense = true;
+                this.config.trait_dispense = true;
                 break;
             case "PRESSURECOOKER": // Pressure cooker
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "PUMP": // Pump
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "RADIATOR": // Radiator
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "REFRIGERATOR": // Refrigerator
-                this.trait.temperaturecontrol = true;
+                this.config.trait_temperaturecontrol = true;
                 break;
             case "REMOTECONTROL": // Remote control
-                this.trait.inputselector = true;
-                this.trait.mediastate = true;
-                this.trait.onoff = true;
-                this.trait.transportcontrol = true;
-                this.trait.volume = true;
+                this.config.trait_inputselector = true;
+                this.config.trait_mediastate = true;
+                this.config.trait_onoff = true;
+                this.config.trait_transportcontrol = true;
+                this.config.trait_volume = true;
                 break;
             case "ROUTER": // Router
-                this.trait.networkcontrol = true;
+                this.config.trait_networkcontrol = true;
                 break;
             case "SCENE": // Scene
-                this.trait.scene = true;
-                this.trait = {
-                    scene: config.trait_scene || false
-                };
+                this.config.trait_scene = true;
                 break;
             case "SECURITYSYSTEM": // Security system
-                this.trait.armdisarm = true;
+                this.config.trait_armdisarm = true;
                 break;
             case "SENSOR": // Sensor
                 break;
             case "SETTOP": // Settop
-                this.trait.appselector = true;
-                this.trait.mediastate = true;
-                this.trait.channel = true;
-                this.trait.transportcontrol = true;
+                this.config.trait_appselector = true;
+                this.config.trait_mediastate = true;
+                this.config.trait_channel = true;
+                this.config.trait_transportcontrol = true;
                 break;
             case "SHOWER": // Shower
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "SHUTTER": // Shutter
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "SMOKE_DETECTOR": // Smoke detector
-                this.trait.sensorstate = true;
+                this.config.trait_sensorstate = true;
                 break;
             case "SOUNDBAR": // Soundbar
-                this.trait.volume = true;
+                this.config.trait_volume = true;
                 break;
             case "SOUSVIDE": // Sousvide
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "SPEAKER": // Speaker
-                this.trait.volume = true;
+                this.config.trait_volume = true;
                 break;
             case "SPRINKLER": // Sprinkler
-                this.trait.startstop = true;
+                this.config.trait_startstop = true;
                 break;
             case "STANDMIXER": // Stand mixer
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "STREAMING_BOX": // Streaming box
-                this.trait.appselector = true;
-                this.trait.mediastate = true;
-                this.trait.transportcontrol = true;
-                this.trait.volume = true;
+                this.config.trait_appselector = true;
+                this.config.trait_mediastate = true;
+                this.config.trait_transportcontrol = true;
+                this.config.trait_volume = true;
                 break;
             case "STREAMING_SOUNDBAR": // Streaming soundbar
-                this.trait.appselector = true;
-                this.trait.mediastate = true;
-                this.trait.transportcontrol = true;
-                this.trait.volume = true;
+                this.config.trait_appselector = true;
+                this.config.trait_mediastate = true;
+                this.config.trait_transportcontrol = true;
+                this.config.trait_volume = true;
                 break;
             case "STREAMING_STICK": // Streaming stick
-                this.trait.appselector = true;
-                this.trait.mediastate = true;
-                this.trait.transportcontrol = true;
-                this.trait.volume = true;
+                this.config.trait_appselector = true;
+                this.config.trait_mediastate = true;
+                this.config.trait_transportcontrol = true;
+                this.config.trait_volume = true;
                 break;
             case "SWITCH": // Switch
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "THERMOSTAT": // Thermostat
-                this.trait.temperaturesetting = true;
+                this.config.trait_temperaturesetting = true;
                 break;
             case "TV": // Television
-                this.trait.appselector = true;
-                this.trait.mediastate = true;
-                this.trait.onoff = true;
-                this.trait.transportcontrol = true;
-                this.trait.volume = true;
+                this.config.trait_appselector = true;
+                this.config.trait_mediastate = true;
+                this.config.trait_onoff = true;
+                this.config.trait_transportcontrol = true;
+                this.config.trait_volume = true;
                 break;
             case "VACUUM": // Vacuum
-                this.trait.startstop = true;
+                this.config.trait_startstop = true;
                 break;
             case "VALVE": // Valve
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "WASHER": // Washer
-                this.trait.startstop = true;
+                this.config.trait_startstop = true;
                 break;
             case "WATERHEATER": // Water heater
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
             case "WATERPURIFIER": // Water purifier
                 break;
             case "WATERSOFTENER": // Water softener
                 break;
             case "WINDOW": // Window
-                this.trait.openclose = true;
+                this.config.trait_openclose = true;
                 break;
             case "YOGURTMAKER": // Yogurt maker
-                this.trait.onoff = true;
+                this.config.trait_onoff = true;
                 break;
         }
+
+        // Ensure scene trait is set correctly
+        Object.keys(this.config)
+            .filter((key) => key.startsWith("trait_"))
+            .forEach((key) => {
+                if (this.device_type === "SCENE") {
+                    // For scene devices, the scene trait must be set, all other traits must not be set
+                    (this.config as any)[key] = key === "trait_scene";
+                } else if (this.device_type !== "SCENE" && key === "trait_scene") {
+                    // For non-scene devices, the scene trait must not be set, all other traits remain unchanged
+                    (this.config as any)[key] = false;
+                }
+            });
 
         this.topicOut = config.topic;
         this.passthru = config.passthru;
@@ -909,7 +913,7 @@ export class DeviceNode {
         this.ct_volume = config.ct_volume || '';
         this.pin_volume = config.pin_volume || '';
 
-        if (this.trait.appselector) {
+        if (this.config.trait_appselector) {
             if (this.appselector_type !== 'json') {
                 this.available_applications = this.to_available_applications(this.loadJson('Applications', this.appselector_file.replace(/<id>/g, this.id), []));
             } else {
@@ -917,7 +921,7 @@ export class DeviceNode {
             }
         }
 
-        if (this.trait.armdisarm) {
+        if (this.config.trait_armdisarm) {
             if (this.available_arm_levels_type !== 'json') {
                 this.available_arm_levels = this.to_available_arm_levels(this.loadJson('Available arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []));
             } else {
@@ -925,7 +929,7 @@ export class DeviceNode {
             }
         }
 
-        if (this.trait.channel) {
+        if (this.config.trait_channel) {
             if (this.channel_type !== 'json') {
                 this.available_channels = this.to_available_channels(this.loadJson('Channels', this.channel_file.replace(/<id>/g, this.id), []));
             } else {
@@ -933,7 +937,7 @@ export class DeviceNode {
             }
         }
 
-        if (this.trait.cook) {
+        if (this.config.trait_cook) {
             if (this.food_presets_type !== 'json') {
                 this.food_presets = this.to_food_presets(this.loadJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), []));
             } else {
@@ -941,7 +945,7 @@ export class DeviceNode {
             }
         }
 
-        if (this.trait.dispense) {
+        if (this.config.trait_dispense) {
             if (this.supported_dispense_items_type !== 'json') {
                 this.supported_dispense_items = this.to_supported_dispense_items(this.loadJson('Supported dispense', this.supported_dispense_items_file.replace(/<id>/g, this.id), []));
             } else {
@@ -954,7 +958,7 @@ export class DeviceNode {
             }
         }
 
-        if (this.trait.fanspeed) {
+        if (this.config.trait_fanspeed) {
             if (this.available_fan_speeds_type !== 'json') {
                 this.available_fan_speeds = this.to_available_fan_speeds(this.loadJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), []));
             } else {
@@ -962,7 +966,7 @@ export class DeviceNode {
             }
         }
 
-        if (this.trait.fill) {
+        if (this.config.trait_fill) {
             if (this.available_fill_levels_type !== 'json') {
                 this.available_fill_levels = this.to_available_fill_levels(this.loadJson('Available fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), []));
             } else {
@@ -970,7 +974,7 @@ export class DeviceNode {
             }
         }
 
-        if (this.trait.inputselector) {
+        if (this.config.trait_inputselector) {
             if (this.inputselector_type !== 'json') {
                 this.available_inputs = this.to_available_inputs(this.loadJson('Available inputs', this.inputselector_file.replace(/<id>/g, this.id), []));
             } else {
@@ -978,7 +982,7 @@ export class DeviceNode {
             }
         }
 
-        if (this.trait.modes) {
+        if (this.config.trait_modes) {
             if (this.modes_type !== 'json') {
                 this.available_modes = this.to_available_modes(this.loadJson('Modes', this.modes_file.replace(/<id>/g, this.id), []));
             } else {
@@ -986,7 +990,7 @@ export class DeviceNode {
             }
         }
 
-        if (this.trait.toggles) {
+        if (this.config.trait_toggles) {
             if (this.toggles_type !== 'json') {
                 this.available_toggles = this.to_available_toggles(this.loadJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), []));
             } else {
@@ -1017,8 +1021,8 @@ export class DeviceNode {
                 },
                 roomHint: this.room_hint,
                 willReportState: true,
-                notificationSupportedByAgent: this.trait.objectdetection || this.trait.runcycle || this.trait.sensorstate
-                    || this.trait.lockunlock || this.trait.networkcontrol || this.trait.openclose,
+                notificationSupportedByAgent: this.config.trait_objectdetection || this.config.trait_runcycle || this.config.trait_sensorstate
+                    || this.config.trait_lockunlock || this.config.trait_networkcontrol || this.config.trait_openclose,
                 attributes: {
                 },
                 deviceInfo: {
@@ -1060,7 +1064,7 @@ export class DeviceNode {
         let state_types = this.state_types;
         state_types['online'] = Formats.BOOL + Formats.MANDATORY;
 
-        if (this.trait.appselector) {
+        if (this.config.trait_appselector) {
             let values = this.available_applications.map(application => application.key);
             if (values.length > 0) {
                 state_types['currentApplication'] = {
@@ -1070,7 +1074,7 @@ export class DeviceNode {
                 };
             }
         }
-        if (this.trait.armdisarm) {
+        if (this.config.trait_armdisarm) {
             let values = this.available_arm_levels.map(al => al.level_name);
             if (values.length > 0) {
                 state_types['isArmed'] = Formats.BOOL + Formats.MANDATORY;
@@ -1082,14 +1086,14 @@ export class DeviceNode {
                 state_types['exitAllowance'] = Formats.INT;
             }
         }
-        if (this.trait.brightness && !this.command_only_brightness) {
+        if (this.config.trait_brightness && !this.command_only_brightness) {
             state_types['brightness'] = {
                 type: Formats.INT,
                 min: 0,
                 max: 100,
             };
         }
-        if (this.trait.colorsetting) {
+        if (this.config.trait_colorsetting) {
             if (!this.command_only_colorsetting) {
                 if ((this.color_model === "rgb") || (this.color_model === 'rgb_temp')) {
                     state_types['color'] = {
@@ -1144,7 +1148,7 @@ export class DeviceNode {
                 }
             }
         }
-        if (this.trait.cook) {
+        if (this.config.trait_cook) {
             let cooking_mode_values = ['NONE'];
             cooking_mode_values.push(...this.supported_cooking_modes);
             state_types['currentCookingMode'] = {
@@ -1163,7 +1167,7 @@ export class DeviceNode {
                 values: COOK_SUPPORTED_UNITS,
             };
         }
-        if (this.trait.dispense) {
+        if (this.config.trait_dispense) {
             let dispense_items_values = this.supported_dispense_items.map(item => item.item_name);
             state_types['dispenseItems'] = {
                 type: Formats.OBJECT + Formats.ARRAY,
@@ -1198,10 +1202,10 @@ export class DeviceNode {
                 removeIfNoData: true,
             };
         }
-        if (this.trait.dock) {
+        if (this.config.trait_dock) {
             state_types['isDocked'] = Formats.BOOL;
         }
-        if (this.trait.energystorage) {
+        if (this.config.trait_energystorage) {
             state_types['descriptiveCapacityRemaining'] = Formats.STRING + Formats.MANDATORY;
             state_types['capacityRemaining'] = {
                 type: Formats.OBJECT + Formats.ARRAY,
@@ -1242,7 +1246,7 @@ export class DeviceNode {
             }
             state_types['isPluggedIn'] = Formats.BOOL;
         }
-        if (this.trait.fanspeed) {
+        if (this.config.trait_fanspeed) {
             if (!this.command_only_fanspeed) {
                 if (this.supports_fan_speed_percent) {
                     state_types['currentFanSpeedPercent'] = Formats.INT + Formats.MANDATORY;
@@ -1259,7 +1263,7 @@ export class DeviceNode {
                 }
             }
         }
-        if (this.trait.fill) {
+        if (this.config.trait_fill) {
             state_types['isFilled'] = Formats.BOOL + Formats.MANDATORY;
             if (this.available_fill_levels.length > 0) {
                 let values = this.available_fill_levels.map(fl => fl.level_name);
@@ -1275,13 +1279,13 @@ export class DeviceNode {
                 state_types['currentFillPercent'] = Formats.FLOAT;
             }
         }
-        if (this.trait.humiditysetting) {
+        if (this.config.trait_humiditysetting) {
             if (!this.command_only_humiditysetting) {
                 state_types['humiditySetpointPercent'] = Formats.INT;
                 state_types['humidityAmbientPercent'] = Formats.INT;
             }
         }
-        if (this.trait.inputselector) {
+        if (this.config.trait_inputselector) {
             if (!this.command_only_input_selector) {
                 let values = this.available_inputs.map(input => input.key);
                 if (values.length > 0) {
@@ -1292,7 +1296,7 @@ export class DeviceNode {
                 }
             }
         }
-        if (this.trait.lighteffects) {
+        if (this.config.trait_lighteffects) {
             let light_effect_value = [''];
             light_effect_value.push(...this.supported_effects);
             if (light_effect_value.length > 0) {
@@ -1304,11 +1308,11 @@ export class DeviceNode {
             }
         }
         // Locator
-        if (this.trait.lockunlock) {
+        if (this.config.trait_lockunlock) {
             state_types['isLocked'] = Formats.BOOL;
             state_types['isJammed'] = Formats.BOOL;
         }
-        if (this.trait.mediastate) {
+        if (this.config.trait_mediastate) {
             state_types['activityState'] = {
                 type: Formats.STRING,
                 values: ["INACTIVE", "STANDBY", "ACTIVE"],
@@ -1320,7 +1324,7 @@ export class DeviceNode {
                 upperCase: true,
             };
         }
-        if (this.trait.modes) {
+        if (this.config.trait_modes) {
             if (!this.command_only_modes) {
                 let attributes = {};
                 let ok = false;
@@ -1343,7 +1347,7 @@ export class DeviceNode {
                 }
             }
         }
-        if (this.trait.networkcontrol) {
+        if (this.config.trait_networkcontrol) {
             state_types['networkEnabled'] = Formats.BOOL;
             state_types['networkSettings'] = {
                 type: Formats.OBJECT,
@@ -1388,7 +1392,7 @@ export class DeviceNode {
         }
         // ObjectDetection
         // OccupancySensing
-        if (this.trait.occupancysensing) {
+        if (this.config.trait_occupancysensing) {
             if (this.occupancy_sensing_pir || this.occupancy_sensing_ultrasonic || this.occupancy_sensing_physical_contact) {
                 state_types['occupancy'] = {
                     type: Formats.STRING + Formats.MANDATORY,
@@ -1397,15 +1401,15 @@ export class DeviceNode {
                     upperCase: true,
                 }
             } else {
-                this.trait.occupancysensing = false;
+                this.config.trait_occupancysensing = false;
             }
         }
-        if (this.trait.onoff) {
+        if (this.config.trait_onoff) {
             if (!this.command_only_onoff) {
                 state_types['on'] = Formats.BOOL;
             }
         }
-        if (this.trait.openclose) {
+        if (this.config.trait_openclose) {
             if (!this.command_only_openclose) {
                 if (this.open_direction.length < 2) {
                     state_types['openPercent'] = Formats.FLOAT + Formats.MANDATORY;
@@ -1429,7 +1433,7 @@ export class DeviceNode {
             }
         }
         // Reboot, no state
-        if (this.trait.rotation) {
+        if (this.config.trait_rotation) {
             if (!this.command_only_rotation) {
                 if (this.supports_degrees) {
                     state_types['rotationDegrees'] = Formats.FLOAT;
@@ -1439,7 +1443,7 @@ export class DeviceNode {
                 }
             }
         }
-        if (this.trait.runcycle) {
+        if (this.config.trait_runcycle) {
             state_types['currentRunCycle'] = {
                 type: Formats.OBJECT + Formats.ARRAY,
                 attributes: {
@@ -1460,7 +1464,7 @@ export class DeviceNode {
             state_types['currentCycleRemainingTime'] = Formats.INT + Formats.MANDATORY;
         }
         // Scene
-        if (this.trait.sensorstate) {
+        if (this.config.trait_sensorstate) {
             state_types['currentSensorStateData'] = {
                 type: Formats.OBJECT + Formats.ARRAY,
                 attributes: {
@@ -1478,10 +1482,10 @@ export class DeviceNode {
                 isValidKey: name => this.sensor_states_supported.includes(name.trim()) ? name.trim() : undefined
             };
         }
-        if (this.trait.softwareupdate) {
+        if (this.config.trait_softwareupdate) {
             state_types['lastSoftwareUpdateUnixTimestampSec'] = Formats.INT + Formats.MANDATORY;
         }
-        if (this.trait.startstop) {
+        if (this.config.trait_startstop) {
             state_types['isRunning'] = Formats.BOOL + Formats.MANDATORY;
             state_types['isPaused'] = Formats.BOOL;
             state_types['activeZones'] = {
@@ -1493,7 +1497,7 @@ export class DeviceNode {
                 isValidKey: zone => this.available_zones.includes(zone.trim()) ? zone.trim() : undefined
             };
         }
-        if (this.trait.statusreport) {
+        if (this.config.trait_statusreport) {
             state_types['currentStatusReport'] = {
                 type: Formats.OBJECT + Formats.ARRAY,
                 attributes: {
@@ -1509,7 +1513,7 @@ export class DeviceNode {
                 isValidKey: nodeId => Object.keys(this.clientConn.getProperties([nodeId])).length > 0 ? nodeId : this.clientConn.getIdFromName(nodeId)
             };
         }
-        if (this.trait.temperaturecontrol) {
+        if (this.config.trait_temperaturecontrol) {
             if (!this.command_only_temperaturecontrol) {
                 if (this.query_only_temperaturecontrol) { // Required if queryOnlyTemperatureControl set to false
                     state_types['temperatureSetpointCelsius'] = Formats.FLOAT;
@@ -1519,7 +1523,7 @@ export class DeviceNode {
                 state_types['temperatureAmbientCelsius'] = Formats.FLOAT;
             }
         }
-        if (this.trait.temperaturesetting) {
+        if (this.config.trait_temperaturesetting) {
             if (!this.command_only_temperaturesetting) {
                 state_types['activeThermostatMode'] = Formats.STRING;
                 state_types['targetTempReachedEstimateUnixTimestampSec'] = Formats.INT;
@@ -1543,13 +1547,13 @@ export class DeviceNode {
                 };
             }
         }
-        if (this.trait.timer) {
+        if (this.config.trait_timer) {
             if (!this.command_only_timer) {
                 state_types['timerRemainingSec'] = Formats.INT + Formats.MANDATORY;
                 state_types['timerPaused'] = Formats.BOOL;
             }
         }
-        if (this.trait.toggles) {
+        if (this.config.trait_toggles) {
             if (!this.command_only_toggles) {
                 let attributes = {};
                 this.available_toggles.forEach(function (toggle) {
@@ -1562,7 +1566,7 @@ export class DeviceNode {
             }
         }
         // TransportControl
-        if (this.trait.volume) {
+        if (this.config.trait_volume) {
             if (!this.command_only_volume) {
                 state_types['currentVolume'] = Formats.INT + Formats.MANDATORY;
                 if (this.volume_can_mute_and_unmute) {
@@ -1577,22 +1581,22 @@ export class DeviceNode {
     updateAttributesForTraits(device) {
         let attributes = device.properties.attributes;
 
-        if (this.trait.appselector) {
+        if (this.config.trait_appselector) {
             attributes['availableApplications'] = this.available_applications;
         }
-        if (this.trait.armdisarm) {
+        if (this.config.trait_armdisarm) {
             attributes['availableArmLevels'] = {
                 levels: this.available_arm_levels,
                 ordered: this.arm_levels_ordered
             };
         }
-        if (this.trait.brightness) {
+        if (this.config.trait_brightness) {
             attributes['commandOnlyBrightness'] = this.command_only_brightness;
         }
-        if (this.trait.channel) {
+        if (this.config.trait_channel) {
             attributes['availableChannels'] = this.available_channels;
         }
-        if (this.trait.colorsetting) {
+        if (this.config.trait_colorsetting) {
             attributes["commandOnlyColorSetting"] = this.command_only_colorsetting;
             if (this.color_model === "rgb" || this.color_model === "rgb_temp") {
                 attributes['colorModel'] = "rgb";
@@ -1607,26 +1611,26 @@ export class DeviceNode {
                 };
             }
         }
-        if (this.trait.camerastream) {
+        if (this.config.trait_camerastream) {
             attributes['cameraStreamSupportedProtocols'] = this.camera_stream_supported_protocols;
             attributes['cameraStreamNeedAuthToken'] = this.need_auth_token;
         }
-        if (this.trait.cook) {
+        if (this.config.trait_cook) {
             attributes['supportedCookingModes'] = this.supported_cooking_modes;
             attributes['foodPresets'] = this.food_presets;
         }
-        if (this.trait.dispense) {
+        if (this.config.trait_dispense) {
             attributes['supportedDispenseItems'] = this.supported_dispense_items;
             attributes['supportedDispensePresets'] = this.supported_dispense_presets;
         }
-        if (this.trait.energystorage) {
+        if (this.config.trait_energystorage) {
             attributes['queryOnlyEnergyStorage'] = this.query_only_energy_storage;
             if (this.energy_storage_distance_unit_for_ux) {
                 attributes['energyStorageDistanceUnitForUX'] = this.energy_storage_distance_unit_for_ux;
             }
             attributes['isRechargeable'] = this.is_rechargeable;
         }
-        if (this.trait.fanspeed) {
+        if (this.config.trait_fanspeed) {
             attributes['reversible'] = this.reversible;
             attributes['commandOnlyFanSpeed'] = this.command_only_fanspeed;
             attributes['supportsFanSpeedPercent'] = this.supports_fan_speed_percent;
@@ -1635,14 +1639,14 @@ export class DeviceNode {
                 ordered: this.fan_speeds_ordered
             };
         }
-        if (this.trait.fill) {
+        if (this.config.trait_fill) {
             attributes['availableFillLevels'] = {
                 levels: this.available_fill_levels,
                 ordered: this.ordered_fill_levels,
                 supportsFillPercent: this.supports_fill_percent
             };
         }
-        if (this.trait.humiditysetting) {
+        if (this.config.trait_humiditysetting) {
             attributes['humiditySetpointRange'] = {
                 minPercent: this.min_percent,
                 maxPercent: this.max_percent
@@ -1650,26 +1654,26 @@ export class DeviceNode {
             attributes['commandOnlyHumiditySetting'] = this.command_only_humiditysetting;
             attributes['queryOnlyHumiditySetting'] = this.query_only_humiditysetting;
         }
-        if (this.trait.inputselector) {
+        if (this.config.trait_inputselector) {
             attributes['availableInputs'] = this.available_inputs;
             attributes['commandOnlyInputSelector'] = this.command_only_input_selector;
             attributes['orderedInputs'] = this.ordered_inputs;
         }
-        if (this.trait.lighteffects) {
+        if (this.config.trait_lighteffects) {
             attributes['defaultSleepDuration'] = this.default_sleep_duration;
             attributes['defaultWakeDuration'] = this.default_wake_duration;
             attributes['supportedEffects'] = this.supported_effects;
         }
-        if (this.trait.mediastate) {
+        if (this.config.trait_mediastate) {
             attributes['supportActivityState'] = this.support_activity_state;
             attributes['supportPlaybackState'] = this.support_playback_state;
         }
-        if (this.trait.modes) {
+        if (this.config.trait_modes) {
             attributes['availableModes'] = this.available_modes;
             attributes['commandOnlyModes'] = this.command_only_modes;
             attributes['queryOnlyModes'] = this.query_only_modes;
         }
-        if (this.trait.networkcontrol) {
+        if (this.config.trait_networkcontrol) {
             attributes['supportsEnablingGuestNetwork'] = this.supports_enabling_guest_network;
             attributes['supportsDisablingGuestNetwork'] = this.supports_disabling_guest_network;
             attributes['supportsGettingGuestNetworkPassword'] = this.supports_getting_guest_network_password;
@@ -1679,7 +1683,7 @@ export class DeviceNode {
             attributes['supportsNetworkDownloadSpeedTest'] = this.supports_network_download_speedtest;
             attributes['supportsNetworkUploadSpeedTest'] = this.supports_network_upload_speedtest;
         }
-        if (this.trait.occupancysensing) {
+        if (this.config.trait_occupancysensing) {
             let occupancysensingattributes = [];
             if (this.occupancy_sensing_pir) {
                 if (this.occupied_to_unoccupied_delay_sec_pir) {
@@ -1725,17 +1729,17 @@ export class DeviceNode {
             }
             attributes['occupancySensorConfiguration'] = occupancysensingattributes;
         }
-        if (this.trait.onoff) {
+        if (this.config.trait_onoff) {
             attributes['commandOnlyOnOff'] = this.command_only_onoff;
             attributes['queryOnlyOnOff'] = this.query_only_onoff;
         }
-        if (this.trait.openclose) {
+        if (this.config.trait_openclose) {
             attributes['discreteOnlyOpenClose'] = this.discrete_only_openclose;
             attributes['openDirection'] = this.open_direction;
             attributes['commandOnlyOpenClose'] = this.command_only_openclose;
             attributes['queryOnlyOpenClose'] = this.query_only_openclose;
         }
-        if (this.trait.rotation) {
+        if (this.config.trait_rotation) {
             attributes['supportsDegrees'] = this.supports_degrees;
             attributes['supportsPercent'] = this.supports_percent;
             attributes['rotationDegreesRange'] = [{
@@ -1745,10 +1749,10 @@ export class DeviceNode {
             attributes['supportsContinuousRotation'] = this.supports_continuous_rotation;
             attributes['commandOnlyRotation'] = this.command_only_rotation;
         }
-        if (this.trait.scene) {
+        if (this.config.trait_scene) {
             attributes['sceneReversible'] = this.scene_reversible;
         }
-        if (this.trait.sensorstate) {
+        if (this.config.trait_sensorstate) {
             let sensor_states_supported = [];
             this.sensor_states_supported.forEach(function (sensor_state_name) {
                 let sensor_state_supported = { name: sensor_state_name };
@@ -1852,11 +1856,11 @@ export class DeviceNode {
             });
             attributes['sensorStatesSupported'] = sensor_states_supported;
         }
-        if (this.trait.startstop) {
+        if (this.config.trait_startstop) {
             attributes['pausable'] = this.pausable;
             attributes['availableZones'] = this.available_zones;
         }
-        if (this.trait.temperaturecontrol) {
+        if (this.config.trait_temperaturecontrol) {
             attributes['temperatureRange'] = {
                 minThresholdCelsius: this.tc_min_threshold_celsius,
                 maxThresholdCelsius: this.tc_max_threshold_celsius
@@ -1866,7 +1870,7 @@ export class DeviceNode {
             attributes['commandOnlyTemperatureControl'] = this.command_only_temperaturecontrol;
             attributes['queryOnlyTemperatureControl'] = this.query_only_temperaturecontrol;
         }
-        if (this.trait.temperaturesetting) {
+        if (this.config.trait_temperaturesetting) {
             attributes['availableThermostatModes'] = this.available_thermostat_modes;
             attributes['thermostatTemperatureRange'] = {
                 minThresholdCelsius: this.min_threshold_celsius,
@@ -1877,19 +1881,19 @@ export class DeviceNode {
             attributes['commandOnlyTemperatureSetting'] = this.command_only_temperaturesetting;
             attributes['queryOnlyTemperatureSetting'] = this.query_only_temperaturesetting;
         }
-        if (this.trait.timer) {
+        if (this.config.trait_timer) {
             attributes['maxTimerLimitSec'] = this.max_timer_limit_sec;
             attributes['commandOnlyTimer'] = this.command_only_timer;
         }
-        if (this.trait.toggles) {
+        if (this.config.trait_toggles) {
             attributes['availableToggles'] = this.available_toggles;
             attributes['commandOnlyToggles'] = this.command_only_toggles;
             attributes['queryOnlyToggles'] = this.query_only_toggles;
         }
-        if (this.trait.transportcontrol) {
+        if (this.config.trait_transportcontrol) {
             attributes['transportControlSupportedCommands'] = this.supported_commands;
         }
-        if (this.trait.volume) {
+        if (this.config.trait_volume) {
             attributes['volumeMaxLevel'] = this.volume_max_level;
             attributes['volumeCanMuteAndUnmute'] = this.volume_can_mute_and_unmute;
             attributes['volumeDefaultPercentage'] = this.volume_default_percentage;
@@ -1939,18 +1943,18 @@ export class DeviceNode {
     initializeStates(device) {
         let states = device.states;
 
-        if (this.trait.appselector) {
+        if (this.config.trait_appselector) {
             states['currentApplication'] = '';
         }
-        if (this.trait.armdisarm) {
+        if (this.config.trait_armdisarm) {
             states['isArmed'] = false;
             states['currentArmLevel'] = '';
             // states['exitAllowance'] = 60;
         }
-        if (this.trait.brightness) {
+        if (this.config.trait_brightness) {
             // states['brightness'] = 50;
         }
-        if (this.trait.colorsetting) {
+        if (this.config.trait_colorsetting) {
             if (!this.command_only_colorsetting) {
                 if (this.color_model === "rgb") {
                     states['color'] = { spectrumRgb: 16777215 };
@@ -1967,19 +1971,19 @@ export class DeviceNode {
                 }
             }
         }
-        if (this.trait.cook) {
+        if (this.config.trait_cook) {
             states['currentCookingMode'] = "NONE";
             states['currentFoodPreset'] = "NONE";
             // states['currentFoodQuantity'] = 0;
             // states['currentFoodUnit'] = "UNKNOWN_UNITS";
         }
-        if (this.trait.dispense) {
+        if (this.config.trait_dispense) {
             states['dispenseItems'] = this.getDispenseNewState();
         }
-        if (this.trait.dock) {
+        if (this.config.trait_dock) {
             // states['isDocked'] = false;
         }
-        if (this.trait.energystorage) {
+        if (this.config.trait_energystorage) {
             states['descriptiveCapacityRemaining'] = "FULL";
             // states['capacityRemaining'] = [];
             if (this.is_rechargeable) {
@@ -1988,13 +1992,13 @@ export class DeviceNode {
             }
             // states['isPluggedIn'] = false;
         }
-        if (this.trait.fanspeed) {
+        if (this.config.trait_fanspeed) {
             // states['currentFanSpeedSetting'] = "";
             if (!this.command_only_fanspeed && this.supports_fan_speed_percent) {
                 states['currentFanSpeedPercent'] = 0;
             }
         }
-        if (this.trait.fill) {
+        if (this.config.trait_fill) {
             states['isFilled'] = false;
             if (this.available_fill_levels.length > 0) {
                 states['currentFillLevel'] = "";
@@ -2003,11 +2007,11 @@ export class DeviceNode {
                 states['currentFillPercent'] = 0;
             }
         }
-        if (this.trait.humiditysetting) {
+        if (this.config.trait_humiditysetting) {
             // states['humiditySetpointPercent'] = 52;
             // states['humidityAmbientPercent'] = 52;
         }
-        if (this.trait.inputselector) {
+        if (this.config.trait_inputselector) {
             if (!this.command_only_input_selector) {
                 if (this.availableInputs && this.availableInputs.length > 0) {
                     states['currentInput'] = this.availableInputs[0].key;
@@ -2016,27 +2020,27 @@ export class DeviceNode {
                 }
             }
         }
-        if (this.trait.lighteffects) {
+        if (this.config.trait_lighteffects) {
             states['activeLightEffect'] = "";
             // states['lightEffectEndUnixTimestampSec'] = 60;
         }
-        //if (this.trait.lockunlock) {
+        //if (this.config.trait_lockunlock) {
         // states['isLocked'] = false;
         // states['isJammed'] = false;
         //}
-        //if (this.trait.mediastate) {
+        //if (this.config.trait_mediastate) {
         // INACTIVE STANDBY ACTIVE
         // states['activityState'] = 'INACTIVE';
         // PAUSED PLAYING FAST_FORWARDING REWINDING BUFFERING STOPPED
         // states['playbackState'] = 'STOPPED';
         //}
-        if (this.trait.modes) {
+        if (this.config.trait_modes) {
             if (!this.command_only_modes) {
                 states['currentModeSettings'] = {};
                 this.updateModesState(device);
             }
         }
-        //if (this.trait.networkcontrol) {
+        //if (this.config.trait_networkcontrol) {
         // states['networkEnabled'] = true;
         // states['networkSettings'] = { ssid: '' };
         // states['guestNetworkEnabled'] = false;
@@ -2057,10 +2061,10 @@ export class DeviceNode {
         };*/
         // states['networkSpeedTestInProgress'] = false;
         //}
-        //if (this.trait.onoff) {
+        //if (this.config.trait_onoff) {
         // states['on'] = false;
         //}
-        if (this.trait.openclose) {
+        if (this.config.trait_openclose) {
             if (!this.command_only_openclose) {
                 if (this.open_direction.length < 2) {
                     states['openPercent'] = 0;
@@ -2076,7 +2080,7 @@ export class DeviceNode {
                 }
             }
         }
-        /*if (this.trait.rotation) {
+        /*if (this.config.trait_rotation) {
             if (this.supports_degrees) {
                 // states['rotationDegrees'] = 0;
             }
@@ -2084,7 +2088,7 @@ export class DeviceNode {
                 // states['rotationPercent'] = 0;
             }
         }*/
-        if (this.trait.runcycle) {
+        if (this.config.trait_runcycle) {
             states['currentRunCycle'] = [{
                 currentCycle: "unknown",
                 lang: this.lang
@@ -2092,7 +2096,7 @@ export class DeviceNode {
             states['currentTotalRemainingTime'] = 0;
             states['currentCycleRemainingTime'] = 0;
         }
-        if (this.trait.sensorstate) {
+        if (this.config.trait_sensorstate) {
             let current_sensor_state_data = [];
             this.sensor_states_supported.forEach(function (sensor_state_name) {
                 let current_sensor = { name: sensor_state_name };
@@ -2154,24 +2158,24 @@ export class DeviceNode {
                 delete this.state_types['currentSensorStateData'];
             }
         }
-        if (this.trait.softwareupdate) {
+        if (this.config.trait_softwareupdate) {
             states['lastSoftwareUpdateUnixTimestampSec'] = 0;
         }
-        if (this.trait.startstop) {
+        if (this.config.trait_startstop) {
             states['isRunning'] = false;
             // states['isPaused'] = false;
             // states['activeZones'] = [];
         }
-        /*if (this.trait.statusreport) {
+        /*if (this.config.trait_statusreport) {
             states['currentStatusReport'] = [];
         }*/
-        if (this.trait.temperaturecontrol) {
+        if (this.config.trait_temperaturecontrol) {
             if (!this.query_only_temperaturecontrol) { // Required if queryOnlyTemperatureControl set to false
                 states['temperatureSetpointCelsius'] = this.tc_min_threshold_celsius;
             }
             // states['temperatureAmbientCelsius'] = this.tc_min_threshold_celsius;
         }
-        if (this.trait.temperaturesetting) {
+        if (this.config.trait_temperaturesetting) {
             if (!this.command_only_temperaturesetting) {
                 // states['activeThermostatMode'] = "none";
                 // states['targetTempReachedEstimateUnixTimestampSec'] = this.target_temp_reached_estimate_unix_timestamp_sec;
@@ -2185,19 +2189,19 @@ export class DeviceNode {
                 // states['thermostatTemperatureSetpointLow'] = this.thermostat_temperature_setpoint_low;
             }
         }
-        if (this.trait.timer) {
+        if (this.config.trait_timer) {
             if (!this.command_only_timer) {
                 states['timerRemainingSec'] = -1;
                 // states['timerPaused'] = false;
             }
         }
-        if (this.trait.toggles) {
+        if (this.config.trait_toggles) {
             if (!this.command_only_toggles) {
                 states['currentToggleSettings'] = {};
                 this.updateTogglesState(device);
             }
         }
-        if (this.trait.volume) {
+        if (this.config.trait_volume) {
             if (!this.command_only_volume) {
                 states['currentVolume'] = this.volume_default_percentage;
                 if (this.volume_can_mute_and_unmute) {
@@ -2217,11 +2221,11 @@ export class DeviceNode {
         let fill = 'red';
         let shape = 'dot';
         if (this.states.online) {
-            if (this.trait.scene) {
+            if (this.config.trait_scene) {
                 text.push('OK');
                 fill = 'green';
             }
-            if (this.trait.onoff) {
+            if (this.config.trait_onoff) {
                 if (this.states.on !== undefined) {
                     if (this.states.on) {
                         text.push('ON');
@@ -2235,21 +2239,21 @@ export class DeviceNode {
             } else {
                 fill = 'blue';
             }
-            if (this.trait.brightness && this.states.brightness !== undefined) {
+            if (this.config.trait_brightness && this.states.brightness !== undefined) {
                 text.push(`${this.states.brightness} %`);
             }
-            if (this.trait.colorsetting && this.states.color.temperatureK !== undefined) {
+            if (this.config.trait_colorsetting && this.states.color.temperatureK !== undefined) {
                 text.push(`${this.states.color.temperatureK} K`);
             }
-            if (this.trait.colorsetting && this.states.color.spectrumRgb !== undefined) {
+            if (this.config.trait_colorsetting && this.states.color.spectrumRgb !== undefined) {
                 text.push('#' + this.states.color.spectrumRgb.toString(16).toUpperCase().padStart(6, '0'));
             }
-            if (this.trait.colorsetting && this.states.color.spectrumHsv !== undefined) {
+            if (this.config.trait_colorsetting && this.states.color.spectrumHsv !== undefined) {
                 text.push('H: ' + this.states.color.spectrumHsv.hue +
                     ' S: ' + this.states.color.spectrumHsv.saturation +
                     ' V: ' + this.states.color.spectrumHsv.value);
             }
-            if (this.trait.openclose) {
+            if (this.config.trait_openclose) {
                 if (this.states.openPercent !== undefined) {
                     if (this.states.openPercent === 0) {
                         text.push('CLOSED');
@@ -2259,7 +2263,7 @@ export class DeviceNode {
                     }
                 }
             }
-            if (this.trait.startstop) {
+            if (this.config.trait_startstop) {
                 if (this.pausable && this.states.isPaused) {
                     text.push('Paused');
                     fill = 'yellow';
@@ -2268,7 +2272,7 @@ export class DeviceNode {
                     fill = this.states.isRunning ? 'green' : 'red';
                 }
             }
-            if (this.trait.humiditysetting) {
+            if (this.config.trait_humiditysetting) {
                 if (this.states.humidityAmbientPercent !== undefined) {
                     text.push('H: ' + this.states.humidityAmbientPercent + "% ");
                 }
@@ -2276,7 +2280,7 @@ export class DeviceNode {
                     text.push('TH: ' + this.states.humiditySetpointPercent + "% ");
                 }
             }
-            if (this.trait.temperaturecontrol) {
+            if (this.config.trait_temperaturecontrol) {
                 if (this.states.temperatureAmbientCelsius !== undefined) {
                     text.push('TC: ' + this.states.temperatureAmbientCelsius);
                 }
@@ -2284,7 +2288,7 @@ export class DeviceNode {
                     text.push(' SC: ' + this.states.temperatureSetpointCelsius);
                 }
             }
-            if (this.trait.temperaturesetting) {
+            if (this.config.trait_temperaturesetting) {
                 const thermostat_mode = this.states.thermostatMode;
                 const st = " T: " + (this.states.thermostatTemperatureAmbient || '?') + "°C | S: " + (this.states.thermostatTemperatureSetpoint || '?');
                 if (thermostat_mode === "off") {
@@ -2303,10 +2307,10 @@ export class DeviceNode {
                     text.push(this.states.thermostatHumidityAmbient + "%");
                 }
             }
-            if (this.trait.energystorage) {
+            if (this.config.trait_energystorage) {
                 text.push(this.states.descriptiveCapacityRemaining);
             }
-            if (this.trait.armdisarm) {
+            if (this.config.trait_armdisarm) {
                 if (this.states.isArmed) {
                     if (this.states.currentArmLevel) {
                         text.push(this.states.currentArmLevel);
@@ -2315,7 +2319,7 @@ export class DeviceNode {
                     text.push('DISARMED');
                 }
             }
-            if (this.trait.fanspeed) {
+            if (this.config.trait_fanspeed) {
                 if (typeof this.states.currentFanSpeedPercent === 'number') {
                     text.push(this.states.currentFanSpeedPercent + '%');
                 }
@@ -2323,7 +2327,7 @@ export class DeviceNode {
                     text.push(this.states.currentFanSpeedSetting);
                 }
             }
-            if (this.trait.sensorstate) {
+            if (this.config.trait_sensorstate) {
                 if (Array.isArray(this.states.currentSensorStateData)) {
                     this.states.currentSensorStateData.forEach(sensor => {
                         const currentSensorStateSet = sensor.currentSensorState !== undefined && sensor.currentSensorState !== 'unknown';
@@ -2339,14 +2343,14 @@ export class DeviceNode {
                     });
                 }
             }
-            if (this.trait.lockunlock) {
+            if (this.config.trait_lockunlock) {
                 if (this.states.isJammed) {
                     text.push('JAMMED');
                 } else if (typeof this.states.isLocked === 'boolean') {
                     text.push(this.states.isLocked ? ' LOCKED' : ' UNLOCKED');
                 }
             }
-            if (this.trait.runcycle) {
+            if (this.config.trait_runcycle) {
                 if(
                     typeof this.states.currentRunCycle !== 'undefined' &&
                     typeof this.states.currentRunCycle[0] !== 'undefined' &&
@@ -2356,7 +2360,7 @@ export class DeviceNode {
                     text.push(this.states.currentRunCycle[0].currentCycle);
                 }
             }
-            if (this.trait.occupancysensing) {
+            if (this.config.trait_occupancysensing) {
                 if(typeof this.states.occupancy !== 'undefined')
                     text.push(this.states.occupancy);
             }
@@ -2461,7 +2465,7 @@ export class DeviceNode {
                     this.errorCode = undefined;
                 }
             } else if (upper_topic === 'AVAILABLEAPPLICATIONS') {
-                if (this.trait.appselector) {
+                if (this.config.trait_appselector) {
                     if (this.appselector_type === 'str') {
                         const filename = this.appselector_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
@@ -2482,7 +2486,7 @@ export class DeviceNode {
                     this.error("Got AVAILABLEAPPLICATIONS message, but AppSelector trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLEARMLEVELS') {
-                if (this.trait.armdisarm) {
+                if (this.config.trait_armdisarm) {
                     if (this.available_arm_levels_type === 'str') {
                         const filename = this.available_arm_levels_file.replace(/<id>/g, this.id)
                         if (typeof msg.payload !== 'undefined') {
@@ -2503,7 +2507,7 @@ export class DeviceNode {
                     this.error("Got AVAILABLEARMLEVELS message, but ArmDisarm trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLECHANNELS') {
-                if (this.trait.channel) {
+                if (this.config.trait_channel) {
                     if (this.channel_type === 'str') {
                         const filename = this.channel_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
@@ -2524,7 +2528,7 @@ export class DeviceNode {
                     this.error("Got AVAILABLECHANNELS message, but Channel trait is disabled");
                 }
             } else if (upper_topic === 'SUPPORTEDDISPENSEITEMS') {
-                if (this.trait.dispense) {
+                if (this.config.trait_dispense) {
                     if (this.supported_dispense_items_type === 'str') {
                         const filename = this.supported_dispense_items_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
@@ -2546,7 +2550,7 @@ export class DeviceNode {
                     this.error("Got SUPPORTEDDISPENSEITEMS message, but Dispense trait is disabled");
                 }
             } else if (upper_topic === 'SUPPORTEDDISPENSEPRESETS') {
-                if (this.trait.dispense) {
+                if (this.config.trait_dispense) {
                     if (this.supported_dispense_presets_type === 'str') {
                         const filename = this.supported_dispense_presets_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
@@ -2568,7 +2572,7 @@ export class DeviceNode {
                     this.error("Got SUPPORTEDDISPENSEPRESETS message, but Dispense trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLEFANSPEEDS') {
-                if (this.trait.fanspeed) {
+                if (this.config.trait_fanspeed) {
                     if (this.available_fan_speeds_type === 'str') {
                         const filename = this.available_fan_speeds_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
@@ -2589,7 +2593,7 @@ export class DeviceNode {
                     this.error("Got AVAILABLEFANSPEEDS message, but FanSpeed trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLEFILLLEVELS') {
-                if (this.trait.dispense) {
+                if (this.config.trait_dispense) {
                     if (this.available_fill_levels_type === 'str') {
                         const filename = this.available_fill_levels_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
@@ -2610,7 +2614,7 @@ export class DeviceNode {
                     this.error("Got AVAILABLEFILLLEVELS message, but Fill trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLEFOODPRESETS') {
-                if (this.trait.cook) {
+                if (this.config.trait_cook) {
                     if (this.food_presets_type === 'str') {
                         const filename = this.food_presets_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
@@ -2631,7 +2635,7 @@ export class DeviceNode {
                     this.error("Got AVAILABLEFOODPRESETS message, but Cook trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLEINPUTS') {
-                if (this.trait.inputselector) {
+                if (this.config.trait_inputselector) {
                     if (this.inputselector_type === 'json') {
                         const filename = this.inputselector_file.replace(/<id>/g, this.id)
                         if (typeof msg.payload !== 'undefined') {
@@ -2652,7 +2656,7 @@ export class DeviceNode {
                     this.error("Got AVAILABLEINPUTS message, but InputSelector trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLEMODES') {
-                if (this.trait.modes) {
+                if (this.config.trait_modes) {
                     if (this.modes_type !== 'json') {
                         const filename = this.modes_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
@@ -2674,7 +2678,7 @@ export class DeviceNode {
                     this.error("Got AVAILABLEMODES message, but Modes trait is disabled");
                 }
             } else if (upper_topic === 'AVAILABLETOGGLES') {
-                if (this.trait.toggles) {
+                if (this.config.trait_toggles) {
                     if (this.toggles_type === 'str') {
                         const filename = this.toggles_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
@@ -2709,7 +2713,7 @@ export class DeviceNode {
                 //}
             } else if (upper_topic === 'GUESTNETWORKPASSWORD') {
                 this.guest_network_password = Formats.formatValue('guestNetworkPassword', msg.payload, Formats.STRING);
-            } else if (this.trait.objectdetection && upper_topic === 'OBJECTDETECTION') {
+            } else if (this.config.trait_objectdetection && upper_topic === 'OBJECTDETECTION') {
                 let payload = {};
                 if (typeof msg.payload.familiar === 'number') {
                     payload.familiar = msg.payload.familiar;
@@ -2732,7 +2736,7 @@ export class DeviceNode {
                         detectionTimestamp: Date.now()
                     }
                 });  // tell Google ...
-            } else if (this.trait.runcycle && upper_topic === 'RUNCYCLE') {
+            } else if (this.config.trait_runcycle && upper_topic === 'RUNCYCLE') {
                 let payload = { priority: 0 };
                 if (typeof msg.payload.status === 'string') {
                     payload.status = msg.payload.status;
@@ -2746,7 +2750,7 @@ export class DeviceNode {
                 this.clientConn.sendNotifications(this, {
                     RunCycle: payload
                 });  // tell Google ...
-            } else if (this.trait.sensorstate && upper_topic === 'SENSORSTATE') {
+            } else if (this.config.trait_sensorstate && upper_topic === 'SENSORSTATE') {
                 if (typeof msg.payload.name === 'string' && msg.payload.name.trim() && this.sensor_states_supported.includes(msg.payload.name.trim())) {
                     let payload = { priority: 0 };
                     payload.name = msg.payload.name.trim();
@@ -2757,7 +2761,7 @@ export class DeviceNode {
                         });  // tell Google ...
                     }
                 }
-            } else if (this.trait.lockunlock && upper_topic === 'LOCKUNLOCK') {
+            } else if (this.config.trait_lockunlock && upper_topic === 'LOCKUNLOCK') {
                 let payload = {};
                 if (typeof msg.payload.followUpToken === 'string') {
                     payload.followUpToken = msg.payload.followUpToken;
@@ -2777,14 +2781,14 @@ export class DeviceNode {
                         followUpResponse: payload
                     }
                 });  // tell Google ...
-            } else if (this.trait.networkcontrol && upper_topic === 'NETWORKCONTROL') {
+            } else if (this.config.trait_networkcontrol && upper_topic === 'NETWORKCONTROL') {
                 this.clientConn.sendNotifications(this, {
                     NetworkControl: {
                         priority: 0,
                         followUpResponse: msg.payload
                     }
                 });  // tell Google ...
-            } else if (this.trait.openclose && upper_topic === 'OPENCLOSE') {
+            } else if (this.config.trait_openclose && upper_topic === 'OPENCLOSE') {
                 let payload = {};
                 if (typeof msg.payload.followUpToken === 'string') {
                     payload.followUpToken = msg.payload.followUpToken;
@@ -2804,7 +2808,7 @@ export class DeviceNode {
                         followUpResponse: payload
                     }
                 });  // tell Google ...
-            } else if (this.trait.statusreport && upper_topic === 'STATUSREPORT') {
+            } else if (this.config.trait_statusreport && upper_topic === 'STATUSREPORT') {
                 // Update or Add reports based on deviceTarget and statusCode
                 let payload = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
                 let new_payload = [];
@@ -3090,118 +3094,117 @@ export class DeviceNode {
     }
 
     getTraits() {
-        const trait = this.trait;
         let traits = [];
 
-        if (trait.appselector) {
+        if (this.config.trait_appselector) {
             traits.push("action.devices.traits.AppSelector");
         }
-        if (trait.armdisarm) {
+        if (this.config.trait_armdisarm) {
             traits.push("action.devices.traits.ArmDisarm");
         }
-        if (trait.brightness) {
+        if (this.config.trait_brightness) {
             traits.push("action.devices.traits.Brightness");
         }
-        if (trait.camerastream) {
+        if (this.config.trait_camerastream) {
             traits.push("action.devices.traits.CameraStream");
         }
-        if (trait.channel) {
+        if (this.config.trait_channel) {
             traits.push("action.devices.traits.Channel");
         }
-        if (trait.colorsetting) {
+        if (this.config.trait_colorsetting) {
             traits.push("action.devices.traits.ColorSetting");
         }
-        if (trait.cook) {
+        if (this.config.trait_cook) {
             traits.push("action.devices.traits.Cook");
         }
-        if (trait.dispense) {
+        if (this.config.trait_dispense) {
             traits.push("action.devices.traits.Dispense");
         }
-        if (trait.dock) {
+        if (this.config.trait_dock) {
             traits.push("action.devices.traits.Dock");
         }
-        if (trait.energystorage) {
+        if (this.config.trait_energystorage) {
             traits.push("action.devices.traits.EnergyStorage");
         }
-        if (trait.fanspeed) {
+        if (this.config.trait_fanspeed) {
             traits.push("action.devices.traits.FanSpeed");
         }
-        if (trait.fill) {
+        if (this.config.trait_fill) {
             traits.push("action.devices.traits.Fill");
         }
-        if (trait.humiditysetting) {
+        if (this.config.trait_humiditysetting) {
             traits.push("action.devices.traits.HumiditySetting");
         }
-        if (trait.inputselector) {
+        if (this.config.trait_inputselector) {
             traits.push("action.devices.traits.InputSelector");
         }
-        if (trait.lighteffects) {
+        if (this.config.trait_lighteffects) {
             traits.push("action.devices.traits.LightEffects");
         }
-        if (trait.locator) {
+        if (this.config.trait_locator) {
             traits.push("action.devices.traits.Locator");
         }
-        if (trait.lockunlock) {
+        if (this.config.trait_lockunlock) {
             traits.push("action.devices.traits.LockUnlock");
         }
-        if (trait.mediastate) {
+        if (this.config.trait_mediastate) {
             traits.push("action.devices.traits.MediaState");
         }
-        if (trait.modes) {
+        if (this.config.trait_modes) {
             traits.push("action.devices.traits.Modes");
         }
-        if (trait.networkcontrol) {
+        if (this.config.trait_networkcontrol) {
             traits.push("action.devices.traits.NetworkControl");
         }
-        if (trait.objectdetection) {
+        if (this.config.trait_objectdetection) {
             traits.push("action.devices.traits.ObjectDetection");
         }
-        if (trait.onoff) {
+        if (this.config.trait_onoff) {
             traits.push("action.devices.traits.OnOff");
         }
-        if (trait.openclose) {
+        if (this.config.trait_openclose) {
             traits.push("action.devices.traits.OpenClose");
         }
-        if (trait.reboot) {
+        if (this.config.trait_reboot) {
             traits.push("action.devices.traits.Reboot");
         }
-        if (trait.rotation) {
+        if (this.config.trait_rotation) {
             traits.push("action.devices.traits.Rotation");
         }
-        if (trait.runcycle) {
+        if (this.config.trait_runcycle) {
             traits.push("action.devices.traits.RunCycle");
         }
-        if (trait.sensorstate) {
+        if (this.config.trait_sensorstate) {
             traits.push("action.devices.traits.SensorState");
         }
-        if (trait.scene) {
+        if (this.config.trait_scene) {
             traits.push("action.devices.traits.Scene");
         }
-        if (trait.softwareupdate) {
+        if (this.config.trait_softwareupdate) {
             traits.push("action.devices.traits.SoftwareUpdate");
         }
-        if (trait.startstop) {
+        if (this.config.trait_startstop) {
             traits.push("action.devices.traits.StartStop");
         }
-        if (trait.statusreport) {
+        if (this.config.trait_statusreport) {
             traits.push("action.devices.traits.StatusReport");
         }
-        if (trait.temperaturecontrol) {
+        if (this.config.trait_temperaturecontrol) {
             traits.push("action.devices.traits.TemperatureControl");
         }
-        if (trait.temperaturesetting) {
+        if (this.config.trait_temperaturesetting) {
             traits.push("action.devices.traits.TemperatureSetting");
         }
-        if (trait.timer) {
+        if (this.config.trait_timer) {
             traits.push("action.devices.traits.Timer");
         }
-        if (trait.toggles) {
+        if (this.config.trait_toggles) {
             traits.push("action.devices.traits.Toggles");
         }
-        if (trait.transportcontrol) {
+        if (this.config.trait_transportcontrol) {
             traits.push("action.devices.traits.TransportControl");
         }
-        if (trait.volume) {
+        if (this.config.trait_volume) {
             traits.push("action.devices.traits.Volume");
         }
         return traits;
