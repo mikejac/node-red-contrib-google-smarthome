@@ -575,7 +575,11 @@ export class GoogleSmartHome {
         });
     }
 
-    getCustomData() {
+    /**
+     * Retrieves custom data to be attached to the devices in the SYNC response.
+     * This data is used by the app.js script on the smart speaker to connect to our local HTTP server.
+     */
+    getCustomData(): { httpPort?: number, httpPathPrefix?: string, clientId?: string, accessToken?: string } {
         if (this._localScanType) {
             return {
                 httpPort: this._localExecutionPort,
