@@ -339,7 +339,6 @@ export class GoogleSmartHome {
      * Starts the mDNS advertisement for local fulfillment.
      */
     StartMDNSAdvertisement(): void {
-        const me = this;
         this.StopMDNSAdvertisement();
 
         this.dnssdAd = dnssd.Advertisement(
@@ -367,7 +366,6 @@ export class GoogleSmartHome {
 
         try {
             const graceMilliseconds = 500;
-            const me                = this;
 
             if (this._jwtKeyFile) {
                 this.auth.loadJwtKeyFile(this._jwtKeyFile, this._userDir);     // will throw if file cannot be read
