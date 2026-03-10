@@ -24,6 +24,11 @@ import { Formats } from '../lib/Formats';
 import { setRED, RED } from '../lib/SmartHome';
 import { GoogleSmartHomeNode } from '../google-smarthome';
 
+enum CommandQueryMode {
+    COMMAND_AND_QUERY = '',
+    COMMAND_ONLY = 'command',
+    QUERY_ONLY = 'query',
+}
 
 interface DeviceNodeConfig extends NodeDef {
     id: string;
@@ -89,7 +94,7 @@ interface DeviceNodeConfig extends NodeDef {
     ordered_inputs: boolean;
     support_activity_state: boolean;
     support_playback_state: boolean;
-    command_query_onoff: string;
+    command_query_onoff: CommandQueryMode;
     supported_commands: string[];
     volume_max_level: number | string;
     volume_can_mute_and_unmute: boolean;
@@ -103,10 +108,10 @@ interface DeviceNodeConfig extends NodeDef {
     temperature_max_k: number | string;
     modes_file: string;
     modes_type: string;
-    command_query_modes: string;
+    command_query_modes: CommandQueryMode;
     toggles_file: string;
     toggles_type: string;
-    command_query_toggles: string;
+    command_query_toggles: CommandQueryMode;
     hls: string;
     hls_app_id: string;
     dash: string;
@@ -127,18 +132,18 @@ interface DeviceNodeConfig extends NodeDef {
     max_threshold_celsius: number | string;
     thermostat_temperature_unit: string;
     buffer_range_celsius: number | string;
-    command_query_temperaturesetting: string;
+    command_query_temperaturesetting: CommandQueryMode;
     tc_min_threshold_celsius: number | string;
     tc_max_threshold_celsius: number | string;
     tc_temperature_step_celsius: number | string;
     tc_temperature_unit_for_ux: string;
-    tc_command_query_temperaturecontrol: string;
+    tc_command_query_temperaturecontrol: CommandQueryMode;
     min_percent: number | string;
     max_percent: number | string;
-    command_query_humiditysetting: string;
+    command_query_humiditysetting: CommandQueryMode;
     discrete_only_openclose: boolean;
     open_direction: string[];
-    command_query_openclose: string;
+    command_query_openclose: CommandQueryMode;
     pausable: boolean;
     available_zones: string[];
     supports_degrees: boolean;
@@ -648,8 +653,6 @@ export class DeviceNode {
         this.available_arm_levels_type = config.available_arm_levels_type || 'str';
         this.arm_levels_ordered = config.arm_levels_ordered || false;
         this.available_arm_levels = [];
-        // Brightness
-        this.command_only_brightness = config.command_only_brightness;
         // CameraStream
         this.need_auth_token = true == config.need_auth_token;
         this.auth_token = (config.auth_token || '').trim();
@@ -687,7 +690,6 @@ export class DeviceNode {
         this.last_channel_index = -1;
         this.current_channel_index = -1;
         // ColorSetting
-        this.command_only_colorsetting = config.command_only_colorsetting;
         this.color_model = config.color_model || 'temp';
         this.temperature_min_k = parseInt(config.temperature_min_k) || 2000;
         this.temperature_max_k = parseInt(config.temperature_max_k) || 9000;
@@ -706,11 +708,9 @@ export class DeviceNode {
         // Dock
         // EnergyStorage
         this.energy_storage_distance_unit_for_ux = config.energy_storage_distance_unit_for_ux;
-        this.query_only_energy_storage = config.query_only_energy_storage;
         this.is_rechargeable = config.is_rechargeable;
         // FanSpeed
         this.reversible = config.reversible;
-        this.command_only_fanspeed = config.command_only_fanspeed;
         this.supports_fan_speed_percent = config.supports_fan_speed_percent;
         this.available_fan_speeds_file = config.available_fan_speeds_file;
         this.available_fan_speeds_type = config.available_fan_speeds_type || 'str';
@@ -725,13 +725,10 @@ export class DeviceNode {
         // HumiditySetting
         this.min_percent = parseInt(config.min_percent) || 0;
         this.max_percent = parseInt(config.max_percent) || 100;
-        this.command_only_humiditysetting = config.command_query_humiditysetting === 'command';
-        this.query_only_humiditysetting = config.command_query_humiditysetting === 'query';
         // InputSelector
         this.inputselector_file = config.inputselector_file;
         this.inputselector_type = config.inputselector_type || 'str';
         this.available_inputs = [];
-        this.command_only_input_selector = config.command_only_input_selector;
         this.ordered_inputs = config.ordered_inputs;
         this.current_input_index = -1;
         // LightEffects
@@ -747,8 +744,6 @@ export class DeviceNode {
         this.modes_file = config.modes_file;
         this.modes_type = config.modes_type || 'str';
         this.available_modes = [];
-        this.command_only_modes = config.command_query_modes === 'command';
-        this.query_only_modes = config.command_query_modes === 'query';
         // NetworkControl
         this.supports_enabling_guest_network = config.supports_enabling_guest_network;
         this.supports_disabling_guest_network = config.supports_disabling_guest_network;
@@ -773,14 +768,9 @@ export class DeviceNode {
         this.occupied_to_unoccupied_delay_sec_physical_contact = parseInt(config.occupied_to_unoccupied_delay_sec_physical_contact) || 0;
         this.unoccupied_to_occupied_delay_sec_physical_contact = parseInt(config.unoccupied_to_occupied_delay_sec_physical_contact) || 2;
         this.unoccupied_to_occupied_event_threshold_physical_contact = parseInt(config.unoccupied_to_occupied_event_threshold_physical_contact) || 2;
-        // OnOff
-        this.command_only_onoff = config.command_query_onoff === 'command';
-        this.query_only_onoff = config.command_query_onoff === 'query';
         // OpenClose
         this.discrete_only_openclose = config.discrete_only_openclose;
         this.open_direction = config.open_direction;
-        this.command_only_openclose = config.command_query_openclose === 'command';
-        this.query_only_openclose = config.command_query_openclose === 'query';
         // Reboot
         // Rotation
         this.supports_degrees = config.supports_degrees;
@@ -788,7 +778,6 @@ export class DeviceNode {
         this.rotation_degrees_min = parseInt(config.rotation_degrees_min) || 0;
         this.rotation_degrees_max = parseInt(config.rotation_degrees_max) || 360;
         this.supports_continuous_rotation = config.supports_continuous_rotation;
-        this.command_only_rotation = config.command_only_rotation;
         // RunCycle
         // Scene
         this.scene_reversible = config.scene_reversible;
@@ -804,8 +793,6 @@ export class DeviceNode {
         this.tc_max_threshold_celsius = parseInt(config.tc_max_threshold_celsius) || 40;
         this.tc_temperature_step_celsius = parseInt(config.tc_temperature_step_celsius) || 1;
         this.tc_temperature_unit_for_ux = config.tc_temperature_unit_for_ux;
-        this.command_only_temperaturecontrol = config.tc_command_query_temperaturecontrol === 'command';
-        this.query_only_temperaturecontrol = config.tc_command_query_temperaturecontrol === 'query';
         // TemperatureSetting
         this.available_thermostat_modes = config.available_thermostat_modes;
         this.min_threshold_celsius = parseInt(config.min_threshold_celsius) || 10;
@@ -815,20 +802,15 @@ export class DeviceNode {
         this.thermostat_temperature_setpoint_hight = this.max_threshold_celsius;
         this.thermostat_temperature_unit = config.thermostat_temperature_unit || "C";
         this.buffer_range_celsius = parseInt(config.buffer_range_celsius) || 2;
-        this.command_only_temperaturesetting = config.command_query_temperaturesetting === 'command';
-        this.query_only_temperaturesetting = config.command_query_temperaturesetting === 'query';
         this.target_temp_reached_estimate_unix_timestamp_sec = 360;
         this.thermostat_humidity_ambient = 60;
         // Timer
         this.max_timer_limit_sec = parseInt(config.max_timer_limit_sec) || 86400;
-        this.command_only_timer = config.command_only_timer;
         this.timer_end_timestamp = -1;
         // Toggles
         this.toggles_file = config.toggles_file;
         this.toggles_type = config.toggles_type || 'str';
         this.available_toggles = [];
-        this.command_only_toggles = config.command_query_toggles === 'command';
-        this.query_only_toggles = config.command_query_toggles === 'query';
         // TransportControl
         this.supported_commands = config.supported_commands;
         // Volume
@@ -836,7 +818,6 @@ export class DeviceNode {
         this.volume_can_mute_and_unmute = config.volume_can_mute_and_unmute;
         this.volume_default_percentage = parseInt(config.volume_default_percentage) || 40;
         this.level_step_size = parseInt(config.level_step_size) || 1;
-        this.command_only_volume = config.command_only_volume;
         // Secondary User Verification
         this.ct_appselector = config.ct_appselector || '';
         this.pin_appselector = config.pin_appselector || '';
@@ -1086,7 +1067,7 @@ export class DeviceNode {
                 state_types['exitAllowance'] = Formats.INT;
             }
         }
-        if (this.config.trait_brightness && !this.command_only_brightness) {
+        if (this.config.trait_brightness && !this.config.command_only_brightness) {
             state_types['brightness'] = {
                 type: Formats.INT,
                 min: 0,
@@ -1094,7 +1075,7 @@ export class DeviceNode {
             };
         }
         if (this.config.trait_colorsetting) {
-            if (!this.command_only_colorsetting) {
+            if (!this.config.command_only_colorsetting) {
                 if ((this.color_model === "rgb") || (this.color_model === 'rgb_temp')) {
                     state_types['color'] = {
                         type: Formats.OBJECT + Formats.DELETE_MISSING,
@@ -1247,7 +1228,7 @@ export class DeviceNode {
             state_types['isPluggedIn'] = Formats.BOOL;
         }
         if (this.config.trait_fanspeed) {
-            if (!this.command_only_fanspeed) {
+            if (!this.config.command_only_fanspeed) {
                 if (this.supports_fan_speed_percent) {
                     state_types['currentFanSpeedPercent'] = Formats.INT + Formats.MANDATORY;
                 } else {
@@ -1280,13 +1261,13 @@ export class DeviceNode {
             }
         }
         if (this.config.trait_humiditysetting) {
-            if (!this.command_only_humiditysetting) {
+            if (this.config.command_query_humiditysetting != CommandQueryMode.COMMAND_ONLY) {
                 state_types['humiditySetpointPercent'] = Formats.INT;
                 state_types['humidityAmbientPercent'] = Formats.INT;
             }
         }
         if (this.config.trait_inputselector) {
-            if (!this.command_only_input_selector) {
+            if (!this.config.command_only_input_selector) {
                 const values = this.available_inputs.map(input => input.key);
                 if (values.length > 0) {
                     state_types['currentInput'] = {
@@ -1325,7 +1306,7 @@ export class DeviceNode {
             };
         }
         if (this.config.trait_modes) {
-            if (!this.command_only_modes) {
+            if (this.config.command_query_modes !== CommandQueryMode.COMMAND_ONLY) {
                 const attributes = {};
                 let ok = false;
                 this.available_modes.forEach(function (mode) {
@@ -1405,12 +1386,12 @@ export class DeviceNode {
             }
         }
         if (this.config.trait_onoff) {
-            if (!this.command_only_onoff) {
+            if (this.config.command_query_onoff !== CommandQueryMode.COMMAND_ONLY) {
                 state_types['on'] = Formats.BOOL;
             }
         }
         if (this.config.trait_openclose) {
-            if (!this.command_only_openclose) {
+            if (this.config.command_query_openclose !== CommandQueryMode.COMMAND_ONLY) {
                 if (this.open_direction.length < 2) {
                     state_types['openPercent'] = Formats.FLOAT + Formats.MANDATORY;
                 } else {
@@ -1434,7 +1415,7 @@ export class DeviceNode {
         }
         // Reboot, no state
         if (this.config.trait_rotation) {
-            if (!this.command_only_rotation) {
+            if (!this.config.command_only_rotation) {
                 if (this.supports_degrees) {
                     state_types['rotationDegrees'] = Formats.FLOAT;
                 }
@@ -1514,8 +1495,8 @@ export class DeviceNode {
             };
         }
         if (this.config.trait_temperaturecontrol) {
-            if (!this.command_only_temperaturecontrol) {
-                if (this.query_only_temperaturecontrol) { // Required if queryOnlyTemperatureControl set to false
+            if (this.config.tc_command_query_temperaturecontrol !== CommandQueryMode.COMMAND_ONLY) {
+                if (this.config.tc_command_query_temperaturecontrol === CommandQueryMode.QUERY_ONLY) { // Required if queryOnlyTemperatureControl set to false
                     state_types['temperatureSetpointCelsius'] = Formats.FLOAT;
                 } else {
                     state_types['temperatureSetpointCelsius'] = Formats.FLOAT + Formats.MANDATORY;
@@ -1524,7 +1505,7 @@ export class DeviceNode {
             }
         }
         if (this.config.trait_temperaturesetting) {
-            if (!this.command_only_temperaturesetting) {
+            if (this.config.command_query_temperaturesetting !== CommandQueryMode.COMMAND_ONLY) {
                 state_types['activeThermostatMode'] = Formats.STRING;
                 state_types['targetTempReachedEstimateUnixTimestampSec'] = Formats.INT;
                 state_types['thermostatHumidityAmbient'] = Formats.FLOAT;
@@ -1548,13 +1529,13 @@ export class DeviceNode {
             }
         }
         if (this.config.trait_timer) {
-            if (!this.command_only_timer) {
+            if (!this.config.command_only_timer) {
                 state_types['timerRemainingSec'] = Formats.INT + Formats.MANDATORY;
                 state_types['timerPaused'] = Formats.BOOL;
             }
         }
         if (this.config.trait_toggles) {
-            if (!this.command_only_toggles) {
+            if (this.config.command_query_toggles !== CommandQueryMode.COMMAND_ONLY) {
                 const attributes = {};
                 this.available_toggles.forEach(function (toggle) {
                     attributes[toggle.name] = Formats.BOOL + Formats.MANDATORY;
@@ -1567,7 +1548,7 @@ export class DeviceNode {
         }
         // TransportControl
         if (this.config.trait_volume) {
-            if (!this.command_only_volume) {
+            if (!this.config.command_only_volume) {
                 state_types['currentVolume'] = Formats.INT + Formats.MANDATORY;
                 if (this.volume_can_mute_and_unmute) {
                     state_types['isMuted'] = Formats.BOOL + Formats.MANDATORY;
@@ -1591,13 +1572,13 @@ export class DeviceNode {
             };
         }
         if (this.config.trait_brightness) {
-            attributes['commandOnlyBrightness'] = this.command_only_brightness;
+            attributes['commandOnlyBrightness'] = this.config.command_only_brightness;
         }
         if (this.config.trait_channel) {
             attributes['availableChannels'] = this.available_channels;
         }
         if (this.config.trait_colorsetting) {
-            attributes["commandOnlyColorSetting"] = this.command_only_colorsetting;
+            attributes["commandOnlyColorSetting"] = this.config.command_only_colorsetting;
             if (this.color_model === "rgb" || this.color_model === "rgb_temp") {
                 attributes['colorModel'] = "rgb";
             }
@@ -1624,7 +1605,7 @@ export class DeviceNode {
             attributes['supportedDispensePresets'] = this.supported_dispense_presets;
         }
         if (this.config.trait_energystorage) {
-            attributes['queryOnlyEnergyStorage'] = this.query_only_energy_storage;
+            attributes['queryOnlyEnergyStorage'] = this.config.query_only_energy_storage;
             if (this.energy_storage_distance_unit_for_ux) {
                 attributes['energyStorageDistanceUnitForUX'] = this.energy_storage_distance_unit_for_ux;
             }
@@ -1632,7 +1613,7 @@ export class DeviceNode {
         }
         if (this.config.trait_fanspeed) {
             attributes['reversible'] = this.reversible;
-            attributes['commandOnlyFanSpeed'] = this.command_only_fanspeed;
+            attributes['commandOnlyFanSpeed'] = this.config.command_only_fanspeed;
             attributes['supportsFanSpeedPercent'] = this.supports_fan_speed_percent;
             attributes['availableFanSpeeds'] = {
                 speeds: this.available_fan_speeds,
@@ -1651,12 +1632,12 @@ export class DeviceNode {
                 minPercent: this.min_percent,
                 maxPercent: this.max_percent
             };
-            attributes['commandOnlyHumiditySetting'] = this.command_only_humiditysetting;
-            attributes['queryOnlyHumiditySetting'] = this.query_only_humiditysetting;
+            attributes['commandOnlyHumiditySetting'] = this.config.command_query_humiditysetting === CommandQueryMode.COMMAND_ONLY;
+            attributes['queryOnlyHumiditySetting'] = this.config.command_query_humiditysetting === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_inputselector) {
             attributes['availableInputs'] = this.available_inputs;
-            attributes['commandOnlyInputSelector'] = this.command_only_input_selector;
+            attributes['commandOnlyInputSelector'] = this.config.command_only_input_selector;
             attributes['orderedInputs'] = this.ordered_inputs;
         }
         if (this.config.trait_lighteffects) {
@@ -1670,8 +1651,8 @@ export class DeviceNode {
         }
         if (this.config.trait_modes) {
             attributes['availableModes'] = this.available_modes;
-            attributes['commandOnlyModes'] = this.command_only_modes;
-            attributes['queryOnlyModes'] = this.query_only_modes;
+            attributes['commandOnlyModes'] = this.config.command_query_modes === CommandQueryMode.COMMAND_ONLY;
+            attributes['queryOnlyModes'] = this.config.command_query_modes === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_networkcontrol) {
             attributes['supportsEnablingGuestNetwork'] = this.supports_enabling_guest_network;
@@ -1730,14 +1711,14 @@ export class DeviceNode {
             attributes['occupancySensorConfiguration'] = occupancysensingattributes;
         }
         if (this.config.trait_onoff) {
-            attributes['commandOnlyOnOff'] = this.command_only_onoff;
-            attributes['queryOnlyOnOff'] = this.query_only_onoff;
+            attributes['commandOnlyOnOff'] = this.config.command_query_onoff === CommandQueryMode.COMMAND_ONLY;
+            attributes['queryOnlyOnOff'] = this.config.command_query_onoff === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_openclose) {
             attributes['discreteOnlyOpenClose'] = this.discrete_only_openclose;
             attributes['openDirection'] = this.open_direction;
-            attributes['commandOnlyOpenClose'] = this.command_only_openclose;
-            attributes['queryOnlyOpenClose'] = this.query_only_openclose;
+            attributes['commandOnlyOpenClose'] = this.config.command_query_openclose === CommandQueryMode.COMMAND_ONLY;
+            attributes['queryOnlyOpenClose'] = this.config.command_query_openclose === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_rotation) {
             attributes['supportsDegrees'] = this.supports_degrees;
@@ -1747,7 +1728,7 @@ export class DeviceNode {
                 rotationDegreesMax: this.rotation_degrees_max
             }];
             attributes['supportsContinuousRotation'] = this.supports_continuous_rotation;
-            attributes['commandOnlyRotation'] = this.command_only_rotation;
+            attributes['commandOnlyRotation'] = this.config.command_only_rotation;
         }
         if (this.config.trait_scene) {
             attributes['sceneReversible'] = this.scene_reversible;
@@ -1867,8 +1848,8 @@ export class DeviceNode {
             };
             attributes['temperatureStepCelsius'] = this.tc_temperature_step_celsius;
             attributes['temperatureUnitForUX'] = this.tc_temperature_unit_for_ux;
-            attributes['commandOnlyTemperatureControl'] = this.command_only_temperaturecontrol;
-            attributes['queryOnlyTemperatureControl'] = this.query_only_temperaturecontrol;
+            attributes['commandOnlyTemperatureControl'] = this.config.tc_command_query_temperaturecontrol === CommandQueryMode.COMMAND_ONLY;
+            attributes['queryOnlyTemperatureControl'] = this.config.tc_command_query_temperaturecontrol === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_temperaturesetting) {
             attributes['availableThermostatModes'] = this.available_thermostat_modes;
@@ -1878,17 +1859,17 @@ export class DeviceNode {
             };
             attributes['thermostatTemperatureUnit'] = this.thermostat_temperature_unit;
             attributes['bufferRangeCelsius'] = this.buffer_range_celsius;
-            attributes['commandOnlyTemperatureSetting'] = this.command_only_temperaturesetting;
-            attributes['queryOnlyTemperatureSetting'] = this.query_only_temperaturesetting;
+            attributes['commandOnlyTemperatureSetting'] = this.config.command_query_temperaturesetting === CommandQueryMode.COMMAND_ONLY;
+            attributes['queryOnlyTemperatureSetting'] = this.config.command_query_temperaturesetting === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_timer) {
             attributes['maxTimerLimitSec'] = this.max_timer_limit_sec;
-            attributes['commandOnlyTimer'] = this.command_only_timer;
+            attributes['commandOnlyTimer'] = this.config.command_only_timer;
         }
         if (this.config.trait_toggles) {
             attributes['availableToggles'] = this.available_toggles;
-            attributes['commandOnlyToggles'] = this.command_only_toggles;
-            attributes['queryOnlyToggles'] = this.query_only_toggles;
+            attributes['commandOnlyToggles'] = this.config.command_query_toggles === CommandQueryMode.COMMAND_ONLY;
+            attributes['queryOnlyToggles'] = this.config.command_query_toggles === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_transportcontrol) {
             attributes['transportControlSupportedCommands'] = this.supported_commands;
@@ -1898,7 +1879,7 @@ export class DeviceNode {
             attributes['volumeCanMuteAndUnmute'] = this.volume_can_mute_and_unmute;
             attributes['volumeDefaultPercentage'] = this.volume_default_percentage;
             attributes['levelStepSize'] = this.level_step_size;
-            attributes['commandOnlyVolume'] = this.command_only_volume;
+            attributes['commandOnlyVolume'] = this.config.command_only_volume;
         }
     }
 
@@ -1956,7 +1937,7 @@ export class DeviceNode {
             // states['brightness'] = 50;
         }
         if (this.config.trait_colorsetting) {
-            if (!this.command_only_colorsetting) {
+            if (!this.config.command_only_colorsetting) {
                 if (this.color_model === "rgb") {
                     states['color'] = { spectrumRgb: 16777215 };
                 } else if (this.color_model === "hsv") {
@@ -1995,7 +1976,7 @@ export class DeviceNode {
         }
         if (this.config.trait_fanspeed) {
             // states['currentFanSpeedSetting'] = "";
-            if (!this.command_only_fanspeed && this.supports_fan_speed_percent) {
+            if (!this.config.command_only_fanspeed && this.supports_fan_speed_percent) {
                 states['currentFanSpeedPercent'] = 0;
             }
         }
@@ -2013,7 +1994,7 @@ export class DeviceNode {
             // states['humidityAmbientPercent'] = 52;
         }
         if (this.config.trait_inputselector) {
-            if (!this.command_only_input_selector) {
+            if (!this.config.command_only_input_selector) {
                 if (this.availableInputs && this.availableInputs.length > 0) {
                     states['currentInput'] = this.availableInputs[0].key;
                 } else {
@@ -2036,7 +2017,7 @@ export class DeviceNode {
         // states['playbackState'] = 'STOPPED';
         //}
         if (this.config.trait_modes) {
-            if (!this.command_only_modes) {
+            if (this.config.command_query_modes !== CommandQueryMode.COMMAND_ONLY) {
                 states['currentModeSettings'] = {};
                 this.updateModesState(device);
             }
@@ -2066,7 +2047,7 @@ export class DeviceNode {
         // states['on'] = false;
         //}
         if (this.config.trait_openclose) {
-            if (!this.command_only_openclose) {
+            if (this.config.command_query_openclose !== CommandQueryMode.COMMAND_ONLY) {
                 if (this.open_direction.length < 2) {
                     states['openPercent'] = 0;
                 } else {
@@ -2171,13 +2152,13 @@ export class DeviceNode {
             states['currentStatusReport'] = [];
         }*/
         if (this.config.trait_temperaturecontrol) {
-            if (!this.query_only_temperaturecontrol) { // Required if queryOnlyTemperatureControl set to false
+            if (this.config.tc_command_query_temperaturecontrol !== CommandQueryMode.QUERY_ONLY) { // Required if queryOnlyTemperatureControl set to false
                 states['temperatureSetpointCelsius'] = this.tc_min_threshold_celsius;
             }
             // states['temperatureAmbientCelsius'] = this.tc_min_threshold_celsius;
         }
         if (this.config.trait_temperaturesetting) {
-            if (!this.command_only_temperaturesetting) {
+            if (this.config.command_query_temperaturesetting !== CommandQueryMode.COMMAND_ONLY) {
                 // states['activeThermostatMode'] = "none";
                 // states['targetTempReachedEstimateUnixTimestampSec'] = this.target_temp_reached_estimate_unix_timestamp_sec;
                 // states['thermostatHumidityAmbient'] = this.thermostat_humidity_ambient;
@@ -2191,19 +2172,19 @@ export class DeviceNode {
             }
         }
         if (this.config.trait_timer) {
-            if (!this.command_only_timer) {
+            if (!this.config.command_only_timer) {
                 states['timerRemainingSec'] = -1;
                 // states['timerPaused'] = false;
             }
         }
         if (this.config.trait_toggles) {
-            if (!this.command_only_toggles) {
+            if (this.config.command_query_toggles !== CommandQueryMode.COMMAND_ONLY) {
                 states['currentToggleSettings'] = {};
                 this.updateTogglesState(device);
             }
         }
         if (this.config.trait_volume) {
-            if (!this.command_only_volume) {
+            if (!this.config.command_only_volume) {
                 states['currentVolume'] = this.volume_default_percentage;
                 if (this.volume_can_mute_and_unmute) {
                     states['isMuted'] = false;
@@ -4418,7 +4399,7 @@ export class DeviceNode {
 
         // FanSpeed
         else if (command.command === 'action.devices.commands.SetFanSpeed') {
-            if (!this.command_only_fanspeed) {
+            if (!this.config.command_only_fanspeed) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'fanSpeed')) {
                     const fanSpeed = command.params['fanSpeed'];
                     let new_fanspeed = '';
@@ -4465,7 +4446,7 @@ export class DeviceNode {
 
         // HumiditySetting
         else if (command.command === 'action.devices.commands.SetHumidity') {
-            if (!this.command_only_humiditysetting) {
+            if (this.config.command_query_humiditysetting !== CommandQueryMode.COMMAND_ONLY) {
                 const humidity = command.params['humidity'];
                 params['humiditySetpointPercent'] = humidity;
                 executionStates.push('humiditySetpointPercent');
@@ -4521,7 +4502,7 @@ export class DeviceNode {
 
         // Inputs
         else if (command.command === 'action.devices.commands.SetInput') {
-            if (!this.command_only_input_selector) {
+            if (!this.config.command_only_input_selector) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'newInput')) {
                     const newInput = command.params['newInput'];
                     let current_input_index = -1;
@@ -4543,7 +4524,7 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.NextInput') {
-            if (!this.command_only_input_selector) {
+            if (!this.config.command_only_input_selector) {
                 this.current_input_index++;
                 if (this.current_input_index >= this.available_inputs.length) {
                     this.current_input_index = 0;
@@ -4553,7 +4534,7 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.PreviousInput') {
-            if (!this.command_only_input_selector) {
+            if (!this.config.command_only_input_selector) {
                 if (this.current_input_index <= 0) {
                     this.current_input_index = this.available_inputs.length;
                 }
@@ -4565,7 +4546,7 @@ export class DeviceNode {
 
         // On/Off
         else if (command.command === 'action.devices.commands.OnOff') {
-            if (!this.command_only_onoff) {
+            if (this.config.command_query_onoff !== CommandQueryMode.COMMAND_ONLY) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'on')) {
                     const on_param = command.params['on'];
                     executionStates.push('on');
@@ -4576,7 +4557,7 @@ export class DeviceNode {
 
         // OpenClose
         else if (command.command === 'action.devices.commands.OpenClose') {
-            if (!this.command_only_openclose) {
+            if (this.config.command_query_openclose !== CommandQueryMode.COMMAND_ONLY) {
                 const open_percent = command.params['openPercent'] || 0;
                 if (Object.prototype.hasOwnProperty.call(this.states, 'openPercent')) {
                     executionStates.push('openPercent');
@@ -4708,7 +4689,7 @@ export class DeviceNode {
 
         // TemperatureControl
         else if (command.command === 'action.devices.commands.SetTemperature') {
-            if (!this.command_only_temperaturecontrol) {
+            if (this.config.tc_command_query_temperaturecontrol !== CommandQueryMode.COMMAND_ONLY) {
                 const temperature = command.params['temperature'];
                 params['temperatureSetpointCelsius'] = temperature;
                 executionStates.push('temperatureSetpointCelsius');
@@ -4717,7 +4698,7 @@ export class DeviceNode {
 
         // TemperatureSetting
         else if (command.command === 'action.devices.commands.ThermostatTemperatureSetpoint') {
-            if (!this.command_only_temperaturesetting) {
+            if (this.config.command_query_temperaturesetting !== CommandQueryMode.COMMAND_ONLY) {
                 const thermostatTemperatureSetpoint = command.params['thermostatTemperatureSetpoint'];
                 params['thermostatTemperatureSetpoint'] = thermostatTemperatureSetpoint;
                 this.thermostat_temperature_setpoint = thermostatTemperatureSetpoint;
@@ -4725,7 +4706,7 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.ThermostatTemperatureSetRange') {
-            if (!this.command_only_temperaturesetting) {
+            if (this.config.command_query_temperaturesetting !== CommandQueryMode.COMMAND_ONLY) {
                 const thermostatTemperatureSetpointHigh = command.params['thermostatTemperatureSetpointHigh'];
                 const thermostatTemperatureSetpointLow = command.params['thermostatTemperatureSetpointLow'];
                 params['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh;
@@ -4736,7 +4717,7 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.ThermostatSetMode') {
-            if (!this.command_only_temperaturesetting) {
+            if (this.config.command_query_temperaturesetting !== CommandQueryMode.COMMAND_ONLY) {
                 const thermostatMode = command.params.thermostatMode;
                 params['thermostatMode'] = thermostatMode;
                 executionStates.push('thermostatMode');
@@ -4767,7 +4748,7 @@ export class DeviceNode {
 
         // Timer
         else if (command.command === 'action.devices.commands.TimerStart') {
-            if (!this.command_only_timer) {
+            if (!this.config.command_only_timer) {
                 const timer_time_sec = command.params['timerTimeSec'];
                 const now = Math.floor(Date.now() / 1000);
                 params['timerRemainingSec'] = timer_time_sec;
@@ -4777,7 +4758,7 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.TimerResume') {
-            if (!this.command_only_timer) {
+            if (!this.config.command_only_timer) {
                 const now = Math.floor(Date.now() / 1000);
                 const timer_remaining_sec = this.states['timerRemainingSec'];
                 if (timer_remaining_sec > 0 && this.states['timerPaused']) {
@@ -4793,7 +4774,7 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.TimerPause') {
-            if (!this.command_only_timer) {
+            if (!this.config.command_only_timer) {
                 const now = Math.floor(Date.now() / 1000);
                 if (this.states['timerPaused']) {
                     executionStates.push('timerPaused');
@@ -4811,7 +4792,7 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.TimerCancel') {
-            if (!this.command_only_timer) {
+            if (!this.config.command_only_timer) {
                 const now = Math.floor(Date.now() / 1000);
                 if (now < this.timer_end_timestamp) {
                     this.states['timerRemainingSec'] = 0;
@@ -4827,7 +4808,7 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.TimerAdjust') {
-            if (!this.command_only_timer) {
+            if (!this.config.command_only_timer) {
                 const now = Math.floor(Date.now() / 1000);
                 const timer_time_sec = command.params['timerTimeSec'];
                 if (this.states['timerPaused']) {
@@ -4849,7 +4830,7 @@ export class DeviceNode {
 
         // Volume
         else if (command.command === 'action.devices.commands.mute') {
-            if (!this.command_only_volume) {
+            if (!this.config.command_only_volume) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'mute')) {
                     const mute = command.params['mute'];
                     params['isMuted'] = mute;
@@ -4858,7 +4839,7 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.setVolume') {
-            if (!this.command_only_volume) {
+            if (!this.config.command_only_volume) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'volumeLevel')) {
                     let volumeLevel = command.params['volumeLevel'];
                     if (volumeLevel > this.volume_max_level) {
@@ -4871,7 +4852,7 @@ export class DeviceNode {
             }
         }
         else if (command.command === 'action.devices.commands.volumeRelative') {
-            if (!this.command_only_volume) {
+            if (!this.config.command_only_volume) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'relativeSteps')) {
                     const relativeSteps = command.params['relativeSteps'];
                     let current_volume = this.states['currentVolume'];
@@ -4989,7 +4970,7 @@ export class DeviceNode {
 
         // Modes
         else if (command.command === 'action.devices.commands.SetModes') {
-            if (!this.command_only_modes) {
+            if (this.config.command_query_modes !== CommandQueryMode.COMMAND_ONLY) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'updateModeSettings')) {
                     const updateModeSettings = command.params['updateModeSettings'];
                     const current_modes = this.states['currentModeSettings'];
@@ -5015,7 +4996,7 @@ export class DeviceNode {
 
         // Rotation
         else if (command.command === 'action.devices.commands.RotateAbsolute') {
-            if (!this.command_only_rotation) {
+            if (!this.config.command_only_rotation) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'rotationDegrees')) {
                     const rotationDegrees = command.params['rotationDegrees'];
                     params['rotationDegrees'] = rotationDegrees;
@@ -5031,7 +5012,7 @@ export class DeviceNode {
 
         // Traits
         else if (command.command === 'action.devices.commands.SetToggles') {
-            if (!this.command_only_toggles) {
+            if (this.config.command_query_toggles !== CommandQueryMode.COMMAND_ONLY) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'updateToggleSettings')) {
                     const updateToggleSettings = command.params['updateToggleSettings'];
                     const current_toggle = this.states['currentToggleSettings'];
@@ -5051,7 +5032,7 @@ export class DeviceNode {
 
         // Brightness
         else if (command.command === 'action.devices.commands.BrightnessAbsolute') {
-            if (!this.command_only_brightness) {
+            if (!this.config.command_only_brightness) {
                 const brightness = command.params['brightness'];
                 params['brightness'] = brightness;
                 executionStates.push('brightness');
@@ -5075,7 +5056,7 @@ export class DeviceNode {
 
         // ColorSetting
         else if (command.command === 'action.devices.commands.ColorAbsolute') {
-            if (!this.command_only_colorsetting) {
+            if (!this.config.command_only_colorsetting) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'color')) {
                     if (Object.prototype.hasOwnProperty.call(command.params.color, 'temperature') || Object.prototype.hasOwnProperty.call(command.params.color, 'temperatureK')) {
                         const temperature = Object.prototype.hasOwnProperty.call(command.params.color, 'temperature') ? command.params.color.temperature : command.params.color.temperatureK;
