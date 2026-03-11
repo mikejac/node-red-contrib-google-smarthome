@@ -638,8 +638,6 @@ export class DeviceNode {
                 }
             });
 
-        this.topicOut = config.topic;
-        this.passthru = config.passthru;
         this.topic_filter = config.topic_filter || false;
         this.persistent_state = config.persistent_state || false;
         this.room_hint = config.room_hint;
@@ -708,10 +706,7 @@ export class DeviceNode {
         // Dock
         // EnergyStorage
         this.energy_storage_distance_unit_for_ux = config.energy_storage_distance_unit_for_ux;
-        this.is_rechargeable = config.is_rechargeable;
         // FanSpeed
-        this.reversible = config.reversible;
-        this.supports_fan_speed_percent = config.supports_fan_speed_percent;
         this.available_fan_speeds_file = config.available_fan_speeds_file;
         this.available_fan_speeds_type = config.available_fan_speeds_type || 'str';
         this.fan_speeds_ordered = config.fan_speeds_ordered || false;
@@ -721,7 +716,6 @@ export class DeviceNode {
         this.available_fill_levels_type = config.available_fill_levels_type || 'str';
         this.available_fill_levels = [];
         this.ordered_fill_levels = config.ordered_fill_levels;
-        this.supports_fill_percent = config.supports_fill_percent;
         // HumiditySetting
         this.min_percent = parseInt(config.min_percent) || 0;
         this.max_percent = parseInt(config.max_percent) || 100;
@@ -745,14 +739,7 @@ export class DeviceNode {
         this.modes_type = config.modes_type || 'str';
         this.available_modes = [];
         // NetworkControl
-        this.supports_enabling_guest_network = config.supports_enabling_guest_network;
-        this.supports_disabling_guest_network = config.supports_disabling_guest_network;
-        this.supports_getting_guest_network_password = config.supports_getting_guest_network_password;
         this.network_profiles = config.network_profiles;
-        this.supports_enabling_network_profile = config.supports_enabling_network_profile;
-        this.supports_disabling_network_profile = config.supports_disabling_network_profile;
-        this.supports_network_download_speedtest = config.supports_network_download_speedtest;
-        this.supports_network_upload_speedtest = config.supports_network_upload_speedtest;
         this.guest_network_password = '';
         // ObjectDetection
         // OccupancySensing
@@ -769,7 +756,6 @@ export class DeviceNode {
         this.unoccupied_to_occupied_delay_sec_physical_contact = parseInt(config.unoccupied_to_occupied_delay_sec_physical_contact) || 2;
         this.unoccupied_to_occupied_event_threshold_physical_contact = parseInt(config.unoccupied_to_occupied_event_threshold_physical_contact) || 2;
         // OpenClose
-        this.discrete_only_openclose = config.discrete_only_openclose;
         this.open_direction = config.open_direction;
         // Reboot
         // Rotation
@@ -779,13 +765,10 @@ export class DeviceNode {
         this.rotation_degrees_max = parseInt(config.rotation_degrees_max) || 360;
         this.supports_continuous_rotation = config.supports_continuous_rotation;
         // RunCycle
-        // Scene
-        this.scene_reversible = config.scene_reversible;
         // SensorState
         this.sensor_states_supported = config.sensor_states_supported;
         // SoftwareUpdate
         // StartStop
-        this.pausable = config.pausable;
         this.available_zones = config.available_zones;
         // StatusReport
         // TemperatireControl
@@ -815,7 +798,6 @@ export class DeviceNode {
         this.supported_commands = config.supported_commands;
         // Volume
         this.volume_max_level = parseInt(config.volume_max_level) || 100;
-        this.volume_can_mute_and_unmute = config.volume_can_mute_and_unmute;
         this.volume_default_percentage = parseInt(config.volume_default_percentage) || 40;
         this.level_step_size = parseInt(config.level_step_size) || 1;
         // Secondary User Verification
@@ -1205,7 +1187,7 @@ export class DeviceNode {
                 replaceAll: true,
                 isValidKey: unit => ENERGY_STORAGE_UNITS.includes(unit)
             };
-            if (this.is_rechargeable) {
+            if (this.config.is_rechargeable) {
                 state_types['capacityUntilFull'] = {
                     type: Formats.OBJECT + Formats.ARRAY,
                     attributes: {
@@ -1229,7 +1211,7 @@ export class DeviceNode {
         }
         if (this.config.trait_fanspeed) {
             if (!this.config.command_only_fanspeed) {
-                if (this.supports_fan_speed_percent) {
+                if (this.config.supports_fan_speed_percent) {
                     state_types['currentFanSpeedPercent'] = Formats.INT + Formats.MANDATORY;
                 } else {
                     state_types['currentFanSpeedPercent'] = Formats.INT;
@@ -1254,7 +1236,7 @@ export class DeviceNode {
                     defaultValue: values[0],
                 };
             }
-            if (this.supports_fill_percent) {
+            if (this.config.supports_fill_percent) {
                 state_types['currentFillPercent'] = Formats.FLOAT + Formats.MANDATORY;
             } else {
                 state_types['currentFillPercent'] = Formats.FLOAT;
@@ -1550,7 +1532,7 @@ export class DeviceNode {
         if (this.config.trait_volume) {
             if (!this.config.command_only_volume) {
                 state_types['currentVolume'] = Formats.INT + Formats.MANDATORY;
-                if (this.volume_can_mute_and_unmute) {
+                if (this.config.volume_can_mute_and_unmute) {
                     state_types['isMuted'] = Formats.BOOL + Formats.MANDATORY;
                 } else {
                     state_types['isMuted'] = Formats.BOOL;
@@ -1609,12 +1591,12 @@ export class DeviceNode {
             if (this.energy_storage_distance_unit_for_ux) {
                 attributes['energyStorageDistanceUnitForUX'] = this.energy_storage_distance_unit_for_ux;
             }
-            attributes['isRechargeable'] = this.is_rechargeable;
+            attributes['isRechargeable'] = this.config.is_rechargeable;
         }
         if (this.config.trait_fanspeed) {
-            attributes['reversible'] = this.reversible;
+            attributes['reversible'] = this.config.reversible;
             attributes['commandOnlyFanSpeed'] = this.config.command_only_fanspeed;
-            attributes['supportsFanSpeedPercent'] = this.supports_fan_speed_percent;
+            attributes['supportsFanSpeedPercent'] = this.config.supports_fan_speed_percent;
             attributes['availableFanSpeeds'] = {
                 speeds: this.available_fan_speeds,
                 ordered: this.fan_speeds_ordered
@@ -1624,7 +1606,7 @@ export class DeviceNode {
             attributes['availableFillLevels'] = {
                 levels: this.available_fill_levels,
                 ordered: this.ordered_fill_levels,
-                supportsFillPercent: this.supports_fill_percent
+                supportsFillPercent: this.config.supports_fill_percent
             };
         }
         if (this.config.trait_humiditysetting) {
@@ -1655,14 +1637,14 @@ export class DeviceNode {
             attributes['queryOnlyModes'] = this.config.command_query_modes === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_networkcontrol) {
-            attributes['supportsEnablingGuestNetwork'] = this.supports_enabling_guest_network;
-            attributes['supportsDisablingGuestNetwork'] = this.supports_disabling_guest_network;
-            attributes['supportsGettingGuestNetworkPassword'] = this.supports_getting_guest_network_password;
+            attributes['supportsEnablingGuestNetwork'] = this.config.supports_enabling_guest_network;
+            attributes['supportsDisablingGuestNetwork'] = this.config.supports_disabling_guest_network;
+            attributes['supportsGettingGuestNetworkPassword'] = this.config.supports_getting_guest_network_password;
             attributes['networkProfiles'] = this.network_profiles;
-            attributes['supportsEnablingNetworkProfile'] = this.supports_enabling_network_profile;
-            attributes['supportsDisablingNetworkProfile'] = this.supports_disabling_network_profile;
-            attributes['supportsNetworkDownloadSpeedTest'] = this.supports_network_download_speedtest;
-            attributes['supportsNetworkUploadSpeedTest'] = this.supports_network_upload_speedtest;
+            attributes['supportsEnablingNetworkProfile'] = this.config.supports_enabling_network_profile;
+            attributes['supportsDisablingNetworkProfile'] = this.config.supports_disabling_network_profile;
+            attributes['supportsNetworkDownloadSpeedTest'] = this.config.supports_network_download_speedtest;
+            attributes['supportsNetworkUploadSpeedTest'] = this.config.supports_network_upload_speedtest;
         }
         if (this.config.trait_occupancysensing) {
             const occupancysensingattributes = [];
@@ -1715,7 +1697,7 @@ export class DeviceNode {
             attributes['queryOnlyOnOff'] = this.config.command_query_onoff === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_openclose) {
-            attributes['discreteOnlyOpenClose'] = this.discrete_only_openclose;
+            attributes['discreteOnlyOpenClose'] = this.config.discrete_only_openclose;
             attributes['openDirection'] = this.open_direction;
             attributes['commandOnlyOpenClose'] = this.config.command_query_openclose === CommandQueryMode.COMMAND_ONLY;
             attributes['queryOnlyOpenClose'] = this.config.command_query_openclose === CommandQueryMode.QUERY_ONLY;
@@ -1731,7 +1713,7 @@ export class DeviceNode {
             attributes['commandOnlyRotation'] = this.config.command_only_rotation;
         }
         if (this.config.trait_scene) {
-            attributes['sceneReversible'] = this.scene_reversible;
+            attributes['sceneReversible'] = this.config.scene_reversible;
         }
         if (this.config.trait_sensorstate) {
             const sensor_states_supported = [];
@@ -1838,7 +1820,7 @@ export class DeviceNode {
             attributes['sensorStatesSupported'] = sensor_states_supported;
         }
         if (this.config.trait_startstop) {
-            attributes['pausable'] = this.pausable;
+            attributes['pausable'] = this.config.pausable;
             attributes['availableZones'] = this.available_zones;
         }
         if (this.config.trait_temperaturecontrol) {
@@ -1876,7 +1858,7 @@ export class DeviceNode {
         }
         if (this.config.trait_volume) {
             attributes['volumeMaxLevel'] = this.volume_max_level;
-            attributes['volumeCanMuteAndUnmute'] = this.volume_can_mute_and_unmute;
+            attributes['volumeCanMuteAndUnmute'] = this.config.volume_can_mute_and_unmute;
             attributes['volumeDefaultPercentage'] = this.volume_default_percentage;
             attributes['levelStepSize'] = this.level_step_size;
             attributes['commandOnlyVolume'] = this.config.command_only_volume;
@@ -1968,7 +1950,7 @@ export class DeviceNode {
         if (this.config.trait_energystorage) {
             states['descriptiveCapacityRemaining'] = "FULL";
             // states['capacityRemaining'] = [];
-            if (this.is_rechargeable) {
+            if (this.config.is_rechargeable) {
                 // states['capacityUntilFull'] = [];
                 states['isCharging'] = false;
             }
@@ -1976,7 +1958,7 @@ export class DeviceNode {
         }
         if (this.config.trait_fanspeed) {
             // states['currentFanSpeedSetting'] = "";
-            if (!this.config.command_only_fanspeed && this.supports_fan_speed_percent) {
+            if (!this.config.command_only_fanspeed && this.config.supports_fan_speed_percent) {
                 states['currentFanSpeedPercent'] = 0;
             }
         }
@@ -1985,7 +1967,7 @@ export class DeviceNode {
             if (this.available_fill_levels.length > 0) {
                 states['currentFillLevel'] = "";
             }
-            if (this.supports_fill_percent) {
+            if (this.config.supports_fill_percent) {
                 states['currentFillPercent'] = 0;
             }
         }
@@ -2186,7 +2168,7 @@ export class DeviceNode {
         if (this.config.trait_volume) {
             if (!this.config.command_only_volume) {
                 states['currentVolume'] = this.volume_default_percentage;
-                if (this.volume_can_mute_and_unmute) {
+                if (this.config.volume_can_mute_and_unmute) {
                     states['isMuted'] = false;
                 }
             }
@@ -2241,12 +2223,12 @@ export class DeviceNode {
                         text.push('CLOSED');
                         fill = 'green';
                     } else {
-                        text.push(this.discrete_only_openclose ? 'OPEN' : util.format("OPEN %d%%", this.states.openPercent));
+                        text.push(this.config.discrete_only_openclose ? 'OPEN' : util.format("OPEN %d%%", this.states.openPercent));
                     }
                 }
             }
             if (this.config.trait_startstop) {
-                if (this.pausable && this.states.isPaused) {
+                if (this.config.pausable && this.states.isPaused) {
                     text.push('Paused');
                     fill = 'yellow';
                 } else {
@@ -2387,8 +2369,8 @@ export class DeviceNode {
             payload: {},
         };
 
-        if (this.topicOut)
-            msg.topic = this.topicOut;
+        if (this.config.topic)
+            msg.topic = this.config.topic;
 
         // Copy the device state to the payload
         this.cloneObject(msg.payload, this.states, this.state_types);
@@ -2415,11 +2397,11 @@ export class DeviceNode {
     onInput(msgi, send, done) {
         if(!send) send = () => { this.send.apply(this, arguments) };
         let msg = msgi;
-        if (this.topic_filter && !(msg.topic || '').toString().startsWith(this.topicOut)) {
+        if (this.topic_filter && !(msg.topic || '').toString().startsWith(this.config.topic)) {
             if(done) done();
             return;
         }
-        if (this.topic_filter && msg.payload.topic && (msg.topic || '').toString().startsWith(this.topicOut)) {
+        if (this.topic_filter && msg.payload.topic && (msg.topic || '').toString().startsWith(this.config.topic)) {
             msg.topic = msg.payload.topic;
         }
         this._debug(".input: topic = " + msg.topic);
@@ -2837,7 +2819,7 @@ export class DeviceNode {
                     if (this.persistent_state) {
                         this.clientConn.app.ScheduleGetState();
                     }
-                    // if (this.passthru) {
+                    // if (this.config.passthru) {
                     //     msg.payload = new_payload;
                     //     this.send(msg);
                     // }
@@ -3003,7 +2985,7 @@ export class DeviceNode {
                     if (msgi.stateOutput) {
                         const states = {};
                         this.cloneObject(states, this.states, this.state_types);
-                        send({ topic: this.topicOut, payload: states });
+                        send({ topic: this.config.topic, payload: states });
                     }
                     this.clientConn.reportState(this.id);  // tell Google ...
                     if (this.persistent_state) {
@@ -3011,7 +2993,7 @@ export class DeviceNode {
                     }
                     this.updateStatusIcon(false);
                 }
-                if (this.passthru) {
+                if (this.config.passthru) {
                     send(msgi);
                 }
 
@@ -4144,7 +4126,7 @@ export class DeviceNode {
                         name: this.name,
                         pin: challenge_pin,
                         command: command.command,
-                        topic: this.topicOut,
+                        topic: this.config.topic,
                     }
                 });
                 // ackNeeded with trait states
