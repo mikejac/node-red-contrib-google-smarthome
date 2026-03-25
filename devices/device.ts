@@ -302,7 +302,7 @@ export class DeviceNode {
         this.name = config.name || config.id;
         this.device_type = config.device_type;
         this.nicknames = config.nicknames;
-        this.clientConn = RED.nodes.getNode(this.config.client);
+        this.clientConn = RED.nodes.getNode(this.config.client) as GoogleSmartHomeNode;
         this._debug(".constructor config " + JSON.stringify(config));
 
         if (!this.clientConn) {
@@ -1014,7 +1014,7 @@ export class DeviceNode {
         this.clientConn.app.ScheduleRequestSync();
     }
 
-    _debug(msg) {
+    _debug(msg): void {
         msg = 'google-smarthome:DeviceNode[' + this.name + '] ' + msg;
         if (this.clientConn && typeof this.clientConn._debug === 'function') {
             this.clientConn._debug(msg);
@@ -1541,7 +1541,7 @@ export class DeviceNode {
         }
     }
 
-    updateAttributesForTraits(device) {
+    updateAttributesForTraits(device): void {
         const attributes = device.properties.attributes;
 
         if (this.config.trait_appselector) {
@@ -1902,9 +1902,8 @@ export class DeviceNode {
      * Initializes states to their default values.
      *
      * @param device
-     * @returns {object}
      */
-    initializeStates(device) {
+    initializeStates(device): void {
         const states = device.states;
 
         if (this.config.trait_appselector) {
@@ -2178,9 +2177,9 @@ export class DeviceNode {
     /**
      * Updates the status icon of this device node.
      *
-     * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
+     * @param is_local - Indicates whether the current command was issued using local fulfillment.
      */
-    updateStatusIcon(is_local: boolean) {
+    updateStatusIcon(is_local: boolean): void {
         let text = [];
         let fill = 'red';
         let shape = 'dot';
@@ -2345,9 +2344,9 @@ export class DeviceNode {
     /******************************************************************************************************************
      * called when state is updated from Google Assistant
      *
-     * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
+     * @param is_local - Indicates whether the current command was issued using local fulfillment.
      */
-    updated(g_command, exe_result, is_local: boolean) {
+    updated(g_command, exe_result, is_local: boolean): void {
         const command = g_command.command.startsWith('action.devices.commands.') ? g_command.command.substr(24) : g_command.command;
         const params = exe_result.params || {};
         this._debug(".updated: g_command = " + JSON.stringify(g_command));
@@ -2394,7 +2393,7 @@ export class DeviceNode {
      * @param {Function} send - Function to send outgoing messages
      * @param {Function} done - Function to inform the runtime that this node has finished its operation
      */
-    onInput(msgi, send, done) {
+    onInput(msgi, send, done): void {
         if(!send) send = () => { this.send.apply(this, arguments) };
         let msg = msgi;
         if (this.topic_filter && !(msg.topic || '').toString().startsWith(this.config.topic)) {
@@ -3010,10 +3009,10 @@ export class DeviceNode {
     /**
      * Called by the runtime when this node is being removed or restarted
      *
-     * @param {boolean} removed - true if the is being removed, false on restart
+     * @param removed - true if the is being removed, false on restart
      * @param {Function} done - Function to inform the runtime that this node has finished its operation
      */
-    onClose(removed, done) {
+    onClose(removed, done): void {
         if (removed) {
             // this node has been deleted
             this.clientConn.remove(this, 'device');
@@ -3025,7 +3024,7 @@ export class DeviceNode {
         done();
     }
 
-    updateTogglesState(device) {
+    updateTogglesState(device): void {
         // Key/value pair with the toggle name of the device as the key, and the current state as the value.
         this._debug(".updateTogglesState");
         const states = device.states || {};
@@ -3041,7 +3040,7 @@ export class DeviceNode {
         states['currentToggleSettings'] = new_toggles;
     }
 
-    updateModesState(device) {
+    updateModesState(device): void {
         // Key/value pair with the mode name of the device as the key, and the current setting_name as the value.
         this._debug(".updateModesState");
         const states = device.states || {};

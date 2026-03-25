@@ -184,8 +184,8 @@ export default class HttpActions {
     }
 
     /**
-     * @param {Request} request   - Express request object
-     * @param {Response} response - Express response object
+     * @param request  - Express request object
+     * @param response - Express response object
      */
     private _post(request: Request, response: Response, url: string) {
         const reqdata = request.body;
@@ -395,7 +395,7 @@ export default class HttpActions {
     }
 
     /**
-     * @param {Response} response - Express response object
+     * @param response - Express response object
      */
     private _sync(requestId: string, response: Response) {
         this._smarthome.debug('HttpActions:_sync()');
@@ -461,7 +461,7 @@ export default class HttpActions {
     }
 
     /**
-     * @param {Response} response - Express response object
+     * @param response - Express response object
      */
     private _query(requestId: string, devices, response: Response) {
         this._smarthome.debug('HttpActions:_query()');
@@ -491,8 +491,8 @@ export default class HttpActions {
     }
 
     /**
-     * @param {Response} response - Express response object
-     * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
+     * @param response - Express response object
+     * @param is_local - Indicates whether the current command was issued using local fulfillment.
      */
     private _exec(requestId, commands, response: Response, is_local: boolean) {
         this._smarthome.debug('HttpActions:_exec()');
@@ -552,7 +552,7 @@ export default class HttpActions {
     }
 
     /**
-     * @param {boolean} is_local - Indicates whether the current command was issued using local fulfillment.
+     * @param is_local - Indicates whether the current command was issued using local fulfillment.
      */
     private _execDevice(command, device, is_local: boolean) {
         this._smarthome.debug('HttpActions:_execDevice(): command = ' + JSON.stringify(command));
@@ -617,7 +617,7 @@ export default class HttpActions {
     }
 
     /**
-     * @param {Response} response - Express response object
+     * @param response - Express response object
      */
     private _reachable_devices(requestId, response: Response) {
         this._smarthome.debug('HttpActions:_reachable_devices()');
@@ -648,7 +648,7 @@ export default class HttpActions {
     //
     //
     //
-    reportState(deviceId: string, states, notifications) {
+    reportState(deviceId?: string, states, notifications?): void {
         if (deviceId == undefined && Object.keys(states).length === 0 && notifications == undefined) {
             this._smarthome.error('HttpActions:reportState(): skipped reporting states, no devices registered');
             return;
@@ -740,7 +740,7 @@ export default class HttpActions {
     /**
      * Sends a request to Google to sync devices.
      */
-    requestSync() {
+    requestSync(): void {
         this._smarthome.debug('HttpActions:requestSync()');
 
         if (!this._smarthome.IsHttpServerRunning()) {

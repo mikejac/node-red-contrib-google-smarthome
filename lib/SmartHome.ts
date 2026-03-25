@@ -54,13 +54,18 @@ export class GoogleSmartHome {
     private httpServer!: http.Server & stoppable.WithStop;
     private localHttpServer!: http.Server & stoppable.WithStop;
     private _httpLocalPath: string
+    private _httpLocalPort: number;
+    private _localScanPort: number;
     private _httpPath: string;
+    private _httpPort: number;
     private _httpNodeRoot: string;
     private _localScanType: string;
     private _httpServerRunning: boolean = false;
     private _dnssdAdRunning: boolean = false;
     private _syncScheduled: boolean = false;
+    private _sslOffload: boolean;
     private _getStateScheduled: boolean = false;
+    private _reportStateTimer: NodeJS.Timeout | null;
     private debug_function: (data: any) => void;
     private error_function: (data: any) => void
 
@@ -68,7 +73,7 @@ export class GoogleSmartHome {
 
 
     constructor(configNode: GoogleSmartHomeNode, userDir: string, httpNodeRoot: string, useGoogleLogin, googleClientId, emails, username, password, usehttpnoderoot,
-        httpPath, httpPort, localScanType, localScanPort, httpLocalPort, nodeRedUsesHttps, ssloffload: boolean, publicKey, privateKey, jwtkeyFile, clientid,
+        httpPath: string, httpPort: number, localScanType: string, localScanPort: number, httpLocalPort: number, nodeRedUsesHttps, ssloffload: boolean, publicKey, privateKey, jwtkeyFile, clientid,
         clientsecret, debug, debug_function: (data: any) => void, error_function: (data: any) => void) {
 
         this.auth                   = new Auth(this);
@@ -168,10 +173,10 @@ export class GoogleSmartHome {
     /**
      * Joins multiple path segments into a single path.
      *
-     * @param {...string} paths - The path segments to join
+     * @param paths - The path segments to join
      * @returns The joined path
      */
-    Path_join(...paths): string {
+    Path_join(...paths: string[]): string {
         let full_path = '';
 
         for (const ipath of paths) {
@@ -193,7 +198,7 @@ export class GoogleSmartHome {
      * Determines the type of a HTTP route (GET, POST, OPTIONS, etc.).
      *
      * @param {object} route - The route object
-     * @returns {string} The type of the route
+     * @returns The type of the route
      */
     GetRouteType(route): string {
         if (route) {
@@ -211,9 +216,9 @@ export class GoogleSmartHome {
      * use our own webserver, routes are automatically removed when we
      * stop the webserver.
      *
-     * @param {express.Express} REDapp - the Express server from Node-RED
+     * @param REDapp - the Express server from Node-RED
      */
-    UnregisterUrl(REDapp: express.Express) {
+    UnregisterUrl(REDapp: express.Express): void {
         // Skip if we are using our own webserver instead of Node-RED's webserver
         if (this._httpPort > 0) {
             return;
@@ -418,7 +423,7 @@ export class GoogleSmartHome {
 
                     // update server if certificate file changes on disk
                     // timeout is used to give certbot enough time to renew private and public key
-                    let waitForRenewalTimeout;
+                    let waitForRenewalTimeout: NodeJS.Timeout;
                     fs.watch(this._publicKey, () => {
                         this.debug('SmartHome:Start(listen): Certificate file change detected. Updating HTTPS server in 30 seconds.');
                         clearTimeout(waitForRenewalTimeout);
@@ -510,7 +515,7 @@ export class GoogleSmartHome {
     //
     //
     //
-    Stop(REDapp: express.Express, done) {
+    Stop(REDapp: express.Express, done): void {
         // httpNodeRoot is the root url for nodes that provide HTTP endpoints. If set to false, all node-based HTTP endpoints are disabled. 
         if (this._httpNodeRoot === false) return;
 
@@ -563,7 +568,7 @@ export class GoogleSmartHome {
     //
     //
     //
-    Restart(REDapp: express.Express, REDserver) {
+    Restart(REDapp: express.Express, REDserver): void {
         this.Stop(REDapp, () => {
             this.debug('SmartHome:Restart(): Stop done');
 
@@ -684,7 +689,7 @@ export class GoogleSmartHome {
      *
      * @param {string} data - The debug information to log.
      */
-    debug(data) {
+    debug(data): void {
         this.debug_function(data);
     }
 
@@ -693,7 +698,7 @@ export class GoogleSmartHome {
      *
      * @param {string} data - The error information to log.
      */
-    error(data) {
+    error(data): void {
         this.error_function(data);
     }
 }

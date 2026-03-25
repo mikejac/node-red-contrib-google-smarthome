@@ -43,7 +43,7 @@ export class MgmtNode {
         RED.nodes.createNode(this, config);
 
         this.config = config;
-        this.clientConn = RED.nodes.getNode(this.config.client);
+        this.clientConn = RED.nodes.getNode(this.config.client) as GoogleSmartHomeNode;
 
         if (!this.clientConn) {
             this.error(RED._("googlemanagement.errors.missing-config"));
@@ -77,7 +77,7 @@ export class MgmtNode {
      * called when state is updated from Google Assistant
      *
      */
-    updated(data) {   // this must be defined before the call to clientConn.register()
+    updated(data): void {   // this must be defined before the call to clientConn.register()
         this._debug("MgmtNode(updated): data = " + JSON.stringify(data));
 
         const msg = {
@@ -95,7 +95,7 @@ export class MgmtNode {
      * @param {Function} send - Function to send outgoing messages
      * @param {Function} done - Function to inform the runtime that this node has finished its operation
      */
-    onInput(msg, send, done) {
+    onInput(msg, send, done): void {
         const topicArr = (msg.topic || '').split(this.topicDelim);
         const topic = topicArr[topicArr.length - 1];   // get last part of topic
         const topic_upper = topic.toUpperCase();
@@ -161,10 +161,10 @@ export class MgmtNode {
     /**
      * Called by the runtime when this node is being removed or restarted
      *
-     * @param {boolean} removed - true if the is being removed, false on restart
+     * @param removed - true if the is being removed, false on restart
      * @param {Function} done - Function to inform the runtime that this node has finished its operation
      */
-    onClose(removed, done) {
+    onClose(removed: boolean, done): void {
         if (removed) {
             // this node has been deleted
             this.clientConn.remove(this, 'mgmt');
@@ -176,7 +176,7 @@ export class MgmtNode {
         done();
     }
 
-    sendSetState() {
+    sendSetState(): void {
         if (this.set_state_type === 'no_nodes') return;
         const onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.set_state_type);
         const useNames = ['all_by_name', 'filtered_by_name'].includes(this.set_state_type);

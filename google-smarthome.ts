@@ -120,7 +120,7 @@ export class GoogleSmartHomeNode {
         });
     }
 
-    _debug(msg) {
+    _debug(msg): void {
         if (this.enabledebug) {
             console.log(msg)
         } else {
@@ -128,7 +128,7 @@ export class GoogleSmartHomeNode {
         }
     }
 
-    _error(msg) {
+    _error(msg): void {
         if (typeof msg === 'object') {
             this._debug(JSON.stringify(msg));
         }
@@ -139,17 +139,17 @@ export class GoogleSmartHomeNode {
      * functions called by our 'clients'
      *
      */
-    register(client, type) {
+    register(client: MgmtNode | DeviceNode, type: 'mgmt' | 'device'): void {
         this._debug("GoogleSmartHomeNode(): register; type = " + type + ' ' + client.id);
 
         if (type === 'mgmt') {
-            this.mgmtNodes[client.id] = client;
+            this.mgmtNodes[client.id] = client as MgmtNode;
         } else {
-            this.app.devices.registerDevice(client);
+            this.app.devices.registerDevice(client as DeviceNode);
         }
     }
 
-    deregister(client, type) {
+    deregister(client: MgmtNode | DeviceNode, type: 'mgmt' | 'device'): void {
         this._debug("GoogleSmartHomeNode(): deregister; type = " + type);
 
         if (type === 'mgmt' && this.mgmtNodes[client.id]) {
@@ -157,17 +157,17 @@ export class GoogleSmartHomeNode {
         }
     }
 
-    remove(client, type) {
+    remove(client: MgmtNode | DeviceNode, type: 'mgmt' | 'device'): void {
         this._debug("GoogleSmartHomeNode(): remove; type = " + type);
 
         if (type === 'mgmt' && this.mgmtNodes[client.id]) {
             delete this.mgmtNodes[client.id];
         } else {
-            this.app.devices.DeleteDevice(client);
+            this.app.devices.DeleteDevice(client as DeviceNode);
         }
     }
 
-    sendNotifications(client: DeviceNode, notifications) {
+    sendNotifications(client: DeviceNode, notifications): void {
         this._debug("GoogleSmartHomeNode:sendNotifications(): notifications = " + JSON.stringify(notifications));
         this.app.devices.SendNotifications(client.id, notifications);
     }

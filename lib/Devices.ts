@@ -43,7 +43,7 @@ export default class Devices {
     //
     //
     //
-    DeleteDevice(client): boolean {
+    DeleteDevice(client: DeviceNode): boolean {
         if (!this._nodes[client.id]) {
             this._smarthome.debug('Device:DeleteDevice(): device does not exist; client.id = ' + client.id);
             return false;
@@ -97,7 +97,7 @@ export default class Devices {
     //
     //
     //
-    registerDevice(client) {
+    registerDevice(client: DeviceNode) {
         if (!this._nodes[client.id]) {
             this._smarthome.debug('Device:registerDevice(): new device ' + JSON.stringify(client.device));
         } else {

@@ -21,11 +21,8 @@ import path from 'path';
 import helper from 'node-red-node-test-helper';
 import { describe, beforeEach, afterEach, it } from 'mocha';
 
-// @ts-expect-error Silence warning about missing default export ("export default ..."), as Node-RED expocts CommonJS export ("module.exports = ...")
-import DeviceNode from '../devices/device';
-// @ts-expect-error Silence warning about missing default export ("export default ..."), as Node-RED expocts CommonJS export ("module.exports = ...")
-import GoogleSmartHomeNode from '../google-smarthome';
-// @ts-expect-error Silence warning about missing default export ("export default ..."), as Node-RED expocts CommonJS export ("module.exports = ...")
+import DeviceNode, { DeviceNode as DeviceNodeType } from '../devices/device';
+import GoogleSmartHomeNode, { GoogleSmartHomeNode as GoogleSmartHomeNodeType } from '../google-smarthome';
 import MgmtNode from '../google-mgmt';
 
 helper.init(require.resolve('node-red'));
@@ -48,14 +45,14 @@ describe('Device Node', function () {
         this.timeout(10000);
 
         const flowPath = path.join(__dirname, 'device_flow.json');
-        const flow = JSON.parse(fs.readFileSync(flowPath));
+        const flow = JSON.parse(fs.readFileSync(flowPath, 'utf8'));
 
         helper.load([GoogleSmartHomeNode, MgmtNode, DeviceNode], flow, function () {
             try {
-                const device1 = helper.getNode("device1");
+                const device1 = helper.getNode("device1") as DeviceNodeType;
                 device1.should.have.property('type', 'google-device');
                 device1.should.have.property('clientConn');
-                const client = helper.getNode(device1.config.client);
+                const client = helper.getNode(device1.config.client) as GoogleSmartHomeNodeType;
                 client.should.have.property('type', 'googlesmarthome-client');
                 const mgmt = helper.getNode("mgmt");
                 mgmt.should.have.property('type', 'google-mgmt');
