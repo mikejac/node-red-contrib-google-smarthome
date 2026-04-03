@@ -190,37 +190,37 @@ This won't guarantee that local fulfillment will work. But it can give you hints
 
 ## Verifying UDP discovery
 
-**Verifying that the smart speaker is sending UDP discovery packets:**
+Verify UDP discovery directly on the Node-RED host with `tcpdump`. Capturing on another computer in the network is
+often misleading, because the UDP reply is typically sent back as unicast traffic and may never reach that other
+machine.
 
-1. Install an app like [UDP Monitor](https://play.google.com/store/apps/details?id=com.sandersoft.udpmonitor) on
-       your phone.
-2. Connect your phone to the same network as your smart speaker and Node-RED.
-3. Start the UDP Monitor app.
-4. Set "Local PORT" to 3002 (the port you set as UDP port on the Google Console).
-5. Tap "Start receiving".
-6. You should regularly see messages with the content "node-red-contrib-google-smarthome" coming from your smart speaker.
+1. Start a capture on the Node-RED host:
+   `sudo tcpdump -ni any udp port 3002 -X`
+2. Wait for the smart speaker. Roughly once per minute, you should see a broadcast packet like this:
 
-**Verifying that Node-RED is receiving UDP discovery packets:**
+   ```text
+   16:15:22.397812 eth0  B   IP 192.168.178.30.3002 > 255.255.255.255.3002: UDP, length 33
+         0x0000:  4500 003d 985f 0000 4011 6f8a c0a8 b21e  E..=._..@.o.....
+         0x0010:  ffff ffff 0bbb 0bba 0029 0de8 6e6f 6465  .........)..node
+         0x0020:  2d72 6564 2d63 6f6e 7472 6962 2d67 6f6f  -red-contrib-goo
+         0x0030:  676c 652d 736d 6172 7468 6f6d 65         gle-smarthome
+   ```
 
-This can be tricky. Basically, you send a UDP packet to Node-RED and wait for Node-RED to respond. Unfortunately, some
-versions of nc, ncat or socat won't display UDP answers, even if Node-RED does answer. To be sure, you can use Wireshark
-as explained below.
+3. If that broadcast does not appear, check the settings described in [Enable Local Fulfillment](#enable-local-fulfillment)
+   in the Google Home Developer Console and restart the smart speaker.
+4. Right after the broadcast, you should see the UDP response from Node-RED back to the smart speaker:
 
-1. Depending on your operating system:
-   - If you use Linux, run: \
-     `echo "node-red-contrib-google-smarthome" | nc -u -w1 192.168.178.25 3002` \
-     If `nc` is not installed on your system, you can usually run the same command with `ncat` instead.
-   - If you use Windows, install socat from the Cygwin package, then run: \
-     `echo node-red-contrib-google-smarthome | c:\cygwin64\bin\socat.exe -t 10 - udp:192.168.178.25:3002,sp=3002`
-2. You should see a response like `{"clientId":"df2d8b59.a731e4"}`
-3. If you don't see a response, it might be because Node-RED did not answer. Or as said above, it might be because
-   nc, ncat or socat did not display the response. To be sure, you can verify the traffic using Wireshark.
-   Start Wireshark, let it capture your traffic (the shark fin icon in the toolbar) and filter to `udp.port == 3002`.
-   Then, run the above commands again.\
-   You should see the package you just sent, containing the string "node-red-contrib-google-smarthome":
-   <kbd>![](images/local_fulfillment/wireshark_sent_udp.png)</kbd>
-   You should also see the response coming from Node-RED, containing the JSON string:
-   <kbd>![](images/local_fulfillment/wireshark_received_udp.png)</kbd>
+   ```text
+   16:15:22.399192 eth0  Out IP 192.168.178.25.3002 > 192.168.178.30.3002: UDP, length 30
+         0x0000:  4500 003a b44c 4000 4011 a0dd c0a8 b219  E..:.L@.@.......
+         0x0010:  c0a8 b21e 0bba 0bbb 0026 e5c0 7b22 636c  .........&..{"cl
+         0x0020:  6965 6e74 4964 223a 2266 6464 3235 3964  ientId":"fdd259d
+         0x0030:  322e 3539 6138 3338 227d                 2.59a838"}
+   ```
+
+5. If the reply does not appear, check the Node-RED settings described in [Enable Local Fulfillment](#enable-local-fulfillment).
+6. If Node-RED runs inside a container or virtual machine, capture traffic both outside and inside that environment
+   to determine if the packets are missing before entering the container/VM or if they are being dropped inside the virtualized environment.
 
 
 ## Verify mDNS discovery
