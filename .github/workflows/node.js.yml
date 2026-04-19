@@ -1,5 +1,5 @@
 ---
-name: Node.js CI
+name: Run tests
 
 on:
   push:
@@ -10,30 +10,56 @@ on:
 
 jobs:
   build:
-    name: Node.js CI
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: latest
+          cache: npm
+      - name: npm Install
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Create npm package tarball
+        run: |
+          TGZ="$(npm pack --json | node -e "const fs = require('fs'); const data = JSON.parse(fs.readFileSync(0, 'utf8')); process.stdout.write(data[0].filename);")"
+          echo "TGZ=$TGZ" >> "$GITHUB_ENV"
+      - name: Upload npm package tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-package
+          path: ${{ env.TGZ }}
+          if-no-files-found: error
+
+  test:
+    name: Runtime test (Node.js ${{ matrix.node-version }})
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
         # Needs to be kept in sync with the "engines" field in package.json
         node-version: [18.x, 20.x, 22.x, 24.x]
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v6
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-      - name: Cache node_modules
-        id: cache-node-modules
-        uses: actions/cache@v5.0.4
+      - name: Download npm package tarball
+        uses: actions/download-artifact@v4
         with:
-          path: node_modules
-          key: node-modules-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
-      - name: npm Install
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: npm ci
-      - name: Build
-        run: npm run build
-      - name: Run tests
-        run: npm test
+          name: npm-package
+          path: package-artifact
+      - name: Install packaged artifact
+        run: |
+          mkdir node-test
+          cd node-test
+          npm init -y
+          npm install ../package-artifact/*.tgz mocha@^11.7.5 node-red@^4.1.8 node-red-node-test-helper@^0.3.6
+      - name: Run packaged artifact tests
+        working-directory: node-test
+        run: |
+          npx mocha "node_modules/node-red-contrib-google-smarthome/dist/test/**/*_spec.js"
