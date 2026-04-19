@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        # Needs to be kept in sync with the "engines" field in package.json
         node-version: [18.x, 20.x, 22.x, 24.x]
     steps:
       - name: Checkout Code
