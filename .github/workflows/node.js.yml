@@ -49,7 +49,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Download npm package tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: npm-package
           path: package-artifact
