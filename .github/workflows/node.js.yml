@@ -29,7 +29,7 @@ jobs:
           TGZ="$(npm pack --json | node -e "const fs = require('fs'); const data = JSON.parse(fs.readFileSync(0, 'utf8')); process.stdout.write(data[0].filename);")"
           echo "TGZ=$TGZ" >> "$GITHUB_ENV"
       - name: Upload npm package tarball
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: npm-package
           path: ${{ env.TGZ }}
