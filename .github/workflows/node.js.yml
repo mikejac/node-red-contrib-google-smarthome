@@ -42,7 +42,7 @@ jobs:
     strategy:
       matrix:
         # Needs to be kept in sync with the "engines" field in package.json
-        node-version: [18.x, 20.x, 22.x, 24.x]
+        node-version: [18.x, 20.x, 22.x, 24.x, 26.x]
     steps:
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
