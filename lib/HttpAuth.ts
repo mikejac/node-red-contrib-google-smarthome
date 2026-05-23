@@ -159,19 +159,19 @@ export default class HttpAuth {
                         const email = payload['email'];
                         const isValidUser = this._smarthome.auth.isGoogleClientEmailValid(email);
                         this._smarthome.debug('HttpAuth:_handlePostOauth(): email ' + email + " valid: " + isValidUser);
-                        this._handleUserAuth(request, response, email, '', isValidUser, httpRoot);
+                        this._handleUserAuth(request, response, email, isValidUser, httpRoot);
                     })
                     .catch((err) => {
                         this._smarthome.error('HttpAuth:_handlePostOauth(): verifyIdToken error ' + err);
-                        this._handleUserAuth(request, response, 'google', '', false, httpRoot);
+                        this._handleUserAuth(request, response, 'google', false, httpRoot);
                     });
             } else {
-                this._handleUserAuth(request, response, 'google', '', false, httpRoot);
+                this._handleUserAuth(request, response, 'google', false, httpRoot);
             }
         } else {
             this._smarthome.debug('HttpAuth:_handlePostOauth(): Local login');
             const isValidUser = this._smarthome.auth.isValidUser(request.body.username, request.body.password);
-            this._handleUserAuth(request, response, request.body.username, request.body.password, isValidUser, httpRoot);
+            this._handleUserAuth(request, response, request.body.username, isValidUser, httpRoot);
         }
     }
 
@@ -236,7 +236,7 @@ export default class HttpAuth {
      * {
      * }
      */
-    private _handleUserAuth(req: Request, res: Response, username, password, isValidUser, httpRoot) {
+    private _handleUserAuth(req: Request, res: Response, username, isValidUser, httpRoot) {
         if (!isValidUser) {
             const redirectUrl = util.format('%s?client_id=%s&redirect_uri=%s&state=%s&response_type=code&error=invalid_user',
                 this._smarthome.Path_join(httpRoot, 'oauth'), req.body.client_id, encodeURIComponent(req.body.redirect_uri), req.body.state);
