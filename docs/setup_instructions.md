@@ -156,8 +156,6 @@ Now we will install and configure the module in Node-RED.
     * Name: A name for your config node.
     * Enable Node Debug: Check this box if you want to see debug messages from the node. Enable it for now.
     * Default Language: The language of your project.
-    * Use Google login: Check this box if you want to use Google Sign-In authentication. This tutorial uses the simpler
-      password based authentication, so uncheck this box.
     * Username/Password: Username and password of your choice. You will use this to log in in the Google Home App later.
     * Client ID and Client Secret: The client ID and secret you previously entered in the Google Actions Console.
     * Jwt Key: Path to the JSON file you downloaded when you enabled the HomeGraph API. Can be an absolute path or a
@@ -326,7 +324,6 @@ Finally, we will link the Google Home App to the Node-RED service.
 ## Further information
 
 - You can enable [local fulfillment](local_fulfillment.md) for faster response times.
-- You can [switch to Google Sign-In](google_signin.md) to make logging in a bit easier.
 
 
 ## Troubleshooting

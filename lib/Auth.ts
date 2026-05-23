@@ -47,9 +47,6 @@ export default class Auth {
     private _clientSecret: string;
     private _username: string;
     private _password: string;
-    private _useGoogleClientAuth: boolean;
-    private _googleClientId: string;
-    private _emails: string[];
     private _authFilename: string | null;
 
 
@@ -64,9 +61,6 @@ export default class Auth {
         this._clientSecret   = "";
         this._username       = "";
         this._password       = "";
-        this._useGoogleClientAuth = false;
-        this._googleClientId = "";
-        this._emails         = [];
         this._authCode       = new Map();
         this._authFilename   = null;
         this._jwtkey         = null;
@@ -147,65 +141,8 @@ export default class Auth {
      * @param {string} password - Password
      */
     setUsernamePassword(username: string, password: string): void {
-        this._useGoogleClientAuth = false;
         this._username = username;
         this._password = password;
-    }
-
-    /**
-     * Sets Client ID and authorized email addresses for Google client authentication (a.k.a. Google Login).
-     *
-     * @param {string} clientid - Google Client ID
-     * @param {string[]|string} emails - Authorized email addresses as array or string separated by ";"
-     */
-    setGoogleClientIdAndEmails(clientid: string, emails: string[] | string) {
-        this._useGoogleClientAuth = true;
-        this._googleClientId = clientid;
-        if (typeof emails === "string") {
-            this._emails = emails.split(";");
-        } else {
-            this._emails = emails;
-        }
-    }
-
-    /**
-     * Checks if Google client authentication (a.k.a. Google Login) is used.
-     *
-     * @returns {boolean} True if Google Client authentication is used, false otherwise
-     */
-    useGoogleClientAuth(): boolean {
-        return this._useGoogleClientAuth;
-    }
-
-    /**
-     * Retrieves the Client ID for Google Client authentication (a.k.a. Google Login).
-     *
-     * @returns {string} Google Client ID
-     */
-    getGoogleClientId(): string {
-        return this._googleClientId;
-    }
-
-    /**
-     * Retrieves the authorized email addresses for Google Client authentication (a.k.a. Google Login).
-     *
-     * @returns {string[]} Authorized email addresses
-     */
-    getGoogleClientEmails(): string[] {
-        return this._emails;
-    }
-
-    /**
-     * Checks if the provided email address is valid for Google Client authentication (a.k.a. Google Login).
-     *
-     * @param {string} email - Email to check
-     * @returns {boolean} True if the email is valid, false otherwise
-     */
-    isGoogleClientEmailValid(email): boolean {
-        if (this._useGoogleClientAuth) {
-            return this._emails.includes(email);
-        }
-        return false;
     }
 
     /**

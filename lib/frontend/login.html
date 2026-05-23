@@ -5,8 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-
     <title>Node-RED SmartHome</title>
 
     <style>
@@ -188,7 +186,7 @@
             Invalid username or password. Please try again!
         </div>
 
-        <form method="post" id="loginform" style="display: none;">
+        <form method="post" id="loginform">
 
             <div class="field">
                 <input type="text" name="username" id="username" autocomplete="off" autocapitalize="none" placeholder=" ">
@@ -204,20 +202,12 @@
             <input type="hidden" name="redirect_uri">
             <input type="hidden" name="state" />
             <input type="hidden" name="response_type" />
-            <input type="hidden" name="id_token" />
 
             <button id="login-button">LOGIN</button>
         </form>
-        <div id="g_id_onload" data-client_id="GOOGLE_CLIENT_ID" data-context="signin" data-ux_mode="popup" data-auto_prompt="false" data-callback="handleCredentialResponse"></div>
-        <div id='login-google' style="display:none;align-items: center;" class="g_id_signin" data-type="standard"></div>
     </div>
 
     <script>
-        function handleCredentialResponse(response) {
-            document.querySelector('[name="id_token"]').value = response.credential;
-            document.getElementById("loginform").submit();
-        }
-
         document.addEventListener("DOMContentLoaded", function (event) {
             let url = window.location.href.split('?')[0];
             document.getElementById("loginform").action = url;
@@ -228,11 +218,7 @@
             document.querySelector('[name="redirect_uri"]').value = decodeURIComponent(params.get('redirect_uri'));
             document.querySelector('[name="state"]').value = params.get('state');
 
-            if (USE_GOOGLE_LOGIN) {
-                document.getElementById('login-google').style.display = 'block';
-            } else {
-                document.getElementById('loginform').style.display = 'block';
-            }
+            document.getElementById('loginform').style.display = 'block';
 
             if (params.get('error')) {
                 document.getElementById('error_invalid_user').style.display = 'block';

@@ -20,7 +20,6 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import util from 'util';
-import { OAuth2Client } from 'google-auth-library';
 import { Request, Response } from 'express';
 
 import { GoogleSmartHome } from './SmartHome';
@@ -100,9 +99,6 @@ export default class HttpAuth {
             return;
         }
 
-        const useGoogleClientAuth = this._smarthome.auth.useGoogleClientAuth();
-        const googleClientId = useGoogleClientAuth ? this._smarthome.auth.getGoogleClientId() : '';
-
         // User is not logged in. Show login page.
         this._smarthome.debug('HttpAuth:_handleGetOauth() User is not logged in, showing login page');
         fs.readFile(path.join(__dirname, 'frontend/login.html'), 'utf8', function (err, data) {
@@ -111,8 +107,8 @@ export default class HttpAuth {
                 throw(err);
             }
             response
-                .set("Content-Security-Policy", "default-src 'self' 'unsafe-inline' *.google.com")
-                .send(data.replace(/GOOGLE_CLIENT_ID/g, googleClientId).replace(/USE_GOOGLE_LOGIN/g, '' + useGoogleClientAuth));
+                .set("Content-Security-Policy", "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; form-action 'self'; base-uri 'none'; frame-ancestors 'none'")
+                .send(data);
         });
     }
 
@@ -143,36 +139,9 @@ export default class HttpAuth {
             return;
         }
 
-        if (this._smarthome.auth.useGoogleClientAuth()) {
-            this._smarthome.debug('HttpAuth:_handlePostOauth(): Google login');
-            if (request.body.id_token) {
-                const googleClientId = this._smarthome.auth.getGoogleClientId();
-                const client = new OAuth2Client(googleClientId);
-                client
-                    .verifyIdToken({
-                        idToken: request.body.id_token,
-                        audience: googleClientId,
-                    })
-                    .then((ticket) => {
-                        const payload = ticket.getPayload();
-                        // const userid = payload['sub'];
-                        const email = payload['email'];
-                        const isValidUser = this._smarthome.auth.isGoogleClientEmailValid(email);
-                        this._smarthome.debug('HttpAuth:_handlePostOauth(): email ' + email + " valid: " + isValidUser);
-                        this._handleUserAuth(request, response, email, isValidUser, httpRoot);
-                    })
-                    .catch((err) => {
-                        this._smarthome.error('HttpAuth:_handlePostOauth(): verifyIdToken error ' + err);
-                        this._handleUserAuth(request, response, 'google', false, httpRoot);
-                    });
-            } else {
-                this._handleUserAuth(request, response, 'google', false, httpRoot);
-            }
-        } else {
-            this._smarthome.debug('HttpAuth:_handlePostOauth(): Local login');
-            const isValidUser = this._smarthome.auth.isValidUser(request.body.username, request.body.password);
-            this._handleUserAuth(request, response, request.body.username, isValidUser, httpRoot);
-        }
+        this._smarthome.debug('HttpAuth:_handlePostOauth(): Local login');
+        const isValidUser = this._smarthome.auth.isValidUser(request.body.username, request.body.password);
+        this._handleUserAuth(request, response, request.body.username, isValidUser, httpRoot);
     }
 
     /**

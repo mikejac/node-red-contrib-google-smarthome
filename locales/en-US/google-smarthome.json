@@ -20,9 +20,6 @@
             "privatekey": "Private Key",
             "jwtkey": "Jwt Key",
             "enabledebug": "Enable Node Debug",
-            "emails": "Authorized emails",
-            "usegooglelogin": "Use Google login",
-            "loginclientid": "Login Client ID",
             "default_lang": "Default language",
             "da": "Danish",
             "nl": "Dutch",
@@ -49,8 +46,7 @@
             "jwtkey": "Filename",
             "port": "Server port. -1 or empty for the Node-RED port",
             "localport": "Local HTTP port. required if Node-RED uses https",
-            "local_scan_port": "Local port for advertise the service",
-            "emails": "Semicolon separated authorized emails"
+            "local_scan_port": "Local port for advertise the service"
         }
     }
 }

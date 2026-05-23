@@ -12,7 +12,6 @@
         "name": "Google",
         "enabledebug": true,
         "default_lang": "it",
-        "usegooglelogin": false,
         "usehttpnoderoot": true,
         "port": "",
         "httppath": "smarthome",

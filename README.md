@@ -198,14 +198,7 @@ Example flow:
 
 **Local Authentication**
 
-  `Use Google Login`: If checked, use Google login authentication.
-
-  `Login Client ID`: If Google Login is enabled, the client ID you received from the *Google Sign-In* integration.
-
-  `Authorized emails`: If Google Login is enabled, the email addresses authorized to log in.
-
-  `Username` and `Password`: If Google Login is disabled, a username and password used during account linking in the
-      Google Home app.
+  `Username` and `Password`: Username and password used during account linking in the Google Home app.
   
 **Actions on Google Project Settings**
 
@@ -269,22 +262,6 @@ See https://developers.google.com/assistant/smarthome/develop/notifications.
 You can invite other people into your smart home in the app by following
 [these steps](https://support.google.com/googlenest/answer/9155535?hl=en#zippy=%2Cinvite-members-to-a-home).
 
-Inviting people will not work in all cases. For example, it won't work if either you or the other person has a
-commercial Google Workspace account. If this is the case, you can share access to your Smart Home project as follows:
-
-1. If you are currently using username/password authentication, switch to Google Sign-In by following the instructions
-   on [Integrating Google Sign-In](docs/google_signin.md).
-   Proceed only after you have successfully unlinked and relinked your own account.
-2. In "Authorized emails", add the email address of the account you want to add. Save and deploy.
-3. Open your project in the Google Actions Console.
-4. Select "Manage user access" from the menu (three dots on the top right) choose "Manage user access".
-5. Select "Add".
-6. Enter the email address for the account you want to add. Select at least "Viewer" as the role.
-7. Return to the Google Actions Console. On the `Test` tab, select `Settings` and disable `On device testing`.
-   Then click `Start testing`.
-8. The person you just added should now able to link to your project by following the steps in
-   [Setup Account linking](docs/setup_instructions.md#setup-account-linking).
-
 ---
 ## Troubleshooting
 
@@ -299,8 +276,6 @@ commercial Google Workspace account. If this is the case, you can share access t
 - Check Node-Red's debug panel for error messages.
 - Unlink and relink your account in the Google Home app. Check Node-RED's debug panel for errors while doing so.
 - If you are having trouble linking your account, try turning off Wi-Fi on your phone to use only the cellular network.
-- If you are having trouble linking your account, disable "Use Google Login" and try logging in with username/password
-  first. You can switch back to Google Login later.
 - Restart your flows (using the `Restart Flows` option in the dropdown menu of the deploy button) while the debug panel
   is open to see any error messages during initialization.
 - Check the logs at [Google Cloud Logs](https://console.cloud.google.com/logs/). Make sure you selected the correct project.

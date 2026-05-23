@@ -17,12 +17,6 @@
 -->
 
 <script type="text/x-red" data-template-name="googlesmarthome-client">
-    <style>
-        ol#node-config-input-googlesmarthome-emails-container .red-ui-typedInput-container {
-            flex:1;
-        }
-    </style>
-
     <div class="form-tips" style="margin-bottom: 1em">
         For setup instructions, <a href="https://github.com/mikejac/node-red-contrib-google-smarthome/blob/master/docs/setup_instructions.md" target="_blank">look here </a>.
     </div>
@@ -60,27 +54,6 @@
 
     <fieldset>
         <legend>Local Authentication</legend>
-
-        <div class="form-row">
-            <label style="width:auto" for="node-config-input-usegooglelogin"><i class="fa fa-arrow-right"></i> <span data-i18n="googlesmarthome.label.usegooglelogin"></span></label>
-            <input type="checkbox" id="node-config-input-usegooglelogin" style="display:inline-block; width:auto; vertical-align:top;">
-        </div>
-
-        <div class="form-row hidden" id="usegooglelogin" style="background: #fbfbfb">
-            <div class="form-row">
-                <label for="node-config-input-loginclientid"><i class="fa fa-user"></i> <span data-i18n="googlesmarthome.label.loginclientid"></span></label>
-                <input type="text" id="node-config-input-loginclientid">
-            </div>
-
-            <div class="form-row">
-                <div class="form-row" style="margin-bottom:0;">
-                    <label><i class="fa fa-list"></i> <span data-i18n="googlesmarthome.label.emails"></span></label>
-                </div>
-                <div class="form-row node-config-input-googlesmarthome-emails-container-row">
-                    <ol id="node-config-input-googlesmarthome-emails-container"></ol>
-                </div>
-            </div>
-        </div>
 
         <div class="form-row" id="useloginpwd" style="background: #fbfbfb">
             <div class="form-row">
@@ -199,43 +172,6 @@
                 default_lang: {
                     value: "en", required: true,
                 },
-                usegooglelogin: {
-                    value: false
-                },
-                /*
-                loginclientid: {
-                    value:"", required:false,
-                    validate: function(v) {
-                        let usegoogleloginField = $("#node-config-input-usegooglelogin");
-                        let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
-                        return usegooglelogin ? v.trim().length > 0 : true;
-                    }
-                },
-                emails: {
-                    value:[], required:false, 
-                    validate: function(v) {
-                        let usegoogleloginField = $("#node-config-input-usegooglelogin");
-                        let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
-                        return usegooglelogin ? v.trim().length > 0 : true;
-                    }
-                },
-                username: {
-                    value:"", required:false,
-                    validate: function(v) {
-                        let usegoogleloginField = $("#node-config-input-usegooglelogin");
-                        let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
-                        return !usegooglelogin ? v.trim().length > 0 : true;
-                    }
-                },
-                password: {
-                    value:"", required:false,
-                    validate: function(v) {
-                        let usegoogleloginField = $("#node-config-input-usegooglelogin");
-                        let usegooglelogin = usegoogleloginField.length > 0 ? usegoogleloginField.prop('checked') : this.usegooglelogin;
-                        return !usegooglelogin ? v.trim().length > 0 : true;
-                    }
-                },
-                */
                 usehttpnoderoot: {
                     value: false
                 },
@@ -295,10 +231,8 @@
             },
 
             credentials: {
-                loginclientid: { type: "text" },
-                emails: { type: "text" },
-                username: { type: "text" },
-                password: { type: "password" },
+                username: { type: "text", required: true },
+                password: { type: "password", required: true },
                 publickey: { type: "text" },
                 privatekey: { type: "text" },
                 jwtkey: { type: "text" },
@@ -314,53 +248,6 @@
                 return this.name ? "node_label_italic" : "";
             },
             oneditprepare: function () {
-                // emails
-                $('#node-config-input-googlesmarthome-emails-container').css('min-height', '150px').css('min-width', '250px').editableList({
-                    addItem: function (container, i, opt) {
-                        let emails = opt;
-                        if (!Object.prototype.hasOwnProperty.call(emails, 'name')) {
-                            emails = { name: "" };
-                        }
-                        container.css({
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap'
-                        });
-                        let fragment = document.createDocumentFragment();
-                        let row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
-                        let propertyName = $('<input/>', { class: "node-config-input-googlesmarthome-emails-property-name", type: "text", style: "width: 100%" })
-                            .appendTo(row1);
-                        propertyName.val(emails.name);
-
-                        container[0].appendChild(fragment);
-                    },
-                    removable: true,
-                    sortable: true
-                });
-                let emails = this.credentials.emails;
-                if (typeof emails === 'string') {
-                    emails = emails.split(";");
-                }
-                if (!emails) {
-                    emails = [];
-                }
-                for (let i = 0; i < emails.length; i++) {
-                    let email = emails[i];
-                    $("#node-config-input-googlesmarthome-emails-container").editableList('addItem', { name: email });
-                }
-                // Use Google login on / off
-                let useGoogleLogin = function () {
-                    let usegooglelogin = $("#node-config-input-usegooglelogin").prop('checked');
-                    if (usegooglelogin == false) {
-                        $("#usegooglelogin").hide();
-                        $("#useloginpwd").show();
-                    } else {
-                        $("#usegooglelogin").show();
-                        $("#useloginpwd").hide();
-                    }
-                };
-                useGoogleLogin();
-                $("#node-config-input-usegooglelogin").change(useGoogleLogin);
-
                 // Use external SSL offload on / off
                 let sslOffLoadKeys = function () {
                     let ssloffload = $("#node-config-input-ssloffload").prop('checked');
@@ -402,29 +289,6 @@
                 localFulFillment();
                 $('#node-config-input-local_scan_type').change(localFulFillment);
             },
-            oneditsave: function () {
-                let me = this;
-                // emails
-                let emails = $("#node-config-input-googlesmarthome-emails-container").editableList('items');
-                me.credentials.emails = [];
-                emails.each(function (i) {
-                    let email = $(this);
-                    let name = email.find(".node-config-input-googlesmarthome-emails-property-name").val();
-                    me.credentials.emails.push(name);
-                });
-            },
-            oneditresize: function (size) {
-                // emails
-                let rows = $("#dialog-form>div:not(node-config-input-googlesmarthome-emails-container-row)");
-                let height = size.height;
-                for (let i = 0; i < rows.length; i++) {
-                    height -= $(rows[i]).outerHeight(true);
-                }
-                let editorRow = $("#dialog-form>div.node-config-input-googlesmarthome-emails-container-row");
-                height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
-                height += 16;
-                $("#node-config-input-googlesmarthome-emails-container").editableList('height', height);
-            }
         });
     })();
 </script>

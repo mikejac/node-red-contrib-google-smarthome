@@ -20,9 +20,6 @@
             "privatekey": "Chiave privata",
             "jwtkey": "Chiave JWT",
             "enabledebug": "Abilita debug dei nodi",
-            "emails": "Email autorizzate",
-            "usegooglelogin": "Usa Google login",
-            "loginclientid": "ID del cliente per la login",
             "default_lang": "Lingua predefinita",
             "da": "Danese",
             "nl": "Olandese",
@@ -49,8 +46,7 @@
             "jwtkey": "Nome file",
             "port": "Porta del server. -1 o vuoto per quella di Node-RED",
             "localport": "Porta locale HTTP. Obbligatoria se Node-RED usa HTTPS",
-            "local_scan_port": "Porta locale per pubblicizzare il servizio",
-            "emails": "Email autorizzate, separate da punto e virgola"
+            "local_scan_port": "Porta locale per pubblicizzare il servizio"
         }
     }
 }

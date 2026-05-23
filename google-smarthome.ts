@@ -36,7 +36,6 @@ interface GoogleSmartHomeNodeConfig extends NodeDef {
     name: string;
     enabledebug: boolean;
     default_lang: string;
-    usegooglelogin: boolean;
     port: string;
     httppath: string;
     usehttpnoderoot: boolean;
@@ -47,8 +46,6 @@ interface GoogleSmartHomeNodeConfig extends NodeDef {
 }
 
 interface GoogleSmartHomeCredentials {
-    loginclientid: string;
-    emails: string[];
     username: string;
     password: string;
     clientid: string;
@@ -78,9 +75,6 @@ export class GoogleSmartHomeNode {
             this,
             RED.settings.userDir,
             RED.settings.httpNodeRoot,
-            config.usegooglelogin,
-            this.credentials.loginclientid || '',
-            this.credentials.emails || [],
             this.credentials.username || '',
             this.credentials.password || '',
             config.usehttpnoderoot,
@@ -191,8 +185,6 @@ export default module.exports = function(RED:NodeAPI) {
 
     RED.nodes.registerType("googlesmarthome-client", GoogleSmartHomeNode, {
         credentials: {
-            loginclientid: { type: "text" },
-            emails: { type: "text" },
             username: { type: "text" },
             password: { type: "password" },
             publickey: { type: "text" },
