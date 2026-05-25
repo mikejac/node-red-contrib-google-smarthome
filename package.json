@@ -44,7 +44,7 @@
     "express": "^5.2.x",
     "google-auth-library": "^10.6.2",
     "googleapis": "^172.0.x",
-    "helmet": "^8.1.0",
+    "helmet": "^8.2.0",
     "ip-range-check": "^0.2.x",
     "morgan": "^1.10.x",
     "nanoid": "^3.3.12",
