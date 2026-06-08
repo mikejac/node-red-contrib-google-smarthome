@@ -46,7 +46,7 @@
     "googleapis": "^173.0.x",
     "helmet": "^8.2.0",
     "ip-range-check": "^0.2.x",
-    "morgan": "^1.10.x",
+    "morgan": "^1.11.x",
     "nanoid": "^3.3.12",
     "stoppable": "^1.1.x"
   },
