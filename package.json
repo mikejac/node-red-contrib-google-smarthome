@@ -63,7 +63,7 @@
     "eslint": "^10.6.0",
     "eslint-plugin-jsdoc": "^63.0.10",
     "glob": "^13.0.6",
-    "globals": "^17.6.0",
+    "globals": "^17.7.0",
     "mocha": "^11.7.6",
     "node-red": "^5.0.0",
     "node-red-node-test-helper": "^0.3.6",
