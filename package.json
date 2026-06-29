@@ -42,7 +42,7 @@
     "@gravitysoftware/dnssd": "^0.5.x",
     "cors": "^2.8.x",
     "express": "^5.2.x",
-    "google-auth-library": "^10.7.0",
+    "google-auth-library": "^10.9.0",
     "googleapis": "^173.0.x",
     "helmet": "^8.2.0",
     "ip-range-check": "^0.2.x",
