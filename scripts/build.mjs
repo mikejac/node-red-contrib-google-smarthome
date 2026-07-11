@@ -21,7 +21,6 @@ const assetsToCopy = [
 
 const projectRoot = path.resolve(__dirname, '..');
 const distDir = path.join(projectRoot, 'dist');
-const useTsgo = false;
 
 
 try {
@@ -60,7 +59,7 @@ function runTsc() {
             projectRoot,
             'node_modules',
             '.bin',
-            useTsgo ? 'tsgo' : 'tsc'
+            'tsc'
         );
 
         const tsc = spawn(
