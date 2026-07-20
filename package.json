@@ -47,7 +47,7 @@
     "helmet": "^8.3.0",
     "ip-range-check": "^0.2.x",
     "morgan": "^1.11.x",
-    "nanoid": "^3.3.15",
+    "nanoid": "^3.3.16",
     "stoppable": "^1.1.x"
   },
   "devDependencies": {
