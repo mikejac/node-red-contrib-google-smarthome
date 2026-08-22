@@ -20,7 +20,7 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { nanoid } from 'nanoid';
-import { google } from 'googleapis';
+import { auth as googleAuth, homegraph as googleHomegraph } from '@googleapis/homegraph';
 import { GaxiosError } from 'googleapis-common';
 import ipRangeCheck from 'ip-range-check';
 import { Request, Response } from 'express';
@@ -697,12 +697,12 @@ export default class HttpActions {
             }
         }
 
-        const auth = new google.auth.GoogleAuth({
+        const auth = new googleAuth.GoogleAuth({
             keyFile: this._smarthome._jwtKeyFile.startsWith(path.sep) ? this._smarthome._jwtKeyFile : path.join(this._smarthome._userDir, this._smarthome._jwtKeyFile),
             scopes: ['https://www.googleapis.com/auth/homegraph']
         });
 
-        const homegraph = google.homegraph({
+        const homegraph = googleHomegraph({
             version: 'v1',
             auth: auth,
         });
@@ -765,12 +765,12 @@ export default class HttpActions {
 
         this._smarthome.debug('HttpActions:requestSync(): postData = ' + JSON.stringify(postData));
 
-        const auth = new google.auth.GoogleAuth({
+        const auth = new googleAuth.GoogleAuth({
             keyFile: this._smarthome._jwtKeyFile.startsWith(path.sep) ? this._smarthome._jwtKeyFile : path.join(this._smarthome._userDir, this._smarthome._jwtKeyFile),
             scopes: ['https://www.googleapis.com/auth/homegraph']
         });
 
-        const homegraph = google.homegraph({
+        const homegraph = googleHomegraph({
             version: 'v1',
             auth: auth,
         });
