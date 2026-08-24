@@ -39,7 +39,7 @@
   },
   "homepage": "https://github.com/mikejac/node-red-contrib-google-smarthome#readme",
   "dependencies": {
-    "@googleapis/homegraph": "^10.0.0",
+    "@googleapis/homegraph": "^10.1.0",
     "@gravitysoftware/dnssd": "^0.5.x",
     "cors": "^2.8.x",
     "express": "^5.2.x",
