@@ -46,7 +46,7 @@
     "google-auth-library": "^11.0.2",
     "helmet": "^8.3.0",
     "ip-range-check": "^0.2.x",
-    "morgan": "^1.11.x",
+    "morgan": "^1.12.x",
     "nanoid": "^3.3.18",
     "stoppable": "^1.1.x"
   },
