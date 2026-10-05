@@ -566,34 +566,16 @@ export default class HttpActions {
             return { status: 'ERROR', errorCode: 'deviceOffline' };
         }
 
-        const curDevice = {
-            id: deviceId,
-            states: {},
-        };
-
-        curDevice.command = command.command;
         const result = cur_device.execCommand(command);
+
         if (Object.prototype.hasOwnProperty.call(result, 'status')) {
             return result;
         }
         cur_device.updated(command, result, is_local);
 
         let reportState = true;
-        let allParams = false;
         if (Object.prototype.hasOwnProperty.call(result, 'reportState')) {
             reportState = result.reportState;
-        }
-        if (Object.prototype.hasOwnProperty.call(result, "params") && Object.keys(result.params).length > 0) {
-            command.params = result.params;
-            allParams = true;
-        }
-
-        if (Object.prototype.hasOwnProperty.call(command, 'params')) {
-            Object.keys(command.params).forEach(function (key) {
-                if (allParams || Object.prototype.hasOwnProperty.call(cur_device.states, key)) {
-                    curDevice.states[key] = command.params[key];
-                }
-            });
         }
 
         if (reportState) {
