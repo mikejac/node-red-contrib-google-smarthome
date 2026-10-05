@@ -2148,7 +2148,7 @@ export class DeviceNode {
                 // 0
                 states['thermostatTemperatureSetpoint'] = this.thermostat_temperature_setpoint;
                 // 1
-                // states['thermostatTemperatureSetpointHigh'] = this.thermostat_temperature_setpoint_hight;
+                // states['thermostatTemperatureSetpointHigh'] = this.thermostat_temperature_setpoint_high;
                 // states['thermostatTemperatureSetpointLow'] = this.thermostat_temperature_setpoint_low;
             }
         }
@@ -3201,7 +3201,7 @@ export class DeviceNode {
             thermostat_modified = true;
         }
         if (modified.includes("thermostatTemperatureSetpointHigh")) {
-            this.thermostat_temperature_setpoint_hight = this.states.thermostatTemperatureSetpointHigh;
+            this.thermostat_temperature_setpoint_high = this.states.thermostatTemperatureSetpointHigh;
             thermostat_modified = true;
         }
         if (thermostat_modified | modified.includes("thermostatMode")) {
@@ -3210,7 +3210,7 @@ export class DeviceNode {
                 keys_to_update = ['thermostatTemperatureSetpointLow', 'thermostatTemperatureSetpointHigh'];
                 from_states = {
                     thermostatTemperatureSetpointLow: this.thermostat_temperature_setpoint_low,
-                    thermostatTemperatureSetpointHigh: this.thermostat_temperature_setpoint_hight
+                    thermostatTemperatureSetpointHigh: this.thermostat_temperature_setpoint_high
                 };
             } else {
                 keys_to_update = ['thermostatTemperatureSetpoint'];
@@ -4692,7 +4692,7 @@ export class DeviceNode {
                 const thermostatTemperatureSetpointLow = command.params['thermostatTemperatureSetpointLow'];
                 params['thermostatTemperatureSetpointHigh'] = thermostatTemperatureSetpointHigh;
                 params['thermostatTemperatureSetpointLow'] = thermostatTemperatureSetpointLow;
-                this.thermostat_temperature_setpoint_hight = thermostatTemperatureSetpointHigh;
+                this.thermostat_temperature_setpoint_high = thermostatTemperatureSetpointHigh;
                 this.thermostat_temperature_setpoint_low = thermostatTemperatureSetpointLow;
                 executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
             }
@@ -4703,7 +4703,7 @@ export class DeviceNode {
                 params['thermostatMode'] = thermostatMode;
                 executionStates.push('thermostatMode');
                 if (thermostatMode === "heatcool") {
-                    params['thermostatTemperatureSetpointHigh'] = this.thermostat_temperature_setpoint_hight;
+                    params['thermostatTemperatureSetpointHigh'] = this.thermostat_temperature_setpoint_high;
                     params['thermostatTemperatureSetpointLow'] = this.thermostat_temperature_setpoint_low;
                     executionStates.push('thermostatTemperatureSetpointHigh', 'thermostatTemperatureSetpointLow');
                 } else {
