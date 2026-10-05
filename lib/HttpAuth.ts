@@ -107,7 +107,7 @@ export default class HttpAuth {
                 throw(err);
             }
             response
-                .set("Content-Security-Policy", "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; form-action 'self'; base-uri 'none'; frame-ancestors 'none'")
+                .set("Content-Security-Policy", "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; form-action 'self' https://oauth-redirect.googleusercontent.com https://oauth-redirect-sandbox.googleusercontent.com; base-uri 'none'; frame-ancestors 'none'")
                 .send(data);
         });
     }
