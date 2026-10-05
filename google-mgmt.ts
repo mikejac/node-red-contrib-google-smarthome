@@ -55,7 +55,7 @@ export class MgmtNode {
             return;
         }
 
-        this.set_state_type = config.set_state_type || 'filtered_by_id';
+        this.config.set_state_type = config.set_state_type || 'filtered_by_id';
 
         this.clientConn.register(this, 'mgmt', config.name);
 
@@ -112,8 +112,8 @@ export class MgmtNode {
                 this.clientConn.app.RequestSync();
             } else if (topic_upper === 'GET_STATE' || topic_upper === 'GETSTATE') {
                 this._debug("MgmtNode(input): GET_STATE");
-                let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.set_state_type );
-                let useNames = ['all_by_name', 'filtered_by_name'].includes(this.set_state_type );
+                let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.config.set_state_type );
+                let useNames = ['all_by_name', 'filtered_by_name'].includes(this.config.set_state_type );
                 let deviceIds = undefined;
                 if (typeof msg.payload === 'boolean') {
                     onlyPersistent = msg.payload;
@@ -177,9 +177,9 @@ export class MgmtNode {
     }
 
     sendSetState(): void {
-        if (this.set_state_type === 'no_nodes') return;
-        const onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.set_state_type);
-        const useNames = ['all_by_name', 'filtered_by_name'].includes(this.set_state_type);
+        if (this.config.set_state_type === 'no_nodes') return;
+        const onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.config.set_state_type);
+        const useNames = ['all_by_name', 'filtered_by_name'].includes(this.config.set_state_type);
         const states = this.clientConn.app.devices.getStates(undefined, onlyPersistent, useNames);
         if (states) {
             this.send({

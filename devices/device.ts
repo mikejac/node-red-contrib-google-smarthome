@@ -96,16 +96,16 @@ interface DeviceNodeConfig extends NodeDef {
     support_playback_state: boolean;
     command_query_onoff: CommandQueryMode;
     supported_commands: string[];
-    volume_max_level: number | string;
+    volume_max_level: number;
     volume_can_mute_and_unmute: boolean;
-    volume_default_percentage: number | string;
-    level_step_size: number | string;
+    volume_default_percentage: number;
+    level_step_size: number;
     command_only_volume: boolean;
     command_only_brightness: boolean;
     command_only_colorsetting: boolean;
-    color_model: string;
-    temperature_min_k: number | string;
-    temperature_max_k: number | string;
+    color_model: "temp" | "rgb" | "hsv" | "rgb_temp" | "hsv_temp";
+    temperature_min_k: number;
+    temperature_max_k: number;
     modes_file: string;
     modes_type: 'str' | 'json';
     command_query_modes: CommandQueryMode;
@@ -125,21 +125,21 @@ interface DeviceNodeConfig extends NodeDef {
     webrtc_ice_servers: string;
     webrtc_ice_servers_type: 'str' | 'json';
     scene_reversible: boolean;
-    max_timer_limit_sec: number | string;
+    max_timer_limit_sec: number;
     command_only_timer: boolean;
     available_thermostat_modes: string[];
-    min_threshold_celsius: number | string;
-    max_threshold_celsius: number | string;
+    min_threshold_celsius: number;
+    max_threshold_celsius: number;
     thermostat_temperature_unit: string;
-    buffer_range_celsius: number | string;
+    buffer_range_celsius: number;
     command_query_temperaturesetting: CommandQueryMode;
-    tc_min_threshold_celsius: number | string;
-    tc_max_threshold_celsius: number | string;
-    tc_temperature_step_celsius: number | string;
+    tc_min_threshold_celsius: number;
+    tc_max_threshold_celsius: number;
+    tc_temperature_step_celsius: number;
     tc_temperature_unit_for_ux: string;
     tc_command_query_temperaturecontrol: CommandQueryMode;
-    min_percent: number | string;
-    max_percent: number | string;
+    min_percent: number;
+    max_percent: number;
     command_query_humiditysetting: CommandQueryMode;
     discrete_only_openclose: boolean;
     open_direction: string[];
@@ -148,12 +148,12 @@ interface DeviceNodeConfig extends NodeDef {
     available_zones: string[];
     supports_degrees: boolean;
     supports_percent: boolean;
-    rotation_degrees_min: number | string;
-    rotation_degrees_max: number | string;
+    rotation_degrees_min: number;
+    rotation_degrees_max: number;
     supports_continuous_rotation: boolean;
     command_only_rotation: boolean;
-    default_sleep_duration: number | string;
-    default_wake_duration: number | string;
+    default_sleep_duration: number;
+    default_wake_duration: number;
     supported_effects: string[];
     supported_cooking_modes: string[];
     food_presets_file: string;
@@ -190,15 +190,15 @@ interface DeviceNodeConfig extends NodeDef {
     occupancy_sensing_pir: boolean;
     occupancy_sensing_ultrasonic: boolean;
     occupancy_sensing_physical_contact: boolean;
-    occupied_to_unoccupied_delay_sec_pir: number | string;
-    unoccupied_to_occupied_delay_sec_pir: number | string;
-    unoccupied_to_occupied_event_threshold_pir: number | string;
-    occupied_to_unoccupied_delay_sec_ultrasonic: number | string;
-    unoccupied_to_occupied_delay_sec_ultrasonic: number | string;
-    unoccupied_to_occupied_event_threshold_ultrasonic: number | string;
-    occupied_to_unoccupied_delay_sec_physical_contact: number | string;
-    unoccupied_to_occupied_delay_sec_physical_contact: number | string;
-    unoccupied_to_occupied_event_threshold_physical_contact: number | string;
+    occupied_to_unoccupied_delay_sec_pir: number;
+    unoccupied_to_occupied_delay_sec_pir: number;
+    unoccupied_to_occupied_event_threshold_pir: number;
+    occupied_to_unoccupied_delay_sec_ultrasonic: number;
+    unoccupied_to_occupied_delay_sec_ultrasonic: number;
+    unoccupied_to_occupied_event_threshold_ultrasonic: number;
+    occupied_to_unoccupied_delay_sec_physical_contact: number;
+    unoccupied_to_occupied_delay_sec_physical_contact: number;
+    unoccupied_to_occupied_event_threshold_physical_contact: number;
     ct_appselector: string;
     ct_armdisarm: string;
     ct_brightness: string;
@@ -291,8 +291,6 @@ export class DeviceNode {
     public  config: DeviceNodeConfig;
     private device_type: string;
     private lang: string;
-    private nicknames: string;
-    private room_hint: string;
     public  states: Record<string, unknown>;
 
     constructor(config: DeviceNodeConfig) {
@@ -303,7 +301,6 @@ export class DeviceNode {
         this.states = {};
         this.name = config.name || config.id;
         this.device_type = config.device_type;
-        this.nicknames = config.nicknames;
         this.clientConn = RED.nodes.getNode(this.config.client) as GoogleSmartHomeNode;
         this._debug(".constructor config " + JSON.stringify(config));
 
@@ -640,21 +637,18 @@ export class DeviceNode {
                 }
             });
 
-        this.topic_filter = config.topic_filter || false;
-        this.persistent_state = config.persistent_state || false;
-        this.room_hint = config.room_hint;
+        this.config.topic_filter = this.config.topic_filter || false;
+        this.config.persistent_state = this.config.persistent_state || false;
 
         // AppSelector
-        this.appselector_file = config.appselector_file;
-        this.appselector_type = config.appselector_type || 'str';
+        this.config.appselector_type = this.config.appselector_type || 'str';
         this.available_applications = [];
         // ArmDisarm
-        this.available_arm_levels_file = config.available_arm_levels_file;
-        this.available_arm_levels_type = config.available_arm_levels_type || 'str';
-        this.arm_levels_ordered = config.arm_levels_ordered || false;
+        this.config.available_arm_levels_type = this.config.available_arm_levels_type || 'str';
+        this.config.arm_levels_ordered = config.arm_levels_ordered || false;
         this.available_arm_levels = [];
         // CameraStream
-        this.need_auth_token = true == config.need_auth_token;
+        this.config.need_auth_token = true == config.need_auth_token;
         this.auth_token = (config.auth_token || '').trim();
         this.hls = (config.hls || '').trim();
         this.hls_app_id = (config.hls_app_id || '').trim();
@@ -684,282 +678,191 @@ export class DeviceNode {
             this.camera_stream_supported_protocols.push('webrtc');
         }
         // Channel
-        this.channel_file = config.channel_file;
-        this.channel_type = config.channel_type || 'str';
+        this.config.channel_type = this.config.channel_type || 'str';
         this.available_channels = [];
         this.last_channel_index = -1;
         this.current_channel_index = -1;
         // ColorSetting
-        this.color_model = config.color_model || 'temp';
-        this.temperature_min_k = parseInt(config.temperature_min_k) || 2000;
-        this.temperature_max_k = parseInt(config.temperature_max_k) || 9000;
+        this.config.color_model = this.config.color_model || 'temp';
+        this.config.temperature_min_k = parseInt(String(this.config.temperature_min_k)) || 2000;
+        this.config.temperature_max_k = parseInt(String(this.config.temperature_max_k)) || 9000;
         // Cook
-        this.supported_cooking_modes = config.supported_cooking_modes;
-        this.food_presets_file = config.food_presets_file;
-        this.food_presets_type = config.food_presets_type || 'str';
+        this.config.food_presets_type = this.config.food_presets_type || 'str';
         this.food_presets = [];
         // Dispense
-        this.supported_dispense_items_file = config.supported_dispense_items_file;
-        this.supported_dispense_items_type = config.supported_dispense_items_type || 'str';
+        this.config.supported_dispense_items_type = this.config.supported_dispense_items_type || 'str';
         this.supported_dispense_items = [];
-        this.supported_dispense_presets_file = config.supported_dispense_presets_file;
-        this.supported_dispense_presets_type = config.supported_dispense_presets_type || 'str';
+        this.config.supported_dispense_presets_type = this.config.supported_dispense_presets_type || 'str';
         this.supported_dispense_presets = [];
         // Dock
         // EnergyStorage
         this.energy_storage_distance_unit_for_ux = config.energy_storage_distance_unit_for_ux;
         // FanSpeed
-        this.available_fan_speeds_file = config.available_fan_speeds_file;
-        this.available_fan_speeds_type = config.available_fan_speeds_type || 'str';
+        this.config.available_fan_speeds_type = this.config.available_fan_speeds_type || 'str';
         this.fan_speeds_ordered = config.fan_speeds_ordered || false;
         this.available_fan_speeds = [];
         // Fill
-        this.available_fill_levels_file = config.available_fill_levels_file;
-        this.available_fill_levels_type = config.available_fill_levels_type || 'str';
+        this.config.available_fill_levels_type = this.config.available_fill_levels_type || 'str';
         this.available_fill_levels = [];
         this.ordered_fill_levels = config.ordered_fill_levels;
         // HumiditySetting
-        this.min_percent = parseInt(config.min_percent) || 0;
-        this.max_percent = parseInt(config.max_percent) || 100;
+        this.config.min_percent = parseInt(String(config.min_percent)) || 0;
+        this.config.max_percent = parseInt(String(config.max_percent)) || 100;
         // InputSelector
-        this.inputselector_file = config.inputselector_file;
-        this.inputselector_type = config.inputselector_type || 'str';
+        this.config.inputselector_type = this.config.inputselector_type || 'str';
         this.available_inputs = [];
-        this.ordered_inputs = config.ordered_inputs;
         this.current_input_index = -1;
         // LightEffects
-        this.default_sleep_duration = parseInt(config.default_sleep_duration) || 1800;
-        this.default_wake_duration = parseInt(config.default_wake_duration) || 1800;
-        this.supported_effects = config.supported_effects;
+        this.config.default_sleep_duration = parseInt(String(this.config.default_sleep_duration)) || 1800;
+        this.config.default_wake_duration = parseInt(String(this.config.default_wake_duration)) || 1800;
         // Locator
         // LockUnlock
         // MediaState
-        this.support_activity_state = config.support_activity_state;
-        this.support_playback_state = config.support_playback_state;
         // Modes
-        this.modes_file = config.modes_file;
-        this.modes_type = config.modes_type || 'str';
+        this.config.modes_type = this.config.modes_type || 'str';
         this.available_modes = [];
         // NetworkControl
-        this.network_profiles = config.network_profiles;
         this.guest_network_password = '';
         // ObjectDetection
         // OccupancySensing
-        this.occupancy_sensing_pir = config.occupancy_sensing_pir || false;
-        this.occupied_to_unoccupied_delay_sec_pir = parseInt(config.occupied_to_unoccupied_delay_sec_pir) || 0;
-        this.unoccupied_to_occupied_delay_sec_pir = parseInt(config.unoccupied_to_occupied_delay_sec_pir) || 2;
-        this.unoccupied_to_occupied_event_threshold_pir = parseInt(config.unoccupied_to_occupied_event_threshold_pir) || 2;
-        this.occupancy_sensing_ultrasonic = config.occupancy_sensing_ultrasonic || false;
-        this.occupied_to_unoccupied_delay_sec_ultrasonic = parseInt(config.occupied_to_unoccupied_delay_sec_ultrasonic) || 0;
-        this.unoccupied_to_occupied_delay_sec_ultrasonic = parseInt(config.unoccupied_to_occupied_delay_sec_ultrasonic) || 2;
-        this.unoccupied_to_occupied_event_threshold_ultrasonic = parseInt(config.unoccupied_to_occupied_event_threshold_ultrasonic) || 2;
-        this.occupancy_sensing_physical_contact = config.occupancy_sensing_physical_contact || false;
-        this.occupied_to_unoccupied_delay_sec_physical_contact = parseInt(config.occupied_to_unoccupied_delay_sec_physical_contact) || 0;
-        this.unoccupied_to_occupied_delay_sec_physical_contact = parseInt(config.unoccupied_to_occupied_delay_sec_physical_contact) || 2;
-        this.unoccupied_to_occupied_event_threshold_physical_contact = parseInt(config.unoccupied_to_occupied_event_threshold_physical_contact) || 2;
+        this.config.occupancy_sensing_pir = config.occupancy_sensing_pir || false;
+        this.config.occupied_to_unoccupied_delay_sec_pir = parseInt(String(config.occupied_to_unoccupied_delay_sec_pir)) || 0;
+        this.config.unoccupied_to_occupied_delay_sec_pir = parseInt(String(config.unoccupied_to_occupied_delay_sec_pir)) || 2;
+        this.config.unoccupied_to_occupied_event_threshold_pir = parseInt(String(config.unoccupied_to_occupied_event_threshold_pir)) || 2;
+        this.config.occupancy_sensing_ultrasonic = config.occupancy_sensing_ultrasonic || false;
+        this.config.occupied_to_unoccupied_delay_sec_ultrasonic = parseInt(String(config.occupied_to_unoccupied_delay_sec_ultrasonic)) || 0;
+        this.config.unoccupied_to_occupied_delay_sec_ultrasonic = parseInt(String(config.unoccupied_to_occupied_delay_sec_ultrasonic)) || 2;
+        this.config.unoccupied_to_occupied_event_threshold_ultrasonic = parseInt(String(config.unoccupied_to_occupied_event_threshold_ultrasonic)) || 2;
+        this.config.occupancy_sensing_physical_contact = config.occupancy_sensing_physical_contact || false;
+        this.config.occupied_to_unoccupied_delay_sec_physical_contact = parseInt(String(config.occupied_to_unoccupied_delay_sec_physical_contact)) || 0;
+        this.config.unoccupied_to_occupied_delay_sec_physical_contact = parseInt(String(config.unoccupied_to_occupied_delay_sec_physical_contact)) || 2;
+        this.config.unoccupied_to_occupied_event_threshold_physical_contact = parseInt(String(config.unoccupied_to_occupied_event_threshold_physical_contact)) || 2;
         // OpenClose
-        this.open_direction = config.open_direction;
         // Reboot
         // Rotation
-        this.supports_degrees = config.supports_degrees;
-        this.supports_percent = config.supports_percent;
-        this.rotation_degrees_min = parseInt(config.rotation_degrees_min) || 0;
-        this.rotation_degrees_max = parseInt(config.rotation_degrees_max) || 360;
-        this.supports_continuous_rotation = config.supports_continuous_rotation;
+        this.config.rotation_degrees_min = parseInt(String(config.rotation_degrees_min)) || 0;
+        this.config.rotation_degrees_max = parseInt(String(config.rotation_degrees_max)) || 360;
         // RunCycle
         // SensorState
-        this.sensor_states_supported = config.sensor_states_supported;
         // SoftwareUpdate
         // StartStop
-        this.available_zones = config.available_zones;
         // StatusReport
         // TemperatireControl
-        this.tc_min_threshold_celsius = parseInt(config.tc_min_threshold_celsius) || 0;
-        this.tc_max_threshold_celsius = parseInt(config.tc_max_threshold_celsius) || 40;
-        this.tc_temperature_step_celsius = parseInt(config.tc_temperature_step_celsius) || 1;
-        this.tc_temperature_unit_for_ux = config.tc_temperature_unit_for_ux;
+        this.config.tc_min_threshold_celsius = parseInt(String(config.tc_min_threshold_celsius)) || 0;
+        this.config.tc_max_threshold_celsius = parseInt(String(config.tc_max_threshold_celsius)) || 40;
+        this.config.tc_temperature_step_celsius = parseInt(String(config.tc_temperature_step_celsius)) || 1;
         // TemperatureSetting
         this.available_thermostat_modes = config.available_thermostat_modes;
-        this.min_threshold_celsius = parseInt(config.min_threshold_celsius) || 10;
-        this.max_threshold_celsius = parseInt(config.max_threshold_celsius) || 32;
-        this.thermostat_temperature_setpoint = this.min_threshold_celsius;
-        this.thermostat_temperature_setpoint_low = this.min_threshold_celsius;
-        this.thermostat_temperature_setpoint_hight = this.max_threshold_celsius;
-        this.thermostat_temperature_unit = config.thermostat_temperature_unit || "C";
-        this.buffer_range_celsius = parseInt(config.buffer_range_celsius) || 2;
+        this.config.min_threshold_celsius = parseInt(String(config.min_threshold_celsius)) || 10;
+        this.config.max_threshold_celsius = parseInt(String(config.max_threshold_celsius)) || 32;
+        this.thermostat_temperature_setpoint = this.config.min_threshold_celsius;
+        this.thermostat_temperature_setpoint_low = this.config.min_threshold_celsius;
+        this.thermostat_temperature_setpoint_high = this.config.max_threshold_celsius;
+        this.config.thermostat_temperature_unit = config.thermostat_temperature_unit || "C";
+        this.config.buffer_range_celsius = parseInt(String(config.buffer_range_celsius)) || 2;
         this.target_temp_reached_estimate_unix_timestamp_sec = 360;
         this.thermostat_humidity_ambient = 60;
         // Timer
-        this.max_timer_limit_sec = parseInt(config.max_timer_limit_sec) || 86400;
+        this.config.max_timer_limit_sec = parseInt(String(this.config.max_timer_limit_sec)) || 86400;
         this.timer_end_timestamp = -1;
         // Toggles
-        this.toggles_file = config.toggles_file;
-        this.toggles_type = config.toggles_type || 'str';
+        this.config.toggles_type = this.config.toggles_type || 'str';
         this.available_toggles = [];
         // TransportControl
-        this.supported_commands = config.supported_commands;
         // Volume
-        this.volume_max_level = parseInt(config.volume_max_level) || 100;
-        this.volume_default_percentage = parseInt(config.volume_default_percentage) || 40;
-        this.level_step_size = parseInt(config.level_step_size) || 1;
-        // Secondary User Verification
-        this.ct_appselector = config.ct_appselector || '';
-        this.pin_appselector = config.pin_appselector || '';
-        this.ct_armdisarm = config.ct_armdisarm || '';
-        this.pin_armdisarm = config.pin_armdisarm || '';
-        this.ct_brightness = config.ct_brightness || '';
-        this.pin_brightness = config.pin_brightness || '';
-        this.ct_camerastream = config.ct_camerastream || '';
-        this.pin_camerastream = config.pin_camerastream || '';
-        this.ct_channel = config.ct_channel || '';
-        this.pin_channel = config.pin_channel || '';
-        this.ct_colorsetting = config.ct_colorsetting || '';
-        this.pin_colorsetting = config.pin_colorsetting || '';
-        this.ct_cook = config.ct_cook || '';
-        this.pin_cook = config.pin_cook || '';
-        this.ct_dispense = config.ct_dispense || '';
-        this.pin_dispense = config.pin_dispense || '';
-        this.ct_dock = config.ct_dock || '';
-        this.pin_dock = config.pin_dock || '';
-        this.ct_energystorage = config.ct_energystorage || '';
-        this.pin_energystorage = config.pin_energystorage || '';
-        this.ct_fanspeed = config.ct_fanspeed || '';
-        this.pin_fanspeed = config.pin_fanspeed || '';
-        this.ct_fill = config.ct_fill || '';
-        this.pin_fill = config.pin_fill || '';
-        this.ct_humiditysetting = config.ct_humiditysetting || '';
-        this.pin_humiditysetting = config.pin_humiditysetting || '';
-        this.ct_inputselector = config.ct_inputselector || '';
-        this.pin_inputselector = config.pin_inputselector || '';
-        this.ct_lighteffects = config.ct_lighteffects || '';
-        this.pin_lighteffects = config.pin_lighteffects || '';
-        this.ct_locator = config.ct_locator || '';
-        this.pin_locator = config.pin_locator || '';
-        this.ct_lockunlock = config.ct_lockunlock || '';
-        this.pin_lockunlock = config.pin_lockunlock || '';
-        this.ct_mediastate = config.ct_mediastate || '';
-        this.pin_mediastate = config.pin_mediastate || '';
-        this.ct_modes = config.ct_modes || '';
-        this.pin_modes = config.pin_modes || '';
-        this.ct_networkcontrol = config.ct_networkcontrol || '';
-        this.pin_networkcontrol = config.pin_networkcontrol || '';
-        this.ct_objectdetection = config.ct_objectdetection || '';
-        this.pin_objectdetection = config.pin_objectdetection || '';
-        this.ct_onoff = config.ct_onoff || '';
-        this.pin_onoff = config.pin_onoff || '';
-        this.ct_openclose = config.ct_openclose || '';
-        this.pin_openclose = config.pin_openclose || '';
-        this.ct_reboot = config.ct_reboot || '';
-        this.pin_reboot = config.pin_reboot || '';
-        this.ct_rotation = config.ct_rotation || '';
-        this.pin_rotation = config.pin_rotation || '';
-        this.ct_runcycle = config.ct_runcycle || '';
-        this.pin_runcycle = config.pin_runcycle || '';
-        this.ct_scene = config.ct_scene || '';
-        this.pin_scene = config.pin_scene || '';
-        this.ct_sensorstate = config.ct_sensorstate || '';
-        this.pin_sensorstate = config.pin_sensorstate || '';
-        this.ct_softwareupdate = config.ct_softwareupdate || '';
-        this.pin_softwareupdate = config.pin_softwareupdate || '';
-        this.ct_startstop = config.ct_startstop || '';
-        this.pin_startstop = config.pin_startstop || '';
-        this.ct_statusreport = config.ct_statusreport || '';
-        this.pin_statusreport = config.pin_statusreport || '';
-        this.ct_temperaturecontrol = config.ct_temperaturecontrol || '';
-        this.pin_temperaturecontrol = config.pin_temperaturecontrol || '';
-        this.ct_temperaturesetting = config.ct_temperaturesetting || '';
-        this.pin_temperaturesetting = config.pin_temperaturesetting || '';
-        this.ct_timer = config.ct_timer || '';
-        this.pin_timer = config.pin_timer || '';
-        this.ct_toggles = config.ct_toggles || '';
-        this.pin_toggles = config.pin_toggles || '';
-        this.ct_transportcontrol = config.ct_transportcontrol || '';
-        this.pin_transportcontrol = config.pin_transportcontrol || '';
-        this.ct_volume = config.ct_volume || '';
-        this.pin_volume = config.pin_volume || '';
+        this.config.volume_max_level = parseInt(String(this.config.volume_max_level)) || 100;
+        this.config.volume_default_percentage = parseInt(String(this.config.volume_default_percentage)) || 40;
+        this.config.level_step_size = parseInt(String(this.config.level_step_size)) || 1;
+        
+        // Secondary User Verification: Set all challenge types (ct) and PINs to empty string if not configured
+        Object.keys(this.config)
+            .filter(key => key.startsWith('ct_') || key.startsWith('pin_'))
+            .forEach(key => {
+                (this.config as any)[key] = (this.config as any)[key] || '';
+            });
 
         if (this.config.trait_appselector) {
-            if (this.appselector_type !== 'json') {
-                this.available_applications = this.to_available_applications(this.loadJson('Applications', this.appselector_file.replace(/<id>/g, this.id), []));
+            if (this.config.appselector_type !== 'json') {
+                this.available_applications = this.to_available_applications(this.loadJson('Applications', this.config.appselector_file.replace(/<id>/g, this.id), []));
             } else {
-                this.available_applications = this.to_available_applications(this.parseJson('Applications', this.appselector_file, []));
+                this.available_applications = this.to_available_applications(this.parseJson('Applications', this.config.appselector_file, []));
             }
         }
 
         if (this.config.trait_armdisarm) {
-            if (this.available_arm_levels_type !== 'json') {
-                this.available_arm_levels = this.to_available_arm_levels(this.loadJson('Available arm levels', this.available_arm_levels_file.replace(/<id>/g, this.id), []));
+            if (this.config.available_arm_levels_type !== 'json') {
+                this.available_arm_levels = this.to_available_arm_levels(this.loadJson('Available arm levels', this.config.available_arm_levels_file.replace(/<id>/g, this.id), []));
             } else {
-                this.available_arm_levels = this.to_available_arm_levels(this.parseJson('Available arm levels', this.available_arm_levels_file, []));
+                this.available_arm_levels = this.to_available_arm_levels(this.parseJson('Available arm levels', this.config.available_arm_levels_file, []));
             }
         }
 
         if (this.config.trait_channel) {
-            if (this.channel_type !== 'json') {
-                this.available_channels = this.to_available_channels(this.loadJson('Channels', this.channel_file.replace(/<id>/g, this.id), []));
+            if (this.config.channel_type !== 'json') {
+                this.available_channels = this.to_available_channels(this.loadJson('Channels', this.config.channel_file.replace(/<id>/g, this.id), []));
             } else {
-                this.available_channels = this.to_available_channels(this.parseJson('Channels', this.channel_file, []));
+                this.available_channels = this.to_available_channels(this.parseJson('Channels', this.config.channel_file, []));
             }
         }
 
         if (this.config.trait_cook) {
-            if (this.food_presets_type !== 'json') {
-                this.food_presets = this.to_food_presets(this.loadJson('Food presets', this.food_presets_file.replace(/<id>/g, this.id), []));
+            if (this.config.food_presets_type !== 'json') {
+                this.food_presets = this.to_food_presets(this.loadJson('Food presets', this.config.food_presets_file.replace(/<id>/g, this.id), []));
             } else {
-                this.food_presets = this.to_food_presets(this.parseJson('Food presets', this.food_presets_file, []));
+                this.food_presets = this.to_food_presets(this.parseJson('Food presets', this.config.food_presets_file, []));
             }
         }
 
         if (this.config.trait_dispense) {
-            if (this.supported_dispense_items_type !== 'json') {
-                this.supported_dispense_items = this.to_supported_dispense_items(this.loadJson('Supported dispense', this.supported_dispense_items_file.replace(/<id>/g, this.id), []));
+            if (this.config.supported_dispense_items_type !== 'json') {
+                this.supported_dispense_items = this.to_supported_dispense_items(this.loadJson('Supported dispense', this.config.supported_dispense_items_file.replace(/<id>/g, this.id), []));
             } else {
-                this.supported_dispense_items = this.to_supported_dispense_items(this.parseJson('Supported dispense', this.supported_dispense_items_file, []));
+                this.supported_dispense_items = this.to_supported_dispense_items(this.parseJson('Supported dispense', this.config.supported_dispense_items_file, []));
             }
-            if (this.supported_dispense_presets_type !== 'json') {
-                this.supported_dispense_presets = this.to_supported_dispense_presets(this.loadJson('Supported dispense presets', this.supported_dispense_presets_file.replace(/<id>/g, this.id), []));
+            if (this.config.supported_dispense_presets_type !== 'json') {
+                this.supported_dispense_presets = this.to_supported_dispense_presets(this.loadJson('Supported dispense presets', this.config.supported_dispense_presets_file.replace(/<id>/g, this.id), []));
             } else {
-                this.supported_dispense_presets = this.to_supported_dispense_presets(this.parseJson('Supported dispense presets', this.supported_dispense_presets_file, []));
+                this.supported_dispense_presets = this.to_supported_dispense_presets(this.parseJson('Supported dispense presets', this.config.supported_dispense_presets_file, []));
             }
         }
 
         if (this.config.trait_fanspeed) {
-            if (this.available_fan_speeds_type !== 'json') {
-                this.available_fan_speeds = this.to_available_fan_speeds(this.loadJson('Fan speeds', this.available_fan_speeds_file.replace(/<id>/g, this.id), []));
+            if (this.config.available_fan_speeds_type !== 'json') {
+                this.available_fan_speeds = this.to_available_fan_speeds(this.loadJson('Fan speeds', this.config.available_fan_speeds_file.replace(/<id>/g, this.id), []));
             } else {
-                this.available_fan_speeds = this.to_available_fan_speeds(this.parseJson('Fan speeds', this.available_fan_speeds_file, []));
+                this.available_fan_speeds = this.to_available_fan_speeds(this.parseJson('Fan speeds', this.config.available_fan_speeds_file, []));
             }
         }
 
         if (this.config.trait_fill) {
-            if (this.available_fill_levels_type !== 'json') {
-                this.available_fill_levels = this.to_available_fill_levels(this.loadJson('Available fill levels', this.available_fill_levels_file.replace(/<id>/g, this.id), []));
+            if (this.config.available_fill_levels_type !== 'json') {
+                this.available_fill_levels = this.to_available_fill_levels(this.loadJson('Available fill levels', this.config.available_fill_levels_file.replace(/<id>/g, this.id), []));
             } else {
-                this.available_fill_levels = this.to_available_fill_levels(this.parseJson('Available fill levels', this.available_fill_levels_file, []));
+                this.available_fill_levels = this.to_available_fill_levels(this.parseJson('Available fill levels', this.config.available_fill_levels_file, []));
             }
         }
 
         if (this.config.trait_inputselector) {
-            if (this.inputselector_type !== 'json') {
-                this.available_inputs = this.to_available_inputs(this.loadJson('Available inputs', this.inputselector_file.replace(/<id>/g, this.id), []));
+            if (this.config.inputselector_type !== 'json') {
+                this.available_inputs = this.to_available_inputs(this.loadJson('Available inputs', this.config.inputselector_file.replace(/<id>/g, this.id), []));
             } else {
-                this.available_inputs = this.to_available_inputs(this.parseJson('Available inputs', this.inputselector_file, []));
+                this.available_inputs = this.to_available_inputs(this.parseJson('Available inputs', this.config.inputselector_file, []));
             }
         }
 
         if (this.config.trait_modes) {
-            if (this.modes_type !== 'json') {
-                this.available_modes = this.to_available_modes(this.loadJson('Modes', this.modes_file.replace(/<id>/g, this.id), []));
+            if (this.config.modes_type !== 'json') {
+                this.available_modes = this.to_available_modes(this.loadJson('Modes', this.config.modes_file.replace(/<id>/g, this.id), []));
             } else {
-                this.available_modes = this.to_available_modes(this.parseJson('Modes', this.modes_file, []));
+                this.available_modes = this.to_available_modes(this.parseJson('Modes', this.config.modes_file, []));
             }
         }
 
         if (this.config.trait_toggles) {
-            if (this.toggles_type !== 'json') {
-                this.available_toggles = this.to_available_toggles(this.loadJson('Toggles', this.toggles_file.replace(/<id>/g, this.id), []));
+            if (this.config.toggles_type !== 'json') {
+                this.available_toggles = this.to_available_toggles(this.loadJson('Toggles', this.config.toggles_file.replace(/<id>/g, this.id), []));
             } else {
-                this.available_toggles = this.to_available_toggles(this.parseJson('Toggles', this.toggles_file, []));
+                this.available_toggles = this.to_available_toggles(this.parseJson('Toggles', this.config.toggles_file, []));
             }
         }
 
@@ -968,7 +871,7 @@ export class DeviceNode {
         const default_name = RED._('device.device_type.' + this.device_type);
         const default_name_type = default_name.replace(/[_ ()/]+/g, '-').toLowerCase();
         // Google uses first nickname as the "real" name of the device. Therefore, report device name as the first nickname
-        const nicknames = this.nicknames ? [this.name].concat(this.nicknames.split(',')) : [];
+        const nicknames = this.config.nicknames ? [this.name].concat(this.config.nicknames.split(',')) : [];
 
         this.states = {
             online: config.online != false
@@ -984,7 +887,7 @@ export class DeviceNode {
                     name: this.name,
                     nicknames: nicknames,
                 },
-                roomHint: this.room_hint,
+                roomHint: this.config.room_hint,
                 willReportState: true,
                 notificationSupportedByAgent: this.config.trait_objectdetection || this.config.trait_runcycle || this.config.trait_sensorstate
                     || this.config.trait_lockunlock || this.config.trait_networkcontrol || this.config.trait_openclose,
@@ -1060,7 +963,7 @@ export class DeviceNode {
         }
         if (this.config.trait_colorsetting) {
             if (!this.config.command_only_colorsetting) {
-                if ((this.color_model === "rgb") || (this.color_model === 'rgb_temp')) {
+                if ((this.config.color_model === "rgb") || (this.config.color_model === 'rgb_temp')) {
                     state_types['color'] = {
                         type: Formats.OBJECT + Formats.DELETE_MISSING,
                         attributes: {
@@ -1070,7 +973,7 @@ export class DeviceNode {
                             },
                         }
                     };
-                } else if ((this.color_model === "hsv") || (this.color_model === "hsv_temp")) {
+                } else if ((this.config.color_model === "hsv") || (this.config.color_model === "hsv_temp")) {
                     state_types['color'] = {
                         type: Formats.OBJECT,
                         attributes: {
@@ -1103,11 +1006,11 @@ export class DeviceNode {
                         attributes: {}
                     };
                 }
-                if (this.color_model !== "rgb" && this.color_model !== "hsv") {
+                if (this.config.color_model !== "rgb" && this.config.color_model !== "hsv") {
                     state_types.color.attributes.temperatureK = {
                         type: Formats.INT + Formats.MANDATORY,
-                        min: this.temperature_min_k,
-                        max: this.temperature_max_k,
+                        min: this.config.temperature_min_k,
+                        max: this.config.temperature_max_k,
                         exclusiveStates: ['spectrumRgb', 'spectrumHsv']
                     };
                 }
@@ -1115,7 +1018,7 @@ export class DeviceNode {
         }
         if (this.config.trait_cook) {
             const cooking_mode_values = ['NONE'];
-            cooking_mode_values.push(...this.supported_cooking_modes);
+            cooking_mode_values.push(...this.config.supported_cooking_modes);
             state_types['currentCookingMode'] = {
                 type: Formats.STRING + Formats.MANDATORY,
                 values: cooking_mode_values,
@@ -1263,7 +1166,7 @@ export class DeviceNode {
         }
         if (this.config.trait_lighteffects) {
             const light_effect_value = [''];
-            light_effect_value.push(...this.supported_effects);
+            light_effect_value.push(...this.config.supported_effects);
             if (light_effect_value.length > 0) {
                 state_types['activeLightEffect'] = {
                     type: Formats.STRING + Formats.MANDATORY,
@@ -1358,7 +1261,7 @@ export class DeviceNode {
         // ObjectDetection
         // OccupancySensing
         if (this.config.trait_occupancysensing) {
-            if (this.occupancy_sensing_pir || this.occupancy_sensing_ultrasonic || this.occupancy_sensing_physical_contact) {
+            if (this.config.occupancy_sensing_pir || this.config.occupancy_sensing_ultrasonic || this.config.occupancy_sensing_physical_contact) {
                 state_types['occupancy'] = {
                     type: Formats.STRING + Formats.MANDATORY,
                     values: ['OCCUPIED', 'UNOCCUPIED', 'UNKNOWN_OCCUPANCY_STATE'],
@@ -1376,7 +1279,7 @@ export class DeviceNode {
         }
         if (this.config.trait_openclose) {
             if (this.config.command_query_openclose !== CommandQueryMode.COMMAND_ONLY) {
-                if (this.open_direction.length < 2) {
+                if (this.config.open_direction.length < 2) {
                     state_types['openPercent'] = Formats.FLOAT + Formats.MANDATORY;
                 } else {
                     state_types['openState'] = {
@@ -1385,14 +1288,14 @@ export class DeviceNode {
                             openPercent: Formats.FLOAT + Formats.MANDATORY,
                             openDirection: {
                                 type: Formats.STRING + Formats.MANDATORY,
-                                values: this.open_direction,
+                                values: this.config.open_direction,
                                 upperCase: true,
                             },
                         },
                         keyId: 'openDirection',
                         removeIfNoData: true,
                         replaceAll: false,
-                        isValidKey: (direction: string) => this.open_direction.includes(direction.trim()) ? direction.trim() : undefined
+                        isValidKey: (direction: string) => this.config.open_direction.includes(direction.trim()) ? direction.trim() : undefined
                     };
                 }
             }
@@ -1400,10 +1303,10 @@ export class DeviceNode {
         // Reboot, no state
         if (this.config.trait_rotation) {
             if (!this.config.command_only_rotation) {
-                if (this.supports_degrees) {
+                if (this.config.supports_degrees) {
                     state_types['rotationDegrees'] = Formats.FLOAT;
                 }
-                if (this.supports_percent) {
+                if (this.config.supports_percent) {
                     state_types['rotationPercent'] = Formats.FLOAT;
                 }
             }
@@ -1435,7 +1338,7 @@ export class DeviceNode {
                 attributes: {
                     name: {
                         type: Formats.STRING + Formats.MANDATORY,
-                        values: this.sensor_states_supported,
+                        values: this.config.sensor_states_supported,
                     },
                     currentSensorState: Formats.STRING,
                     rawValue: Formats.FLOAT
@@ -1444,7 +1347,7 @@ export class DeviceNode {
                 addIfMissing: true,
                 removeIfNoData: true,
                 replaceAll: false,
-                isValidKey: (name: string) => this.sensor_states_supported.includes(name.trim()) ? name.trim() : undefined
+                isValidKey: (name: string) => this.config.sensor_states_supported.includes(name.trim()) ? name.trim() : undefined
             };
         }
         if (this.config.trait_softwareupdate) {
@@ -1455,11 +1358,11 @@ export class DeviceNode {
             state_types['isPaused'] = Formats.BOOL;
             state_types['activeZones'] = {
                 type: Formats.STRING + Formats.ARRAY,
-                values: this.available_zones,
+                values: this.config.available_zones,
                 addIfMissing: true,
                 removeIfNoData: true,
                 replaceAll: true,
-                isValidKey: (zone: string) => this.available_zones.includes(zone.trim()) ? zone.trim() : undefined
+                isValidKey: (zone: string) => this.config.available_zones.includes(zone.trim()) ? zone.trim() : undefined
             };
         }
         if (this.config.trait_statusreport) {
@@ -1552,7 +1455,7 @@ export class DeviceNode {
         if (this.config.trait_armdisarm) {
             attributes['availableArmLevels'] = {
                 levels: this.available_arm_levels,
-                ordered: this.arm_levels_ordered
+                ordered: this.config.arm_levels_ordered
             };
         }
         if (this.config.trait_brightness) {
@@ -1563,25 +1466,25 @@ export class DeviceNode {
         }
         if (this.config.trait_colorsetting) {
             attributes["commandOnlyColorSetting"] = this.config.command_only_colorsetting;
-            if (this.color_model === "rgb" || this.color_model === "rgb_temp") {
+            if (this.config.color_model === "rgb" || this.config.color_model === "rgb_temp") {
                 attributes['colorModel'] = "rgb";
             }
-            else if (this.color_model === "hsv" || this.color_model === "hsv_temp") {
+            else if (this.config.color_model === "hsv" || this.config.color_model === "hsv_temp") {
                 attributes['colorModel'] = "hsv";
             }
-            if (this.color_model !== "rgb" && this.color_model !== "hsv") {
+            if (this.config.color_model !== "rgb" && this.config.color_model !== "hsv") {
                 attributes['colorTemperatureRange'] = {
-                    "temperatureMinK": this.temperature_min_k,
-                    "temperatureMaxK": this.temperature_max_k
+                    "temperatureMinK": this.config.temperature_min_k,
+                    "temperatureMaxK": this.config.temperature_max_k
                 };
             }
         }
         if (this.config.trait_camerastream) {
             attributes['cameraStreamSupportedProtocols'] = this.camera_stream_supported_protocols;
-            attributes['cameraStreamNeedAuthToken'] = this.need_auth_token;
+            attributes['cameraStreamNeedAuthToken'] = this.config.need_auth_token;
         }
         if (this.config.trait_cook) {
-            attributes['supportedCookingModes'] = this.supported_cooking_modes;
+            attributes['supportedCookingModes'] = this.config.supported_cooking_modes;
             attributes['foodPresets'] = this.food_presets;
         }
         if (this.config.trait_dispense) {
@@ -1613,8 +1516,8 @@ export class DeviceNode {
         }
         if (this.config.trait_humiditysetting) {
             attributes['humiditySetpointRange'] = {
-                minPercent: this.min_percent,
-                maxPercent: this.max_percent
+                minPercent: this.config.min_percent,
+                maxPercent: this.config.max_percent
             };
             attributes['commandOnlyHumiditySetting'] = this.config.command_query_humiditysetting === CommandQueryMode.COMMAND_ONLY;
             attributes['queryOnlyHumiditySetting'] = this.config.command_query_humiditysetting === CommandQueryMode.QUERY_ONLY;
@@ -1622,16 +1525,16 @@ export class DeviceNode {
         if (this.config.trait_inputselector) {
             attributes['availableInputs'] = this.available_inputs;
             attributes['commandOnlyInputSelector'] = this.config.command_only_input_selector;
-            attributes['orderedInputs'] = this.ordered_inputs;
+            attributes['orderedInputs'] = this.config.ordered_inputs;
         }
         if (this.config.trait_lighteffects) {
-            attributes['defaultSleepDuration'] = this.default_sleep_duration;
-            attributes['defaultWakeDuration'] = this.default_wake_duration;
-            attributes['supportedEffects'] = this.supported_effects;
+            attributes['defaultSleepDuration'] = this.config.default_sleep_duration;
+            attributes['defaultWakeDuration'] = this.config.default_wake_duration;
+            attributes['supportedEffects'] = this.config.supported_effects;
         }
         if (this.config.trait_mediastate) {
-            attributes['supportActivityState'] = this.support_activity_state;
-            attributes['supportPlaybackState'] = this.support_playback_state;
+            attributes['supportActivityState'] = this.config.support_activity_state;
+            attributes['supportPlaybackState'] = this.config.support_playback_state;
         }
         if (this.config.trait_modes) {
             attributes['availableModes'] = this.available_modes;
@@ -1642,7 +1545,7 @@ export class DeviceNode {
             attributes['supportsEnablingGuestNetwork'] = this.config.supports_enabling_guest_network;
             attributes['supportsDisablingGuestNetwork'] = this.config.supports_disabling_guest_network;
             attributes['supportsGettingGuestNetworkPassword'] = this.config.supports_getting_guest_network_password;
-            attributes['networkProfiles'] = this.network_profiles;
+            attributes['networkProfiles'] = this.config.network_profiles;
             attributes['supportsEnablingNetworkProfile'] = this.config.supports_enabling_network_profile;
             attributes['supportsDisablingNetworkProfile'] = this.config.supports_disabling_network_profile;
             attributes['supportsNetworkDownloadSpeedTest'] = this.config.supports_network_download_speedtest;
@@ -1650,13 +1553,13 @@ export class DeviceNode {
         }
         if (this.config.trait_occupancysensing) {
             const occupancysensingattributes = [];
-            if (this.occupancy_sensing_pir) {
-                if (this.occupied_to_unoccupied_delay_sec_pir) {
+            if (this.config.occupancy_sensing_pir) {
+                if (this.config.occupied_to_unoccupied_delay_sec_pir) {
                     occupancysensingattributes.push({
                         occupancySensorType: "PIR",
-                        occupiedToUnoccupiedDelaySec: this.occupied_to_unoccupied_delay_sec_pir,
-                        unoccupiedToOccupiedDelaySec: this.unoccupied_to_occupied_delay_sec_pir,
-                        unoccupiedToOccupiedEventThreshold: this.unoccupied_to_occupied_event_threshold_pir
+                        occupiedToUnoccupiedDelaySec: this.config.occupied_to_unoccupied_delay_sec_pir,
+                        unoccupiedToOccupiedDelaySec: this.config.unoccupied_to_occupied_delay_sec_pir,
+                        unoccupiedToOccupiedEventThreshold: this.config.unoccupied_to_occupied_event_threshold_pir
                     });
                 } else {
                     occupancysensingattributes.push({
@@ -1664,13 +1567,13 @@ export class DeviceNode {
                     });
                 }
             }
-            if (this.occupancy_sensing_ultrasonic) {
-                if (this.occupied_to_unoccupied_delay_sec_ultrasonic) {
+            if (this.config.occupancy_sensing_ultrasonic) {
+                if (this.config.occupied_to_unoccupied_delay_sec_ultrasonic) {
                     occupancysensingattributes.push({
                         occupancySensorType: "ULTRASONIC",
-                        occupiedToUnoccupiedDelaySec: this.occupied_to_unoccupied_delay_sec_ultrasonic,
-                        unoccupiedToOccupiedDelaySec: this.unoccupied_to_occupied_delay_sec_ultrasonic,
-                        unoccupiedToOccupiedEventThreshold: this.unoccupied_to_occupied_event_threshold_ultrasonic
+                        occupiedToUnoccupiedDelaySec: this.config.occupied_to_unoccupied_delay_sec_ultrasonic,
+                        unoccupiedToOccupiedDelaySec: this.config.unoccupied_to_occupied_delay_sec_ultrasonic,
+                        unoccupiedToOccupiedEventThreshold: this.config.unoccupied_to_occupied_event_threshold_ultrasonic
                     });
                 } else {
                     occupancysensingattributes.push({
@@ -1678,13 +1581,13 @@ export class DeviceNode {
                     });
                 }
             }
-            if (this.occupancy_sensing_physical_contact) {
-                if (this.occupied_to_unoccupied_delay_sec_physical_contact) {
+            if (this.config.occupancy_sensing_physical_contact) {
+                if (this.config.occupied_to_unoccupied_delay_sec_physical_contact) {
                     occupancysensingattributes.push({
                         occupancySensorType: "PHYSICAL_CONTACT",
-                        occupiedToUnoccupiedDelaySec: this.occupied_to_unoccupied_delay_sec_physical_contact,
-                        unoccupiedToOccupiedDelaySec: this.unoccupied_to_occupied_delay_sec_physical_contact,
-                        unoccupiedToOccupiedEventThreshold: this.unoccupied_to_occupied_event_threshold_physical_contact
+                        occupiedToUnoccupiedDelaySec: this.config.occupied_to_unoccupied_delay_sec_physical_contact,
+                        unoccupiedToOccupiedDelaySec: this.config.unoccupied_to_occupied_delay_sec_physical_contact,
+                        unoccupiedToOccupiedEventThreshold: this.config.unoccupied_to_occupied_event_threshold_physical_contact
                     });
                 } else {
                     occupancysensingattributes.push({
@@ -1700,18 +1603,18 @@ export class DeviceNode {
         }
         if (this.config.trait_openclose) {
             attributes['discreteOnlyOpenClose'] = this.config.discrete_only_openclose;
-            attributes['openDirection'] = this.open_direction;
+            attributes['openDirection'] = this.config.open_direction;
             attributes['commandOnlyOpenClose'] = this.config.command_query_openclose === CommandQueryMode.COMMAND_ONLY;
             attributes['queryOnlyOpenClose'] = this.config.command_query_openclose === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_rotation) {
-            attributes['supportsDegrees'] = this.supports_degrees;
-            attributes['supportsPercent'] = this.supports_percent;
+            attributes['supportsDegrees'] = this.config.supports_degrees;
+            attributes['supportsPercent'] = this.config.supports_percent;
             attributes['rotationDegreesRange'] = [{
-                rotationDegreesMin: this.rotation_degrees_min,
-                rotationDegreesMax: this.rotation_degrees_max
+                rotationDegreesMin: this.config.rotation_degrees_min,
+                rotationDegreesMax: this.config.rotation_degrees_max
             }];
-            attributes['supportsContinuousRotation'] = this.supports_continuous_rotation;
+            attributes['supportsContinuousRotation'] = this.config.supports_continuous_rotation;
             attributes['commandOnlyRotation'] = this.config.command_only_rotation;
         }
         if (this.config.trait_scene) {
@@ -1719,7 +1622,7 @@ export class DeviceNode {
         }
         if (this.config.trait_sensorstate) {
             const sensor_states_supported = [];
-            this.sensor_states_supported.forEach(function (sensor_state_name) {
+            this.config.sensor_states_supported.forEach(function (sensor_state_name) {
                 const sensor_state_supported = { name: sensor_state_name };
                 let available_states = undefined;
                 let raw_value_uUnit = undefined;
@@ -1823,31 +1726,31 @@ export class DeviceNode {
         }
         if (this.config.trait_startstop) {
             attributes['pausable'] = this.config.pausable;
-            attributes['availableZones'] = this.available_zones;
+            attributes['availableZones'] = this.config.available_zones;
         }
         if (this.config.trait_temperaturecontrol) {
             attributes['temperatureRange'] = {
-                minThresholdCelsius: this.tc_min_threshold_celsius,
-                maxThresholdCelsius: this.tc_max_threshold_celsius
+                minThresholdCelsius: this.config.tc_min_threshold_celsius,
+                maxThresholdCelsius: this.config.tc_max_threshold_celsius
             };
-            attributes['temperatureStepCelsius'] = this.tc_temperature_step_celsius;
-            attributes['temperatureUnitForUX'] = this.tc_temperature_unit_for_ux;
+            attributes['temperatureStepCelsius'] = this.config.tc_temperature_step_celsius;
+            attributes['temperatureUnitForUX'] = this.config.tc_temperature_unit_for_ux;
             attributes['commandOnlyTemperatureControl'] = this.config.tc_command_query_temperaturecontrol === CommandQueryMode.COMMAND_ONLY;
             attributes['queryOnlyTemperatureControl'] = this.config.tc_command_query_temperaturecontrol === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_temperaturesetting) {
             attributes['availableThermostatModes'] = this.available_thermostat_modes;
             attributes['thermostatTemperatureRange'] = {
-                minThresholdCelsius: this.min_threshold_celsius,
-                maxThresholdCelsius: this.max_threshold_celsius
+                minThresholdCelsius: this.config.min_threshold_celsius,
+                maxThresholdCelsius: this.config.max_threshold_celsius
             };
-            attributes['thermostatTemperatureUnit'] = this.thermostat_temperature_unit;
-            attributes['bufferRangeCelsius'] = this.buffer_range_celsius;
+            attributes['thermostatTemperatureUnit'] = this.config.thermostat_temperature_unit;
+            attributes['bufferRangeCelsius'] = this.config.buffer_range_celsius;
             attributes['commandOnlyTemperatureSetting'] = this.config.command_query_temperaturesetting === CommandQueryMode.COMMAND_ONLY;
             attributes['queryOnlyTemperatureSetting'] = this.config.command_query_temperaturesetting === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_timer) {
-            attributes['maxTimerLimitSec'] = this.max_timer_limit_sec;
+            attributes['maxTimerLimitSec'] = this.config.max_timer_limit_sec;
             attributes['commandOnlyTimer'] = this.config.command_only_timer;
         }
         if (this.config.trait_toggles) {
@@ -1856,13 +1759,13 @@ export class DeviceNode {
             attributes['queryOnlyToggles'] = this.config.command_query_toggles === CommandQueryMode.QUERY_ONLY;
         }
         if (this.config.trait_transportcontrol) {
-            attributes['transportControlSupportedCommands'] = this.supported_commands;
+            attributes['transportControlSupportedCommands'] = this.config.supported_commands;
         }
         if (this.config.trait_volume) {
-            attributes['volumeMaxLevel'] = this.volume_max_level;
+            attributes['volumeMaxLevel'] = this.config.volume_max_level;
             attributes['volumeCanMuteAndUnmute'] = this.config.volume_can_mute_and_unmute;
-            attributes['volumeDefaultPercentage'] = this.volume_default_percentage;
-            attributes['levelStepSize'] = this.level_step_size;
+            attributes['volumeDefaultPercentage'] = this.config.volume_default_percentage;
+            attributes['levelStepSize'] = this.config.level_step_size;
             attributes['commandOnlyVolume'] = this.config.command_only_volume;
         }
     }
@@ -1921,9 +1824,9 @@ export class DeviceNode {
         }
         if (this.config.trait_colorsetting) {
             if (!this.config.command_only_colorsetting) {
-                if (this.color_model === "rgb") {
+                if (this.config.color_model === "rgb") {
                     states['color'] = { spectrumRgb: 16777215 };
-                } else if (this.color_model === "hsv") {
+                } else if (this.config.color_model === "hsv") {
                     states['color'] = {
                         spectrumHsv: {
                             hue: 0.0,           // float, representing hue as positive degrees in the range of [0.0, 360.0)
@@ -1932,7 +1835,7 @@ export class DeviceNode {
                         }
                     };
                 } else {
-                    states['color'] = { temperatureK: this.temperature_max_k || 6000 };
+                    states['color'] = { temperatureK: this.config.temperature_max_k || 6000 };
                 }
             }
         }
@@ -2031,12 +1934,12 @@ export class DeviceNode {
         //}
         if (this.config.trait_openclose) {
             if (this.config.command_query_openclose !== CommandQueryMode.COMMAND_ONLY) {
-                if (this.open_direction.length < 2) {
+                if (this.config.open_direction.length < 2) {
                     states['openPercent'] = 0;
                 } else {
                     const openState = [];
                     states['openState'] = openState;
-                    this.open_direction.forEach(direction => {
+                    this.config.open_direction.forEach(direction => {
                         openState.push({
                             openPercent: 0,
                             openDirection: direction
@@ -2046,10 +1949,10 @@ export class DeviceNode {
             }
         }
         /*if (this.config.trait_rotation) {
-            if (this.supports_degrees) {
+            if (this.config.supports_degrees) {
                 // states['rotationDegrees'] = 0;
             }
-            if (this.supports_percent) {
+            if (this.config.supports_percent) {
                 // states['rotationPercent'] = 0;
             }
         }*/
@@ -2063,7 +1966,7 @@ export class DeviceNode {
         }
         if (this.config.trait_sensorstate) {
             const current_sensor_state_data = [];
-            this.sensor_states_supported.forEach(function (sensor_state_name) {
+            this.config.sensor_states_supported.forEach(function (sensor_state_name) {
                 const current_sensor = { name: sensor_state_name };
                 let current_sensor_state = undefined;
                 let raw_value = undefined;
@@ -2136,9 +2039,9 @@ export class DeviceNode {
         }*/
         if (this.config.trait_temperaturecontrol) {
             if (this.config.tc_command_query_temperaturecontrol !== CommandQueryMode.QUERY_ONLY) { // Required if queryOnlyTemperatureControl set to false
-                states['temperatureSetpointCelsius'] = this.tc_min_threshold_celsius;
+                states['temperatureSetpointCelsius'] = this.config.tc_min_threshold_celsius;
             }
-            // states['temperatureAmbientCelsius'] = this.tc_min_threshold_celsius;
+            // states['temperatureAmbientCelsius'] = this.config.tc_min_threshold_celsius;
         }
         if (this.config.trait_temperaturesetting) {
             if (this.config.command_query_temperaturesetting !== CommandQueryMode.COMMAND_ONLY) {
@@ -2168,7 +2071,7 @@ export class DeviceNode {
         }
         if (this.config.trait_volume) {
             if (!this.config.command_only_volume) {
-                states['currentVolume'] = this.volume_default_percentage;
+                states['currentVolume'] = this.config.volume_default_percentage;
                 if (this.config.volume_can_mute_and_unmute) {
                     states['isMuted'] = false;
                 }
@@ -2356,7 +2259,7 @@ export class DeviceNode {
 
         const modified = this.updateState(params);
         if (modified) {
-            if (this.persistent_state) {
+            if (this.config.persistent_state) {
                 this.clientConn.app.ScheduleGetState();
             }
         }
@@ -2398,11 +2301,11 @@ export class DeviceNode {
     onInput(msgi, send, done): void {
         if(!send) send = () => { this.send.apply(this, arguments) };
         let msg = msgi;
-        if (this.topic_filter && !(msg.topic || '').toString().startsWith(this.config.topic)) {
+        if (this.config.topic_filter && !(msg.topic || '').toString().startsWith(this.config.topic)) {
             if(done) done();
             return;
         }
-        if (this.topic_filter && msg.payload.topic && (msg.topic || '').toString().startsWith(this.config.topic)) {
+        if (this.config.topic_filter && msg.payload.topic && (msg.topic || '').toString().startsWith(this.config.topic)) {
             msg.topic = msg.payload.topic;
         }
         this._debug(".input: topic = " + msg.topic);
@@ -2431,8 +2334,8 @@ export class DeviceNode {
                 }
             } else if (upper_topic === 'AVAILABLEAPPLICATIONS') {
                 if (this.config.trait_appselector) {
-                    if (this.appselector_type === 'str') {
-                        const filename = this.appselector_file.replace(/<id>/g, this.id);
+                    if (this.config.appselector_type === 'str') {
+                        const filename = this.config.appselector_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
                             this.available_applications = this.to_available_applications(msg.payload);
                             this.writeJson('Applications', filename, this.available_applications);
@@ -2452,8 +2355,8 @@ export class DeviceNode {
                 }
             } else if (upper_topic === 'AVAILABLEARMLEVELS') {
                 if (this.config.trait_armdisarm) {
-                    if (this.available_arm_levels_type === 'str') {
-                        const filename = this.available_arm_levels_file.replace(/<id>/g, this.id)
+                    if (this.config.available_arm_levels_type === 'str') {
+                        const filename = this.config.available_arm_levels_file.replace(/<id>/g, this.id)
                         if (typeof msg.payload !== 'undefined') {
                             this.available_arm_levels = this.to_available_arm_levels(msg.payload);
                             this.writeJson('Arm levels', filename, this.available_arm_levels);
@@ -2473,8 +2376,8 @@ export class DeviceNode {
                 }
             } else if (upper_topic === 'AVAILABLECHANNELS') {
                 if (this.config.trait_channel) {
-                    if (this.channel_type === 'str') {
-                        const filename = this.channel_file.replace(/<id>/g, this.id);
+                    if (this.config.channel_type === 'str') {
+                        const filename = this.config.channel_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
                             this.available_channels = this.to_available_channels(msg.payload);
                             this.writeJson('Channels', filename, this.available_channels);
@@ -2494,8 +2397,8 @@ export class DeviceNode {
                 }
             } else if (upper_topic === 'SUPPORTEDDISPENSEITEMS') {
                 if (this.config.trait_dispense) {
-                    if (this.supported_dispense_items_type === 'str') {
-                        const filename = this.supported_dispense_items_file.replace(/<id>/g, this.id);
+                    if (this.config.supported_dispense_items_type === 'str') {
+                        const filename = this.config.supported_dispense_items_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
                             this.supported_dispense_items = this.to_supported_dispense_items(msg.payload);
                             this.writeJson('Dispense items', filename, this.supported_dispense_items);
@@ -2516,8 +2419,8 @@ export class DeviceNode {
                 }
             } else if (upper_topic === 'SUPPORTEDDISPENSEPRESETS') {
                 if (this.config.trait_dispense) {
-                    if (this.supported_dispense_presets_type === 'str') {
-                        const filename = this.supported_dispense_presets_file.replace(/<id>/g, this.id);
+                    if (this.config.supported_dispense_presets_type === 'str') {
+                        const filename = this.config.supported_dispense_presets_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
                             this.supported_dispense_presets = this.to_supported_dispense_presets(msg.payload);
                             this.writeJson('Dispense presets', filename, this.supported_dispense_presets);
@@ -2538,8 +2441,8 @@ export class DeviceNode {
                 }
             } else if (upper_topic === 'AVAILABLEFANSPEEDS') {
                 if (this.config.trait_fanspeed) {
-                    if (this.available_fan_speeds_type === 'str') {
-                        const filename = this.available_fan_speeds_file.replace(/<id>/g, this.id);
+                    if (this.config.available_fan_speeds_type === 'str') {
+                        const filename = this.config.available_fan_speeds_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
                             this.available_fan_speeds = this.to_available_fan_speeds(msg.payload);
                             this.writeJson('Fan speeds', filename, this.available_fan_speeds);
@@ -2559,8 +2462,8 @@ export class DeviceNode {
                 }
             } else if (upper_topic === 'AVAILABLEFILLLEVELS') {
                 if (this.config.trait_dispense) {
-                    if (this.available_fill_levels_type === 'str') {
-                        const filename = this.available_fill_levels_file.replace(/<id>/g, this.id);
+                    if (this.config.available_fill_levels_type === 'str') {
+                        const filename = this.config.available_fill_levels_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
                             this.available_fill_levels = this.to_available_fill_levels(msg.payload);
                             this.writeJson(' Fill levels', filename, this.available_fill_levels);
@@ -2580,8 +2483,8 @@ export class DeviceNode {
                 }
             } else if (upper_topic === 'AVAILABLEFOODPRESETS') {
                 if (this.config.trait_cook) {
-                    if (this.food_presets_type === 'str') {
-                        const filename = this.food_presets_file.replace(/<id>/g, this.id);
+                    if (this.config.food_presets_type === 'str') {
+                        const filename = this.config.food_presets_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
                             this.food_presets = this.to_food_presets(msg.payload);
                             this.writeJson('Food presets', filename, this.food_presets);
@@ -2601,8 +2504,8 @@ export class DeviceNode {
                 }
             } else if (upper_topic === 'AVAILABLEINPUTS') {
                 if (this.config.trait_inputselector) {
-                    if (this.inputselector_type === 'json') {
-                        const filename = this.inputselector_file.replace(/<id>/g, this.id)
+                    if (this.config.inputselector_type === 'json') {
+                        const filename = this.config.inputselector_file.replace(/<id>/g, this.id)
                         if (typeof msg.payload !== 'undefined') {
                             this.available_inputs = this.to_available_inputs(msg.payload);
                             this.writeJson('Inputs', filename, this.available_inputs);
@@ -2622,8 +2525,8 @@ export class DeviceNode {
                 }
             } else if (upper_topic === 'AVAILABLEMODES') {
                 if (this.config.trait_modes) {
-                    if (this.modes_type !== 'json') {
-                        const filename = this.modes_file.replace(/<id>/g, this.id);
+                    if (this.config.modes_type !== 'json') {
+                        const filename = this.config.modes_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
                             this.available_modes = this.to_available_modes(msg.payload);
                             this.writeJson('Modes', filename, this.available_modes);
@@ -2644,8 +2547,8 @@ export class DeviceNode {
                 }
             } else if (upper_topic === 'AVAILABLETOGGLES') {
                 if (this.config.trait_toggles) {
-                    if (this.toggles_type === 'str') {
-                        const filename = this.toggles_file.replace(/<id>/g, this.id);
+                    if (this.config.toggles_type === 'str') {
+                        const filename = this.config.toggles_file.replace(/<id>/g, this.id);
                         if (typeof msg.payload !== 'undefined') {
                             this.available_toggles = this.to_available_toggles(msg.payload);
                             this.writeJson('Toggles', filename, this.available_toggles);
@@ -2716,7 +2619,7 @@ export class DeviceNode {
                     RunCycle: payload
                 });  // tell Google ...
             } else if (this.config.trait_sensorstate && upper_topic === 'SENSORSTATE') {
-                if (typeof msg.payload.name === 'string' && msg.payload.name.trim() && this.sensor_states_supported.includes(msg.payload.name.trim())) {
+                if (typeof msg.payload.name === 'string' && msg.payload.name.trim() && this.config.sensor_states_supported.includes(msg.payload.name.trim())) {
                     const payload = { priority: 0 };
                     payload.name = msg.payload.name.trim();
                     if (typeof msg.payload.currentSensorState === 'string' && msg.payload.currentSensorState.trim()) {
@@ -2817,7 +2720,7 @@ export class DeviceNode {
                 });
                 if (this.updateState({ currentStatusReport: new_payload }) || differs) {
                     this.clientConn.reportState(this.id);  // tell Google ...
-                    if (this.persistent_state) {
+                    if (this.config.persistent_state) {
                         this.clientConn.app.ScheduleGetState();
                     }
                     // if (this.config.passthru) {
@@ -2831,117 +2734,117 @@ export class DeviceNode {
                     case 'action.devices.commands.appInstall':
                     case 'action.devices.commands.appSearch':
                     case 'action.devices.commands.appSelect':
-                        this.pin_appselector = pin;
+                        this.config.pin_appselector = pin;
                         break;
                     case 'action.devices.commands.ArmDisarm':
-                        this.pin_armdisarm = pin;
+                        this.config.pin_armdisarm = pin;
                         break;
                     case 'action.devices.commands.BrightnessAbsolute':
                     case 'action.devices.commands.BrightnessRelative':
-                        this.pin_brightness = pin;
+                        this.config.pin_brightness = pin;
                         break;
                     case 'action.devices.commands.GetCameraStream':
-                        this.pin_camerastream = pin;
+                        this.config.pin_camerastream = pin;
                         break;
                     case 'action.devices.commands.selectChannel':
                     case 'action.devices.commands.relativeChannel':
                     case 'action.devices.commands.returnChannel':
-                        this.pin_channel = pin;
+                        this.config.pin_channel = pin;
                         break;
                     case 'action.devices.commands.ColorAbsolute':
-                        this.pin_colorsetting = pin;
+                        this.config.pin_colorsetting = pin;
                         break;
                     case 'action.devices.commands.Cook':
-                        this.pin_cook = pin;
+                        this.config.pin_cook = pin;
                         break;
                     case 'action.devices.commands.Dispense':
-                        this.pin_dispense = pin;
+                        this.config.pin_dispense = pin;
                         break;
                     case 'action.devices.commands.Dock':
-                        this.pin_dock = pin;
+                        this.config.pin_dock = pin;
                         break;
                     case 'action.devices.commands.Charge':
-                        this.pin_energystorage = pin;
+                        this.config.pin_energystorage = pin;
                         break;
                     case 'action.devices.commands.SetFanSpeed':
                     case 'action.devices.commands.SetFanSpeedRelative':
                     case 'action.devices.commands.Reverse':
-                        this.pin_fanspeed = pin;
+                        this.config.pin_fanspeed = pin;
                         break;
                     case 'action.devices.commands.Fill':
-                        this.pin_fill = pin;
+                        this.config.pin_fill = pin;
                         break;
                     case 'action.devices.commands.SetHumidity':
                     case 'action.devices.commands.HumidityRelative':
-                        this.pin_humiditysetting = pin;
+                        this.config.pin_humiditysetting = pin;
                         break;
                     case 'action.devices.commands.SetInput':
                     case 'action.devices.commands.NextInput':
                     case 'action.devices.commands.PreviousInput':
-                        this.pin_inputselector = pin;
+                        this.config.pin_inputselector = pin;
                         break;
                     case 'action.devices.commands.ColorLoop':
                     case 'action.devices.commands.Sleep':
                     case 'action.devices.commands.StopEffect':
                     case 'action.devices.commands.Wake':
-                        this.pin_colorsetting = pin;
+                        this.config.pin_colorsetting = pin;
                         break;
                     case 'action.devices.commands.Locate':
-                        this.pin_locator = pin;
+                        this.config.pin_locator = pin;
                         break;
                     case 'action.devices.commands.LockUnlock':
-                        this.pin_lockunlock = pin;
+                        this.config.pin_lockunlock = pin;
                         break;
                     case 'action.devices.commands.SetModes':
-                        this.pin_modes = pin;
+                        this.config.pin_modes = pin;
                         break;
                     case 'action.devices.commands.EnableDisableGuestNetwork':
                     case 'action.devices.commands.EnableDisableNetworkProfile':
                     case 'action.devices.commands.GetGuestNetworkPassword':
                     case 'action.devices.commands.TestNetworkSpeed':
-                        this.pin_networkcontrol = pin;
+                        this.config.pin_networkcontrol = pin;
                         break;
                     case 'action.devices.commands.OnOff':
-                        this.pin_onoff = pin;
+                        this.config.pin_onoff = pin;
                         break;
                     case 'action.devices.commands.OpenClose':
                     case 'action.devices.commands.OpenCloseRelative':
-                        this.pin_openclose = pin;
+                        this.config.pin_openclose = pin;
                         break;
                     case 'action.devices.commands.Reboot':
-                        this.pin_reboot = pin;
+                        this.config.pin_reboot = pin;
                         break;
                     case 'action.devices.commands.RotateAbsolute':
-                        this.pin_rotation = pin;
+                        this.config.pin_rotation = pin;
                         break;
                     case 'action.devices.commands.ActivateScene':
-                        this.pin_scene = pin;
+                        this.config.pin_scene = pin;
                         break;
                     case 'action.devices.commands.SoftwareUpdate':
-                        this.pin_softwareupdate = pin;
+                        this.config.pin_softwareupdate = pin;
                         break;
                     case 'action.devices.commands.StartStop':
                     case 'action.devices.commands.PauseUnpause':
-                        this.pin_startstop = pin;
+                        this.config.pin_startstop = pin;
                         break;
                     case 'action.devices.commands.SetTemperature':
-                        this.pin_temperaturecontrol = pin;
+                        this.config.pin_temperaturecontrol = pin;
                         break;
                     case 'action.devices.commands.ThermostatTemperatureSetpoint':
                     case 'action.devices.commands.ThermostatTemperatureSetRange':
                     case 'action.devices.commands.ThermostatSetMode':
                     case 'action.devices.commands.TemperatureRelative':
-                        this.pin_temperaturesetting = pin;
+                        this.config.pin_temperaturesetting = pin;
                         break;
                     case 'action.devices.commands.TimerStart':
                     case 'action.devices.commands.TimerAdjust':
                     case 'action.devices.commands.TimerPause':
                     case 'action.devices.commands.TimerResume':
                     case 'action.devices.commands.TimerCancel':
-                        this.pin_timer = pin;
+                        this.config.pin_timer = pin;
                         break;
                     case 'action.devices.commands.SetToggles':
-                        this.pin_toggles = pin;
+                        this.config.pin_toggles = pin;
                         break;
                     case 'action.devices.commands.mediaStop':
                     case 'action.devices.commands.mediaNext':
@@ -2954,12 +2857,12 @@ export class DeviceNode {
                     case 'action.devices.commands.mediaShuffle':
                     case 'action.devices.commands.mediaClosedCaptioningOn':
                     case 'action.devices.commands.mediaClosedCaptioningOff':
-                        this.pin_transportcontrol = pin;
+                        this.config.pin_transportcontrol = pin;
                         break;
                     case 'action.devices.commands.mute':
                     case 'action.devices.commands.setVolume':
                     case 'action.devices.commands.volumeRelative':
-                        this.pin_volume = pin;
+                        this.config.pin_volume = pin;
                         break;
                 }
             } else {
@@ -2989,7 +2892,7 @@ export class DeviceNode {
                         send({ topic: this.config.topic, payload: states });
                     }
                     this.clientConn.reportState(this.id);  // tell Google ...
-                    if (this.persistent_state) {
+                    if (this.config.persistent_state) {
                         this.clientConn.app.ScheduleGetState();
                     }
                     this.updateStatusIcon(false);
@@ -3936,147 +3839,147 @@ export class DeviceNode {
             case 'action.devices.commands.appInstall':
             case 'action.devices.commands.appSearch':
             case 'action.devices.commands.appSelect':
-                challenge_type = this.ct_appselector;
-                challenge_pin = this.pin_appselector;
+                challenge_type = this.config.ct_appselector;
+                challenge_pin = this.config.pin_appselector;
                 break;
             case 'action.devices.commands.ArmDisarm':
-                challenge_type = this.ct_armdisarm;
-                challenge_pin = this.pin_armdisarm;
+                challenge_type = this.config.ct_armdisarm;
+                challenge_pin = this.config.pin_armdisarm;
                 break;
             case 'action.devices.commands.BrightnessAbsolute':
             case 'action.devices.commands.BrightnessRelative':
-                challenge_type = this.ct_brightness;
-                challenge_pin = this.pin_brightness;
+                challenge_type = this.config.ct_brightness;
+                challenge_pin = this.config.pin_brightness;
                 break;
             case 'action.devices.commands.GetCameraStream':
-                challenge_type = this.ct_camerastream;
-                challenge_pin = this.pin_camerastream;
+                challenge_type = this.config.ct_camerastream;
+                challenge_pin = this.config.pin_camerastream;
                 break;
             case 'action.devices.commands.selectChannel':
             case 'action.devices.commands.relativeChannel':
             case 'action.devices.commands.returnChannel':
-                challenge_type = this.ct_channel;
-                challenge_pin = this.pin_channel;
+                challenge_type = this.config.ct_channel;
+                challenge_pin = this.config.pin_channel;
                 break;
             case 'action.devices.commands.ColorAbsolute':
-                challenge_type = this.ct_colorsetting;
-                challenge_pin = this.pin_colorsetting;
+                challenge_type = this.config.ct_colorsetting;
+                challenge_pin = this.config.pin_colorsetting;
                 break;
             case 'action.devices.commands.Cook':
-                challenge_type = this.ct_cook;
-                challenge_pin = this.pin_cook;
+                challenge_type = this.config.ct_cook;
+                challenge_pin = this.config.pin_cook;
                 break;
             case 'action.devices.commands.Dispense':
-                challenge_type = this.ct_dispense;
-                challenge_pin = this.pin_dispense;
+                challenge_type = this.config.ct_dispense;
+                challenge_pin = this.config.pin_dispense;
                 break;
             case 'action.devices.commands.Dock':
-                challenge_type = this.ct_dock;
-                challenge_pin = this.pin_dock;
+                challenge_type = this.config.ct_dock;
+                challenge_pin = this.config.pin_dock;
                 break;
             case 'action.devices.commands.Charge':
-                challenge_type = this.ct_energystorage;
-                challenge_pin = this.pin_energystorage;
+                challenge_type = this.config.ct_energystorage;
+                challenge_pin = this.config.pin_energystorage;
                 break;
             case 'action.devices.commands.SetFanSpeed':
             case 'action.devices.commands.SetFanSpeedRelative':
             case 'action.devices.commands.Reverse':
-                challenge_type = this.ct_fanspeed;
-                challenge_pin = this.pin_fanspeed;
+                challenge_type = this.config.ct_fanspeed;
+                challenge_pin = this.config.pin_fanspeed;
                 break;
             case 'action.devices.commands.Fill':
-                challenge_type = this.ct_fill;
-                challenge_pin = this.pin_fill;
+                challenge_type = this.config.ct_fill;
+                challenge_pin = this.config.pin_fill;
                 break;
             case 'action.devices.commands.SetHumidity':
             case 'action.devices.commands.HumidityRelative':
-                challenge_type = this.ct_humiditysetting;
-                challenge_pin = this.pin_humiditysetting;
+                challenge_type = this.config.ct_humiditysetting;
+                challenge_pin = this.config.pin_humiditysetting;
                 break;
             case 'action.devices.commands.SetInput':
             case 'action.devices.commands.NextInput':
             case 'action.devices.commands.PreviousInput':
-                challenge_type = this.ct_inputselector;
-                challenge_pin = this.pin_inputselector;
+                challenge_type = this.config.ct_inputselector;
+                challenge_pin = this.config.pin_inputselector;
                 break;
             case 'action.devices.commands.ColorLoop':
             case 'action.devices.commands.Sleep':
             case 'action.devices.commands.StopEffect':
             case 'action.devices.commands.Wake':
-                challenge_type = this.ct_colorsetting;
-                challenge_pin = this.pin_colorsetting;
+                challenge_type = this.config.ct_colorsetting;
+                challenge_pin = this.config.pin_colorsetting;
                 break;
             case 'action.devices.commands.Locate':
-                challenge_type = this.ct_locator;
-                challenge_pin = this.pin_locator;
+                challenge_type = this.config.ct_locator;
+                challenge_pin = this.config.pin_locator;
                 break;
             case 'action.devices.commands.LockUnlock':
-                challenge_type = this.ct_lockunlock;
-                challenge_pin = this.pin_lockunlock;
+                challenge_type = this.config.ct_lockunlock;
+                challenge_pin = this.config.pin_lockunlock;
                 break;
             case 'action.devices.commands.SetModes':
-                challenge_type = this.ct_modes;
-                challenge_pin = this.pin_modes;
+                challenge_type = this.config.ct_modes;
+                challenge_pin = this.config.pin_modes;
                 break;
             case 'action.devices.commands.EnableDisableGuestNetwork':
             case 'action.devices.commands.EnableDisableNetworkProfile':
             case 'action.devices.commands.GetGuestNetworkPassword':
             case 'action.devices.commands.TestNetworkSpeed':
-                challenge_type = this.ct_networkcontrol;
-                challenge_pin = this.pin_networkcontrol;
+                challenge_type = this.config.ct_networkcontrol;
+                challenge_pin = this.config.pin_networkcontrol;
                 break;
             case 'action.devices.commands.OnOff':
-                challenge_type = this.ct_onoff;
-                challenge_pin = this.pin_onoff;
+                challenge_type = this.config.ct_onoff;
+                challenge_pin = this.config.pin_onoff;
                 break;
             case 'action.devices.commands.OpenClose':
             case 'action.devices.commands.OpenCloseRelative':
-                challenge_type = this.ct_openclose;
-                challenge_pin = this.pin_openclose;
+                challenge_type = this.config.ct_openclose;
+                challenge_pin = this.config.pin_openclose;
                 break;
             case 'action.devices.commands.Reboot':
-                challenge_type = this.ct_reboot;
-                challenge_pin = this.pin_reboot;
+                challenge_type = this.config.ct_reboot;
+                challenge_pin = this.config.pin_reboot;
                 break;
             case 'action.devices.commands.RotateAbsolute':
-                challenge_type = this.ct_rotation;
-                challenge_pin = this.pin_rotation;
+                challenge_type = this.config.ct_rotation;
+                challenge_pin = this.config.pin_rotation;
                 break;
             case 'action.devices.commands.ActivateScene':
-                challenge_type = this.ct_scene;
-                challenge_pin = this.pin_scene;
+                challenge_type = this.config.ct_scene;
+                challenge_pin = this.config.pin_scene;
                 break;
             case 'action.devices.commands.SoftwareUpdate':
-                challenge_type = this.ct_softwareupdate;
-                challenge_pin = this.pin_softwareupdate;
+                challenge_type = this.config.ct_softwareupdate;
+                challenge_pin = this.config.pin_softwareupdate;
                 break;
             case 'action.devices.commands.StartStop':
             case 'action.devices.commands.PauseUnpause':
-                challenge_type = this.ct_startstop;
-                challenge_pin = this.pin_startstop;
+                challenge_type = this.config.ct_startstop;
+                challenge_pin = this.config.pin_startstop;
                 break;
             case 'action.devices.commands.SetTemperature':
-                challenge_type = this.ct_temperaturecontrol;
-                challenge_pin = this.pin_temperaturecontrol;
+                challenge_type = this.config.ct_temperaturecontrol;
+                challenge_pin = this.config.pin_temperaturecontrol;
                 break;
             case 'action.devices.commands.ThermostatTemperatureSetpoint':
             case 'action.devices.commands.ThermostatTemperatureSetRange':
             case 'action.devices.commands.ThermostatSetMode':
             case 'action.devices.commands.TemperatureRelative':
-                challenge_type = this.ct_temperaturesetting;
-                challenge_pin = this.pin_temperaturesetting;
+                challenge_type = this.config.ct_temperaturesetting;
+                challenge_pin = this.config.pin_temperaturesetting;
                 break;
             case 'action.devices.commands.TimerStart':
             case 'action.devices.commands.TimerAdjust':
             case 'action.devices.commands.TimerPause':
             case 'action.devices.commands.TimerResume':
             case 'action.devices.commands.TimerCancel':
-                challenge_type = this.ct_timer;
-                challenge_pin = this.pin_timer;
+                challenge_type = this.config.ct_timer;
+                challenge_pin = this.config.pin_timer;
                 break;
             case 'action.devices.commands.SetToggles':
-                challenge_type = this.ct_toggles;
-                challenge_pin = this.pin_toggles;
+                challenge_type = this.config.ct_toggles;
+                challenge_pin = this.config.pin_toggles;
                 break;
             case 'action.devices.commands.mediaStop':
             case 'action.devices.commands.mediaNext':
@@ -4089,14 +3992,14 @@ export class DeviceNode {
             case 'action.devices.commands.mediaShuffle':
             case 'action.devices.commands.mediaClosedCaptioningOn':
             case 'action.devices.commands.mediaClosedCaptioningOff':
-                challenge_type = this.ct_transportcontrol;
-                challenge_pin = this.pin_transportcontrol;
+                challenge_type = this.config.ct_transportcontrol;
+                challenge_pin = this.config.pin_transportcontrol;
                 break;
             case 'action.devices.commands.mute':
             case 'action.devices.commands.setVolume':
             case 'action.devices.commands.volumeRelative':
-                challenge_type = this.ct_volume;
-                challenge_pin = this.pin_volume;
+                challenge_type = this.config.ct_volume;
+                challenge_pin = this.config.pin_volume;
                 break;
         }
         const challenge = command.challenge || {};
@@ -4218,7 +4121,7 @@ export class DeviceNode {
             //const start = command.params['start'];
             if (Object.prototype.hasOwnProperty.call(command.params, 'cookingMode')) {
                 const cooking_mode = command.params['cookingMode'] as string;
-                if (this.supported_cooking_modes.includes(cooking_mode)) {
+                if (this.config.supported_cooking_modes.includes(cooking_mode)) {
                     params['currentCookingMode'] = cooking_mode;
                     executionStates.push('currentCookingMode');
                 } else {
@@ -4453,7 +4356,7 @@ export class DeviceNode {
             const profile = command.params['profile'].toLowerCase();
             //const enable = command.params['enable'] || false;
             let found = false;
-            this.network_profiles.forEach(function (p) {
+            this.config.network_profiles.forEach(function (p) {
                 if (profile === p.toLowerCase()) {
                     found = true;
                 }
@@ -4595,7 +4498,7 @@ export class DeviceNode {
                 if (zones !== undefined) {
                     const active_zones = [];
                     zones.forEach((zone) => {
-                        if (this.available_zones.includes(zone)) {
+                        if (this.config.available_zones.includes(zone)) {
                             active_zones.push(zone);
                         }
                     });
@@ -4825,8 +4728,8 @@ export class DeviceNode {
             if (!this.config.command_only_volume) {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'volumeLevel')) {
                     let volumeLevel = command.params['volumeLevel'];
-                    if (volumeLevel > this.volume_max_level) {
-                        volumeLevel = this.volume_max_level;
+                    if (volumeLevel > this.config.volume_max_level) {
+                        volumeLevel = this.config.volume_max_level;
                     }
                     params['currentVolume'] = volumeLevel;
                     params['isMuted'] = false;
@@ -4839,7 +4742,7 @@ export class DeviceNode {
                 if (Object.prototype.hasOwnProperty.call(command.params, 'relativeSteps')) {
                     const relativeSteps = command.params['relativeSteps'];
                     let current_volume = this.states['currentVolume'];
-                    if (current_volume >= this.volume_max_level && relativeSteps > 0) {
+                    if (current_volume >= this.config.volume_max_level && relativeSteps > 0) {
                         return {
                             status: 'ERROR',
                             errorCode: 'volumeAlreadyMax'
@@ -4851,8 +4754,8 @@ export class DeviceNode {
                         };
                     }
                     current_volume += relativeSteps;
-                    if (current_volume > this.volume_max_level) {
-                        current_volume = this.volume_max_level;
+                    if (current_volume > this.config.volume_max_level) {
+                        current_volume = this.config.volume_max_level;
                     } else if (current_volume < 0) {
                         current_volume = 0;
                     }
