@@ -17,7 +17,7 @@
 ---
 ## Introduction
 
-A collection of Node-RED nodes to control your smart home devices via Google Assistant or the Google Home app.
+A collection of Node-RED nodes to control your smart home devices via Gemini, Google Assistant, or the Google Home app.
 
 This is done by implementing a smart home provider that runs on your own host. So you don't have to rely on any third
 party services (other than Google) that can go offline, charge you, or leak your data.
@@ -28,7 +28,7 @@ What this module does NOT do:
 - It does not talk to your physical devices. It only provides virtual devices in Node-RED. It's up to you to pass
   commands from the virtual to the physical devices.
 - It is not an interface to Google devices (like Nest Thermostats, Nest Cams, etc.).
-- It is for controlling devices only. It does not let you implement your own conversations with Google Assistant.
+- It is for controlling devices only. It does not let you implement your own conversations with Gemini or Google Assistant.
 
 ---
 ## Prerequisites and Setup Instructions

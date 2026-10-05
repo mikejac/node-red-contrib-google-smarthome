@@ -279,7 +279,7 @@ Finally, we will link the Google Home App to the Node-RED service.
 
 
 8. If you just want to control your device, you are done now. If you want to get the current state of your device in the
-   app or using Google Assistant ("Hey Google, is the light on?"), you need to send the current state of your device
+   app or using Gemini or Google Assistant ("Hey Google, is the light on?"), you need to send the current state of your device
    to the Google device. This usually means taking the output of your actual device, converting it using a
    `change` or `function` node and then passing it to the Google device.\
 

@@ -4,7 +4,7 @@ This document explains the essentials of `node-red-contrib-google-smarthome` so 
 
 ## 1. Mission & Scope
 - Provides a self-hosted Google Smart Home provider implemented as custom Node-RED nodes.  
-- Lets end users control virtual devices defined in Node-RED via Google Assistant / Google Home, then relay actions to their own automations.  
+- Lets end users control virtual devices defined in Node-RED via Gemini / Google Assistant / Google Home, then relay actions to their own automations.  
 - Does **not** talk directly to physical devices; flows must bridge between Google-issued commands and the real hardware logic.
 
 ## 2. High-Level Architecture
