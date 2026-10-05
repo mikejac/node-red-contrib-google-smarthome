@@ -53,7 +53,7 @@ export default class Auth {
     /**
      * Constructor
      *
-     * @param {GoogleSmartHome} smarthome
+     * @param smarthome
      */
     constructor(smarthome: GoogleSmartHome) {
         this._smarthome = smarthome;
@@ -70,8 +70,8 @@ export default class Auth {
     /**
      * Loads the auth storage from file.
      *
-     * @param {string} nodeId - ID of the config node
-     * @param {string} userDir - Node-RED's user directory
+     * @param nodeId - ID of the config node
+     * @param userDir - Node-RED's user directory
      */
     loadAuthStorage(nodeId: string, userDir: string): void {
         try {
@@ -112,8 +112,8 @@ export default class Auth {
     /**
      * Load the JWT key from a file.
      *
-     * @param {string} jwtkeyFile - File name of the JWT key
-     * @param {string} dir - Directory (if file name is not already given with path)
+     * @param jwtkeyFile - File name of the JWT key
+     * @param dir - Directory (if file name is not already given with path)
      */
     loadJwtKeyFile(jwtkeyFile: string, dir: string): void {
         if (!jwtkeyFile.startsWith(path.sep)) {
@@ -126,8 +126,8 @@ export default class Auth {
     /**
      * Sets client ID and secret.
      *
-     * @param {string} clientid - Client ID
-     * @param {string} clientsecret - Client secret
+     * @param clientid - Client ID
+     * @param clientsecret - Client secret
      */
     setClientIdSecret(clientid: string, clientsecret: string): void {
         this._clientId     = clientid;
@@ -137,8 +137,8 @@ export default class Auth {
     /**
      * Sets username and password for classic login.
      *
-     * @param {string} username - Username
-     * @param {string} password - Password
+     * @param username - Username
+     * @param password - Password
      */
     setUsernamePassword(username: string, password: string): void {
         this._username = username;

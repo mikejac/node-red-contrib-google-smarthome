@@ -41,7 +41,7 @@ function outputValue(value)
  * @param {mixed[]} inputValues - The values to be tested for conversion
  * @param {number} targetType - The target type to which the values will be converted
  * @param {mixed} targetValue - The expected result of the conversion for each input value
- * @param {string} targetDescription - Description of the target value for log output
+ * @param targetDescription - Description of the target value for log output
  */
 function testConvertsToValue(inputValues, targetType, targetValue, targetDescription: string)
 {
@@ -60,7 +60,7 @@ function testConvertsToValue(inputValues, targetType, targetValue, targetDescrip
  *
  * @param {mixed[]} inputValues - The values to be tested for conversion
  * @param {number} targetType - The target type to which the values will be converted
- * @param {string} targetDescription - Description of the target value for log output
+ * @param targetDescription - Description of the target value for log output
  */
 function testForError(inputValues, targetType, targetDescription: string)
 {

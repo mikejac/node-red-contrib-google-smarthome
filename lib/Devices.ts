@@ -33,7 +33,7 @@ export default class Devices {
     /**
      * Constructor
      *
-     * @param {GoogleSmartHome} smarthome
+     * @param smarthome
      */
     constructor(smarthome: GoogleSmartHome) {
         this._smarthome = smarthome;

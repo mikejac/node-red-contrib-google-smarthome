@@ -57,7 +57,7 @@ export default class HttpActions {
     /**
      * Constructor
      *
-     * @param {GoogleSmartHome} smarthome - Instance of the GoogleSmartHome class
+     * @param smarthome - Instance of the GoogleSmartHome class
      */
     constructor(smarthome: GoogleSmartHome) {
         this._smarthome = smarthome;
