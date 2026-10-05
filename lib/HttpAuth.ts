@@ -205,7 +205,13 @@ export default class HttpAuth {
      * {
      * }
      */
-    private _handleUserAuth(req: Request, res: Response, username, isValidUser, httpRoot) {
+    private _handleUserAuth(
+        req: Request,
+        res: Response,
+        username: string,
+        isValidUser: boolean,
+        httpRoot: string
+    ): void {
         if (!isValidUser) {
             const redirectUrl = util.format('%s?client_id=%s&redirect_uri=%s&state=%s&response_type=code&error=invalid_user',
                 this._smarthome.Path_join(httpRoot, 'oauth'), req.body.client_id, encodeURIComponent(req.body.redirect_uri), req.body.state);
@@ -241,7 +247,7 @@ export default class HttpAuth {
      *   expires_in: "EXPIRATION_SECONDS",
      * }
      */
-    private _handleAuthCode(req: Request, res: Response, my_uri) {
+    private _handleAuthCode(req: Request, res: Response, my_uri: string) {
         const code         = req.query.code          ? req.query.code          : req.body.code;
         const redirect_uri = req.query.redirect_uri  ? req.query.redirect_uri  : req.body.redirect_uri;
 

@@ -25,7 +25,7 @@ interface MgmtNodeConfig extends NodeDef {
     id: string;
     name: string;
     client: string;
-    set_state_type: string;
+    set_state_type: 'no_nodes' | 'all_by_id' | 'filtered_by_id' | 'all_by_name' | 'filtered_by_name';
 }
 
 export interface MgmtNode extends Node {}
@@ -162,9 +162,9 @@ export class MgmtNode {
      * Called by the runtime when this node is being removed or restarted
      *
      * @param removed - true if the is being removed, false on restart
-     * @param {Function} done - Function to inform the runtime that this node has finished its operation
+     * @param done - Function to inform the runtime that this node has finished its operation
      */
-    onClose(removed: boolean, done): void {
+    onClose(removed: boolean, done: (err?: unknown) => void): void {
         if (removed) {
             // this node has been deleted
             this.clientConn.remove(this, 'mgmt');

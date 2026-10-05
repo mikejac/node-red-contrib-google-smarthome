@@ -193,9 +193,9 @@ export default class HttpActions {
         this._smarthome.debug('HttpActions:_post(/' + url + '): request.headers = ' + JSON.stringify(request.headers));
         this._smarthome.debug('HttpActions:_post(/' + url + '): reqdata = ' + JSON.stringify(reqdata));
 
-        let res = request.headers.authorization;
-        if (!res) {
-            this._smarthome.error('HttpActions:_post(/' + url + '): missing authorization header; res = ' + JSON.stringify(res));
+        const authorizationHeader = request.headers.authorization;
+        if (!authorizationHeader) {
+            this._smarthome.error('HttpActions:_post(/' + url + '): missing authorization header; authorizationHeader = ' + JSON.stringify(authorizationHeader));
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -204,9 +204,9 @@ export default class HttpActions {
             return;
         }
 
-        res = res.split(" ");
-        if (res.length != 2 || res[0] !== 'Bearer') {
-            this._smarthome.error('HttpActions:_post(/' + url + '): invalid authorization data; res = ' + JSON.stringify(res));
+        const authorizationHeaderParts = authorizationHeader.split(' ');
+        if (authorizationHeaderParts.length !== 2 || authorizationHeaderParts[0] !== 'Bearer') {
+            this._smarthome.error('HttpActions:_post(/' + url + '): invalid authorization data; authorizationHeaderParts = ' + JSON.stringify(authorizationHeaderParts));
 
             response.status(401).set({
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -215,7 +215,7 @@ export default class HttpActions {
             return;
         }
 
-        const accessToken = res[1];
+        const accessToken = authorizationHeaderParts[1];
         const is_local_execution = this._smarthome.auth.isValidLocalAccessToken(accessToken);
         const user = this._smarthome.auth.getuserForAccessToken(accessToken);
         if (user === null) {
@@ -494,7 +494,7 @@ export default class HttpActions {
      * @param response - Express response object
      * @param is_local - Indicates whether the current command was issued using local fulfillment.
      */
-    private _exec(requestId, commands, response: Response, is_local: boolean) {
+    private _exec(requestId: string, commands, response: Response, is_local: boolean) {
         this._smarthome.debug('HttpActions:_exec()');
 
         // Prevent loop bound injection (https://codeql.github.com/codeql-query-help/javascript/js-loop-bound-injection/)
@@ -601,7 +601,7 @@ export default class HttpActions {
     /**
      * @param response - Express response object
      */
-    private _reachable_devices(requestId, response: Response) {
+    private _reachable_devices(requestId: string, response: Response) {
         this._smarthome.debug('HttpActions:_reachable_devices()');
 
         const reachableDevices = this._smarthome.devices.getReachableDeviceIds();

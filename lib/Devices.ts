@@ -58,10 +58,10 @@ export default class Devices {
     //
     //
     //
-    ReportState(deviceId: string): boolean {
+    ReportState(deviceId: string): void {
         if (!this._nodes[deviceId]) {
             this._smarthome.debug('Device:ReportState(): device ' + deviceId + ' does not exist');
-            return false;
+            return;
         }
 
         this._smarthome.httpActions.reportState(deviceId, this._nodes[deviceId].states);
@@ -107,11 +107,15 @@ export default class Devices {
 
         this._devicesDoTimedSync();
     }
-    //
-    // Executed in HttpActions:_execDevice
-    //
-    getDevice(deviceId: string) {
-        return this._nodes[deviceId] ||  undefined;
+
+    /**
+     * Retrieves a device by its ID.
+     *
+     * @param deviceId - The ID of the device to retrieve. 
+     * @returns The DeviceNode corresponding to the given deviceId, or undefined if not found.
+     */
+    getDevice(deviceId: string): DeviceNode | undefined {
+        return this._nodes[deviceId] || undefined;
     }
     //
     //
@@ -191,7 +195,7 @@ export default class Devices {
      *
      * @param {object} states - States to set
      */
-    setStates(states) {
+    setStates(states): void {
         this._smarthome.debug('Device:setStates()');
 
         Object.keys(states).forEach(deviceId => {

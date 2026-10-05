@@ -58,12 +58,18 @@ export class GoogleSmartHome {
     private _localScanPort: number;
     private _httpPath: string;
     private _httpPort: number;
-    private _httpNodeRoot: string;
+    private _httpNodeRoot: string | false;
     private _localScanType: string;
     private _httpServerRunning: boolean = false;
+    private _localHttpServerRunning: boolean = false;
     private _dnssdAdRunning: boolean = false;
     private _syncScheduled: boolean = false;
     private _sslOffload: boolean;
+    private _publicKey: string;
+    private _privateKey: string;
+    private _jwtKeyFile: string;
+    private _debug: boolean;
+    private _userDir: string
     private _getStateScheduled: boolean = false;
     private _reportStateTimer: NodeJS.Timeout | null;
     private debug_function: (data: any) => void;
@@ -72,9 +78,9 @@ export class GoogleSmartHome {
     private _localScanPacket: string = 'node-red-contrib-google-smarthome';
 
 
-    constructor(configNode: GoogleSmartHomeNode, userDir: string, httpNodeRoot: string, username, password, usehttpnoderoot,
-        httpPath: string, httpPort: number, localScanType: string, localScanPort: number, httpLocalPort: number, nodeRedUsesHttps, ssloffload: boolean, publicKey, privateKey, jwtkeyFile, clientid,
-        clientsecret, debug, debug_function: (data: any) => void, error_function: (data: any) => void) {
+    constructor(configNode: GoogleSmartHomeNode, userDir: string, httpNodeRoot: string | false, username, password, usehttpnoderoot,
+        httpPath: string, httpPort: number, localScanType: string, localScanPort: number, httpLocalPort: number, nodeRedUsesHttps: boolean, ssloffload: boolean, publicKey: string, privateKey: string, jwtkeyFile: string, clientid: string,
+        clientsecret: string, debug: boolean, debug_function: (data: any) => void, error_function: (data: any) => void) {
 
         this.auth                   = new Auth(this);
         this.devices                = new Devices(this);
@@ -508,7 +514,7 @@ export class GoogleSmartHome {
     //
     //
     //
-    Stop(REDapp: express.Express, done): void {
+    Stop(REDapp: express.Express, done: (err?: unknown) => void): void {
         // httpNodeRoot is the root url for nodes that provide HTTP endpoints. If set to false, all node-based HTTP endpoints are disabled. 
         if (this._httpNodeRoot === false) return;
 
@@ -641,7 +647,7 @@ export class GoogleSmartHome {
      * read the local app.js file, parse the version number out of the file and compare the version numbers with each
      * other. If the version numbers do not match, the user gets a message on Node-RED's debug panel.
      *
-     * @param {string} remoteAppJsVersion - version number of the script running on the speaker
+     * @param remoteAppJsVersion - version number of the script running on the speaker
      */
     checkAppJsVersion(remoteAppJsVersion: string): void {
         const appJsPath = path.resolve(__dirname, '../../local-execution/app.js');

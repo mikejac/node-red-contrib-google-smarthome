@@ -37,13 +37,18 @@ export const Formats = {
     /**
      * Convert an input value (e.g. "on"/"off") to a target type (e.g. BOOL).
      *
-     * @param {string} key - Key to use in error messages
-     * @param {*} value - Input value to convert
-     * @param {number} format - Target type to convert to (e.g. Formats.BOOL, Formats.STRING)
-     * @param {*} default_value - Target value to use if input is undefined
-     * @returns {*} Converted value
+     * @param key - Key to use in error messages
+     * @param value - Input value to convert
+     * @param format - Target type to convert to (e.g. Formats.BOOL, Formats.STRING)
+     * @param default_value - Target value to use if input is undefined
+     * @returns Converted value
      */
-    formatValue(key: string, value, format, default_value = undefined) {
+    formatValue(
+        key: string,
+        value: unknown,
+        format: number,
+        default_value: unknown = undefined
+    ): string | number | boolean | undefined {
         if (typeof value === 'undefined') {
             value = default_value;
         }

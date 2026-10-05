@@ -19,6 +19,7 @@
 import path from 'path';
 import fs from 'fs';
 import util from 'util';
+import type { JWTInput } from 'google-auth-library';
 import { nanoid } from 'nanoid'
 import { GoogleSmartHome } from './SmartHome';
 
@@ -48,6 +49,7 @@ export default class Auth {
     private _username: string;
     private _password: string;
     private _authFilename: string | null;
+    private _jwtkey: JWTInput | null;
 
 
     /**
@@ -120,7 +122,7 @@ export default class Auth {
             jwtkeyFile = path.join(dir, jwtkeyFile);
         }
         const jk       = fs.readFileSync(jwtkeyFile);
-        this._jwtkey = JSON.parse(jk.toString());
+        this._jwtkey = JSON.parse(jk.toString()) as JWTInput;
     }
 
     /**
@@ -318,7 +320,7 @@ export default class Auth {
      * Refreshes the access token used by Google to authenticate with our service.
      *
      * @param refreshToken - Refresh token
-     * @returns {object} Tokens
+     * @returns Object containing the new access token
      */
     refreshAccessToken(refreshToken: string): { token_type: string; access_token: string; expires_in: number; } {
         if (!this.isValidRefreshToken(refreshToken)) {
@@ -424,7 +426,7 @@ export default class Auth {
      * @returns JWT client email
      */
     getJwtClientEmail(): string {
-        return this._jwtkey.client_email;
+        return this._jwtkey!.client_email!;
     }
 
     /**
@@ -433,7 +435,7 @@ export default class Auth {
      * @returns JWT private key
      */
     getJwtPrivateKey(): string {
-        return this._jwtkey.private_key;
+        return this._jwtkey!.private_key!;
     }
 
     /**
@@ -442,7 +444,7 @@ export default class Auth {
      * @returns JWT Project ID
      */
     getProjectId(): string {
-        return this._jwtkey.project_id;
+        return this._jwtkey!.project_id!;
     }
 
     /**

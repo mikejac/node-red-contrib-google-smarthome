@@ -85,11 +85,11 @@ interface DeviceNodeConfig extends NodeDef {
     trait_transportcontrol: boolean;
     trait_volume: boolean;
     appselector_file: string;
-    appselector_type: string;
+    appselector_type: 'str' | 'json';
     channel_file: string;
-    channel_type: string;
+    channel_type: 'str' | 'json';
     inputselector_file: string;
-    inputselector_type: string;
+    inputselector_type: 'str' | 'json';
     command_only_input_selector: boolean;
     ordered_inputs: boolean;
     support_activity_state: boolean;
@@ -107,10 +107,10 @@ interface DeviceNodeConfig extends NodeDef {
     temperature_min_k: number | string;
     temperature_max_k: number | string;
     modes_file: string;
-    modes_type: string;
+    modes_type: 'str' | 'json';
     command_query_modes: CommandQueryMode;
     toggles_file: string;
-    toggles_type: string;
+    toggles_type: 'str' | 'json';
     command_query_toggles: CommandQueryMode;
     hls: string;
     hls_app_id: string;
@@ -123,7 +123,7 @@ interface DeviceNodeConfig extends NodeDef {
     webrtc: string;
     webrtc_offer: string;
     webrtc_ice_servers: string;
-    webrtc_ice_servers_type: string;
+    webrtc_ice_servers_type: 'str' | 'json';
     scene_reversible: boolean;
     max_timer_limit_sec: number | string;
     command_only_timer: boolean;
@@ -157,28 +157,28 @@ interface DeviceNodeConfig extends NodeDef {
     supported_effects: string[];
     supported_cooking_modes: string[];
     food_presets_file: string;
-    food_presets_type: string;
+    food_presets_type: 'str' | 'json';
     reversible: boolean;
     supports_fan_speed_percent: boolean;
     fan_speeds_ordered: boolean;
     command_only_fanspeed: boolean;
     available_fan_speeds_file: string;
-    available_fan_speeds_type: string;
+    available_fan_speeds_type: 'str' | 'json';
     sensor_states_supported: string[];
     arm_levels_ordered: boolean;
     available_arm_levels_file: string;
-    available_arm_levels_type: string;
+    available_arm_levels_type: 'str' | 'json';
     available_fill_levels_file: string;
-    available_fill_levels_type: string;
+    available_fill_levels_type: 'str' | 'json';
     supports_fill_percent: boolean;
     ordered_fill_levels: boolean;
     is_rechargeable: boolean;
     query_only_energy_storage: boolean;
     energy_storage_distance_unit_for_ux: string;
     supported_dispense_items_file: string;
-    supported_dispense_items_type: string;
+    supported_dispense_items_type: 'str' | 'json';
     supported_dispense_presets_file: string;
-    supported_dispense_presets_type: string;
+    supported_dispense_presets_type: 'str' | 'json';
     supports_enabling_guest_network: boolean;
     supports_disabling_guest_network: boolean;
     supports_getting_guest_network_password: boolean;
@@ -293,12 +293,14 @@ export class DeviceNode {
     private lang: string;
     private nicknames: string;
     private room_hint: string;
+    public  states: Record<string, unknown>;
 
     constructor(config: DeviceNodeConfig) {
         RED.nodes.createNode(this, config);
 
         this.config = config;
         this.device = {};
+        this.states = {};
         this.name = config.name || config.id;
         this.device_type = config.device_type;
         this.nicknames = config.nicknames;
@@ -1185,7 +1187,7 @@ export class DeviceNode {
                 addIfMissing: true,
                 removeIfNoData: true,
                 replaceAll: true,
-                isValidKey: unit => ENERGY_STORAGE_UNITS.includes(unit)
+                isValidKey: (unit: string) => ENERGY_STORAGE_UNITS.includes(unit)
             };
             if (this.config.is_rechargeable) {
                 state_types['capacityUntilFull'] = {
@@ -1203,7 +1205,7 @@ export class DeviceNode {
                     addIfMissing: true,
                     removeIfNoData: true,
                     replaceAll: true,
-                    isValidKey: unit => ENERGY_STORAGE_UNITS.includes(unit)
+                    isValidKey: (unit: string) => ENERGY_STORAGE_UNITS.includes(unit)
                 };
                 state_types['isCharging'] = Formats.BOOL;
             }
@@ -1390,7 +1392,7 @@ export class DeviceNode {
                         keyId: 'openDirection',
                         removeIfNoData: true,
                         replaceAll: false,
-                        isValidKey: direction => this.open_direction.includes(direction.trim()) ? direction.trim() : undefined
+                        isValidKey: (direction: string) => this.open_direction.includes(direction.trim()) ? direction.trim() : undefined
                     };
                 }
             }
@@ -1442,7 +1444,7 @@ export class DeviceNode {
                 addIfMissing: true,
                 removeIfNoData: true,
                 replaceAll: false,
-                isValidKey: name => this.sensor_states_supported.includes(name.trim()) ? name.trim() : undefined
+                isValidKey: (name: string) => this.sensor_states_supported.includes(name.trim()) ? name.trim() : undefined
             };
         }
         if (this.config.trait_softwareupdate) {
@@ -1457,7 +1459,7 @@ export class DeviceNode {
                 addIfMissing: true,
                 removeIfNoData: true,
                 replaceAll: true,
-                isValidKey: zone => this.available_zones.includes(zone.trim()) ? zone.trim() : undefined
+                isValidKey: (zone: string) => this.available_zones.includes(zone.trim()) ? zone.trim() : undefined
             };
         }
         if (this.config.trait_statusreport) {
@@ -1473,7 +1475,7 @@ export class DeviceNode {
                 addIfMissing: true,
                 removeIfNoData: true,
                 replaceAll: true,
-                isValidKey: nodeId => Object.keys(this.clientConn.getProperties([nodeId])).length > 0 ? nodeId : this.clientConn.getIdFromName(nodeId)
+                isValidKey: (nodeId: string) => Object.keys(this.clientConn.getProperties([nodeId])).length > 0 ? nodeId : this.clientConn.getIdFromName(nodeId)
             };
         }
         if (this.config.trait_temperaturecontrol) {
@@ -3012,7 +3014,7 @@ export class DeviceNode {
      * @param removed - true if the is being removed, false on restart
      * @param {Function} done - Function to inform the runtime that this node has finished its operation
      */
-    onClose(removed, done): void {
+    onClose(removed: boolean, done): void {
         if (removed) {
             // this node has been deleted
             this.clientConn.remove(this, 'device');
@@ -3177,10 +3179,10 @@ export class DeviceNode {
      * Updates the states of this device with new values.
      *
      * @param {Object} from_states - The new states values.
-     * @returns {string[]} - Array of the state keys that were modified.
+     * @returns Array of the state keys that were modified.
      */
-    updateState(from_states) {
-        const modified = [];
+    updateState(from_states): string[] {
+        const modified: string[] = [];
         this._debug('updateState current state ' + JSON.stringify(this.states));
         Object.keys(this.state_types).forEach(key => {
             if (Object.prototype.hasOwnProperty.call(from_states, key)) {
@@ -3485,10 +3487,10 @@ export class DeviceNode {
      * Converts an array of applications to the format expected by Google.
      *
      * @see key_name_synonym
-     * @param {string[]} json_data - The items to convert
+     * @param json_data - The items to convert
      * @returns {object[]} - Object with items as expected by Google
      */
-    to_available_applications(json_data) {
+    to_available_applications(json_data: string[]) {
         return this.key_name_synonym("Applications", json_data, 'key', 'names', 'name_synonym');
     }
 
@@ -3496,10 +3498,10 @@ export class DeviceNode {
      * Converts an array of arm levels to the format expected by Google.
      *
      * @see key_name_synonym
-     * @param {string[]} json_data - The items to convert
+     * @param json_data - The items to convert
      * @returns {object[]} - Object with items as expected by Google
      */
-    to_available_arm_levels(json_data) {
+    to_available_arm_levels(json_data: string[]) {
         return this.key_name_synonym("Arm levels", json_data, 'level_name', 'level_values', 'level_synonym');
     }
 
@@ -3507,10 +3509,10 @@ export class DeviceNode {
      * Converts an array of channels to the format expected by Google.
      *
      * @see key_name_synonym
-     * @param {string[]} json_data - The items to convert
+     * @param json_data - The items to convert
      * @returns {object[]} - Object with items as expected by Google
      */
-    to_available_channels(json_data) {
+    to_available_channels(json_data: string[]) {
         const f = function (data_in, data_out) {
             if (typeof data_in.number === 'string') {
                 data_out.number = data_in.number;
@@ -3587,10 +3589,10 @@ export class DeviceNode {
      * Converts an array of fan speeds to the format expected by Google.
      *
      * @see key_name_synonym
-     * @param {string[]} json_data - The items to convert
+     * @param json_data - The items to convert
      * @returns {object[]} - Object with items as expected by Google
      */
-    to_available_fan_speeds(json_data) {
+    to_available_fan_speeds(json_data: string[]) {
         return this.key_name_synonym("Fan speeds", json_data, 'speed_name', 'speed_values', 'speed_synonym');
     }
 
@@ -3598,11 +3600,11 @@ export class DeviceNode {
      * Converts an array of fill levels to the format expected by Google.
      *
      * @see key_name_synonym
-     * @param {string[]} json_data - The items to convert
+     * @param json_data - The items to convert
      * @returns {object[]} - Object with items as expected by Google
      */
 
-    to_available_fill_levels(json_data) {
+    to_available_fill_levels(json_data: string[]) {
         return this.key_name_synonym("Fill levels", json_data, 'level_name', 'level_values', 'level_synonym');
     }
 
@@ -3610,10 +3612,10 @@ export class DeviceNode {
      * Converts an array of inputs to the format expected by Google.
      *
      * @see key_name_synonym
-     * @param {string[]} json_data - The items to convert
+     * @param json_data - The items to convert
      * @returns {object[]} - Object with items as expected by Google
      */
-    to_available_inputs(json_data) {
+    to_available_inputs(json_data: string[]) {
         return this.key_name_synonym("Inputs", json_data, 'key', 'names', 'name_synonym');
     }
 
@@ -3621,10 +3623,10 @@ export class DeviceNode {
      * Converts an array of toggles to the format expected by Google.
      *
      * @see key_name_synonym
-     * @param {string[]} json_data - The items to convert
+     * @param json_data - The items to convert
      * @returns {object[]} - Object with items as expected by Google
      */
-    to_available_modes(json_data) {
+    to_available_modes(json_data: string[]) {
         const f = (data_in, data_out) => {
             if (Array.isArray(data_in.settings)) {
                 data_out.settings = this.key_name_synonym("Modes settings", data_in.settings, 'setting_name', 'setting_values', 'setting_synonym');
@@ -3642,10 +3644,10 @@ export class DeviceNode {
      * Converts an array of toggles to the format expected by Google.
      *
      * @see key_name_synonym
-     * @param {string[]} json_data - The items to convert
+     * @param json_data - The items to convert
      * @returns {object[]} - Object with items as expected by Google
      */
-    to_available_toggles(json_data) {
+    to_available_toggles(json_data: string[]) {
         return this.key_name_synonym("Toggles", json_data, 'name', 'name_values', 'name_synonym');
     }
 
@@ -3661,15 +3663,15 @@ export class DeviceNode {
      *
      * The keys "name", "name_values" and "name_synonym" can be renamed via the parameters key1, key2 and key3.
      *
-     * @param {string} type - Type name to use in debug messages
+     * @param type - Type name to use in debug messages
      * @param {string[] | string} json_data - Array of items to convert
-     * @param {string} key1 - Key for item name ("name" in example)
-     * @param {string} key2 - Key for synonyms object ("name_values" in example)
-     * @param {string} key3 - Key for synonyms array ("name_synonyms" in example)
+     * @param key1 - Key for item name ("name" in example)
+     * @param key2 - Key for synonyms object ("name_values" in example)
+     * @param key3 - Key for synonyms array ("name_synonyms" in example)
      * @param {Function} manage_other_fields - Optional callback function to handle other fields
      * @returns {object[]} - Object with items as expected by Google
      */
-    key_name_synonym(type, json_data, key1, key2, key3, manage_other_fields) {
+    key_name_synonym(type: string, json_data, key1: string, key2: string, key3: string | undefined, manage_other_fields = undefined) {
         this._debug(".key_name_synonym: Parsing " + type);
         const new_data = [];
         if (Array.isArray(json_data)) {
@@ -4215,7 +4217,7 @@ export class DeviceNode {
         else if (command.command === 'action.devices.commands.Cook') {
             //const start = command.params['start'];
             if (Object.prototype.hasOwnProperty.call(command.params, 'cookingMode')) {
-                const cooking_mode = command.params['cookingMode'];
+                const cooking_mode = command.params['cookingMode'] as string;
                 if (this.supported_cooking_modes.includes(cooking_mode)) {
                     params['currentCookingMode'] = cooking_mode;
                     executionStates.push('currentCookingMode');

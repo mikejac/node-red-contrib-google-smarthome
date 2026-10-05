@@ -102,7 +102,7 @@ export class GoogleSmartHomeNode {
             return;
         }
 
-        this.on('close', (removed, done) => {
+        this.on('close', (removed: boolean, done: (err?: unknown) => void) => {
             this.app.Stop(RED.httpNode || RED.httpAdmin, done);
 
             if (removed) {
@@ -166,15 +166,15 @@ export class GoogleSmartHomeNode {
         this.app.devices.SendNotifications(client.id, notifications);
     }
 
-    reportState(deviceId: string) {
+    reportState(deviceId: string): void {
         this.app.devices.ReportState(deviceId);
     }
 
-    getIdFromName(name) {
+    getIdFromName(name: string) {
         return this.app.devices.GetIdFromName(name);
     }
 
-    getProperties(deviceIds) {
+    getProperties(deviceIds: string[] | null = null) {
         return this.app.devices.getProperties(deviceIds);
     }
 }
