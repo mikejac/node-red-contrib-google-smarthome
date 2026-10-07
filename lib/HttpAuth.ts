@@ -213,8 +213,15 @@ export default class HttpAuth {
         httpRoot: string
     ): void {
         if (!isValidUser) {
-            const redirectUrl = util.format('%s?client_id=%s&redirect_uri=%s&state=%s&response_type=code&error=invalid_user',
-                this._smarthome.Path_join(httpRoot, 'oauth'), req.body.client_id, encodeURIComponent(req.body.redirect_uri), req.body.state);
+            // Request values must remain query data, never additional URL parameters.
+            const params = new URLSearchParams({
+                client_id: req.body.client_id,
+                redirect_uri: req.body.redirect_uri,
+                state: req.body.state,
+                response_type: 'code',
+                error: 'invalid_user',
+            });
+            const redirectUrl = this._smarthome.Path_join(httpRoot, 'oauth') + '?' + params.toString();
             this._smarthome.configNode.error('HttpAuth:_handleUserAuth(): invalid user');
             this._smarthome.debug('HttpAuth:_handleUserAuth(): invalid user, redirecting to login form at ' + redirectUrl);
             res.redirect(redirectUrl);
@@ -226,13 +233,22 @@ export default class HttpAuth {
         const authCode = this._smarthome.auth.generateAuthCode(username);
 
         if (authCode) {
-            const redirectUrl = util.format('%s?code=%s&state=%s', req.body.redirect_uri, authCode, req.body.state)
+            const params = new URLSearchParams({
+                code: authCode,
+                state: req.body.state,
+            });
+            const redirectUrl = req.body.redirect_uri + '?' + params.toString();
             this._smarthome.debug('HttpAuth:_handleUserAuth(): authCode generated successfully (authCode = ' + authCode + ')');
             this._smarthome.debug('HttpAuth:_handleUserAuth(): redirecting to Google at ' + redirectUrl);
             res.redirect(redirectUrl);
         } else {
-            const redirectUrl = util.format('%s?client_id=%s&redirect_uri=%s&state=%s&response_type=code',
-                this._smarthome.Path_join(httpRoot, 'oauth'), req.body.client_id, encodeURIComponent(req.body.redirect_uri), req.body.state);
+            const params = new URLSearchParams({
+                client_id: req.body.client_id,
+                redirect_uri: req.body.redirect_uri,
+                state: req.body.state,
+                response_type: 'code',
+            });
+            const redirectUrl = this._smarthome.Path_join(httpRoot, 'oauth') + '?' + params.toString();
             this._smarthome.configNode.error('HttpAuth:_handleUserAuth(): generating authCode failed');
             this._smarthome.debug('HttpAuth:_handleUserAuth(): generating authCode failed, redirecting to Google at ' + redirectUrl);
             res.redirect(redirectUrl);
