@@ -124,7 +124,7 @@ const forwardRequest = async (nodeRedData, targetDeviceId, request) => {
 const identifyHandler = async (request) => {
     console.log("IDENTIFY intent:", request);
     const deviceToIdentify = request.inputs[0].payload.device;
-    var clientId = "";
+    var clientId;
     if (deviceToIdentify.udpScanData) {
         console.log("IDENTIFY intent data:" + deviceToIdentify.udpScanData.data);
         const data = hex2a(deviceToIdentify.udpScanData.data);
