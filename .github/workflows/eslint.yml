@@ -32,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: latest
+          node-version: '*'
       - name: npm Install
         run: npm ci
       - name: Run ESLint
