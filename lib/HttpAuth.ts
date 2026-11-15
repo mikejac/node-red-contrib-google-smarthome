@@ -133,7 +133,7 @@ export default class HttpAuth {
             return;
         }
 
-        if (!this._smarthome.auth.isValidRedirectUri(request.body.redirect_uri || '', this._smarthome._debug ? my_uri : '')) {
+        if (!this._smarthome.auth.isValidRedirectUri(request.body.redirect_uri || '', this._smarthome.isDebugMode ? my_uri : '')) {
             this._smarthome.error('HttpAuth:_handlePostOauth(): redirect_uri ' + request.body.redirect_uri + ' invalid');
             response.status(500).send('redirect_uri ' + request.body.redirect_uri + ' invalid');
             return;
@@ -187,7 +187,7 @@ export default class HttpAuth {
         }
 
         if (grantType === 'authorization_code') {
-            this._handleAuthCode(request, response, this._smarthome._debug ? my_uri : '');
+            this._handleAuthCode(request, response, this._smarthome.isDebugMode ? my_uri : '');
             return;
         } else if (grantType === 'refresh_token') {
             this._handleRefreshToken(request, response);

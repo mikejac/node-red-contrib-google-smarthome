@@ -123,7 +123,7 @@ export default class HttpActions {
      */
     private _handleGetCheck(request: Request, response: Response) {
         this._smarthome.debug('HttpActions:_handleGetCheck()');
-        if (this._smarthome._debug) {
+        if (this._smarthome.isDebugMode) {
             fs.readFile(path.join(__dirname, 'frontend/check.html'), 'utf8', function (err, data) {
                 if (err) {
                     response.end();

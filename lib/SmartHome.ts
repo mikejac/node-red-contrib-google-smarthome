@@ -68,7 +68,7 @@ export class GoogleSmartHome {
     private _publicKey: string;
     private _privateKey: string;
     private _jwtKeyFile: string;
-    private _debug: boolean;
+    public isDebugMode: boolean;
     private _userDir: string
     private _getStateScheduled: boolean = false;
     private _reportStateTimer: NodeJS.Timeout | null;
@@ -99,7 +99,7 @@ export class GoogleSmartHome {
         this._publicKey             = publicKey;
         this._privateKey            = privateKey;
         this._jwtKeyFile            = jwtkeyFile;
-        this._debug                 = debug;
+        this.isDebugMode            = debug;
         this._userDir               = userDir;
         this._httpLocalPath         = this.Path_join(this._httpNodeRoot || '/', this._httpPath);
         this._httpPath              = this.Path_join((usehttpnoderoot ? this._httpNodeRoot || '/' : '/'), this._httpPath);
@@ -127,7 +127,7 @@ export class GoogleSmartHome {
                 this.app = express();
                 this.app.use(helmet());
                 this.app.use(cors());
-                if(this._debug)
+                if(this.isDebugMode)
                     this.app.use(morgan('dev'));
                 this.app.use(express.json());
                 this.app.use(express.urlencoded({extended: true}));
@@ -144,7 +144,7 @@ export class GoogleSmartHome {
                 this.localApp = express();
                 this.localApp.use(helmet());
                 this.localApp.use(cors());
-                if(this._debug)
+                if(this.isDebugMode)
                     this.localApp.use(morgan('dev'));
                 this.localApp.use(express.json());
                 this.localApp.use(express.urlencoded({extended: true}));
