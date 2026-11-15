@@ -4003,7 +4003,7 @@ export class DeviceNode {
                 break;
         }
         const challenge = command.challenge || {};
-        challenge_pin = challenge_pin.trim();
+        challenge_pin = (challenge_pin ?? '').trim();
         if (challenge_type === 'ackNeeded') {
             if (challenge.ack !== true) {
                 // ackNeeded with trait states
