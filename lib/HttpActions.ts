@@ -288,16 +288,12 @@ export default class HttpActions {
                      *          "devices": [{
                      *            "id": "123",
                      *            "customData": {
-                     *              "fooValue": 12,
-                     *              "barValue": true,
-                     *              "bazValue": "alpaca sauce"
+                     *              "foo": "bar"
                      *            }
                      *          }, {
                      *            "id": "234",
                      *            "customData": {
-                     *              "fooValue": 74,
-                     *              "barValue": false,
-                     *              "bazValue": "sheep dip"
+                     *              "foo": "baz"
                      *            }
                      *          }]
                      *       }
@@ -320,16 +316,12 @@ export default class HttpActions {
                      *         "devices": [{
                      *           "id": "123",
                      *           "customData": {
-                     *             "fooValue": 12,
-                     *             "barValue": true,
-                     *             "bazValue": "alpaca sauce"
+                     *             "foo": "bar"
                      *           }
                      *         }, {
                      *           "id": "234",
                      *           "customData": {
-                     *              "fooValue": 74,
-                     *              "barValue": false,
-                     *              "bazValue": "sheep dip"
+                     *              "foo": "baz"
                      *           }
                      *         }],
                      *         "execution": [{
