@@ -63,7 +63,7 @@
     "@types/stoppable": "^1.1.3",
     "eslint": "^10.14.0",
     "eslint-plugin-jsdoc": "^65.4.4",
-    "glob": "^14.0.4",
+    "glob": "^14.0.6",
     "globals": "^17.14.0",
     "mocha": "^12.0.3",
     "node-red": "^5.0.9",
